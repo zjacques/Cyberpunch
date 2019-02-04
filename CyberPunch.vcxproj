@@ -125,12 +125,16 @@
   <ItemGroup>
     <ClCompile Include="Source\Game.cpp" />
     <ClCompile Include="Source\Main.cpp" />
+    <ClCompile Include="Source\Vector2f.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\Component.h" />
     <ClInclude Include="Header\Game.h" />
     <ClInclude Include="Header\Entity.h" />
+    <ClInclude Include="Header\InputHandler.h" />
     <ClInclude Include="Header\System.h" />
+    <ClInclude Include="Header\Vector2f.h" />
+    <ClInclude Include="Source\InputHandler.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

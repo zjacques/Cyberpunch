@@ -41,8 +41,8 @@ private:
 
 	//Physics variables
 	b2World* m_physWorld;
-	const int32 VELOCITY_ITERS = 8;   //how strongly to correct velocity
-	const int32 POSITION_ITERS = 3;   //how strongly to correct position
+	const int32 VELOCITY_ITERS = 8; //how strongly to correct velocity
+	const int32 POSITION_ITERS = 3; //how strongly to correct position
 
 	float m_msPerFrame;
 	bool m_quit;
