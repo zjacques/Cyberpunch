@@ -40,8 +40,17 @@ void Game::processEvents(SDL_Event& e)
 	}
 }
 
+void Game::setupPhysics()
+{
+	//Create the physics world and set the gravity of the world
+	m_physWorld = new b2World(b2Vec2(0, -10));
+}
+
 void Game::run()
 {
+	//Setup physics world 
+	setupPhysics();
+
 	//Creat eour SDL event variable
 	SDL_Event e;
 	double dt = 0;
@@ -53,6 +62,9 @@ void Game::run()
 	{
 		now = std::chrono::system_clock::now();
 		dt = std::chrono::duration<double>(now - before).count();
+
+		//Simulate the physics
+		m_physWorld->Step(dt, VELOCITY_ITERS, POSITION_ITERS);
 
 		//Process any events that have occured
 		processEvents(e);

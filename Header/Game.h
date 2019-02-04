@@ -1,4 +1,5 @@
 #pragma once
+#include "Box2D/Box2D.h"
 #include <SDL.h>
 #include <stdio.h>
 #include <iostream>
@@ -18,6 +19,8 @@ public:
 
 	void processEvents(SDL_Event& e);
 
+	void setupPhysics();
+
 	void run();
 	//Starts up SDL and creates window
 	bool init();
@@ -35,6 +38,11 @@ private:
 	SDL_Window* m_window;
 	//The surface contained by the window
 	SDL_Surface* m_screenSurface;
+
+	//Physics variables
+	b2World* m_physWorld;
+	const int32 VELOCITY_ITERS = 8;   //how strongly to correct velocity
+	const int32 POSITION_ITERS = 3;   //how strongly to correct position
 
 	float m_msPerFrame;
 	bool m_quit;
