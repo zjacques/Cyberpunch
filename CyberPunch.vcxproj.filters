@@ -50,6 +50,10 @@
     </ClCompile>
     <ClCompile Include="Source\RenderSystem.cpp">
       <Filter>Source Files\Systems</Filter>
+    <ClCompile Include="Source\InputSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\InputComponent.cpp">
     <ClCompile Include="Source\Box2DBridge.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
@@ -84,6 +88,11 @@
     </ClInclude>
     <ClInclude Include="Header\RenderSystem.h">
       <Filter>Header Files\Systems</Filter>
+    <ClInclude Include="Header\InputSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\InputComponent.h">
+      <Filter>Header Files</Filter>
     <ClInclude Include="Header\Box2DBridge.h">
       <Filter>Header Files\Utilities</Filter>
     </ClInclude>

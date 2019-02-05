@@ -2,6 +2,7 @@
 #define SYSTEM_H
 
 #include "Component.h"
+#include <iostream>
 
 class System
 {
