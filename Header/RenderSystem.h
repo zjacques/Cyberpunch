@@ -13,7 +13,6 @@ public:
 	void update(double dt);
 	void addComponent(Component *);
 	void render(SDL_Rect *, SDL_Rect *, SDL_Texture *);
-	SDL_Texture* loadTexture(RenderComponent *);
 
 private:
 	SDL_Window * m_window;

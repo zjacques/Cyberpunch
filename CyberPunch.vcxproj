@@ -129,6 +129,7 @@
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\RenderSystem.cpp" />
     <ClCompile Include="Source\Vector2f.cpp" />
+    <ClInclude Include="Source\InputHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\Box2DBridge.h" />
@@ -144,7 +145,6 @@
     <ClInclude Include="Header\PositionComponent.h" />
     <ClInclude Include="Header\System.h" />
     <ClInclude Include="Header\Vector2f.h" />
-    <ClInclude Include="Source\InputHandler.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

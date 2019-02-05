@@ -34,34 +34,6 @@ void RenderSystem::render(SDL_Rect * src, SDL_Rect * dst, SDL_Texture * t)
 }
 
 /// <summary>
-/// Loads texture using filepath from
-/// render component
-/// </summary>
-SDL_Texture* RenderSystem::loadTexture(RenderComponent * c)
-{
-	SDL_Surface * temp_surface = c->getSurface();
-	SDL_Texture * temp_texture;
-	temp_surface = IMG_Load(c->getTexturePath().c_str());
-
-	int imgFlags = IMG_INIT_PNG;
-	if (!(IMG_Init(imgFlags) & imgFlags))
-	{
-		printf("SDL_image could not initialize! SDL_Error: %s\n", IMG_GetError());
-	}
-	else
-	{
-		temp_surface = IMG_Load(c->getTexturePath().c_str());
-		if (temp_surface == nullptr)
-		{
-			printf("Unable to load image %s!", c->getTexturePath().c_str(), SDL_GetError());
-		}
-		temp_texture = SDL_CreateTextureFromSurface(m_renderer, temp_surface);
-		SDL_FreeSurface(temp_surface);
-	}
-	return temp_texture;
-}
-
-/// <summary>
 /// Loops through render components
 /// creates SDL_Rects using their values
 /// and calls render function.
@@ -70,15 +42,19 @@ void RenderSystem::update(double dt)
 {
 	for (auto c : m_components)
 	{
-		if (c->m_ID == "RENDER")
-		{
-			RenderComponent * temp = dynamic_cast<RenderComponent *>(c);
-			SDL_Rect * src;
-			src->x = temp->getPosition().x;
-			src->y = temp->getPosition().y;
-			src->w = temp->getBounds().x;
-			src->h = temp->getBounds().y;
-		}
+		RenderComponent * temp = dynamic_cast<RenderComponent *>(c);
+		SDL_Rect * src = new SDL_Rect();
+		SDL_Rect * dst = new SDL_Rect();
+		src->x = 0;
+		src->y = 0;
+		src->w = temp->getBounds().x;
+		src->h = temp->getBounds().y;
+
+		dst->x = temp->getPosition().x;
+		dst->y = temp->getPosition().y;
+		dst->w = temp->getBounds().x;
+		dst->h = temp->getBounds().y;
+
+		render(src, dst, temp->getTexture());
 	}
 }
-
