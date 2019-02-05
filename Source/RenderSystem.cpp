@@ -37,9 +37,28 @@ void RenderSystem::render(SDL_Rect * src, SDL_Rect * dst, SDL_Texture * t)
 /// Loads texture using filepath from
 /// render component
 /// </summary>
-void RenderSystem::loadTexture()
+SDL_Texture* RenderSystem::loadTexture(RenderComponent * c)
 {
+	SDL_Surface * temp_surface = c->getSurface();
+	SDL_Texture * temp_texture;
+	temp_surface = IMG_Load(c->getTexturePath().c_str());
 
+	int imgFlags = IMG_INIT_PNG;
+	if (!(IMG_Init(imgFlags) & imgFlags))
+	{
+		printf("SDL_image could not initialize! SDL_Error: %s\n", IMG_GetError());
+	}
+	else
+	{
+		temp_surface = IMG_Load(c->getTexturePath().c_str());
+		if (temp_surface == nullptr)
+		{
+			printf("Unable to load image %s!", c->getTexturePath().c_str(), SDL_GetError());
+		}
+		temp_texture = SDL_CreateTextureFromSurface(m_renderer, temp_surface);
+		SDL_FreeSurface(temp_surface);
+	}
+	return temp_texture;
 }
 
 /// <summary>

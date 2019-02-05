@@ -4,6 +4,7 @@
 #include "System.h"
 #include <SDL.h>
 #include "../Header/RenderComponent.h"
+#include "../Libraries/SDL_image/include/SDL_image.h"
 
 class RenderSystem : public System
 {
@@ -12,7 +13,7 @@ public:
 	void update(double dt);
 	void addComponent(Component *);
 	void render(SDL_Rect *, SDL_Rect *, SDL_Texture *);
-	void loadTexture();
+	SDL_Texture* loadTexture(RenderComponent *);
 
 private:
 	SDL_Window * m_window;
