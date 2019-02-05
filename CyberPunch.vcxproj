@@ -124,6 +124,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\Game.cpp" />
+    <ClCompile Include="Source\InputComponent.cpp" />
+    <ClCompile Include="Source\InputSystem.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Vector2f.cpp" />
   </ItemGroup>
@@ -131,7 +133,9 @@
     <ClInclude Include="Header\Component.h" />
     <ClInclude Include="Header\Game.h" />
     <ClInclude Include="Header\Entity.h" />
+    <ClInclude Include="Header\InputComponent.h" />
     <ClInclude Include="Header\InputHandler.h" />
+    <ClInclude Include="Header\InputSystem.h" />
     <ClInclude Include="Header\System.h" />
     <ClInclude Include="Header\Vector2f.h" />
     <ClInclude Include="Source\InputHandler.cpp" />
