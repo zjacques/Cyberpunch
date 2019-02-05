@@ -123,22 +123,28 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\PhysicsSystem.cpp" />
+    <ClCompile Include="Source\Box2DBridge.cpp" />
     <ClCompile Include="Source\Game.cpp" />
     <ClCompile Include="Source\InputComponent.cpp" />
     <ClCompile Include="Source\InputSystem.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Vector2f.cpp" />
+    <ClInclude Include="Source\InputHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Header\Box2DBridge.h" />
     <ClInclude Include="Header\Component.h" />
     <ClInclude Include="Header\Game.h" />
     <ClInclude Include="Header\Entity.h" />
     <ClInclude Include="Header\InputComponent.h" />
     <ClInclude Include="Header\InputHandler.h" />
     <ClInclude Include="Header\InputSystem.h" />
+    <ClInclude Include="Header\PhysicsComponent.h" />
+    <ClInclude Include="Header\PhysicsSystem.h" />
+    <ClInclude Include="Header\PositionComponent.h" />
     <ClInclude Include="Header\System.h" />
     <ClInclude Include="Header\Vector2f.h" />
-    <ClInclude Include="Source\InputHandler.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

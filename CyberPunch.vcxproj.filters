@@ -52,6 +52,10 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\InputComponent.cpp">
+    <ClCompile Include="Source\Box2DBridge.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Header\PhysicsSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -82,6 +86,17 @@
     </ClInclude>
     <ClInclude Include="Header\InputComponent.h">
       <Filter>Header Files</Filter>
+    <ClInclude Include="Header\Box2DBridge.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\PhysicsComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\PositionComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\PhysicsSystem.h">
+      <Filter>Header Files\Systems</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
