@@ -48,6 +48,10 @@
     <ClCompile Include="Source\Vector2f.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
+    <ClCompile Include="Source\InputSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\InputComponent.cpp">
     <ClCompile Include="Source\Box2DBridge.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
@@ -77,6 +81,11 @@
     <ClInclude Include="Source\InputHandler.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClInclude>
+    <ClInclude Include="Header\InputSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\InputComponent.h">
+      <Filter>Header Files</Filter>
     <ClInclude Include="Header\Box2DBridge.h">
       <Filter>Header Files\Utilities</Filter>
     </ClInclude>
