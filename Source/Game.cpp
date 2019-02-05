@@ -6,17 +6,21 @@ Game::Game(int fps) :
 	m_screenSurface(NULL),
 	m_quit(false)
 {
+	testComponent = new RenderComponent();
+	testSystem = new RenderSystem();
+
+	testSystem->addComponent(testComponent);
 }
 
 void Game::update(double dt)
 {
+	testSystem->update(dt);
 }
 
 void Game::draw()
 {
 	//Clear the surface
 	SDL_FillRect(m_screenSurface, NULL, 0x000000);
-
 
 	//Update the surface
 	SDL_UpdateWindowSurface(m_window);

@@ -125,13 +125,17 @@
   <ItemGroup>
     <ClCompile Include="Source\Game.cpp" />
     <ClCompile Include="Source\Main.cpp" />
+    <ClCompile Include="Source\RenderSystem.cpp" />
     <ClCompile Include="Source\Vector2f.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\Component.h" />
     <ClInclude Include="Header\Game.h" />
     <ClInclude Include="Header\Entity.h" />
+    <ClInclude Include="Header\Header.h" />
     <ClInclude Include="Header\InputHandler.h" />
+    <ClInclude Include="Header\RenderComponent.h" />
+    <ClInclude Include="Header\RenderSystem.h" />
     <ClInclude Include="Header\System.h" />
     <ClInclude Include="Header\Vector2f.h" />
     <ClInclude Include="Source\InputHandler.cpp" />

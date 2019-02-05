@@ -5,6 +5,11 @@
 #include <iostream>
 #include <ctime>
 #include <chrono>
+#include <bitset>
+
+#include "../Header/Component.h"
+#include "../Header/RenderComponent.h"
+#include "../Header/RenderSystem.h"
 
 class Game
 {
@@ -46,4 +51,12 @@ private:
 
 	float m_msPerFrame;
 	bool m_quit;
+
+	//Components
+	RenderComponent * testComponent;
+
+	//Systems
+	RenderSystem * testSystem;
+
+	//Entities
 };
