@@ -42,7 +42,6 @@ private:
 	SDL_Renderer* m_renderer;
 
 	Box2DBridge m_world;
-	Box2DBody* m_testBody;
 
 	float m_msPerFrame;
 	bool m_quit;
