@@ -123,6 +123,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Header\PhysicsSystem.cpp" />
     <ClCompile Include="Source\Box2DBridge.cpp" />
     <ClCompile Include="Source\Game.cpp" />
     <ClCompile Include="Source\Main.cpp" />
@@ -134,6 +135,9 @@
     <ClInclude Include="Header\Game.h" />
     <ClInclude Include="Header\Entity.h" />
     <ClInclude Include="Header\InputHandler.h" />
+    <ClInclude Include="Header\PhysicsComponent.h" />
+    <ClInclude Include="Header\PhysicsSystem.h" />
+    <ClInclude Include="Header\PositionComponent.h" />
     <ClInclude Include="Header\System.h" />
     <ClInclude Include="Header\Vector2f.h" />
     <ClInclude Include="Source\InputHandler.cpp" />

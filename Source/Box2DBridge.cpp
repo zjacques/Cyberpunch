@@ -1,9 +1,9 @@
 #include "..\Header\Box2DBridge.h"
 
-Box2DBridge::Box2DBridge() :
-	m_world(new b2World(GRAVITY))
+Box2DBridge::Box2DBridge()
 {
-	m_world->SetGravity(GRAVITY);
+	m_world = new b2World(GRAVITY); //Create the world
+	m_world->SetGravity(GRAVITY); //Set the gravity of the world
 }
 
 void Box2DBridge::update(double dt)
