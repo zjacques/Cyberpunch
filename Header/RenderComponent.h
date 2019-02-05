@@ -12,12 +12,13 @@ public:
 	Vector2f getBounds() { return m_bounds; }
 	SDL_Surface * getSurface() { return m_surface; }
 	SDL_Texture * getTexture() { return m_texture; }
-
+	std::string getTexturePath() { return filepath; }
 private:
 	Vector2f m_position;
 	Vector2f m_bounds;
 	SDL_Surface * m_surface;
 	SDL_Texture * m_texture;
+	std::string filepath;
 };
 
 #endif

@@ -46,8 +46,7 @@ void Game::processEvents(SDL_Event& e)
 
 void Game::setupPhysics()
 {
-	//Create the physics world and set the gravity of the world
-	m_physWorld = new b2World(b2Vec2(0, -10));
+
 }
 
 void Game::run()
@@ -68,7 +67,7 @@ void Game::run()
 		dt = std::chrono::duration<double>(now - before).count();
 
 		//Simulate the physics
-		m_physWorld->Step(dt, VELOCITY_ITERS, POSITION_ITERS);
+		m_world.update(dt);
 
 		//Process any events that have occured
 		processEvents(e);
@@ -109,6 +108,7 @@ bool Game::init()
 		}
 		else
 		{
+			m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED);
 			//Get window surface
 			m_screenSurface = SDL_GetWindowSurface(m_window);
 		}

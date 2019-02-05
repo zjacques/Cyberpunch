@@ -1,5 +1,5 @@
 #pragma once
-#include "Box2D/Box2D.h"
+#include "Box2DBridge.h"
 #include <SDL.h>
 #include <stdio.h>
 #include <iostream>
@@ -36,18 +36,18 @@ public:
 
 private:
 	//Screen dimension constants
-	const int SCREEN_WIDTH = 1280;
-	const int SCREEN_HEIGHT = 720;
+	const int SCREEN_WIDTH = 1920;
+	const int SCREEN_HEIGHT = 1080;
 
 	//The window we'll be rendering to
 	SDL_Window* m_window;
 	//The surface contained by the window
 	SDL_Surface* m_screenSurface;
+	//The renderer, we will use this to draw images
+	SDL_Renderer* m_renderer;
 
-	//Physics variables
-	b2World* m_physWorld;
-	const int32 VELOCITY_ITERS = 8; //how strongly to correct velocity
-	const int32 POSITION_ITERS = 3; //how strongly to correct position
+	Box2DBridge m_world;
+	Box2DBody* m_testBody;
 
 	float m_msPerFrame;
 	bool m_quit;

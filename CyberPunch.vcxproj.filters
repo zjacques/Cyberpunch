@@ -50,6 +50,8 @@
     </ClCompile>
     <ClCompile Include="Source\RenderSystem.cpp">
       <Filter>Source Files\Systems</Filter>
+    <ClCompile Include="Source\Box2DBridge.cpp">
+      <Filter>Source Files\Utilities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -74,14 +76,13 @@
     <ClInclude Include="Source\InputHandler.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Header.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
     <ClInclude Include="Header\RenderComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="Header\RenderSystem.h">
       <Filter>Header Files\Systems</Filter>
+    <ClInclude Include="Header\Box2DBridge.h">
+      <Filter>Header Files\Utilities</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

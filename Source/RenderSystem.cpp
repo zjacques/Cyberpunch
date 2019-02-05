@@ -34,6 +34,15 @@ void RenderSystem::render(SDL_Rect * src, SDL_Rect * dst, SDL_Texture * t)
 }
 
 /// <summary>
+/// Loads texture using filepath from
+/// render component
+/// </summary>
+void RenderSystem::loadTexture()
+{
+
+}
+
+/// <summary>
 /// Loops through render components
 /// creates SDL_Rects using their values
 /// and calls render function.
