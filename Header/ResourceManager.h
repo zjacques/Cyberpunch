@@ -19,4 +19,4 @@ public:
 private:
 	std::string m_filePath;
 	std::map<std::string, SDL_Texture*> m_map; //Where we will hold the textures
-};pussy
+};
