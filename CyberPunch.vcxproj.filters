@@ -50,6 +50,7 @@
     </ClCompile>
     <ClCompile Include="Source\RenderSystem.cpp">
       <Filter>Source Files\Systems</Filter>
+    </ClCompile>
     <ClCompile Include="Source\InputSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
