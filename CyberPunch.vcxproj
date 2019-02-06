@@ -123,7 +123,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Header\Platform.cpp" />
+    <ClCompile Include="Source\Platform.cpp" />
     <ClCompile Include="Source\MovementSystem.cpp" />
     <ClCompile Include="Source\AnimationSystem.cpp" />
     <ClCompile Include="Source\AnimationComponent.cpp" />
