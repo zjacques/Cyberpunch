@@ -138,7 +138,6 @@
     <ClInclude Include="Header\Component.h" />
     <ClInclude Include="Header\Game.h" />
     <ClInclude Include="Header\Entity.h" />
-    <ClInclude Include="Header\InputHandler.h" />
     <ClInclude Include="Header\RenderComponent.h" />
     <ClInclude Include="Header\RenderSystem.h" />
     <ClInclude Include="Header\InputComponent.h" />
