@@ -8,6 +8,7 @@
 #include <map>
 typedef std::map<std::string, bool> Input;
 
+
 class InputComponent  : public Component {
 
 public: 

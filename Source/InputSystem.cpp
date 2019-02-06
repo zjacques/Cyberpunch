@@ -19,31 +19,14 @@ void InputSystem::update(double dt)
 	m_input->m_current["Space"] = m_input->m_keyStates[SDL_SCANCODE_C];
 }
 
-void InputSystem::isButtonPressed(std::string m_button)
+bool InputSystem::isButtonPressed(std::string m_button)
 {
-	if (m_input->m_current[m_button] == m_input->m_current["W"])
-	{
+	m_input->m_current[m_button] && !m_input->m_previous[m_button];
+}
 
-	}
-
-	if (m_input->m_current[m_button] == m_input->m_current["A"])
-	{
-
-	}
-
-	if (m_input->m_current[m_button] == m_input->m_current["S"])
-	{
-
-	}
-	if (m_input->m_current[m_button] == m_input->m_current["D"])
-	{
-
-	}
-	if (m_input->m_current[m_button] == m_input->m_current["D"])
-	{
-
-	}
-	
+bool InputSystem::isButtonHeld(std::string button)
+{
+	return m_input->m_current[button];
 }
 
 void InputSystem::checkKey(std::string m_button, SDL_Keycode code)
