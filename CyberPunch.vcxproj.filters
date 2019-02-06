@@ -109,6 +109,7 @@
     </ClInclude>
     <ClInclude Include="Header\SpriteComponent.h">
       <Filter>Header Files\Components</Filter>
+    </ClInclude>
     <ClInclude Include="Header\ResourceManager.h">
       <Filter>Header Files\Utilities</Filter>
     </ClInclude>
