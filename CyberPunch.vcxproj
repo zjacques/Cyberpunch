@@ -123,7 +123,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="MovementSystem.cpp" />
+    <ClCompile Include="Source\MovementSystem.cpp" />
     <ClCompile Include="Source\PhysicsSystem.cpp" />
     <ClCompile Include="Source\Box2DBridge.cpp" />
     <ClCompile Include="Source\Game.cpp" />
@@ -134,11 +134,12 @@
     <ClCompile Include="Source\Vector2f.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CommandPattern.h" />
     <ClInclude Include="Header\Box2DBridge.h" />
+    <ClInclude Include="Header\CommandPattern.h" />
     <ClInclude Include="Header\Component.h" />
     <ClInclude Include="Header\Game.h" />
     <ClInclude Include="Header\Entity.h" />
+    <ClInclude Include="Header\MovementSystem.h" />
     <ClInclude Include="Header\RenderComponent.h" />
     <ClInclude Include="Header\RenderSystem.h" />
     <ClInclude Include="Header\InputComponent.h" />
@@ -148,7 +149,6 @@
     <ClInclude Include="Header\PositionComponent.h" />
     <ClInclude Include="Header\System.h" />
     <ClInclude Include="Header\Vector2f.h" />
-    <ClInclude Include="MovementSystem.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

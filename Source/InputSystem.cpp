@@ -21,7 +21,7 @@ void InputSystem::update(double dt)
 
 bool InputSystem::isButtonPressed(std::string m_button)
 {
-	m_input->m_current[m_button] && !m_input->m_previous[m_button];
+	return m_input->m_current[m_button] && !m_input->m_previous[m_button];
 }
 
 bool InputSystem::isButtonHeld(std::string button)
