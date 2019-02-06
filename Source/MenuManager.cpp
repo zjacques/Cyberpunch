@@ -8,7 +8,7 @@ MenuManager::MenuManager() :
 	m_scenes["Game"] = new GameScene();
 
 	//Set the current scene as the main menu
-	m_current = m_scenes["Game"];
+	setScene("Game");
 }
 
 void MenuManager::update(double dt)
@@ -16,6 +16,15 @@ void MenuManager::update(double dt)
 	//If the current scene is a scene
 	if (nullptr != m_current)
 	{
+		//If there is a scene change
+		if (m_current->changeScene())
+		{
+			//Change the current scene
+			setScene(m_current->getNewScene());
+			//Set the change scene boolean to false
+			m_current->resetSceneChange();
+		}
+
 		m_current->update(dt);
 	}
 }
@@ -40,6 +49,14 @@ void MenuManager::handleInput(InputSystem& input)
 
 void MenuManager::setScene(std::string scene)
 {
+	//Call stop on the currently selected scene
+	if (nullptr != m_current)
+	{
+		m_current->stop();
+	}
 	//Set the current scene
 	m_current = m_scenes[scene];
+
+	//Call start on the newly selected scene
+	m_current->start();
 }

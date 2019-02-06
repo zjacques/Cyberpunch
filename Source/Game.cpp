@@ -18,20 +18,24 @@ void Game::update(double dt)
 {
 	testSystem->update(dt);
 
+	//Updat ethe input handler
 	m_input.update(dt);
 
+	//Update the menu manager
 	m_mManager.update(dt);
 }
 
 void Game::draw()
 {
-	//Clear the surface
-	SDL_FillRect(m_screenSurface, NULL, 0x000000);
+	//Clear the screen with a colour of black
+	SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
+	SDL_RenderClear(m_renderer);
 
+	//Draw the current scene
 	m_mManager.draw(*m_renderer);
 
-	//Update the surface
-	SDL_UpdateWindowSurface(m_window);
+	//Render everything drawn to the renderer
+	SDL_RenderPresent(m_renderer);
 }
 
 void Game::processEvents(SDL_Event& e)
@@ -45,20 +49,12 @@ void Game::processEvents(SDL_Event& e)
 			//Set our bool to true
 			m_quit = true;
 		}
-
 	}
 }
 
-void Game::setupPhysics()
-{
-
-}
 
 void Game::run()
 {
-	//Setup physics world 
-	setupPhysics();
-
 	m_inputComp.initialiseJoycon(0);
 
 	//Create our SDL event variable
@@ -77,7 +73,7 @@ void Game::run()
 		processEvents(e);
 
 		//handle input in the scenes
-		//m_mManager.handleInput(Pass in the input system here, there should be 1 input system for the game (multiple for thgame scene for each player);
+		m_mManager.handleInput(m_input);
 
 		//Update the game
 		update(dt);

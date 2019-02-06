@@ -15,6 +15,6 @@ void PhysicsSystem::update(double dt)
 		auto p = dynamic_cast<PhysicsComponent*>(comp);
 
 		//Assign the bodies position the position component
-		p->posPtr->position = p->m_body.getPosition();
+		p->posPtr->position = p->m_body->getPosition();
 	}
 }
