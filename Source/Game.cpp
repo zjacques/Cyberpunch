@@ -17,18 +17,18 @@ Game::Game(int fps) :
 void Game::update(double dt)
 {
 	testSystem->update(dt);
+
 	m_input.update(dt);
 
-	if (m_input.isButtonHeld("ABTN"))
-	{
-		int x = 0;
-	}
+	m_mManager.update(dt);
 }
 
 void Game::draw()
 {
 	//Clear the surface
 	SDL_FillRect(m_screenSurface, NULL, 0x000000);
+
+	m_mManager.draw(*m_renderer);
 
 	//Update the surface
 	SDL_UpdateWindowSurface(m_window);
@@ -73,11 +73,11 @@ void Game::run()
 		now = std::chrono::system_clock::now();
 		dt = std::chrono::duration<double>(now - before).count();
 
-		//Simulate the physics
-		m_world.update(dt);
-
 		//Process any events that have occured
 		processEvents(e);
+
+		//handle input in the scenes
+		//m_mManager.handleInput(Pass in the input system here, there should be 1 input system for the game (multiple for thgame scene for each player);
 
 		//Update the game
 		update(dt);
