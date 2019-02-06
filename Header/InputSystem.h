@@ -8,13 +8,12 @@
 class InputSystem : public System
 {
 public: 
-	InputSystem() {};
+	InputSystem() {}
 	~InputSystem() {}
 	void addComponent(Component * component);
 	void update(double dt);
-	void checkKey();
-	void isButtonPressed();
-
+	void isButtonPressed(std::string m_button);
+	void checkKey(std::string m_button, SDL_Keycode code);
 private:
 	InputComponent * m_input;
 };
