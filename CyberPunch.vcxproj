@@ -131,7 +131,6 @@
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\RenderSystem.cpp" />
     <ClCompile Include="Source\Vector2f.cpp" />
-    <ClInclude Include="Source\InputHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\Box2DBridge.h" />
@@ -141,7 +140,6 @@
     <ClInclude Include="Header\RenderComponent.h" />
     <ClInclude Include="Header\RenderSystem.h" />
     <ClInclude Include="Header\InputComponent.h" />
-    <ClInclude Include="Header\InputHandler.h" />
     <ClInclude Include="Header\InputSystem.h" />
     <ClInclude Include="Header\PhysicsComponent.h" />
     <ClInclude Include="Header\PhysicsSystem.h" />
