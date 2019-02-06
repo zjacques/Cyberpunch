@@ -54,9 +54,6 @@
     <ClCompile Include="Source\Box2DBridge.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
-    <ClCompile Include="Source\InputComponent.cpp">
-      <Filter>Source Files\Components</Filter>
-    </ClCompile>
     <ClCompile Include="Source\InputSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>

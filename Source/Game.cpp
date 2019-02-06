@@ -10,11 +10,19 @@ Game::Game(int fps) :
 	testSystem = new RenderSystem();
 
 	testSystem->addComponent(testComponent);
+
+	m_input.addComponent(&m_inputComp);
 }
 
 void Game::update(double dt)
 {
 	testSystem->update(dt);
+	m_input.update(dt);
+
+	if (m_input.isButtonHeld("ABTN"))
+	{
+		int x = 0;
+	}
 }
 
 void Game::draw()
@@ -37,10 +45,7 @@ void Game::processEvents(SDL_Event& e)
 			//Set our bool to true
 			m_quit = true;
 		}
-		//If user presses a key, Update input? might be better to update input every frame rather than on an event
-		else if (e.type == SDL_KEYDOWN)
-		{
-		}
+
 	}
 }
 
@@ -54,7 +59,9 @@ void Game::run()
 	//Setup physics world 
 	setupPhysics();
 
-	//Creat eour SDL event variable
+	m_inputComp.initialiseJoycon(0);
+
+	//Create our SDL event variable
 	SDL_Event e;
 	double dt = 0;
 	auto now = std::chrono::system_clock::now();
@@ -92,7 +99,7 @@ bool Game::init()
 	bool success = true;
 
 	//Initialize SDL
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0)
 	{
 		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
 		success = false;
