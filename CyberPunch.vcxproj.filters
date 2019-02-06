@@ -63,6 +63,9 @@
     <ClCompile Include="Source\PhysicsSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\ResourceManager.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\Game.h">
@@ -106,6 +109,8 @@
     </ClInclude>
     <ClInclude Include="Header\SpriteComponent.h">
       <Filter>Header Files\Components</Filter>
+    <ClInclude Include="Header\ResourceManager.h">
+      <Filter>Header Files\Utilities</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
