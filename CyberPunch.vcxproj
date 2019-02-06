@@ -145,6 +145,7 @@
     <ClInclude Include="Header\PhysicsComponent.h" />
     <ClInclude Include="Header\PhysicsSystem.h" />
     <ClInclude Include="Header\PositionComponent.h" />
+    <ClInclude Include="Header\SpriteComponent.h" />
     <ClInclude Include="Header\ResourceManager.h" />
     <ClInclude Include="Header\System.h" />
     <ClInclude Include="Header\Vector2f.h" />
