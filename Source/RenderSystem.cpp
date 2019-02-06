@@ -43,18 +43,10 @@ void RenderSystem::update(double dt)
 	for (auto c : m_components)
 	{
 		RenderComponent * temp = dynamic_cast<RenderComponent *>(c);
-		SDL_Rect * src = new SDL_Rect();
-		SDL_Rect * dst = new SDL_Rect();
-		src->x = 0;
-		src->y = 0;
-		src->w = temp->getBounds().x;
-		src->h = temp->getBounds().y;
+		m_src = temp->getSourceRect();
+		m_dst = temp->getDestRect();
 
-		dst->x = temp->getPosition().x;
-		dst->y = temp->getPosition().y;
-		dst->w = temp->getBounds().x;
-		dst->h = temp->getBounds().y;
-
-		render(src, dst, temp->getTexture());
+		render(m_src, m_dst, temp->getTexture());
+		delete(temp);
 	}
 }
