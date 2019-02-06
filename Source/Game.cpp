@@ -9,7 +9,7 @@ Game::Game(int fps) :
 	testComponent = new RenderComponent();
 	testSystem = new RenderSystem();
 
-	testSystem->addComponent(testComponent);
+	//testSystem->addComponent(testComponent);
 }
 
 void Game::update(double dt)
