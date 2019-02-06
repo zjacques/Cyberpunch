@@ -123,6 +123,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\AnimationSystem.cpp" />
+    <ClCompile Include="Source\AnimationComponent.cpp" />
     <ClCompile Include="Source\GameScene.cpp" />
     <ClCompile Include="Source\MainMenuScene.cpp" />
     <ClCompile Include="Source\MenuManager.cpp" />
@@ -138,6 +140,8 @@
     <ClCompile Include="Source\Vector2f.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Header\AnimationComponent.h" />
+    <ClInclude Include="Header\AnimationSystem.h" />
     <ClInclude Include="Header\Box2DBridge.h" />
     <ClInclude Include="Header\Component.h" />
     <ClInclude Include="Header\Game.h" />
