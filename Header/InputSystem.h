@@ -3,7 +3,7 @@
 
 #include "System.h"
 #include "InputComponent.h"
-
+#include "PhysicsComponent.h"
 
 class InputSystem : public System
 {
@@ -13,7 +13,8 @@ public:
 	void addComponent(Component * component);
 	void update(double dt);
 	void checkKey(std::string m_button, SDL_Keycode code);
-	void isButtonPressed(std::string m_button);
+	bool isButtonPressed(std::string m_button);
+	bool isButtonHeld(std::string button);
 private:
 	InputComponent * m_input;
 };

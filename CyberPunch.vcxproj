@@ -123,6 +123,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\MovementSystem.cpp" />
     <ClCompile Include="Source\AnimationSystem.cpp" />
     <ClCompile Include="Source\AnimationComponent.cpp" />
     <ClCompile Include="Source\GameScene.cpp" />
@@ -132,7 +133,6 @@
     <ClCompile Include="Source\PhysicsSystem.cpp" />
     <ClCompile Include="Source\Box2DBridge.cpp" />
     <ClCompile Include="Source\Game.cpp" />
-    <ClCompile Include="Source\InputComponent.cpp" />
     <ClCompile Include="Source\InputSystem.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\RenderSystem.cpp" />
@@ -143,9 +143,11 @@
     <ClInclude Include="Header\AnimationComponent.h" />
     <ClInclude Include="Header\AnimationSystem.h" />
     <ClInclude Include="Header\Box2DBridge.h" />
+    <ClInclude Include="Header\CommandPattern.h" />
     <ClInclude Include="Header\Component.h" />
     <ClInclude Include="Header\Game.h" />
     <ClInclude Include="Header\Entity.h" />
+    <ClInclude Include="Header\MovementSystem.h" />
     <ClInclude Include="Header\GameScene.h" />
     <ClInclude Include="Header\MainMenuScene.h" />
     <ClInclude Include="Header\MenuManager.h" />

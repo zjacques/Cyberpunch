@@ -7,6 +7,8 @@
 #include <bitset>
 #include <thread>
 
+
+#include "InputSystem.h"
 #include "MenuManager.h" //For menus
 #include "Component.h"
 #include "RenderComponent.h"
@@ -37,8 +39,8 @@ public:
 
 private:
 	//Screen dimension constants
-	const int SCREEN_WIDTH = 1920;
-	const int SCREEN_HEIGHT = 1080;
+	const int SCREEN_WIDTH = 1280;
+	const int SCREEN_HEIGHT = 720;
 
 	//The window we'll be rendering to
 	SDL_Window* m_window;
@@ -49,6 +51,8 @@ private:
 
 	float m_msPerFrame;
 	bool m_quit;
+	InputSystem m_input;
+	InputComponent m_inputComp;
 
 	//Our menu manager to handle our scenes
 	MenuManager m_mManager;
