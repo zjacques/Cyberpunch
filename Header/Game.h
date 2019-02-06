@@ -1,15 +1,16 @@
 #pragma once
-#include "Box2DBridge.h"
 #include <SDL.h>
 #include <stdio.h>
 #include <iostream>
 #include <ctime>
 #include <chrono>
 #include <bitset>
+#include <thread>
 
-#include "../Header/Component.h"
-#include "../Header/RenderComponent.h"
-#include "../Header/RenderSystem.h"
+#include "MenuManager.h" //For menus
+#include "Component.h"
+#include "RenderComponent.h"
+#include "RenderSystem.h"
 
 class Game
 {
@@ -46,10 +47,11 @@ private:
 	//The renderer, we will use this to draw images
 	SDL_Renderer* m_renderer;
 
-	Box2DBridge m_world;
-
 	float m_msPerFrame;
 	bool m_quit;
+
+	//Our menu manager to handle our scenes
+	MenuManager m_mManager;
 
 	//Components
 	RenderComponent * testComponent;
