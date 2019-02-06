@@ -123,6 +123,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\AnimationSystem.cpp" />
+    <ClCompile Include="Source\AnimationComponent.cpp" />
+    <ClCompile Include="Source\GameScene.cpp" />
+    <ClCompile Include="Source\MainMenuScene.cpp" />
+    <ClCompile Include="Source\MenuManager.cpp" />
+    <ClCompile Include="Source\OptionsScene.cpp" />
     <ClCompile Include="Source\PhysicsSystem.cpp" />
     <ClCompile Include="Source\Box2DBridge.cpp" />
     <ClCompile Include="Source\Game.cpp" />
@@ -134,10 +140,16 @@
     <ClCompile Include="Source\Vector2f.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Header\AnimationComponent.h" />
+    <ClInclude Include="Header\AnimationSystem.h" />
     <ClInclude Include="Header\Box2DBridge.h" />
     <ClInclude Include="Header\Component.h" />
     <ClInclude Include="Header\Game.h" />
     <ClInclude Include="Header\Entity.h" />
+    <ClInclude Include="Header\GameScene.h" />
+    <ClInclude Include="Header\MainMenuScene.h" />
+    <ClInclude Include="Header\MenuManager.h" />
+    <ClInclude Include="Header\OptionsScene.h" />
     <ClInclude Include="Header\RenderComponent.h" />
     <ClInclude Include="Header\RenderSystem.h" />
     <ClInclude Include="Header\InputComponent.h" />
@@ -145,6 +157,7 @@
     <ClInclude Include="Header\PhysicsComponent.h" />
     <ClInclude Include="Header\PhysicsSystem.h" />
     <ClInclude Include="Header\PositionComponent.h" />
+    <ClInclude Include="Header\Scene.h" />
     <ClInclude Include="Header\SpriteComponent.h" />
     <ClInclude Include="Header\ResourceManager.h" />
     <ClInclude Include="Header\System.h" />
