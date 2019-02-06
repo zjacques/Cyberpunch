@@ -47,6 +47,5 @@ void RenderSystem::update(double dt)
 		m_dst = temp->getDestRect();
 
 		render(m_src, m_dst, temp->getTexture());
-		delete(temp);
 	}
 }
