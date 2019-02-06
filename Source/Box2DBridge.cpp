@@ -2,14 +2,38 @@
 
 Box2DBridge::Box2DBridge()
 {
+}
+
+void Box2DBridge::initWorld()
+{
 	m_world = new b2World(GRAVITY); //Create the world
 	m_world->SetGravity(GRAVITY); //Set the gravity of the world
 }
 
 void Box2DBridge::update(double dt)
 {
+	//If there are bodies to delete, delete them
+	if (!m_bodiesToDelete.empty())
+	{
+		for (auto& body : m_bodiesToDelete)
+		{
+			m_world->DestroyBody(&body->getBody());
+		}
+		m_bodiesToDelete.clear();
+	}
+
 	//Simulate the physics bodies
 	m_world->Step(dt, VELOCITY_ITERS, POSITION_ITERS);
+}
+
+void Box2DBridge::deleteBody(Box2DBody * body)
+{
+	m_bodiesToDelete.push_back(body);
+}
+
+void Box2DBridge::deleteWorld()
+{
+	delete m_world;
 }
 
 Box2DBody* Box2DBridge::createBox(int posX, int posY, int width, int height, bool canRotate, b2BodyType type)
@@ -66,13 +90,19 @@ Vector2f Box2DBody::getPosition()
 {
 	//Get the shape of the body
 	auto shape = m_body->GetFixtureList()->GetAABB(0);
-	auto w = shape.GetExtents().x;
 	m_position.x = m_body->GetPosition().x - (shape.GetExtents().x / 2.0f);
 	m_position.y = m_body->GetPosition().y - (shape.GetExtents().y / 2.0f);
 
 	//Return our position
 	return m_position;
 }
+
+Vector2f Box2DBody::getSize()
+{
+	auto shape = m_body->GetFixtureList()->GetAABB(0);
+	return Vector2f(shape.GetExtents().x, shape.GetExtents().y);
+}
+
 
 float Box2DBody::getAngle()
 {
