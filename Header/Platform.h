@@ -12,9 +12,8 @@ public:
 	void deletePlatforms();
 
 	void draw(SDL_Renderer& renderer);
-	std::vector<PhysicsComponent> m_physicsComponents;
 private:
 	SDL_Rect m_rect;
 
-	//std::vector<PhysicsComponent> m_physicsComponents;
+	std::vector<PhysicsComponent> m_physicsComponents;
 };

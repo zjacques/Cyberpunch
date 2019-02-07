@@ -4,7 +4,8 @@ Game::Game(int fps) :
 	m_msPerFrame(fps / 60.0f), //Get the target fps
 	m_window(NULL),
 	m_screenSurface(NULL),
-	m_quit(false)
+	m_quit(false),
+	m_resources("./Resources/")
 {
 	testComponent = new RenderComponent();
 	testSystem = new RenderSystem();
@@ -126,6 +127,10 @@ bool Game::loadMedia()
 	bool success = true;
 
 	//Load any media here, we call our resource manager here
+	m_resources.loadTextures(*m_renderer);
+	m_mManager.setResourceHandler(m_resources);
+
+	m_mManager.setScene("Game");
 
 	return success;
 }

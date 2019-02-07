@@ -2,6 +2,7 @@
 #include "SDL.h"
 #include <iostream>
 #include "InputSystem.h"
+#include "ResourceManager.h"
 
 //Base scene class, this will be inherited by every other scene
 class Scene
@@ -22,8 +23,10 @@ public:
 	bool changeScene() { return m_cs; }
 	std::string getNewScene() { return m_stgt; }
 	void resetSceneChange() { m_cs = false; }
-
+	void setResourceHandler(ResourceHandler& resources) { m_resources = &resources; }
+	ResourceHandler& resources() { return *m_resources; }
 private:
+	ResourceHandler * m_resources;
 	std::string m_stgt;
 	bool m_cs;
 };

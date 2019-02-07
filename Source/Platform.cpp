@@ -7,12 +7,20 @@ Platform::Platform()
 void Platform::createPlatforms(Box2DBridge& world, PhysicsSystem& system)
 {
 	m_physicsComponents.push_back(PhysicsComponent(new PositionComponent(0, 0)));
-	m_physicsComponents.at(0).m_body = world.createBox(640, 695, 1280, 50, false, b2BodyType::b2_staticBody);
+	m_physicsComponents.at(0).m_body = world.createBox(960, 1055, 1920, 50, false, true, b2BodyType::b2_staticBody);
 	world.addProperties(*m_physicsComponents.at(0).m_body, 0, 1, 0, false, this);
 
 	m_physicsComponents.push_back(PhysicsComponent(new PositionComponent(0, 0)));
-	m_physicsComponents.at(1).m_body = world.createBox(615, 75, 50, 50, true, b2BodyType::b2_dynamicBody);
-	world.addProperties(*m_physicsComponents.at(1).m_body, 1, .15f, .125f, false, this);
+	m_physicsComponents.at(1).m_body = world.createBox(250, 900, 400, 25, false, true, b2BodyType::b2_staticBody);
+	world.addProperties(*m_physicsComponents.at(1).m_body, 0, 1, 0, false, this);
+
+	m_physicsComponents.push_back(PhysicsComponent(new PositionComponent(0, 0)));
+	m_physicsComponents.at(2).m_body = world.createBox(1920 - 250, 900, 400, 25, false, true, b2BodyType::b2_staticBody);
+	world.addProperties(*m_physicsComponents.at(2).m_body, 0, 1, 0, false, this);
+
+	m_physicsComponents.push_back(PhysicsComponent(new PositionComponent(0, 0)));
+	m_physicsComponents.at(3).m_body = world.createBox(1920 /2, 750, 400, 25, false,true,  b2BodyType::b2_staticBody);
+	world.addProperties(*m_physicsComponents.at(3).m_body, 0, 1, 0, false, this);
 }
 
 void Platform::deletePlatforms()

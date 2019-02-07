@@ -11,6 +11,7 @@ public:
 	void update(double dt);
 	void draw(SDL_Renderer& renderer);
 	void handleInput(InputSystem& input);
+	void setResourceHandler(ResourceHandler& resources);
 	void setScene(std::string scene);
 private:
 	std::map<std::string, Scene*> m_scenes;

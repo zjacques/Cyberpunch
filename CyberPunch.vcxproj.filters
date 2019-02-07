@@ -90,8 +90,11 @@
     <ClCompile Include="Source\PhysicsSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
-    <ClCompile Include="Header\Platform.cpp">
+    <ClCompile Include="Source\Platform.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CollisionListener.cpp">
+      <Filter>Source Files\Utilities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -169,6 +172,9 @@
     </ClInclude>
     <ClInclude Include="Header\Platform.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\CollisionListener.h">
+      <Filter>Header Files\Utilities</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
