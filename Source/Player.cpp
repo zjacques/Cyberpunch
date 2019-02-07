@@ -2,6 +2,8 @@
 
 
 Player::Player() :
+	m_canJump(false),
+	m_gravFlipped(false),
 	m_moveSpeed(10),
 	m_jumpSpeed(25),
 	m_posComponent(0,0),
@@ -14,6 +16,7 @@ Player::Player() :
 
 void Player::createPlayer(Box2DBridge& world, PhysicsSystem& system)
 {
+	m_worldPtr = &world; //Ste the world pointer
 	physPtr = &system;
 
 	m_floorSensor = PhysicsComponent(&m_posComponent);
@@ -22,19 +25,18 @@ void Player::createPlayer(Box2DBridge& world, PhysicsSystem& system)
 	m_physComponent.m_body = world.createBox(960, 540, 50, 50, false, false, b2BodyType::b2_dynamicBody);
 	m_floorSensor.m_body = world.createBox(960, 565, 50, 5, false, false, b2BodyType::b2_dynamicBody);
 
-	world.addProperties(*m_physComponent.m_body, 1, 0.1f, 0.125f, false, this);
+	world.addProperties(*m_physComponent.m_body, 1, 0.1f, 0.0f, false, this);
 	world.addProperties(*m_floorSensor.m_body, 1, 0.1f, 0.0f, true, this);
 
 	m_physComponent.m_body->getBody().SetGravityScale(2.0f);
 
-	b2RevoluteJointDef  j;
-	j.bodyA = &m_physComponent.m_body->getBody();
-	j.bodyB = &m_floorSensor.m_body->getBody();
-	j.collideConnected = false;
-	j.localAnchorA.Set(0, .9f);
+	m_sensorJointDef.bodyA = &m_physComponent.m_body->getBody();
+	m_sensorJointDef.bodyB = &m_floorSensor.m_body->getBody();
+	m_sensorJointDef.collideConnected = false;
+	m_sensorJointDef.localAnchorA.Set(0, .9f);
 	
 
-	m_sensorJoint = (b2RevoluteJoint*)world.getWorld().CreateJoint(&j);
+	m_sensorJoint = (b2RevoluteJoint*)world.getWorld().CreateJoint(&m_sensorJointDef);
 }
 
 
@@ -85,7 +87,8 @@ void Player::handleInput(InputSystem& input)
 
 	if(input.isButtonPressed("YBTN") || input.isButtonPressed("STICKUP"))
 	{ 
-		m_jumpCMD.execute(*m_moveSystem);
+		if(m_canJump)
+			m_jumpCMD.execute(*m_moveSystem);
 	}
 	if (input.isButtonHeld("STICKRIGHT") || input.isButtonHeld("STICKDOWNRIGHT") || input.isButtonHeld("STICKUPRIGHT"))
 	{
@@ -101,9 +104,17 @@ void Player::handleInput(InputSystem& input)
 	m_floorSensor.m_body->getBody().SetLinearVelocity(m_currentVel);
 }
 
+void Player::flipGravity()
+{
+	m_gravFlipped = !m_gravFlipped;
+	m_sensorJointDef.localAnchorA.Set(m_sensorJoint->GetLocalAnchorA().x, -m_sensorJoint->GetLocalAnchorA().y);
+	m_worldPtr->getWorld().DestroyJoint(m_sensorJoint);
+	m_worldPtr->getWorld().CreateJoint(&m_sensorJointDef);
+}
+
 void Player::jump()
 {
-	m_currentVel.y -= m_jumpSpeed;
+	m_currentVel.y -= m_gravFlipped ? -m_jumpSpeed : m_jumpSpeed;
 }
 
 void Player::moveLeft()
