@@ -18,14 +18,17 @@ public:
 	void draw(SDL_Renderer& renderer);
 	void handleInput(InputSystem& input);
 
+	void flipGravity();
 	void jump();
 	void moveLeft();
 	void moveRight();
 
+	void setCanJump(bool b) { m_canJump = b; };
 private:
 	b2Vec2 m_currentVel;
 	float m_moveSpeed;
 	float m_jumpSpeed;
+	bool m_canJump, m_gravFlipped;
 	SDL_Rect m_player;
 
 	PhysicsSystem* physPtr;
@@ -37,7 +40,10 @@ private:
 	MoveRightCommand m_moveRightCMD;
 	JumpCommand m_jumpCMD;
 
+	Box2DBridge* m_worldPtr;
+
 	b2RevoluteJoint * m_sensorJoint;
+	b2RevoluteJointDef m_sensorJointDef;
 };
 
 #endif
