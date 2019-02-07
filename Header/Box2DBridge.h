@@ -1,5 +1,6 @@
 #pragma once
 #include <Box2D/Box2D.h> //Include Box2D
+#include "CollisionListener.h"
 #include <vector>
 #include "Vector2f.h"
 
@@ -30,6 +31,7 @@ public:
 	void initWorld();
 	void update(double dt);
 	void flipGravity();
+	void addContactListener(CollisionListener& colListener);
 	void deleteBody(Box2DBody* body);
 	void deleteWorld();
 

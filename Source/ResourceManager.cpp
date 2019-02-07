@@ -12,7 +12,22 @@ ResourceHandler::~ResourceHandler()
 //Load all of our textures we need for the game
 void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 {
+	//Load level data first
+	loadLevelData();
+
 	//Load textures here
+}
+
+void ResourceHandler::loadLevelData()
+{
+	//Open an ifstream on the file
+	std::ifstream ifs(m_filePath + "LevelData.txt");
+	//Load the data into the string content
+	std::string content((std::istreambuf_iterator<char>(ifs)),
+		(std::istreambuf_iterator<char>()));
+
+	//Pars ethe loaded in file to a json object
+	m_gameData = json::parse(content);
 }
 
 SDL_Texture* ResourceHandler::loadFromPath(std::string fileName, SDL_Renderer& renderer)

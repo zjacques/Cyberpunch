@@ -8,6 +8,7 @@ void GameScene::start()
 {
 	std::cout << "Starting Game Scene\n";
 	m_physicsWorld.initWorld(); //Create the physics world
+	m_physicsWorld.addContactListener(m_collisionListener); //Add collision listener to the world
 
 	//Create the platforms for the game
 	m_platformFactory.createPlatforms(m_physicsWorld, m_physicsSystem);
