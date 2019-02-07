@@ -18,6 +18,8 @@ private:
 	SDL_Window * m_window;
 	SDL_Surface * m_drawSurface;
 	SDL_Renderer * m_renderer;
+	SDL_Rect * m_src;
+	SDL_Rect * m_dst;
 
 	float SCREEN_WIDTH;
 	float SCREEN_HEIGHT;

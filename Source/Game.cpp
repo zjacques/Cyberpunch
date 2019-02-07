@@ -10,20 +10,32 @@ Game::Game(int fps) :
 	testSystem = new RenderSystem();
 
 	testSystem->addComponent(testComponent);
+
+	m_input.addComponent(&m_inputComp);
 }
 
 void Game::update(double dt)
 {
 	testSystem->update(dt);
+
+	//Updat ethe input handler
+	m_input.update(dt);
+
+	//Update the menu manager
+	m_mManager.update(dt);
 }
 
 void Game::draw()
 {
-	//Clear the surface
-	SDL_FillRect(m_screenSurface, NULL, 0x000000);
+	//Clear the screen with a colour of black
+	SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
+	SDL_RenderClear(m_renderer);
 
-	//Update the surface
-	SDL_UpdateWindowSurface(m_window);
+	//Draw the current scene
+	m_mManager.draw(*m_renderer);
+
+	//Render everything drawn to the renderer
+	SDL_RenderPresent(m_renderer);
 }
 
 void Game::processEvents(SDL_Event& e)
@@ -37,24 +49,15 @@ void Game::processEvents(SDL_Event& e)
 			//Set our bool to true
 			m_quit = true;
 		}
-		//If user presses a key, Update input? might be better to update input every frame rather than on an event
-		else if (e.type == SDL_KEYDOWN)
-		{
-		}
 	}
 }
 
-void Game::setupPhysics()
-{
-
-}
 
 void Game::run()
 {
-	//Setup physics world 
-	setupPhysics();
+	m_inputComp.initialiseJoycon(0);
 
-	//Creat eour SDL event variable
+	//Create our SDL event variable
 	SDL_Event e;
 	double dt = 0;
 	auto now = std::chrono::system_clock::now();
@@ -66,11 +69,11 @@ void Game::run()
 		now = std::chrono::system_clock::now();
 		dt = std::chrono::duration<double>(now - before).count();
 
-		//Simulate the physics
-		m_world.update(dt);
-
 		//Process any events that have occured
 		processEvents(e);
+
+		//handle input in the scenes
+		m_mManager.handleInput(m_input);
 
 		//Update the game
 		update(dt);
@@ -92,7 +95,7 @@ bool Game::init()
 	bool success = true;
 
 	//Initialize SDL
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0)
 	{
 		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
 		success = false;

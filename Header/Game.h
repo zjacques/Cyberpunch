@@ -1,15 +1,18 @@
 #pragma once
-#include "Box2DBridge.h"
 #include <SDL.h>
 #include <stdio.h>
 #include <iostream>
 #include <ctime>
 #include <chrono>
 #include <bitset>
+#include <thread>
 
-#include "../Header/Component.h"
-#include "../Header/RenderComponent.h"
-#include "../Header/RenderSystem.h"
+
+#include "InputSystem.h"
+#include "MenuManager.h" //For menus
+#include "Component.h"
+#include "RenderComponent.h"
+#include "RenderSystem.h"
 
 class Game
 {
@@ -36,8 +39,8 @@ public:
 
 private:
 	//Screen dimension constants
-	const int SCREEN_WIDTH = 1920;
-	const int SCREEN_HEIGHT = 1080;
+	const int SCREEN_WIDTH = 1280;
+	const int SCREEN_HEIGHT = 720;
 
 	//The window we'll be rendering to
 	SDL_Window* m_window;
@@ -46,10 +49,13 @@ private:
 	//The renderer, we will use this to draw images
 	SDL_Renderer* m_renderer;
 
-	Box2DBridge m_world;
-
 	float m_msPerFrame;
 	bool m_quit;
+	InputSystem m_input;
+	InputComponent m_inputComp;
+
+	//Our menu manager to handle our scenes
+	MenuManager m_mManager;
 
 	//Components
 	RenderComponent * testComponent;

@@ -15,6 +15,22 @@ void PhysicsSystem::update(double dt)
 		auto p = dynamic_cast<PhysicsComponent*>(comp);
 
 		//Assign the bodies position the position component
-		p->posPtr->position = p->m_body.getPosition();
+		p->posPtr->position = p->m_body->getPosition();
 	}
+}
+
+void PhysicsSystem::flipGravity()
+{
+	//Flip the boolean
+	m_gravFlipped = !m_gravFlipped;
+}
+
+void PhysicsSystem::addForce(Box2DBody & body, Vector2f force)
+{
+	body.getBody().ApplyForce(b2Vec2(force.x, m_gravFlipped ? force.y * -1 : force.y), body.getBody().GetWorldCenter(), true);
+}
+
+void PhysicsSystem::addForce(Box2DBody & body, float forceX, float forceY)
+{
+	body.getBody().ApplyForce(b2Vec2(forceX, m_gravFlipped ? forceY * -1 : forceY), body.getBody().GetWorldCenter(), true);
 }

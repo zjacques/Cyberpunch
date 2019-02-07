@@ -1,6 +1,11 @@
-#include "..\Header\Box2DBridge.h"
+#include "Box2DBridge.h"
 
-Box2DBridge::Box2DBridge()
+Box2DBridge::Box2DBridge() :
+	m_gravFlipped(false)
+{
+}
+
+void Box2DBridge::initWorld()
 {
 	m_world = new b2World(GRAVITY); //Create the world
 	m_world->SetGravity(GRAVITY); //Set the gravity of the world
@@ -8,8 +13,39 @@ Box2DBridge::Box2DBridge()
 
 void Box2DBridge::update(double dt)
 {
+	//If there are bodies to delete, delete them
+	if (!m_bodiesToDelete.empty())
+	{
+		for (auto& body : m_bodiesToDelete)
+		{
+			m_world->DestroyBody(&body->getBody());
+		}
+		m_bodiesToDelete.clear();
+	}
+
 	//Simulate the physics bodies
 	m_world->Step(dt, VELOCITY_ITERS, POSITION_ITERS);
+}
+
+void Box2DBridge::flipGravity()
+{
+	m_gravFlipped = !m_gravFlipped;
+
+	//Set the gravity of the world based on the bool
+	if(m_gravFlipped)
+		m_world->SetGravity(FLIPPEDGRAVITY);
+	else
+		m_world->SetGravity(GRAVITY);
+}
+
+void Box2DBridge::deleteBody(Box2DBody * body)
+{
+	m_bodiesToDelete.push_back(body);
+}
+
+void Box2DBridge::deleteWorld()
+{
+	delete m_world;
 }
 
 Box2DBody* Box2DBridge::createBox(int posX, int posY, int width, int height, bool canRotate, b2BodyType type)
@@ -21,9 +57,9 @@ Box2DBody* Box2DBridge::createBox(int posX, int posY, int width, int height, boo
 
 	//Set the body type and its position
 	bDef.type = type;
-	bDef.fixedRotation = canRotate;
-	box.SetAsBox(width, height);
-	bDef.position.Set(posX, posY);
+	bDef.fixedRotation = !canRotate;
+	box.SetAsBox((width / 2.0f) / CONVERSION, (height / 2.0f) / CONVERSION);
+	bDef.position.Set(posX / CONVERSION, posY / CONVERSION);
 
 	fDef.shape = &box;
 
@@ -51,28 +87,35 @@ Box2DBody* Box2DBridge::createCircle(int posX, int posY, float radius, bool canR
 	return body; //Return the body
 }
 
-void Box2DBridge::addProperties(Box2DBody & body, float mass, float friction, bool isSensor, void* data)
+void Box2DBridge::addProperties(Box2DBody & body, float mass, float friction, float rest, bool isSensor, void* data)
 {
 	//Get a pointer to the fixture fo the body
 	b2Fixture* fDef = body.getBody().GetFixtureList();
-	fDef->SetSensor(isSensor); //Set wheter the body is a sensor (doesnt tak epart of regular physics)
+	fDef->SetSensor(isSensor); //Set wheter the body is a sensor (doesnt take part of regular physics)
 	fDef->SetDensity(mass); //Set the density/mass of the body
 	fDef->SetFriction(friction); //Set friction of the body
 	fDef->SetUserData(data); //Set the user data
+	fDef->SetRestitution(rest); //Set the restitution of the body
 }
 
 //Box2DBody methods
 Vector2f Box2DBody::getPosition()
 {
 	//Get the shape of the body
-	auto shape = m_body->GetFixtureList()->GetAABB(0);
-	auto w = shape.GetExtents().x;
-	m_position.x = m_body->GetPosition().x - (shape.GetExtents().x / 2.0f);
-	m_position.y = m_body->GetPosition().y - (shape.GetExtents().y / 2.0f);
+	auto size = getSize();
+	m_position.x = (m_body->GetPosition().x * CONVERSION);
+	m_position.y = (m_body->GetPosition().y * CONVERSION);
 
 	//Return our position
 	return m_position;
 }
+
+Vector2f Box2DBody::getSize()
+{
+	auto shape = m_body->GetFixtureList()->GetAABB(0);
+	return Vector2f(shape.GetExtents().x * CONVERSION * 2, shape.GetExtents().y * CONVERSION * 2);
+}
+
 
 float Box2DBody::getAngle()
 {
