@@ -40,6 +40,8 @@ public:
 	//Allows to modify the mass, friction and sensor boolean on a body
 	void addProperties(Box2DBody& body, float mass, float friction, float rest, bool isSensor, void* data);
 
+	b2World& getWorld() { return *m_world; }
+
 private:
 	bool m_gravFlipped;
 	std::vector<Box2DBody*> m_bodiesToDelete;
@@ -47,6 +49,6 @@ private:
 	const int32 VELOCITY_ITERS = 8; //how strongly to correct velocity
 	const int32 POSITION_ITERS = 3; //how strongly to correct position
 	const float CONVERSION = 30.0f; //Pixels to world and backwords, we multiply or divide by 30
-	const b2Vec2 GRAVITY = b2Vec2(0, 10); //Const gravity
-	const b2Vec2 FLIPPEDGRAVITY = b2Vec2(0, -10); //Const flipped gravity
+	const b2Vec2 GRAVITY = b2Vec2(0, 20); //Const gravity
+	const b2Vec2 FLIPPEDGRAVITY = b2Vec2(0, -20); //Const flipped gravity
 };

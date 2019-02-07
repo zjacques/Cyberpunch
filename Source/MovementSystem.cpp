@@ -1,4 +1,5 @@
 #include "MovementSystem.h"
+#include "Player.h"
 
 
 MovementSystem::MovementSystem(InputSystem * input) :
@@ -8,22 +9,28 @@ MovementSystem::MovementSystem(InputSystem * input) :
 
 void MovementSystem::update(double dt)
 {
-	if (m_inputPtr->isButtonPressed("A"))
-	{
-		
-	}
+
+}
+
+void MovementSystem::addComponent(Component * comp)
+{
+}
+
+void MovementSystem::addPlayer(Player * player)
+{
+	m_player = player;
 }
 
 void MovementSystem::Jump() {
+	m_player->jump();
 }
 
 void MovementSystem::Left() {
-
+	m_player->moveLeft();
 }
 
 void MovementSystem::Right() {
-
-
+	m_player->moveRight();
 }
 
 void MovementSystem::Kick() {
