@@ -4,11 +4,18 @@ Platform::Platform()
 {
 }
 
-void Platform::createPlatforms(Box2DBridge& world, PhysicsSystem& system)
+void Platform::createPlatforms(ResourceHandler& resources, Box2DBridge& world, PhysicsSystem& system)
 {
-	m_physicsComponents.push_back(PhysicsComponent(new PositionComponent(0, 0)));
+	for (auto& platform : resources.getLevelData()["Platforms"])
+	{
+		m_physicsComponents.push_back(PhysicsComponent(new PositionComponent(0, 0)));
+		m_physicsComponents.at(m_physicsComponents.size() - 1).m_body = world.createBox(platform["X"], platform["Y"], platform["W"], platform["H"], false, true, b2BodyType::b2_staticBody);
+		world.addProperties(*m_physicsComponents.at(m_physicsComponents.size() - 1).m_body, 0, 1, 0, false, this);
+	}
+
+	/*m_physicsComponents.push_back(PhysicsComponent(new PositionComponent(0, 0)));
 	m_physicsComponents.at(0).m_body = world.createBox(960, 1055, 1920, 50, false, true, b2BodyType::b2_staticBody);
-	world.addProperties(*m_physicsComponents.at(0).m_body, 0, 1, 0, false, this);
+	world.addProperties(*m_physicsComponents.at(0).m_body, 0, 1, 0, false, this);*/
 
 	m_physicsComponents.push_back(PhysicsComponent(new PositionComponent(0, 0)));
 	m_physicsComponents.at(1).m_body = world.createBox(250, 900, 400, 25, false, true, b2BodyType::b2_staticBody);

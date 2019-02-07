@@ -14,7 +14,7 @@ void GameScene::start()
 	m_player.createPlayer(m_physicsWorld, m_physicsSystem);
 
 	//Create the platforms for the game
-	m_platformFactory.createPlatforms(m_physicsWorld, m_physicsSystem);
+	m_platformFactory.createPlatforms(Scene::resources(),m_physicsWorld, m_physicsSystem);
 }
 
 void GameScene::stop()
