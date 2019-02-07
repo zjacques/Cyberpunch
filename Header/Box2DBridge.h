@@ -29,7 +29,7 @@ public:
 
 	void initWorld();
 	void update(double dt);
-
+	void flipGravity();
 	void deleteBody(Box2DBody* body);
 	void deleteWorld();
 
@@ -38,13 +38,15 @@ public:
 	Box2DBody* createCircle(int posX, int posY, float radius, bool canRotate, b2BodyType type);
 
 	//Allows to modify the mass, friction and sensor boolean on a body
-	void addProperties(Box2DBody& body, float mass, float friction, bool isSensor, void* data);
+	void addProperties(Box2DBody& body, float mass, float friction, float rest, bool isSensor, void* data);
 
 private:
+	bool m_gravFlipped;
 	std::vector<Box2DBody*> m_bodiesToDelete;
 	b2World* m_world; //Create this to handle physics simulation
 	const int32 VELOCITY_ITERS = 8; //how strongly to correct velocity
 	const int32 POSITION_ITERS = 3; //how strongly to correct position
 	const float CONVERSION = 30.0f; //Pixels to world and backwords, we multiply or divide by 30
-	const b2Vec2 GRAVITY = b2Vec2(0, 10 * CONVERSION); //Const gravity
+	const b2Vec2 GRAVITY = b2Vec2(0, 10); //Const gravity
+	const b2Vec2 FLIPPEDGRAVITY = b2Vec2(0, -10); //Const flipped gravity
 };
