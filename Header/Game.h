@@ -10,6 +10,7 @@
 
 #include "InputSystem.h"
 #include "MenuManager.h" //For menus
+#include "ResourceManager.h" //For resource loading
 #include "Component.h"
 #include "RenderComponent.h"
 #include "RenderSystem.h"
@@ -54,6 +55,8 @@ private:
 
 	//Our menu manager to handle our scenes
 	MenuManager m_mManager;
+	//Our resource handler
+	ResourceHandler m_resources;
 
 	//Components
 	RenderComponent * testComponent;

@@ -20,4 +20,5 @@ private:
 	Platform m_platformFactory;
 	PhysicsSystem m_physicsSystem; //Add all physics components to the system
 	Box2DBridge m_physicsWorld;
+	CollisionListener m_collisionListener;
 };
