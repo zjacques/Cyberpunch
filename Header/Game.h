@@ -27,8 +27,6 @@ public:
 
 	void processEvents(SDL_Event& e);
 
-	void setupPhysics();
-
 	void run();
 	//Starts up SDL and creates window
 	bool init();
@@ -39,8 +37,8 @@ public:
 
 private:
 	//Screen dimension constants
-	const int SCREEN_WIDTH = 1280;
-	const int SCREEN_HEIGHT = 720;
+	const int SCREEN_WIDTH = 1920;
+	const int SCREEN_HEIGHT = 1080;
 
 	//The window we'll be rendering to
 	SDL_Window* m_window;

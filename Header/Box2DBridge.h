@@ -34,8 +34,8 @@ public:
 	void deleteWorld();
 
 	//Creates and returns a box2d body, we can create circles and squares
-	Box2DBody* createBox(int posX, int posY, int width, int height, bool canRotate, b2BodyType type);
-	Box2DBody* createCircle(int posX, int posY, float radius, bool canRotate, b2BodyType type);
+	Box2DBody* createBox(int posX, int posY, int width, int height, bool canRotate, bool allowSleep, b2BodyType type);
+	Box2DBody* createCircle(int posX, int posY, float radius, bool canRotate, bool allowSleep, b2BodyType type);
 
 	//Allows to modify the mass, friction and sensor boolean on a body
 	void addProperties(Box2DBody& body, float mass, float friction, float rest, bool isSensor, void* data);
