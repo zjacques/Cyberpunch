@@ -16,6 +16,12 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 	loadLevelData();
 
 	//Load textures here
+	//You do not need to include the entire path, the resource manager
+	//Will look for everything in the Resources folder, so you then need to only provide th erest of the path to the file
+	//Like so
+	//loadFromPath("Player.png")
+	//If you had the player.png in another folder, then youd call it like this
+	//loadFromPath("Characters/Player.png")
 }
 
 void ResourceHandler::loadLevelData()
