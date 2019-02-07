@@ -1,4 +1,6 @@
-#pragma once
+#ifndef GAME_H
+#define GAME_H
+
 #include <SDL.h>
 #include <stdio.h>
 #include <iostream>
@@ -66,3 +68,5 @@ private:
 
 	//Entities
 };
+
+#endif
