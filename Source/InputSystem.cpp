@@ -34,6 +34,10 @@ void InputSystem::update(double dt)
 	m_input->m_current["STICKDOWN"] = SDL_JoystickGetHat(m_input->m_joycon, 0) == 4 ? true : false;
 	m_input->m_current["STICKLEFT"] = SDL_JoystickGetHat(m_input->m_joycon, 0) == 8 ? true : false;
 	m_input->m_current["STICKRIGHT"] = SDL_JoystickGetHat(m_input->m_joycon, 0) == 2 ? true : false;
+	m_input->m_current["STICKDOWNLEFT"] = SDL_JoystickGetHat(m_input->m_joycon, 0) == 12 ? true : false;
+	m_input->m_current["STICKDOWNRIGHT"] = SDL_JoystickGetHat(m_input->m_joycon, 0) == 6 ? true : false;
+	m_input->m_current["STICKUPLEFT"] = SDL_JoystickGetHat(m_input->m_joycon, 0) == 9 ? true : false;
+	m_input->m_current["STICKUPRIGHT"] = SDL_JoystickGetHat(m_input->m_joycon, 0) == 3 ? true : false;
 }
 
 bool InputSystem::isButtonPressed(std::string m_button)

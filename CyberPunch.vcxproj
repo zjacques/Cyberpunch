@@ -132,11 +132,12 @@
     <ClCompile Include="Source\MainMenuScene.cpp" />
     <ClCompile Include="Source\MenuManager.cpp" />
     <ClCompile Include="Source\OptionsScene.cpp" />
+    <ClCompile Include="Source\PhysicsSystem.cpp" />
     <ClCompile Include="Source\Box2DBridge.cpp" />
     <ClCompile Include="Source\Game.cpp" />
     <ClCompile Include="Source\InputSystem.cpp" />
     <ClCompile Include="Source\Main.cpp" />
-    <ClCompile Include="Source\PhysicsSystem.cpp" />
+    <ClCompile Include="Source\Player.cpp" />
     <ClCompile Include="Source\RenderSystem.cpp" />
     <ClCompile Include="Source\ResourceManager.cpp" />
     <ClCompile Include="Source\Vector2f.cpp" />
@@ -156,6 +157,7 @@
     <ClInclude Include="Header\MenuManager.h" />
     <ClInclude Include="Header\OptionsScene.h" />
     <ClInclude Include="Header\Platform.h" />
+    <ClInclude Include="Header\Player.h" />
     <ClInclude Include="Header\RenderComponent.h" />
     <ClInclude Include="Header\RenderSystem.h" />
     <ClInclude Include="Header\InputComponent.h" />
