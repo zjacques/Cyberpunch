@@ -54,7 +54,7 @@ void GameScene::stop()
 
 	m_localInputs.clear();
 	m_physicsWorld.deleteWorld(); //Delete the physics world
-	m_platformFactory.deletePlatforms(); //Delete the platforms of the game
+	m_platforms.clear(); //Delete the platforms of the game
 	m_numOfLocalPlayers = 0;
 }
 
@@ -107,11 +107,10 @@ void GameScene::handleInput(InputSystem & input)
 		//Flip the gravioty of the physics system and the physics world
 		m_physicsSystem.flipGravity();
 		m_physicsWorld.flipGravity();
-		for (auto& player : m_localPlayers)
+		for (int i = 0; i < m_numOfLocalPlayers; i++)
 		{
-			player.flipGravity();
+			m_localPlayers.at(i).flipGravity();
 		}
 		m_collisionListener.flipGravity();
-		m_player.flipGravity();
 	}
 }
