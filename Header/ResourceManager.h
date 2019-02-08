@@ -20,7 +20,7 @@ public:
 	void destroyTextures();
 
 	SDL_Texture* getTexture(std::string name);
-	json getLevelData() { return m_gameData; }
+	json& getLevelData() { return m_gameData; }
 private:
 	json m_gameData;
 	std::string m_filePath;

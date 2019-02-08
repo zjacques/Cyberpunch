@@ -11,6 +11,7 @@ public:
 	void addComponent(Component* comp);
 	void addPlayer(Player* player);
 	void Jump();
+	void JumpDown();
 	void Left();
 	void Right();
 	void crouch();

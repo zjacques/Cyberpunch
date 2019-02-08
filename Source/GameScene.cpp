@@ -10,7 +10,6 @@ GameScene::GameScene()
 
 void GameScene::start()
 {
-	std::cout << "Starting Game Scene\n";
 	m_physicsSystem = PhysicsSystem(); // Recreate the physics system
 	m_physicsWorld.initWorld(); //Create the physics world
 	m_physicsWorld.addContactListener(m_collisionListener); //Add collision listener to the world
@@ -31,15 +30,25 @@ void GameScene::start()
 	}
 
 
-	//Create the platforms for the game
-	m_platformFactory.createPlatforms(m_physicsWorld, m_physicsSystem);
+	//Create all of the platforms for the game
+	for (auto& platform : Scene::resources().getLevelData()["Platforms"])
+	{
+		//Get the X,Y,Width and Height of the platform
+		int x = platform["X"], y = platform["Y"], w = platform["W"], h = platform["H"];
+		std::string tag = platform["Tag"];
+		auto newPlat = Platform(tag);
 
+		//Add a physics body to the platform
+		newPlat.getPhysComp().m_body = m_physicsWorld.createBox(x, y, w, h, false, true, b2BodyType::b2_staticBody);
+		//Add the properties of the physics body
+		m_physicsWorld.addProperties(*newPlat.getPhysComp().m_body, 0, 1, 0, false, new PhysicsComponent::ColData(newPlat.getTag(), &newPlat));
+
+		m_platforms.push_back(newPlat); //Create a new platform
+	}
 }
 
 void GameScene::stop()
 {
-	std::cout << "Stopping Game Scene\n";
-
 	for (auto& player : m_localPlayers)
 		player.deletePlayer();
 
@@ -68,7 +77,10 @@ void GameScene::update(double dt)
 void GameScene::draw(SDL_Renderer & renderer)
 {
 	//Draw the platforms
-	m_platformFactory.draw(renderer);
+	for (auto& platform : m_platforms)
+	{
+		platform.draw(renderer);
+	}
 
 	for (int i = 0; i < m_numOfLocalPlayers; i++)
 	{
@@ -95,10 +107,11 @@ void GameScene::handleInput(InputSystem & input)
 		//Flip the gravioty of the physics system and the physics world
 		m_physicsSystem.flipGravity();
 		m_physicsWorld.flipGravity();
-		//Flip grav in all players
 		for (auto& player : m_localPlayers)
 		{
 			player.flipGravity();
 		}
+		m_collisionListener.flipGravity();
+		m_player.flipGravity();
 	}
 }
