@@ -39,6 +39,16 @@ public:
 	}
 };
 
+class JumpDownCommand : public Command
+{
+public:
+	JumpDownCommand() { }
+	void execute(MovementSystem& moveSystem)
+	{
+		moveSystem.JumpDown();
+	}
+};
+
 
 #endif // !COMMANDPATTERN_H
 

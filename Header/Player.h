@@ -20,14 +20,16 @@ public:
 
 	void flipGravity();
 	void jump();
+	void jumpDown();
 	void moveLeft();
 	void moveRight();
 
-	void setCanJump(bool b) { m_canJump = b; };
+	void setCanJump(bool b) { m_canJump = b; }
+	void setCanFall(bool b) { m_canFall = b; }
 private:
 	b2Vec2 m_currentVel;
 	float m_moveSpeed;
-	float m_jumpSpeed;
+	float m_jumpSpeed, m_jumpDownSpeed;
 	bool m_canJump, m_gravFlipped;
 	SDL_Rect m_player;
 
@@ -39,11 +41,15 @@ private:
 	MoveLeftCommand m_moveLeftCMD;
 	MoveRightCommand m_moveRightCMD;
 	JumpCommand m_jumpCMD;
+	JumpDownCommand m_jumpDwnCMD;
 
 	Box2DBridge* m_worldPtr;
 
 	b2RevoluteJoint * m_sensorJoint;
 	b2RevoluteJointDef m_sensorJointDef;
+
+	//Bools to determine if the player can flick down on the joycon stick
+	bool m_canFall;
 };
 
 #endif

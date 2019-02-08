@@ -4,8 +4,10 @@
 Player::Player() :
 	m_canJump(false),
 	m_gravFlipped(false),
+	m_canFall(false),
 	m_moveSpeed(10),
-	m_jumpSpeed(25),
+	m_jumpSpeed(20),
+	m_jumpDownSpeed(-12.5f),
 	m_posComponent(0,0),
 	m_floorSensor(&m_posComponent),
 	m_physComponent(&m_posComponent)
@@ -23,10 +25,10 @@ void Player::createPlayer(Box2DBridge& world, PhysicsSystem& system)
 	m_physComponent = PhysicsComponent(&m_posComponent);
 
 	m_physComponent.m_body = world.createBox(960, 540, 50, 50, false, false, b2BodyType::b2_dynamicBody);
-	m_floorSensor.m_body = world.createBox(960, 565, 50, 5, false, false, b2BodyType::b2_dynamicBody);
+	m_floorSensor.m_body = world.createBox(960, 565, 45, 5, false, false, b2BodyType::b2_dynamicBody);
 
-	world.addProperties(*m_physComponent.m_body, 1, 0.1f, 0.0f, false, this);
-	world.addProperties(*m_floorSensor.m_body, 1, 0.1f, 0.0f, true, this);
+	world.addProperties(*m_physComponent.m_body, 1, 0.1f, 0.0f, false, new PhysicsComponent::ColData("Player Body", this));
+	world.addProperties(*m_floorSensor.m_body, 1, 0.1f, 0.0f, true, new PhysicsComponent::ColData("Jump Sensor", this));
 
 	m_physComponent.m_body->getBody().SetGravityScale(2.0f);
 
@@ -99,6 +101,15 @@ void Player::handleInput(InputSystem& input)
 		m_moveLeftCMD.execute(*m_moveSystem);
 	}
 
+	if (input.isButtonPressed("STICKDOWN"))
+	{
+		//If we can fall, call our jump down command
+		if (m_canFall)
+		{
+			m_jumpDwnCMD.execute(*m_moveSystem);
+		}
+	}
+
 	//Set the velocity of the players body
 	m_physComponent.m_body->getBody().SetLinearVelocity(m_currentVel);
 	m_floorSensor.m_body->getBody().SetLinearVelocity(m_currentVel);
@@ -115,6 +126,13 @@ void Player::flipGravity()
 void Player::jump()
 {
 	m_currentVel.y -= m_gravFlipped ? -m_jumpSpeed : m_jumpSpeed;
+}
+
+void Player::jumpDown()
+{
+	//Set the body as a sensor so he falls below a platform
+	m_physComponent.m_body->getBody().GetFixtureList()->SetSensor(true);
+	m_currentVel.y -= m_gravFlipped ? -m_jumpDownSpeed : m_jumpDownSpeed;
 }
 
 void Player::moveLeft()
