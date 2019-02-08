@@ -63,6 +63,9 @@
     <ClCompile Include="Source\InputSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
+    <ClCompile Include="Source\PhysicsSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
     <ClCompile Include="Source\MovementSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
@@ -87,11 +90,17 @@
     <ClCompile Include="Source\AnimationSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Player.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Platform.cpp">
+      <Filter>Source Files</Filter>
+      </ClCompile>
     <ClCompile Include="Source\PhysicsSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
-    <ClCompile Include="Header\Platform.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Source\CollisionListener.cpp">
+      <Filter>Source Files\Utilities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -167,8 +176,14 @@
     <ClInclude Include="Header\AnimationComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Header\Platform.h">
       <Filter>Header Files</Filter>
+      </ClInclude>
+    <ClInclude Include="Header\CollisionListener.h">
+      <Filter>Header Files\Utilities</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

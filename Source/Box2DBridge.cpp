@@ -38,6 +38,11 @@ void Box2DBridge::flipGravity()
 		m_world->SetGravity(GRAVITY);
 }
 
+void Box2DBridge::addContactListener(CollisionListener & colListener)
+{
+	m_world->SetContactListener(&colListener);
+}
+
 void Box2DBridge::deleteBody(Box2DBody * body)
 {
 	m_bodiesToDelete.push_back(body);
@@ -48,7 +53,7 @@ void Box2DBridge::deleteWorld()
 	delete m_world;
 }
 
-Box2DBody* Box2DBridge::createBox(int posX, int posY, int width, int height, bool canRotate, b2BodyType type)
+Box2DBody* Box2DBridge::createBox(int posX, int posY, int width, int height, bool canRotate, bool allowSleep, b2BodyType type)
 {
 	Box2DBody* body =  new Box2DBody();
 	b2BodyDef bDef;
@@ -58,6 +63,7 @@ Box2DBody* Box2DBridge::createBox(int posX, int posY, int width, int height, boo
 	//Set the body type and its position
 	bDef.type = type;
 	bDef.fixedRotation = !canRotate;
+	bDef.allowSleep = allowSleep;
 	box.SetAsBox((width / 2.0f) / CONVERSION, (height / 2.0f) / CONVERSION);
 	bDef.position.Set(posX / CONVERSION, posY / CONVERSION);
 
@@ -70,7 +76,7 @@ Box2DBody* Box2DBridge::createBox(int posX, int posY, int width, int height, boo
 	return body; //Return the body
 }
 
-Box2DBody* Box2DBridge::createCircle(int posX, int posY, float radius, bool canRotate, b2BodyType type)
+Box2DBody* Box2DBridge::createCircle(int posX, int posY, float radius, bool canRotate, bool allowSleep, b2BodyType type)
 {
 	Box2DBody* body = new Box2DBody();
 	b2BodyDef bDef;
@@ -79,6 +85,7 @@ Box2DBody* Box2DBridge::createCircle(int posX, int posY, float radius, bool canR
 	//Set the body type and its position
 	bDef.type = type;
 	bDef.fixedRotation = canRotate;
+	bDef.allowSleep = allowSleep;
 	circle.m_p.Set(posX, posY);
 	circle.m_radius = radius;
 	bDef.position.Set(posX, posY);
@@ -89,7 +96,7 @@ Box2DBody* Box2DBridge::createCircle(int posX, int posY, float radius, bool canR
 
 void Box2DBridge::addProperties(Box2DBody & body, float mass, float friction, float rest, bool isSensor, void* data)
 {
-	//Get a pointer to the fixture fo the body
+	//Get a pointer to the fixture for the body
 	b2Fixture* fDef = body.getBody().GetFixtureList();
 	fDef->SetSensor(isSensor); //Set wheter the body is a sensor (doesnt take part of regular physics)
 	fDef->SetDensity(mass); //Set the density/mass of the body
