@@ -123,6 +123,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\AIComponent.cpp" />
     <ClCompile Include="Source\Button.cpp" />
     <ClCompile Include="Source\CollisionListener.cpp" />
     <ClCompile Include="Source\Platform.cpp" />
@@ -144,6 +145,7 @@
     <ClCompile Include="Source\Vector2f.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Header\AIComponent.h" />
     <ClInclude Include="Header\AnimationComponent.h" />
     <ClInclude Include="Header\AnimationSystem.h" />
     <ClInclude Include="Header\Box2DBridge.h" />
