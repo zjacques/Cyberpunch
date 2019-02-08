@@ -123,6 +123,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Button.cpp" />
     <ClCompile Include="Source\CollisionListener.cpp" />
     <ClCompile Include="Source\Platform.cpp" />
     <ClCompile Include="Source\MovementSystem.cpp" />

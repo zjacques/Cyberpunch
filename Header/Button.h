@@ -10,14 +10,25 @@
 class Button
 {
 public:
-	Button();
+	Button(SDL_Texture*, std::string, SDL_Color *, SDL_Color *);
 	~Button();
 
+	void update();
+	void render(SDL_Renderer &);
 private:
 	SDL_Rect * m_rect;
 	SDL_Surface * m_surface;
 	SDL_Texture * m_texture;
+	SDL_Color * m_selectedColour;
+	SDL_Color * m_defaultColour;
+
+	TTF_Font * m_font;
+	SDL_Rect m_textRect;
+	SDL_Color  * m_textColour;
+	SDL_Texture * m_textTexture;
+
 	std::string m_text;
+	bool selected = false;
 };
 
 #endif
