@@ -25,6 +25,11 @@ void MovementSystem::Jump() {
 	m_player->jump();
 }
 
+void MovementSystem::JumpDown()
+{
+	m_player->jumpDown();
+}
+
 void MovementSystem::Left() {
 	m_player->moveLeft();
 }

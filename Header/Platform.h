@@ -8,14 +8,18 @@
 class Platform
 {
 public:
-	Platform();
+	Platform(std::string tag);
 
-	void createPlatforms(ResourceHandler& resources, Box2DBridge& world, PhysicsSystem& system);
-	void deletePlatforms();
 
 	void draw(SDL_Renderer& renderer);
+	void addContact() { m_numberOfContacts++; }
+	void removeContact() { m_numberOfContacts--; }
+	PhysicsComponent& getPhysComp() { return m_physicsComponents; }
+	std::string& getTag() { return m_tag; }
 private:
+	int m_numberOfContacts;
+	std::string m_tag;
 	SDL_Rect m_rect;
 
-	std::vector<PhysicsComponent> m_physicsComponents;
+	PhysicsComponent m_physicsComponents;
 };
