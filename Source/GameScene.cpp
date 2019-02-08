@@ -55,5 +55,6 @@ void GameScene::handleInput(InputSystem & input)
 		//Flip the gravioty of the physics system and the physics world
 		m_physicsSystem.flipGravity();
 		m_physicsWorld.flipGravity();
+		m_player.flipGravity();
 	}
 }
