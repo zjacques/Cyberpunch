@@ -4,6 +4,7 @@
 Player::Player() :
 	m_canJump(false),
 	m_gravFlipped(false),
+  m_moveSystem(nullptr),
 	m_canFall(false),
 	m_moveSpeed(10),
 	m_jumpSpeed(20),
@@ -89,8 +90,13 @@ void Player::handleInput(InputSystem& input)
 
 	if(input.isButtonPressed("YBTN") || input.isButtonPressed("STICKUP"))
 	{ 
-		if(m_canJump)
+
+		if (m_canJump)
+		{
 			m_jumpCMD.execute(*m_moveSystem);
+			input.applyRumble(0.75, 1000);
+		}
+			
 	}
 	if (input.isButtonHeld("STICKRIGHT") || input.isButtonHeld("STICKDOWNRIGHT") || input.isButtonHeld("STICKUPRIGHT"))
 	{
