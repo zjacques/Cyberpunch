@@ -52,6 +52,7 @@ private:
 	bool m_quit;
 	InputSystem m_input;
 	InputComponent m_inputComp;
+	
 
 	//Our menu manager to handle our scenes
 	MenuManager m_mManager;
