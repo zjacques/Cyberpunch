@@ -145,9 +145,11 @@
     <ClCompile Include="Source\Vector2f.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Header\Action.h" />
     <ClInclude Include="Header\AIComponent.h" />
     <ClInclude Include="Header\AnimationComponent.h" />
     <ClInclude Include="Header\AnimationSystem.h" />
+    <ClInclude Include="Header\BehaviourTree.h" />
     <ClInclude Include="Header\Box2DBridge.h" />
     <ClInclude Include="Header\Button.h" />
     <ClInclude Include="Header\CollisionListener.h" />
