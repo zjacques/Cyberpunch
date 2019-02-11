@@ -27,10 +27,10 @@ void PhysicsSystem::flipGravity()
 
 void PhysicsSystem::addForce(Box2DBody & body, Vector2f force)
 {
-	body.getBody().ApplyLinearImpulse(b2Vec2(force.x, m_gravFlipped ? force.y * -1 : force.y), body.getBody().GetWorldCenter(), true);
+	body.getBody()->ApplyLinearImpulse(b2Vec2(force.x, m_gravFlipped ? force.y * -1 : force.y), body.getBody()->GetWorldCenter(), true);
 }
 
 void PhysicsSystem::addForce(Box2DBody & body, float forceX, float forceY)
 {
-	body.getBody().ApplyLinearImpulse(b2Vec2(forceX, m_gravFlipped ? forceY * -1 : forceY), body.getBody().GetWorldCenter(), true);
+	body.getBody()->ApplyLinearImpulse(b2Vec2(forceX, m_gravFlipped ? forceY * -1 : forceY), body.getBody()->GetWorldCenter(), true);
 }
