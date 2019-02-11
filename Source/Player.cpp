@@ -16,8 +16,8 @@ Player::Player() :
 	m_lpttl(0),
 	m_timeTillPunch(m_punchRecharge),
 	m_moveSpeed(10),
-	m_jumpSpeed(20.0f),
-	m_jumpDownSpeed(-10.0f),
+	m_jumpSpeed(40.0f),
+	m_jumpDownSpeed(-20.0f),
 	m_posComponent(0,0),
 	m_floorSensor(&m_posComponent),
 	m_physComponent(&m_posComponent),
@@ -73,6 +73,8 @@ void Player::deletePlayer()
 	m_movingR = true;
 	m_canPunch = true;
 	m_punched = false;
+	m_stunned = false;
+	m_kicked = false;
 	m_timeTillPunch = m_punchRecharge; //Reset our punch timer
 }
 
@@ -87,6 +89,16 @@ void Player::update(double dt)
 	checkForPunch(dt);
 	//Check if we must delete any punch sensors
 	checkToDeletePunch(dt);
+
+	if (m_stunned)
+	{
+		m_stunLeft -= dt;
+
+		if (m_stunLeft <= 0)
+		{
+			m_stunned = false;
+		}
+	}
 }
 
 void Player::checkForPunch(double dt)
@@ -128,7 +140,12 @@ void Player::draw(SDL_Renderer & renderer)
 	m_rect.x = m_physComponent.m_body->getPosition().x - (m_rect.w / 2.0f);
 	m_rect.y = m_physComponent.m_body->getPosition().y - (m_rect.h / 2.0f);
 
-	SDL_SetRenderDrawColor(&renderer, 255, 0, 0, 255);
+	//Dra wthe playe ras yello wif they are stunned
+	if(m_stunned)
+		SDL_SetRenderDrawColor(&renderer, 255, 255, 0, 255);
+	else
+		SDL_SetRenderDrawColor(&renderer, 255, 0, 0, 255);
+
 	SDL_RenderFillRect(&renderer, &m_rect);
 
 	m_rect.w = m_floorSensor.m_body->getSize().x;
@@ -173,43 +190,55 @@ void Player::handleInput(InputSystem& input)
 
 	//Get the current velocity of the body
 	m_currentVel = m_physComponent.m_body->getBody()->GetLinearVelocity();
-	//m_currentVel.x = 0; //Reset the velocity on the X
 
-	if(input.isButtonPressed("YBTN") || input.isButtonPressed("STICKUP"))
-	{ 
+	m_desiredVel.x = 0;
 
-		if (m_canJump)
+	//Only handle input if the playe ris not stunned
+	if (m_stunned == false)
+	{
+
+		if (input.isButtonPressed("YBTN") || input.isButtonPressed("STICKUP"))
 		{
-			m_jumpCMD.execute(*m_moveSystem);
+
+			if (m_canJump)
+			{
+				m_jumpCMD.execute(*m_moveSystem);
+			}
+
 		}
-			
-	}
-	if (input.isButtonHeld("STICKRIGHT") || input.isButtonHeld("STICKDOWNRIGHT") || input.isButtonHeld("STICKUPRIGHT"))
-	{
-		m_moveRightCMD.execute(*m_moveSystem);
-	}
-	if (input.isButtonHeld("STICKLEFT") || input.isButtonHeld("STICKDOWNLEFT") || input.isButtonHeld("STICKUPLEFT"))
-	{
-		m_moveLeftCMD.execute(*m_moveSystem);
-	}
-
-	if (input.isButtonPressed("XBTN"))
-	{
-		punch();
-	}
-
-	if (input.isButtonPressed("STICKDOWN"))
-	{
-		//If we can fall, call our jump down command
-		if (m_canFall)
+		if (input.isButtonHeld("STICKRIGHT") || input.isButtonHeld("STICKDOWNRIGHT") || input.isButtonHeld("STICKUPRIGHT"))
 		{
-			m_jumpDwnCMD.execute(*m_moveSystem);
+			m_moveRightCMD.execute(*m_moveSystem);
+		}
+		if (input.isButtonHeld("STICKLEFT") || input.isButtonHeld("STICKDOWNLEFT") || input.isButtonHeld("STICKUPLEFT"))
+		{
+			m_moveLeftCMD.execute(*m_moveSystem);
+		}
+
+		if (input.isButtonPressed("XBTN"))
+		{
+			punch();
+		}
+		if (input.isButtonPressed("ABTN"))
+		{
+			kick();
+		}
+
+		if (input.isButtonPressed("STICKDOWN"))
+		{
+			//If we can fall, call our jump down command
+			if (m_canFall)
+			{
+				m_jumpDwnCMD.execute(*m_moveSystem);
+			}
 		}
 	}
+
+	if (m_desiredVel.x == 0)
+		m_currentVel.x *= .98f;
 
 	//Set the velocity of the players body
 	m_physComponent.m_body->getBody()->SetLinearVelocity(m_currentVel);
-	m_floorSensor.m_body->getBody()->SetLinearVelocity(m_currentVel);
 }
 
 void Player::flipGravity()
@@ -222,6 +251,7 @@ void Player::flipGravity()
 
 void Player::jump()
 {
+	m_currentVel.y = 0;
 	m_currentVel.y -= m_gravFlipped ? -m_jumpSpeed : m_jumpSpeed;
 }
 
@@ -237,7 +267,10 @@ void Player::moveLeft()
 	//Only move left if we arent punching
 	if (m_lpttl <= 0 && m_rpttl <= 0 || !m_canJump)
 	{
-		m_currentVel.x =  -m_moveSpeed;
+		m_desiredVel.x = -1;
+		m_currentVel.x -= 0.4f;
+
+		m_currentVel.x = m_currentVel.x < -m_moveSpeed ? -m_moveSpeed : m_currentVel.x;
 		m_movingL = true;
 		m_movingR = false;
 	}
@@ -248,8 +281,10 @@ void Player::moveRight()
 	//Only move right if we arent punching or we are punching and falling
 	if (m_lpttl <= 0 && m_rpttl <= 0 || !m_canJump)
 	{
-		m_currentVel.x = 0;
-		m_currentVel.x = +m_moveSpeed;
+		m_desiredVel.x = 1;
+		m_currentVel.x += 0.4f;
+
+		m_currentVel.x = m_currentVel.x > m_moveSpeed ? m_moveSpeed : m_currentVel.x;
 		m_movingR = true;
 		m_movingL = false;
 	}
@@ -263,7 +298,6 @@ void Player::punch()
 
 		m_punched = true;
 
-		//960, 540, X, Y
 		if (m_movingL)
 		{
 			//If we already had a punch sensor active, delete it
@@ -289,6 +323,39 @@ void Player::punch()
 
 void Player::kick()
 {
+	if (m_timeTillPunch >= m_punchRecharge)
+	{
+		m_timeTillPunch = 0; //Reset the time till punch
+
+		m_kicked = true;
+
+		if (m_movingL)
+		{
+			//If we already had a punch sensor active, delete it
+			if (m_leftAttackSensor.m_body)
+				m_worldPtr->deleteBody(m_leftAttackSensor.m_body);
+			m_lpttl = m_punchRecharge;
+			m_leftAttackSensor.m_body = m_worldPtr->createBox(m_physComponent.m_body->getPosition().x - 37.5f, m_physComponent.m_body->getPosition().y, 25, 50, false, false, b2BodyType::b2_dynamicBody);
+			m_worldPtr->addProperties(*m_leftAttackSensor.m_body, 0, 0.1f, 0.0f, true, new PhysicsComponent::ColData("Attack Left", this));
+			m_leftAttackSensor.m_body->getBody()->SetGravityScale(0);
+		}
+		else if (m_movingR)
+		{
+			//If we already had a punch sensor active, delete it
+			if (m_rightAttackSensor.m_body)
+				m_worldPtr->deleteBody(m_rightAttackSensor.m_body);
+			m_rpttl = m_punchRecharge;
+			m_rightAttackSensor.m_body = m_worldPtr->createBox(m_physComponent.m_body->getPosition().x + 37.5f, m_physComponent.m_body->getPosition().y, 25, 50, false, false, b2BodyType::b2_dynamicBody);
+			m_worldPtr->addProperties(*m_rightAttackSensor.m_body, 0, 0.1f, 0.0f, true, new PhysicsComponent::ColData("Attack Right", this));
+			m_rightAttackSensor.m_body->getBody()->SetGravityScale(0);
+		}
+	}
+}
+
+void Player::stun()
+{
+	m_stunned = true;
+	m_stunLeft = .2f;	
 }
 
 void Player::super()

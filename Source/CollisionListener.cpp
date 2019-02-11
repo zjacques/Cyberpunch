@@ -87,12 +87,14 @@ void CollisionListener::checkPlayerAttack(b2Contact * contact)
 			return;
 
 		//If the attacking player punched
-		if (attackingP->punched())
+		if (attackingP->punched() || attackingP->kicked())
 		{
 			auto dmgP = attackingP->punched() ? 2 : 5;
+			auto impulse = dmgP == 2 ? -250 : -300;
 
 			otherP->damage(dmgP); //Add damage of the punch to the other players damage percentage
-			otherP->applyDmgImpulse(-40); //Knock back the other player
+			otherP->applyDmgImpulse(impulse); //Knock back the other player
+			otherP->stun();
 
 			attackingP->punched() = false; //Set punched as false
 			attackingP->deletePunch("Left");
@@ -110,12 +112,14 @@ void CollisionListener::checkPlayerAttack(b2Contact * contact)
 			return;
 
 		//If the attacking player punched
-		if (attackingP->punched())
+		if (attackingP->punched() || attackingP->kicked())
 		{
 			auto dmgP = attackingP->punched() ? 2 : 5;
+			auto impulse = dmgP == 2 ? 250 : 300;
 
 			otherP->damage(dmgP); //Add damage of the punch to the other players damage percentage
-			otherP->applyDmgImpulse(40); //Knock back the other player
+			otherP->applyDmgImpulse(impulse); //Knock back the other player back
+			otherP->stun();
 
 			attackingP->punched() = false; //Set punched as false
 			attackingP->deletePunch("Right");

@@ -27,6 +27,7 @@ public:
 	void moveRight();
 	void punch();
 	void kick();
+	void stun();
 	void super();
 	void damage(int percent);
 	void applyDmgImpulse(float x);
@@ -35,10 +36,11 @@ public:
 	void setCanJump(bool b) { m_canJump = b; }
 	void setCanFall(bool b) { m_canFall = b; }
 	bool& falling() { return m_falling; }
-	bool& punched() { return m_punched; } //Return wheter punched or not
+	bool& punched() { return m_punched; } //Return wheter the player punched or not
+	bool& kicked() { return m_kicked; } //Return wheter the player kicked or not
 private:
 	int m_dmgPercent;
-	b2Vec2 m_currentVel;
+	b2Vec2 m_currentVel, m_desiredVel;
 	float m_moveSpeed;
 	float m_jumpSpeed, m_jumpDownSpeed;
 	bool m_canJump, m_gravFlipped, m_movingL, m_movingR;
@@ -63,8 +65,8 @@ private:
 	b2RevoluteJointDef m_sensorJointDef, m_attackLeftJointDef, m_attackRightJointDef;
 
 	//Attack variables
-	float m_punchRecharge, m_timeTillPunch, m_lpttl, m_rpttl;
-	bool m_canPunch, m_punched;
+	float m_punchRecharge, m_timeTillPunch, m_lpttl, m_rpttl, m_stunLeft;
+	bool m_canPunch, m_punched, m_kicked, m_stunned;
 
 	//Bools to determine if the player can flick down on the joycon stick
 	bool m_canFall, m_falling;
