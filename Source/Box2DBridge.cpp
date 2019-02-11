@@ -9,6 +9,7 @@ void Box2DBridge::initWorld()
 {
 	m_world = new b2World(GRAVITY); //Create the world
 	m_world->SetGravity(GRAVITY); //Set the gravity of the world
+	m_world->SetContinuousPhysics(true);
 }
 
 void Box2DBridge::update(double dt)
@@ -22,7 +23,6 @@ void Box2DBridge::update(double dt)
 		}
 		m_bodiesToDelete.clear();
 	}
-
 	//Simulate the physics bodies
 	m_world->Step(dt, VELOCITY_ITERS, POSITION_ITERS);
 }

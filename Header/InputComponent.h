@@ -48,10 +48,16 @@ public:
 	{
 		SDL_JoystickEventState(SDL_ENABLE);
 		m_joycon = SDL_JoystickOpen(index);
+
+		std::cout << "Joycon has rumble? " << (SDL_JoystickIsHaptic(m_joycon) == SDL_TRUE ? "Yes" : "NO") << "\n";
+		m_rumble = SDL_GameControllerOpen(index);
+		//SDL_HapticRumbleInit(m_rumble);
+		int x = 0;
 	}
 		
 	const Uint8* m_keyStates;
 	SDL_Joystick* m_joycon;
+	SDL_GameController* m_rumble;
 	Input m_current;
 	Input m_previous;
 };

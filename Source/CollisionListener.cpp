@@ -23,27 +23,8 @@ void CollisionListener::BeginContact(b2Contact * contact)
 		{
 			player->setCanFall(true);
 		}
-
+		//player->falling() = false;
 		player->setCanJump(true);
-	}
-
-	//Else if a players body has hit a platform
-	else if ((dataA->Tag() == "Player Body" && dataB->Tag() == "Platform")
-	|| (dataB->Tag() == "Player Body" && dataA->Tag() == "Platform"))
-	{
-		//Convert the collision data to a player pointer and call the allow jump method
-		auto player = dataA->Tag() == "Player Body" ? contact->GetFixtureA(): contact->GetFixtureB();
-		auto platform = dataA->Tag() == "Platform" ? contact->GetFixtureA() : contact->GetFixtureB();
-
-		auto pPos = player->GetBody()->GetPosition().y;
-		auto pHeight = player->GetBody()->GetFixtureList()->GetAABB(0).GetExtents().y; //get height of the player
-
-		//If the player is jumping up from below a platform, set it sensor to true
-		if ((!m_gravFlipped && player->GetBody()->GetPosition().y + pHeight > platform->GetBody()->GetPosition().y)
-		|| (m_gravFlipped && player->GetBody()->GetPosition().y - pHeight < platform->GetBody()->GetPosition().y))
-		{
-			player->SetSensor(true);
-		}
 	}
 }
 
@@ -65,21 +46,62 @@ void CollisionListener::EndContact(b2Contact * contact)
 		player->setCanFall(false);
 	}
 
-	//Else if a players body has stopped hitting a platform
-	else if ((dataA->Tag() == "Player Body" && dataB->Tag() == "Platform")
+	//if a players body has hit a platform
+	if ((dataA->Tag() == "Player Body" && dataB->Tag() == "Platform")
 		|| (dataB->Tag() == "Player Body" && dataA->Tag() == "Platform"))
 	{
 		//Convert the collision data to a player pointer and call the allow jump method
 		auto player = dataA->Tag() == "Player Body" ? contact->GetFixtureA() : contact->GetFixtureB();
 		auto platform = dataA->Tag() == "Platform" ? contact->GetFixtureA() : contact->GetFixtureB();
 
-		auto pPtr = static_cast<Player*>(dataA->Tag() == "Jump Sensor" ? dataA->Data() : dataB->Data());
+		auto pHeight = player->GetBody()->GetFixtureList()->GetAABB(0).GetExtents().y; //get height of the player
 
+		//Convert the collision data to a player pointer and call the allow jump method
+		auto pPtr = static_cast<Player*>(dataA->Tag() == "Player Body" ? dataA->Data() : dataB->Data());
 
-		auto vel = player->GetBody()->GetLinearVelocity().y;
-
-		player->SetSensor(false);
+		//If the player is jumping up from below a platform, set it sensor to true
+		if ((!m_gravFlipped && player->GetBody()->GetPosition().y + pHeight < platform->GetBody()->GetPosition().y)
+			|| (m_gravFlipped && player->GetBody()->GetPosition().y - pHeight > platform->GetBody()->GetPosition().y))
+		{
+			//Set contact as disabled so the player can move through floors
+			pPtr->falling() = false;;
+		}
 	}
+}
+
+void CollisionListener::PreSolve(b2Contact * contact, const b2Manifold * oldManifold)
+{
+	//Convert both contact points to a ColData struct, from here we can check what tthe bodies are tagged with
+	auto dataA = static_cast<PhysicsComponent::ColData *>(contact->GetFixtureA()->GetUserData());
+	auto dataB = static_cast<PhysicsComponent::ColData *>(contact->GetFixtureB()->GetUserData());
+	
+	//if a players body has hit a platform
+	if ((dataA->Tag() == "Player Body" && dataB->Tag() == "Platform")
+		|| (dataB->Tag() == "Player Body" && dataA->Tag() == "Platform"))
+	{
+		//Convert the collision data to a player pointer and call the allow jump method
+		auto player = dataA->Tag() == "Player Body" ? contact->GetFixtureA() : contact->GetFixtureB();
+		auto platform = dataA->Tag() == "Platform" ? contact->GetFixtureA() : contact->GetFixtureB();
+
+		auto pHeight = player->GetBody()->GetFixtureList()->GetAABB(0).GetExtents().y; //get height of the player
+
+		//Convert the collision data to a player pointer and call the allow jump method
+		auto pPtr = static_cast<Player*>(dataA->Tag() == "Player Body" ? dataA->Data() : dataB->Data());
+
+		//If the player is jumping up from below a platform, set it sensor to true
+		if ((!m_gravFlipped && player->GetBody()->GetPosition().y + pHeight > platform->GetBody()->GetPosition().y)
+			|| (m_gravFlipped && player->GetBody()->GetPosition().y - pHeight < platform->GetBody()->GetPosition().y)
+			|| (pPtr->falling()))
+		{
+			//Set contact as disabled so the player can move through floors
+			contact->SetEnabled(false);
+		}
+	}
+}
+
+void CollisionListener::PostSolve(b2Contact * contact, const b2ContactImpulse * impulse)
+{
+
 }
 
 void CollisionListener::flipGravity()

@@ -13,8 +13,9 @@ public:
 	void draw(SDL_Renderer& renderer);
 	void handleInput(InputSystem& input);
 private:
-	//Test player
-	Player m_player;
+	std::vector<Player> m_localPlayers;
+	std::vector<InputSystem*> m_localInputs;
+	int m_numOfLocalPlayers;
 
 	//Physics variables
 	PhysicsSystem m_physicsSystem; //Add all physics components to the system

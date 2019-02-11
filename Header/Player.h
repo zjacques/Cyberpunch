@@ -26,6 +26,7 @@ public:
 
 	void setCanJump(bool b) { m_canJump = b; }
 	void setCanFall(bool b) { m_canFall = b; }
+	bool& falling() { return m_falling; }
 private:
 	b2Vec2 m_currentVel;
 	float m_moveSpeed;
@@ -49,7 +50,7 @@ private:
 	b2RevoluteJointDef m_sensorJointDef;
 
 	//Bools to determine if the player can flick down on the joycon stick
-	bool m_canFall;
+	bool m_canFall, m_falling;
 };
 
 #endif

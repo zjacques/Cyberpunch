@@ -4,7 +4,9 @@
 Player::Player() :
 	m_canJump(false),
 	m_gravFlipped(false),
+	m_moveSystem(nullptr),
 	m_canFall(false),
+	m_falling(false),
 	m_moveSpeed(10),
 	m_jumpSpeed(20),
 	m_jumpDownSpeed(-12.5f),
@@ -27,6 +29,7 @@ void Player::createPlayer(Box2DBridge& world, PhysicsSystem& system)
 	m_physComponent.m_body = world.createBox(960, 540, 50, 50, false, false, b2BodyType::b2_dynamicBody);
 	m_floorSensor.m_body = world.createBox(960, 565, 45, 5, false, false, b2BodyType::b2_dynamicBody);
 
+
 	world.addProperties(*m_physComponent.m_body, 1, 0.1f, 0.0f, false, new PhysicsComponent::ColData("Player Body", this));
 	world.addProperties(*m_floorSensor.m_body, 1, 0.1f, 0.0f, true, new PhysicsComponent::ColData("Jump Sensor", this));
 
@@ -46,6 +49,9 @@ void Player::deletePlayer()
 {
 	delete m_moveSystem;
 	m_moveSystem = nullptr;
+	m_canJump = false;
+	m_canFall = false;
+	m_gravFlipped = false;
 }
 
 void Player::update(double dt)
@@ -89,8 +95,13 @@ void Player::handleInput(InputSystem& input)
 
 	if(input.isButtonPressed("YBTN") || input.isButtonPressed("STICKUP"))
 	{ 
-		if(m_canJump)
+
+		if (m_canJump)
+		{
 			m_jumpCMD.execute(*m_moveSystem);
+			input.applyRumble(0.75, 1000);
+		}
+			
 	}
 	if (input.isButtonHeld("STICKRIGHT") || input.isButtonHeld("STICKDOWNRIGHT") || input.isButtonHeld("STICKUPRIGHT"))
 	{
@@ -130,8 +141,8 @@ void Player::jump()
 
 void Player::jumpDown()
 {
-	//Set the body as a sensor so he falls below a platform
-	m_physComponent.m_body->getBody().GetFixtureList()->SetSensor(true);
+	//Set the player as falling
+	m_falling = true;
 	m_currentVel.y -= m_gravFlipped ? -m_jumpDownSpeed : m_jumpDownSpeed;
 }
 
