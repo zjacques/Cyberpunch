@@ -124,6 +124,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\CollisionListener.cpp" />
+    <ClCompile Include="Source\PickUp.cpp" />
     <ClCompile Include="Source\Platform.cpp" />
     <ClCompile Include="Source\MovementSystem.cpp" />
     <ClCompile Include="Source\AnimationSystem.cpp" />
@@ -156,6 +157,7 @@
     <ClInclude Include="Header\MainMenuScene.h" />
     <ClInclude Include="Header\MenuManager.h" />
     <ClInclude Include="Header\OptionsScene.h" />
+    <ClInclude Include="Header\PickUp.h" />
     <ClInclude Include="Header\Platform.h" />
     <ClInclude Include="Header\Player.h" />
     <ClInclude Include="Header\RenderComponent.h" />
