@@ -15,6 +15,9 @@ void GameScene::start()
 	m_physicsWorld.addContactListener(m_collisionListener); //Add collision listener to the world
 
 	//m_player.createPlayer(m_physicsWorld, m_physicsSystem);
+	m_pickUp.createPickUp(m_physicsWorld, m_physicsSystem);
+
+	m_bG = Scene::resources().getTexture("Game BG");
 
 	m_numOfLocalPlayers = SDL_NumJoysticks();
 
@@ -56,6 +59,7 @@ void GameScene::stop()
 	m_physicsWorld.deleteWorld(); //Delete the physics world
 	m_platforms.clear(); //Delete the platforms of the game
 	m_numOfLocalPlayers = 0;
+	m_pickUp.deletePickUp();
 }
 
 void GameScene::update(double dt)
@@ -76,6 +80,13 @@ void GameScene::update(double dt)
 
 void GameScene::draw(SDL_Renderer & renderer)
 {
+	SDL_Rect rect;
+	rect.x = 0;
+	rect.y = 0;
+	rect.w = 1920;
+	rect.h = 1080;
+
+	SDL_RenderCopy(&renderer, m_bG, &rect, &rect);
 	//Draw the platforms
 	for (auto& platform : m_platforms)
 	{
@@ -87,6 +98,8 @@ void GameScene::draw(SDL_Renderer & renderer)
 		m_localPlayers.at(i).draw(renderer);
 	}
 	
+
+	m_pickUp.draw(renderer);
 }
 
 void GameScene::handleInput(InputSystem & input)

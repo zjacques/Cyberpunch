@@ -102,6 +102,7 @@
     <ClCompile Include="Source\CollisionListener.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="Source\Platform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -109,6 +110,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\AIComponent.cpp">
+=======
+    <ClCompile Include="Source\PickUp.cpp">
+>>>>>>> 1b99acef855d0a505682cc8f115b3b2689d8462a
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -204,6 +208,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Header\Action.h">
+    </ClInclude>
+    <ClInclude Include="Header\PickUp.h">
+    </ClInclude>
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

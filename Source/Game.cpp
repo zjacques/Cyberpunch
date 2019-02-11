@@ -117,6 +117,11 @@ bool Game::init()
 		}
 		else
 		{
+			//Initialize PNG loading 
+			int imgFlags = IMG_INIT_PNG; 
+			if( !( IMG_Init( imgFlags ) & imgFlags ) )
+			{ printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() ); }
+
 			m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED);
 			//Get window surface
 			m_screenSurface = SDL_GetWindowSurface(m_window);

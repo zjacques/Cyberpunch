@@ -117,7 +117,6 @@ public:
 	BehaviourTree() : m_root(new Root) {}
 	void setRootChild(Node * c) const { m_root->setChild(c); }
 	bool run() const { return m_root->run(); }
-
 };
 
 #endif
