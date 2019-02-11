@@ -22,7 +22,7 @@ void PickUp::createPickUp(Box2DBridge& world, PhysicsSystem& system)
 		m_physComponent.m_body = world.createBox(950, 400, 40, 40, false, false, b2BodyType::b2_dynamicBody);
 		world.addProperties(*m_physComponent.m_body, 1, 0.1f, 0.0f, true, new PhysicsComponent::ColData("Pick-Up", this));
 
-		m_physComponent.m_body->getBody().SetGravityScale(0.0f);
+		m_physComponent.m_body->getBody()->SetGravityScale(0.0f);
 
 	}
 }
