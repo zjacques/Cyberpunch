@@ -13,12 +13,15 @@ public:
 	void draw(SDL_Renderer& renderer);
 	void handleInput(InputSystem& input);
 private:
-	//Test player
-	Player m_player;
+	std::vector<Player> m_localPlayers;
+	std::vector<InputSystem*> m_localInputs;
+	int m_numOfLocalPlayers;
 
 	//Physics variables
-	Platform m_platformFactory;
 	PhysicsSystem m_physicsSystem; //Add all physics components to the system
 	Box2DBridge m_physicsWorld;
 	CollisionListener m_collisionListener;
+
+	//Platforms of the game
+	std::vector<Platform> m_platforms;
 };

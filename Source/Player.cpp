@@ -4,8 +4,12 @@
 Player::Player() :
 	m_canJump(false),
 	m_gravFlipped(false),
+	m_moveSystem(nullptr),
+	m_canFall(false),
+	m_falling(false),
 	m_moveSpeed(10),
-	m_jumpSpeed(25),
+	m_jumpSpeed(20),
+	m_jumpDownSpeed(-12.5f),
 	m_posComponent(0,0),
 	m_floorSensor(&m_posComponent),
 	m_physComponent(&m_posComponent)
@@ -23,10 +27,11 @@ void Player::createPlayer(Box2DBridge& world, PhysicsSystem& system)
 	m_physComponent = PhysicsComponent(&m_posComponent);
 
 	m_physComponent.m_body = world.createBox(960, 540, 50, 50, false, false, b2BodyType::b2_dynamicBody);
-	m_floorSensor.m_body = world.createBox(960, 565, 50, 5, false, false, b2BodyType::b2_dynamicBody);
+	m_floorSensor.m_body = world.createBox(960, 565, 45, 5, false, false, b2BodyType::b2_dynamicBody);
 
-	world.addProperties(*m_physComponent.m_body, 1, 0.1f, 0.0f, false, this);
-	world.addProperties(*m_floorSensor.m_body, 1, 0.1f, 0.0f, true, this);
+
+	world.addProperties(*m_physComponent.m_body, 1, 0.1f, 0.0f, false, new PhysicsComponent::ColData("Player Body", this));
+	world.addProperties(*m_floorSensor.m_body, 1, 0.1f, 0.0f, true, new PhysicsComponent::ColData("Jump Sensor", this));
 
 	m_physComponent.m_body->getBody().SetGravityScale(2.0f);
 
@@ -44,6 +49,9 @@ void Player::deletePlayer()
 {
 	delete m_moveSystem;
 	m_moveSystem = nullptr;
+	m_canJump = false;
+	m_canFall = false;
+	m_gravFlipped = false;
 }
 
 void Player::update(double dt)
@@ -87,8 +95,13 @@ void Player::handleInput(InputSystem& input)
 
 	if(input.isButtonPressed("YBTN") || input.isButtonPressed("STICKUP"))
 	{ 
-		if(m_canJump)
+
+		if (m_canJump)
+		{
 			m_jumpCMD.execute(*m_moveSystem);
+			input.applyRumble(0.75, 1000);
+		}
+			
 	}
 	if (input.isButtonHeld("STICKRIGHT") || input.isButtonHeld("STICKDOWNRIGHT") || input.isButtonHeld("STICKUPRIGHT"))
 	{
@@ -97,6 +110,15 @@ void Player::handleInput(InputSystem& input)
 	if (input.isButtonHeld("STICKLEFT") || input.isButtonHeld("STICKDOWNLEFT") || input.isButtonHeld("STICKUPLEFT"))
 	{
 		m_moveLeftCMD.execute(*m_moveSystem);
+	}
+
+	if (input.isButtonPressed("STICKDOWN"))
+	{
+		//If we can fall, call our jump down command
+		if (m_canFall)
+		{
+			m_jumpDwnCMD.execute(*m_moveSystem);
+		}
 	}
 
 	//Set the velocity of the players body
@@ -115,6 +137,13 @@ void Player::flipGravity()
 void Player::jump()
 {
 	m_currentVel.y -= m_gravFlipped ? -m_jumpSpeed : m_jumpSpeed;
+}
+
+void Player::jumpDown()
+{
+	//Set the player as falling
+	m_falling = true;
+	m_currentVel.y -= m_gravFlipped ? -m_jumpDownSpeed : m_jumpDownSpeed;
 }
 
 void Player::moveLeft()

@@ -15,6 +15,8 @@ public:
 	void checkKey(std::string m_button, SDL_Keycode code);
 	bool isButtonPressed(std::string m_button);
 	bool isButtonHeld(std::string button);
+	void applyRumble(float strength, int durMs);
+	
 private:
 	InputComponent * m_input;
 };
