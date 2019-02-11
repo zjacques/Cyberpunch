@@ -41,7 +41,7 @@ void GameScene::start()
 		//Add a physics body to the platform
 		newPlat.getPhysComp().m_body = m_physicsWorld.createBox(x, y, w, h, false, true, b2BodyType::b2_staticBody);
 		//Add the properties of the physics body
-		m_physicsWorld.addProperties(*newPlat.getPhysComp().m_body, 0, 1, 0, false, new PhysicsComponent::ColData(newPlat.getTag(), &newPlat));
+		m_physicsWorld.addProperties(*newPlat.getPhysComp().m_body, 0, .1f, 0, false, new PhysicsComponent::ColData(newPlat.getTag(), &newPlat));
 
 		m_platforms.push_back(newPlat); //Create a new platform
 	}
