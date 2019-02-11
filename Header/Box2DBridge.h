@@ -8,9 +8,10 @@
 class Box2DBody
 {
 public:
+	Box2DBody() :m_body(nullptr) {}
 	void setBody(b2Body* body) { m_body = body; };
 	
-	b2Body& getBody() { return *m_body; }
+	b2Body* getBody() { return m_body; }
 
 	Vector2f getPosition();
 	Vector2f getSize();

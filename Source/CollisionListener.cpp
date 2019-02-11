@@ -1,5 +1,4 @@
 #include "CollisionListener.h"
-#include "PhysicsComponent.h"
 #include "Player.h"
 #include "Platform.h"
 
@@ -23,9 +22,11 @@ void CollisionListener::BeginContact(b2Contact * contact)
 		{
 			player->setCanFall(true);
 		}
-		//player->falling() = false;
 		player->setCanJump(true);
 	}
+
+	//Check if a player has attacked another player
+	checkPlayerAttack(contact);
 }
 
 void CollisionListener::EndContact(b2Contact * contact)
@@ -65,6 +66,59 @@ void CollisionListener::EndContact(b2Contact * contact)
 		{
 			//Set contact as disabled so the player can move through floors
 			pPtr->falling() = false;;
+		}
+	}
+}
+
+void CollisionListener::checkPlayerAttack(b2Contact * contact)
+{
+	auto dataA = static_cast<PhysicsComponent::ColData *>(contact->GetFixtureA()->GetUserData());
+	auto dataB = static_cast<PhysicsComponent::ColData *>(contact->GetFixtureB()->GetUserData());
+
+	//If a player has attacked left and hit a player
+	if ((dataA->Tag() == "Attack Left" && dataB->Tag() == "Player Body")
+	|| (dataB->Tag() == "Attack Left" && dataA->Tag() == "Player Body"))
+	{
+		//get our player pointers
+		auto attackingP = static_cast<Player*>(dataA->Tag() == "Attack Left" ? dataA->Data() : dataB->Data());
+		auto otherP = static_cast<Player*>(dataA->Tag() == "Player Body" ? dataA->Data() : dataB->Data());
+
+		if (attackingP == otherP)
+			return;
+
+		//If the attacking player punched
+		if (attackingP->punched())
+		{
+			auto dmgP = attackingP->punched() ? 2 : 5;
+
+			otherP->damage(dmgP); //Add damage of the punch to the other players damage percentage
+			otherP->applyDmgImpulse(-40); //Knock back the other player
+
+			attackingP->punched() = false; //Set punched as false
+			attackingP->deletePunch("Left");
+		}
+	}
+	//If a player has attacked right and hit a player
+	else if ((dataA->Tag() == "Attack Right" && dataB->Tag() == "Player Body")
+	|| (dataB->Tag() == "Attack Right" && dataA->Tag() == "Player Body"))
+	{
+		//get our player pointers
+		auto attackingP = static_cast<Player*>(dataA->Tag() == "Attack Right" ? dataA->Data() : dataB->Data());
+		auto otherP = static_cast<Player*>(dataA->Tag() == "Player Body" ? dataA->Data() : dataB->Data());
+
+		if (attackingP == otherP)
+			return;
+
+		//If the attacking player punched
+		if (attackingP->punched())
+		{
+			auto dmgP = attackingP->punched() ? 2 : 5;
+
+			otherP->damage(dmgP); //Add damage of the punch to the other players damage percentage
+			otherP->applyDmgImpulse(40); //Knock back the other player
+
+			attackingP->punched() = false; //Set punched as false
+			attackingP->deletePunch("Right");
 		}
 	}
 }
