@@ -95,12 +95,18 @@
     </ClCompile>
     <ClCompile Include="Source\Platform.cpp">
       <Filter>Source Files</Filter>
-      </ClCompile>
+    </ClCompile>
     <ClCompile Include="Source\PhysicsSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
     <ClCompile Include="Source\CollisionListener.cpp">
       <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ClientSocket.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\OnlineSendComponent.cpp">
+      <Filter>Source Files\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -181,9 +187,18 @@
     </ClInclude>
     <ClInclude Include="Header\Platform.h">
       <Filter>Header Files</Filter>
-      </ClInclude>
+    </ClInclude>
     <ClInclude Include="Header\CollisionListener.h">
       <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\ClientSocket.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\SocketException.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\OnlineSendComponent.h">
+      <Filter>Header Files\Components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

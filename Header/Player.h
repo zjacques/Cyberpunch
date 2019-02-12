@@ -5,6 +5,7 @@
 #include "PhysicsSystem.h"
 #include "MovementSystem.h"
 #include "CommandPattern.h"
+#include "OnlineSendComponent.h"
 #include "SDL.h"
 
 class Player {
@@ -17,6 +18,8 @@ public:
 	void update(double dt);
 	void draw(SDL_Renderer& renderer);
 	void handleInput(InputSystem& input);
+
+	void addClient();
 
 	void flipGravity();
 	void jump();
@@ -33,6 +36,9 @@ private:
 	float m_jumpSpeed, m_jumpDownSpeed;
 	bool m_canJump, m_gravFlipped;
 	SDL_Rect m_player;
+
+	OnlineSendComponent* m_client;
+	bool is_online = false;
 
 	PhysicsSystem* physPtr;
 	PhysicsComponent m_physComponent, m_floorSensor;

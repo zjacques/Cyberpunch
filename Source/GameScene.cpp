@@ -18,6 +18,13 @@ void GameScene::start()
 
 	m_numOfLocalPlayers = SDL_NumJoysticks();
 
+	// Initialise SDL_net (Note: We don't initialise or use normal SDL at all - only the SDL_net library!)
+	if (SDLNet_Init() == -1)
+	{
+		std::cerr << "Failed to intialise SDL_net: " << SDLNet_GetError() << std::endl;
+		exit(-1);
+	}
+
 	//Create players for extra inputs
 	for (int i = 0; i < m_numOfLocalPlayers; i++)
 	{
@@ -27,6 +34,7 @@ void GameScene::start()
 		input->addComponent(inputComp);
 		m_localInputs.push_back(input);
 		m_localPlayers.at(i).createPlayer(m_physicsWorld, m_physicsSystem);
+		m_localPlayers.at(i).addClient();
 	}
 
 

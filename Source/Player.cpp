@@ -88,7 +88,7 @@ void Player::handleInput(InputSystem& input)
 		m_moveSystem = new MovementSystem(&input);
 		m_moveSystem->addPlayer(this);
 	}
-
+	bool buttonPressed = false;
 	//Get the current velocity of the body
 	m_currentVel = m_physComponent.m_body->getBody().GetLinearVelocity();
 	m_currentVel.x = 0; //Reset the velocity on the X
@@ -100,16 +100,19 @@ void Player::handleInput(InputSystem& input)
 		{
 			m_jumpCMD.execute(*m_moveSystem);
 			input.applyRumble(0.75, 1000);
+			buttonPressed = true;
 		}
 			
 	}
 	if (input.isButtonHeld("STICKRIGHT") || input.isButtonHeld("STICKDOWNRIGHT") || input.isButtonHeld("STICKUPRIGHT"))
 	{
 		m_moveRightCMD.execute(*m_moveSystem);
+		buttonPressed = true;
 	}
 	if (input.isButtonHeld("STICKLEFT") || input.isButtonHeld("STICKDOWNLEFT") || input.isButtonHeld("STICKUPLEFT"))
 	{
 		m_moveLeftCMD.execute(*m_moveSystem);
+		buttonPressed = true;
 	}
 
 	if (input.isButtonPressed("STICKDOWN"))
@@ -118,12 +121,28 @@ void Player::handleInput(InputSystem& input)
 		if (m_canFall)
 		{
 			m_jumpDwnCMD.execute(*m_moveSystem);
+			buttonPressed = true;
 		}
 	}
 
 	//Set the velocity of the players body
 	m_physComponent.m_body->getBody().SetLinearVelocity(m_currentVel);
 	m_floorSensor.m_body->getBody().SetLinearVelocity(m_currentVel);
+
+	//Online
+	if (is_online && buttonPressed)
+	{
+		m_client->SerializeInputs(input);
+		m_client->Send();
+	}
+}
+
+void Player::addClient()
+{
+	m_client = new OnlineSendComponent();
+	m_client->ConnectToServer();
+	is_online = true;
+
 }
 
 void Player::flipGravity()
