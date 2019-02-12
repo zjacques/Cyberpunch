@@ -19,7 +19,7 @@ void Box2DBridge::update(double dt)
 	{
 		for (auto& body : m_bodiesToDelete)
 		{
-			m_world->DestroyBody(&body->getBody());
+			m_world->DestroyBody(body->getBody());
 		}
 		m_bodiesToDelete.clear();
 	}
@@ -72,7 +72,7 @@ Box2DBody* Box2DBridge::createBox(int posX, int posY, int width, int height, boo
 	//Create the body and set it for our box2D body wrapper
 	body->setBody(m_world->CreateBody(&bDef));
 
-	body->getBody().CreateFixture(&fDef);
+	body->getBody()->CreateFixture(&fDef);
 	return body; //Return the body
 }
 
@@ -97,7 +97,7 @@ Box2DBody* Box2DBridge::createCircle(int posX, int posY, float radius, bool canR
 void Box2DBridge::addProperties(Box2DBody & body, float mass, float friction, float rest, bool isSensor, void* data)
 {
 	//Get a pointer to the fixture for the body
-	b2Fixture* fDef = body.getBody().GetFixtureList();
+	b2Fixture* fDef = body.getBody()->GetFixtureList();
 	fDef->SetSensor(isSensor); //Set wheter the body is a sensor (doesnt take part of regular physics)
 	fDef->SetDensity(mass); //Set the density/mass of the body
 	fDef->SetFriction(friction); //Set friction of the body
