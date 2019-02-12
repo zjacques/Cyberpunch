@@ -105,6 +105,12 @@ void Box2DBridge::addProperties(Box2DBody & body, float mass, float friction, fl
 	fDef->SetRestitution(rest); //Set the restitution of the body
 }
 
+void Box2DBody::setPosition(float x, float y)
+{
+	//Set the position of the physics body
+	m_body->SetTransform(b2Vec2(x / CONVERSION, y / CONVERSION), 0);
+}
+
 //Box2DBody methods
 Vector2f Box2DBody::getPosition()
 {
