@@ -27,7 +27,7 @@ void OnlineSendComponent::ConnectToServer()
 
 void OnlineSendComponent::SerializeInputs(InputSystem& input)
 {
-	string jsonString = "{ \"type\" : \" COMMANDS\", \"list\":{";
+	string jsonString = "{ \"type\" : \"COMMANDS\", \"list\":[";
 	bool isFirst = true;
 
 	if (input.isButtonPressed("YBTN") || input.isButtonPressed("STICKUP"))
@@ -36,8 +36,7 @@ void OnlineSendComponent::SerializeInputs(InputSystem& input)
 			jsonString += ",";
 		}
 		else isFirst = false;
-		jsonString += " \"command\" : \"JUMP\" ";
-		//m_commandsToSend.push_back(pair<string, string>("command", "JUMP"));
+		jsonString += "\"YBTN\" ";
 	}
 	if (input.isButtonHeld("STICKRIGHT") || input.isButtonHeld("STICKDOWNRIGHT") || input.isButtonHeld("STICKUPRIGHT"))
 	{
@@ -45,8 +44,7 @@ void OnlineSendComponent::SerializeInputs(InputSystem& input)
 			jsonString += ",";
 		}
 		else isFirst = false;
-		jsonString += " \"command\" : \"RIGHT\" ";
-		//m_commandsToSend.push_back(pair<string, string>("command", "RIGHT"));
+		jsonString += "\"STICKRIGHT\" ";
 	}
 	if (input.isButtonHeld("STICKLEFT") || input.isButtonHeld("STICKDOWNLEFT") || input.isButtonHeld("STICKUPLEFT"))
 	{
@@ -54,8 +52,7 @@ void OnlineSendComponent::SerializeInputs(InputSystem& input)
 			jsonString += ",";
 		}
 		else isFirst = false;
-		jsonString += " \"command\" : \"LEFT\" ";
-		//m_commandsToSend.push_back(pair<string, string>("command", "LEFT"));
+		jsonString += "\"STICKLEFT\" ";
 	}
 	if (input.isButtonPressed("STICKDOWN"))
 	{
@@ -63,11 +60,26 @@ void OnlineSendComponent::SerializeInputs(InputSystem& input)
 			jsonString += ",";
 		}
 		else isFirst = false;
-		jsonString += " \"command\" : \"FALL\" ";
-		//m_commandsToSend.push_back(pair<string, string>("command", "FALL"));
+		jsonString += "\"STICKDOWN\" ";
+	}
+	if (input.isButtonPressed("XBTN"))
+	{
+		if (!isFirst) {
+			jsonString += ",";
+		}
+		else isFirst = false;
+		jsonString += "\"XBTN\" ";
+	}
+	if (input.isButtonPressed("ABTN"))
+	{
+		if (!isFirst) {
+			jsonString += ",";
+		}
+		else isFirst = false;
+		jsonString += "\"ABTN\" ";
 	}
 
-	jsonString += " }}";
+	jsonString += " ]}";
 
 	m_commandsToSend.push(jsonString);
 

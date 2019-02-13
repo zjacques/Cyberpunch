@@ -203,29 +203,31 @@ void Player::handleInput(InputSystem& input)
 			if (m_canJump)
 			{
 				m_jumpCMD.execute(*m_moveSystem);
+				buttonPressed = true;
 			}
 
 		}
-			
 	
-	if (input.isButtonHeld("STICKRIGHT") || input.isButtonHeld("STICKDOWNRIGHT") || input.isButtonHeld("STICKUPRIGHT"))
-	{
-		m_moveRightCMD.execute(*m_moveSystem);
-		buttonPressed = true;
-	}
-	if (input.isButtonHeld("STICKLEFT") || input.isButtonHeld("STICKDOWNLEFT") || input.isButtonHeld("STICKUPLEFT"))
-	{
-		m_moveLeftCMD.execute(*m_moveSystem);
-		buttonPressed = true;
-	}
+		if (input.isButtonHeld("STICKRIGHT") || input.isButtonHeld("STICKDOWNRIGHT") || input.isButtonHeld("STICKUPRIGHT"))
+		{
+			m_moveRightCMD.execute(*m_moveSystem);
+			buttonPressed = true;
+		}
+		if (input.isButtonHeld("STICKLEFT") || input.isButtonHeld("STICKDOWNLEFT") || input.isButtonHeld("STICKUPLEFT"))
+		{
+			m_moveLeftCMD.execute(*m_moveSystem);
+			buttonPressed = true;
+		}
 
 		if (input.isButtonPressed("XBTN"))
 		{
 			punch();
+			buttonPressed = true;
 		}
 		if (input.isButtonPressed("ABTN"))
 		{
 			kick();
+			buttonPressed = true;
 		}
 
 		if (input.isButtonPressed("STICKDOWN"))

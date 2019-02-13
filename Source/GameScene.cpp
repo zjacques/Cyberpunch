@@ -4,7 +4,8 @@ GameScene::GameScene()
 {
 	for (int i = 0; i < 4; i++)
 	{
-		m_localPlayers.push_back(Player());
+		m_localPlayers.push_back(Player()); 
+		m_onlinePlayers.push_back(Player());
 	}
 }
 
@@ -20,6 +21,7 @@ void GameScene::start()
 	m_bG = Scene::resources().getTexture("Game BG");
 
 	m_numOfLocalPlayers = SDL_NumJoysticks();
+	m_numOfOnlinePlayers = 1;
 
 	// Initialise SDL_net (Note: We don't initialise or use normal SDL at all - only the SDL_net library!)
 	if (SDLNet_Init() == -1)
@@ -38,6 +40,15 @@ void GameScene::start()
 		m_localInputs.push_back(input);
 		m_localPlayers.at(i).createPlayer(m_physicsWorld, m_physicsSystem);
 		m_localPlayers.at(i).addClient();
+	}
+	for (int i = 0; i < m_numOfOnlinePlayers; i++)
+	{
+		auto inputComp = new InputComponent();
+		auto input = new OnlineInputSystem();
+		input->addComponent(inputComp);
+		input->ConnectToServer();
+		m_onlineInputs.push_back(input);
+		m_onlinePlayers.at(i).createPlayer(m_physicsWorld, m_physicsSystem);
 	}
 
 
@@ -62,8 +73,11 @@ void GameScene::stop()
 {
 	for (auto& player : m_localPlayers)
 		player.deletePlayer();
+	for (auto& player : m_onlinePlayers)
+		player.deletePlayer();
 
 	m_localInputs.clear();
+	m_onlineInputs.clear();
 	m_physicsWorld.deleteWorld(); //Delete the physics world
 	m_platforms.clear(); //Delete the platforms of the game
 	m_numOfLocalPlayers = 0;
@@ -79,10 +93,18 @@ void GameScene::update(double dt)
 	{
 		inputSys->update(dt);
 	}
+	for (auto& inputSys : m_onlineInputs)
+	{
+		inputSys->update(dt);
+	}
 
 	for (int i = 0; i < m_numOfLocalPlayers; i++)
 	{
 		m_localPlayers.at(i).update(dt);
+	}
+	for (int i = 0; i < m_numOfOnlinePlayers; i++)
+	{
+		m_onlinePlayers.at(i).update(dt);
 	}
 }
 
@@ -105,7 +127,10 @@ void GameScene::draw(SDL_Renderer & renderer)
 	{
 		m_localPlayers.at(i).draw(renderer);
 	}
-	
+	for (int i = 0; i < m_numOfOnlinePlayers; i++)
+	{
+		m_onlinePlayers.at(i).draw(renderer);
+	}
 
 	m_pickUp.draw(renderer);
 }
@@ -116,6 +141,10 @@ void GameScene::handleInput(InputSystem & input)
 	for (int i = 0; i < m_numOfLocalPlayers; i++)
 	{
 		m_localPlayers.at(i).handleInput(*m_localInputs.at(i));
+	}
+	for (int i = 0; i < m_numOfOnlinePlayers; i++)
+	{
+		m_onlinePlayers.at(i).handleInput(*m_onlineInputs.at(i));
 	}
 
 	//If the pause button has been pressed on either joycon
@@ -131,6 +160,10 @@ void GameScene::handleInput(InputSystem & input)
 		for (int i = 0; i < m_numOfLocalPlayers; i++)
 		{
 			m_localPlayers.at(i).flipGravity();
+		}
+		for (int i = 0; i < m_numOfOnlinePlayers; i++)
+		{
+			m_onlinePlayers.at(i).flipGravity();
 		}
 		m_collisionListener.flipGravity();
 	}

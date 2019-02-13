@@ -17,7 +17,7 @@ public:
 	bool isButtonHeld(std::string button);
 	void applyRumble(float strength, int durMs);
 	
-private:
+protected:
 	InputComponent * m_input;
 };
 

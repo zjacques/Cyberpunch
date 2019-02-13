@@ -105,11 +105,14 @@
     <ClCompile Include="Source\ClientSocket.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
+    <ClCompile Include="Source\PickUp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Source\OnlineSendComponent.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Source\PickUp.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Source\OnlineInputSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -205,6 +208,9 @@
     </ClInclude>
     <ClInclude Include="Header\PickUp.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\OnlineInputSystem.h">
+      <Filter>Header Files\Systems</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

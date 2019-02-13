@@ -125,6 +125,8 @@
   <ItemGroup>
     <ClCompile Include="Source\ClientSocket.cpp" />
     <ClCompile Include="Source\CollisionListener.cpp" />
+    <ClCompile Include="Source\OnlineInputSystem.cpp" />
+    <ClCompile Include="Source\OnlineSendComponent.cpp" />
     <ClCompile Include="Source\PickUp.cpp" />
     <ClCompile Include="Source\Platform.cpp" />
     <ClCompile Include="Source\MovementSystem.cpp" />
@@ -158,6 +160,7 @@
     <ClInclude Include="Header\GameScene.h" />
     <ClInclude Include="Header\MainMenuScene.h" />
     <ClInclude Include="Header\MenuManager.h" />
+    <ClInclude Include="Header\OnlineInputSystem.h" />
     <ClInclude Include="Header\OnlineSendComponent.h" />
     <ClInclude Include="Header\OptionsScene.h" />
     <ClInclude Include="Header\PickUp.h" />
