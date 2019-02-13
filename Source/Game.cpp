@@ -7,6 +7,11 @@ Game::Game(int fps) :
 	m_quit(false),
 	m_resources("./Resources/")
 {
+	if (TTF_Init() < 0)
+	{
+		printf("TTF_Init: %s\n", TTF_GetError());
+	}
+
 	testComponent = new RenderComponent();
 	testSystem = new RenderSystem();
 
@@ -145,6 +150,8 @@ void Game::close()
 	//Destroy window
 	SDL_DestroyWindow(m_window);
 	m_window = NULL;
+
+	TTF_Quit();
 
 	//Quit SDL subsystems
 	SDL_Quit();

@@ -3,9 +3,16 @@
 MenuManager::MenuManager() :
 	m_current(nullptr)
 {
+	if (TTF_Init() < 0)
+	{
+		printf("TTF_Init: %s\n", TTF_GetError());
+	}
 	m_scenes["Main Menu"] = new MainMenuScene();
 	m_scenes["Options"] = new OptionsScene();
 	m_scenes["Game"] = new GameScene();
+
+	//Set the current scene as the main menu
+	setScene("Options");
 }
 
 void MenuManager::update(double dt)

@@ -52,8 +52,6 @@ bool InputSystem::isButtonHeld(std::string button)
 
 void InputSystem::applyRumble(float strength, int durMs)
 {
-
-
 	if (SDL_JoystickRumble(m_input->m_joycon, .5, .75, 10000) == -1)
 	{
 		std::cout << "Rumble not supported\n";
