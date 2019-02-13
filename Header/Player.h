@@ -16,8 +16,10 @@ public:
 	void createPlayer(Box2DBridge& world, PhysicsSystem& system);
 	void deletePlayer();
 	void update(double dt);
+	void offsetAttackSensor();
 	void checkForPunch(double dt);
-	void checkToDeletePunch(double dt);
+	void checkForKick(double dt);
+	void checkToDeleteAttack(double dt);
 	void draw(SDL_Renderer& renderer);
 	void handleInput(InputSystem& input);
 
@@ -30,20 +32,32 @@ public:
 	void moveRight();
 	void punch();
 	void kick();
+	void punchUp();
+	void punchDown();
+	void upperCut();
 	void stun();
 	void super();
 	void damage(int percent);
-	void applyDmgImpulse(float x);
-	void deletePunch(std::string whichArm);
+	void applyDmgImpulse(float x, float y);
+	void deleteAttackBody();
 
 	void setCanJump(bool b) { m_canJump = b; }
 	void setCanFall(bool b) { m_canFall = b; }
 	bool& falling() { return m_falling; }
 	bool& punched() { return m_punched; } //Return wheter the player punched or not
+	bool& punchedDown() { return m_punchedDown; } //Return wheter the player punched down
+	bool& punchedUp() { return m_punchedUp; } //Return wheter the player punched up
+	bool& uppercut() { return m_upperCut; }
 	bool& kicked() { return m_kicked; } //Return wheter the player kicked or not
+	bool& stunned() { return m_stunned; } //Return wheter the player is stunned or not
+	bool attacked() { return !m_canAttack; } //Return th eopposie of can attack (if we cant attack, we have attacked)
 private:
+	//Private methods
+	void attack(std::string tag, PhysicsComponent& sensor, int sizeX, int sizeY);
+
 	int m_dmgPercent;
 	b2Vec2 m_currentVel, m_desiredVel;
+	Vector2f m_attackBoxOffset; //The offset of the attack box
 	float m_moveSpeed;
 	float m_jumpSpeed, m_jumpDownSpeed;
 	bool m_canJump, m_gravFlipped, m_movingL, m_movingR;
@@ -58,7 +72,9 @@ private:
 	MovementSystem* m_moveSystem;
 
 	//Attacking variables
-	PhysicsComponent m_leftAttackSensor, m_rightAttackSensor;
+	PhysicsComponent m_leftAttackSensor, m_rightAttackSensor, m_upAttackSensor, m_downAttackSensor, m_upperCutSensor;
+	//Current attacking sensor
+	PhysicsComponent* m_currentAttackSensor;
 
 	MoveLeftCommand m_moveLeftCMD;
 	MoveRightCommand m_moveRightCMD;
@@ -67,12 +83,12 @@ private:
 
 	Box2DBridge* m_worldPtr;
 
-	b2RevoluteJoint * m_sensorJoint, *m_attackLeftJoint, *m_attackRightJoint;
-	b2RevoluteJointDef m_sensorJointDef, m_attackLeftJointDef, m_attackRightJointDef;
+	b2RevoluteJoint * m_sensorJoint;
+	b2RevoluteJointDef m_sensorJointDef;
 
 	//Attack variables
-	float m_punchRecharge, m_timeTillPunch, m_lpttl, m_rpttl, m_stunLeft;
-	bool m_canPunch, m_punched, m_kicked, m_stunned;
+	float m_punchRecharge, m_timeTillPunch, m_kickRecharge, m_timeTillKick, m_lpttl, m_rpttl, m_puttl, m_stunLeft;
+	bool m_canPunch, m_punched, m_kicked, m_stunned, m_canAttack, m_punchedUp, m_punchedDown, m_upperCut;
 
 	//Bools to determine if the player can flick down on the joycon stick
 	bool m_canFall, m_falling;

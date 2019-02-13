@@ -10,9 +10,11 @@ class Box2DBody
 public:
 	Box2DBody() :m_body(nullptr) {}
 	void setBody(b2Body* body) { m_body = body; };
+	void setPosition(float x, float y);
 	
 	b2Body* getBody() { return m_body; }
 
+	//Getters
 	Vector2f getPosition();
 	Vector2f getSize();
 	float getAngle();
