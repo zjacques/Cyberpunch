@@ -92,6 +92,7 @@ void CollisionListener::checkPlayerAttack(b2Contact * contact)
 	float xImpulse;
 	float yImpulse;
 	int dmgP;
+	bool applyDmg = false;
 
 
 	//If a player has attacked and hit a player
@@ -111,6 +112,7 @@ void CollisionListener::checkPlayerAttack(b2Contact * contact)
 		//If the attacking player punched
 		if (attackingP->attacked() && !attackingP->stunned())
 		{
+			applyDmg = true;
 			dmgP = attackingP->punched() ? 2 : 5;
 			if(direction == "Attack Right")
 				xImpulse = dmgP == 2 ? 250 : 300;
@@ -138,6 +140,7 @@ void CollisionListener::checkPlayerAttack(b2Contact * contact)
 		//If the attacking player punched
 		if (attackingP->attacked() && !attackingP->stunned())
 		{
+			applyDmg = true;
 			dmgP = 4;
 			if (direction == "UpperCut Left")
 				xImpulse = -10;
@@ -151,7 +154,7 @@ void CollisionListener::checkPlayerAttack(b2Contact * contact)
 	//If the player was not found return
 	if (nullptr == attackingP || nullptr == otherP)
 		return;
-	else
+	else if(applyDmg)
 	{
 		otherP->damage(dmgP); //Add damage of the punch to the other players damage percentage
 		otherP->applyDmgImpulse(xImpulse, yImpulse); //Knock back the other player back
