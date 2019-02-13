@@ -51,6 +51,12 @@ void AISystem::createTree()
 		cast_comp->m_selectors[2].addChildren({ &cast_comp->m_succeeders[1], cast_comp->Flee });
 		cast_comp->m_selectors[3].addChildren({ cast_comp->isPlayerAbove, &cast_comp->m_selectors[4] });
 		cast_comp->m_selectors[4].addChildren({ cast_comp->isPlayerHealthLow, cast_comp->punch });
+
+		//Right sub tree
+		cast_comp->m_selectors[5].addChildren({ &cast_comp->m_sequences[1], &cast_comp->m_sequences[2] });
+		cast_comp->m_sequences[1].addChildren({ cast_comp->getNearest, cast_comp->closeEnough });
+		cast_comp->m_sequences[2].addChildren({ &cast_comp->m_succeeders[1], &cast_comp->m_selectors[6] });
+		cast_comp->m_selectors[6].addChildren({ cast_comp->isPlayerAbove, cast_comp->drop });
 	}
 }
 
@@ -59,7 +65,18 @@ void AISystem::createTree()
 /// </summary>
 void AISystem::runTree()
 {
-
+	for (auto c : m_components)
+	{
+		auto cast_comp = dynamic_cast<AIComponent *>(c);
+		if (cast_comp->BT.run())
+		{
+			std::cout << "Behaviour tree exited with SUCCESS" << std::endl;
+		}
+		else
+		{
+			std::cout << "Behaviour tree exited with FAILURE" << std::endl;
+		}
+	}
 }
 
 /// <summary>
