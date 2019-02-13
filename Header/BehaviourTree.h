@@ -100,6 +100,66 @@ public:
 	};
 
 	/// <summary>
+	/// 
+	/// </summary>
+	class DecoratorNode : public Node
+	{
+	private:
+		Node * m_child;
+	protected:
+		Node * getChild() const { return m_child; }
+	public:
+		void setChild(Node * c) { m_child = c; }
+	};
+
+	/// <summary>
+	/// 
+	/// </summary>
+	class Inverter : public DecoratorNode
+	{
+	private:
+		virtual bool run() override { return !getChild()->run(); }
+	};
+
+	/// <summary>
+	/// 
+	/// </summary>
+	class Succeeder : public DecoratorNode
+	{
+	private:
+		virtual bool run() override { getChild()->run(); return true; }
+	};
+
+	class Failer : public DecoratorNode
+	{
+	private:
+		virtual bool run() override { getChild()->run(); return false; }
+	};
+
+	class Repeater : public DecoratorNode
+	{
+	private:
+		int numRepeats;
+		static const int NOT_FOUND = -1;
+		Repeater(int num = NOT_FOUND) : numRepeats(num) {}
+		virtual bool run() override
+		{
+			if (numRepeats == NOT_FOUND)
+			{
+				while (true) getChild()->run();
+			}
+			else
+			{
+				for (int i = 0; i < numRepeats; i++)
+				{
+					getChild()->run();
+				}
+				return getChild()->run();
+			}
+		}
+	};
+
+	/// <summary>
 	/// Root node that start the tree structure
 	/// </summary>
 	class Root : public Node

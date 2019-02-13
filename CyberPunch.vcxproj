@@ -124,6 +124,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\AIComponent.cpp" />
+    <ClCompile Include="Source\AISystem.cpp" />
     <ClCompile Include="Source\Button.cpp" />
     <ClCompile Include="Source\CollisionListener.cpp" />
     <ClCompile Include="Source\PickUp.cpp" />
@@ -148,6 +149,7 @@
   <ItemGroup>
     <ClInclude Include="Header\Action.h" />
     <ClInclude Include="Header\AIComponent.h" />
+    <ClInclude Include="Header\AISystem.h" />
     <ClInclude Include="Header\AnimationComponent.h" />
     <ClInclude Include="Header\AnimationSystem.h" />
     <ClInclude Include="Header\BehaviourTree.h" />
