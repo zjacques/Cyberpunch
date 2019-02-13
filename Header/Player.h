@@ -3,8 +3,7 @@
 
 #include "Box2DBridge.h"
 #include "PhysicsSystem.h"
-#include "MovementSystem.h"
-#include "CommandPattern.h"
+#include "InputSystem.h"
 #include "SDL.h"
 
 class Player {
@@ -63,17 +62,12 @@ private:
 	PhysicsSystem* m_physPtr;
 	PhysicsComponent m_physComponent, m_floorSensor;
 	PositionComponent m_posComponent;
-	MovementSystem* m_moveSystem;
 
 	//Attacking variables
 	PhysicsComponent m_leftAttackSensor, m_rightAttackSensor, m_upAttackSensor, m_downAttackSensor, m_upperCutSensor;
 	//Current attacking sensor
 	PhysicsComponent* m_currentAttackSensor;
 
-	MoveLeftCommand m_moveLeftCMD;
-	MoveRightCommand m_moveRightCMD;
-	JumpCommand m_jumpCMD;
-	JumpDownCommand m_jumpDwnCMD;
 
 	Box2DBridge* m_worldPtr;
 

@@ -24,8 +24,5 @@ void MainMenuScene::draw(SDL_Renderer & renderer)
 
 void MainMenuScene::handleInput(InputSystem& input)
 {
-	if (input.isButtonPressed("A"))
-	{
-		Scene::goToScene("Game");
-	}
+
 }

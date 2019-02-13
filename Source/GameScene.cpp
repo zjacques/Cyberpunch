@@ -2,10 +2,6 @@
 
 GameScene::GameScene()
 {
-	for (int i = 0; i < 4; i++)
-	{
-		m_localPlayers.push_back(Player());
-	}
 }
 
 void GameScene::start()
@@ -24,12 +20,7 @@ void GameScene::start()
 	//Create players for extra inputs
 	for (int i = 0; i < m_numOfLocalPlayers; i++)
 	{
-		auto inputComp = new InputComponent();
-		inputComp->initialiseJoycon(i);
-		auto input = new InputSystem();
-		input->addComponent(inputComp);
-		m_localInputs.push_back(input);
-		m_localPlayers.at(i).createPlayer(m_physicsWorld, m_physicsSystem);
+		m_localPlayers.push_back(createPlayer(i,600 + 150 * i, 360));
 	}
 
 
@@ -52,10 +43,10 @@ void GameScene::start()
 
 void GameScene::stop()
 {
-	for (auto& player : m_localPlayers)
-		player.deletePlayer();
+	//for (auto& player : m_localPlayers)
+	//	player.deletePlayer();
 
-	m_localInputs.clear();
+	//m_localInputs.clear();
 	m_physicsWorld.deleteWorld(); //Delete the physics world
 	m_platforms.clear(); //Delete the platforms of the game
 	m_numOfLocalPlayers = 0;
@@ -66,16 +57,42 @@ void GameScene::update(double dt)
 {
 	//Update the physics world, do this before ANYTHING else
 	m_physicsWorld.update(dt);
+	//Update the player physics system
+	Scene::systems()["Player Physics"]->update(dt);
+}
 
-	for (auto& inputSys : m_localInputs)
-	{
-		inputSys->update(dt);
-	}
+Entity * GameScene::createPlayer(int index,int posX, int posY)
+{
+	auto p = new Entity("Player");
+	p->addComponent("Pos", new PositionComponent(0, 0));
 
-	for (int i = 0; i < m_numOfLocalPlayers; i++)
-	{
-		m_localPlayers.at(i).update(dt);
-	}
+	//Create and initiliase the input component
+	auto input = new PlayerInputComponent();
+	Scene::systems()["Input"]->addComponent(input);
+	input->initialiseJoycon(index);
+
+	//Create the physics component and set up the bodies
+	auto phys = new PlayerPhysicsComponent(&p->getComponent("Pos"));
+	phys->m_body = m_physicsWorld.createBox(posX, posY, 50, 50, false, false, b2BodyType::b2_dynamicBody);
+	phys->m_jumpSensor = m_physicsWorld.createBox(posX, posY + 25, 50, 50, false, false, b2BodyType::b2_dynamicBody);
+
+	m_physicsWorld.addProperties(*phys->m_body, 1, 0.05f, 0.0f, false, new PhysicsComponent::ColData("Player Body", p));
+	m_physicsWorld.addProperties(*phys->m_jumpSensor, 1, 0.05f, 0.0f, true, new PhysicsComponent::ColData("Jump Sensor", p));
+
+	//Set the gravity scale to 2, this makes the player less floaty
+	phys->m_body->getBody()->SetGravityScale(2.0f);
+
+	//Create the joint between the player and the jump sensor
+	phys->createJoint(m_physicsWorld);
+
+	//Add the components to the entity
+	p->addComponent("Input", input);
+	p->addComponent("Player Physics", phys);
+
+	//Add the physics component to the playe rphysics system
+	Scene::systems()["Player Physics"]->addComponent(phys);
+
+	return p; //Return the created entity
 }
 
 void GameScene::draw(SDL_Renderer & renderer)
@@ -93,37 +110,56 @@ void GameScene::draw(SDL_Renderer & renderer)
 		platform.draw(renderer);
 	}
 
+
 	for (int i = 0; i < m_numOfLocalPlayers; i++)
 	{
-		m_localPlayers.at(i).draw(renderer);
+		SDL_SetRenderDrawColor(&renderer, 255, 0, 0, 255);
+		auto phys = static_cast<PlayerPhysicsComponent*>(&m_localPlayers.at(i)->getComponent("Player Physics"));
+		SDL_Rect rect;
+		rect.w = phys->m_body->getSize().x;
+		rect.h = phys->m_body->getSize().y;
+		rect.x = phys->m_body->getPosition().x - (rect.w / 2);
+		rect.y = phys->m_body->getPosition().y - (rect.h / 2);
+		SDL_RenderFillRect(&renderer, &rect);
 	}
 	
 
-	m_pickUp.draw(renderer);
+	//m_pickUp.draw(renderer);
 }
 
 void GameScene::handleInput(InputSystem & input)
 {
-	//Handle input for all players
+	//Update the input system
+	Scene::systems()["Input"]->update(0);
+
 	for (int i = 0; i < m_numOfLocalPlayers; i++)
 	{
-		m_localPlayers.at(i).handleInput(*m_localInputs.at(i));
+		auto input = static_cast<InputComponent*>(&m_localPlayers.at(i)->getComponent("Input"));
+		input->handleInput(m_localPlayers.at(i));
 	}
 
-	//If the pause button has been pressed on either joycon
-	if (input.isButtonPressed("A"))
-	{
-		Scene::goToScene("Main Menu");
-	}
-	if (input.isButtonPressed("Space"))
-	{
-		//Flip the gravioty of the physics system and the physics world
-		m_physicsSystem.flipGravity();
-		m_physicsWorld.flipGravity();
-		for (int i = 0; i < m_numOfLocalPlayers; i++)
-		{
-			m_localPlayers.at(i).flipGravity();
-		}
-		m_collisionListener.flipGravity();
-	}
+
+
+	//Handle input for all players
+	//for (int i = 0; i < m_numOfLocalPlayers; i++)
+	//{
+	//	m_localPlayers.at(i).handleInput(*m_localInputs.at(i));
+	//}
+
+	////If the pause button has been pressed on either joycon
+	//if (input.isButtonPressed("A"))
+	//{
+	//	Scene::goToScene("Main Menu");
+	//}
+	//if (input.isButtonPressed("Space"))
+	//{
+	//	//Flip the gravioty of the physics system and the physics world
+	//	m_physicsSystem.flipGravity();
+	//	m_physicsWorld.flipGravity();
+	//	for (int i = 0; i < m_numOfLocalPlayers; i++)
+	//	{
+	//		m_localPlayers.at(i).flipGravity();
+	//	}
+	//	m_collisionListener.flipGravity();
+	//}
 }

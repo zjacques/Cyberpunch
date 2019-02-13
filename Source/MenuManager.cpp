@@ -10,9 +10,6 @@ MenuManager::MenuManager() :
 	m_scenes["Main Menu"] = new MainMenuScene();
 	m_scenes["Options"] = new OptionsScene();
 	m_scenes["Game"] = new GameScene();
-
-	//Set the current scene as the main menu
-	setScene("Options");
 }
 
 void MenuManager::update(double dt)
@@ -57,8 +54,14 @@ void MenuManager::setResourceHandler(ResourceHandler & resources)
 	{
 		scene.second->setResourceHandler(resources);
 	}
+}
 
-	//m_scenes["Main Menu"]->setResourceHandler(resources);
+void MenuManager::setSystemPtr(std::map<std::string, System*>& systems)
+{
+	for (auto& scene : m_scenes)
+	{
+		scene.second->setSystemsPtr(systems);
+	}
 }
 
 void MenuManager::setScene(std::string scene)

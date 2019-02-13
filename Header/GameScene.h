@@ -3,6 +3,9 @@
 #include "Player.h"
 #include "Scene.h"
 #include "PickUp.h"
+#include "Entity.h"
+#include "PlayerPhysicsComponent.h"
+#include "PlayerInputComponent.h"
 
 class GameScene : public Scene
 {
@@ -11,10 +14,11 @@ public:
 	void start();
 	void stop();
 	void update(double dt);
+	Entity* createPlayer(int index, int posX, int posY);
 	void draw(SDL_Renderer& renderer);
 	void handleInput(InputSystem& input);
 private:
-	std::vector<Player> m_localPlayers;
+	std::vector<Entity*> m_localPlayers;
 	std::vector<InputSystem*> m_localInputs;
 	int m_numOfLocalPlayers;
 	PickUp m_pickUp;

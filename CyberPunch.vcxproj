@@ -123,13 +123,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Header\PlayerPhysicsComponent.cpp" />
+    <ClCompile Include="Header\PlayerPhysicsSystem.cpp" />
     <ClCompile Include="Source\AIComponent.cpp" />
     <ClCompile Include="Source\AISystem.cpp" />
     <ClCompile Include="Source\Button.cpp" />
     <ClCompile Include="Source\CollisionListener.cpp" />
     <ClCompile Include="Source\PickUp.cpp" />
     <ClCompile Include="Source\Platform.cpp" />
-    <ClCompile Include="Source\MovementSystem.cpp" />
     <ClCompile Include="Source\AnimationSystem.cpp" />
     <ClCompile Include="Source\AnimationComponent.cpp" />
     <ClCompile Include="Source\GameScene.cpp" />
@@ -156,11 +157,13 @@
     <ClInclude Include="Header\Box2DBridge.h" />
     <ClInclude Include="Header\Button.h" />
     <ClInclude Include="Header\CollisionListener.h" />
-    <ClInclude Include="Header\CommandPattern.h" />
+    <ClInclude Include="Header\Commands.h" />
     <ClInclude Include="Header\Component.h" />
     <ClInclude Include="Header\Game.h" />
     <ClInclude Include="Header\Entity.h" />
-    <ClInclude Include="Header\MovementSystem.h" />
+    <ClInclude Include="Header\PlayerInputComponent.h" />
+    <ClInclude Include="Header\PlayerInputSystem.h" />
+    <ClInclude Include="Header\PlayerPhysicsComponent.h" />
     <ClInclude Include="Header\GameScene.h" />
     <ClInclude Include="Header\MainMenuScene.h" />
     <ClInclude Include="Header\MenuManager.h" />
@@ -168,6 +171,7 @@
     <ClInclude Include="Header\PickUp.h" />
     <ClInclude Include="Header\Platform.h" />
     <ClInclude Include="Header\Player.h" />
+    <ClInclude Include="Header\PlayerPhysicsSystem.h" />
     <ClInclude Include="Header\RenderComponent.h" />
     <ClInclude Include="Header\RenderSystem.h" />
     <ClInclude Include="Header\InputComponent.h" />

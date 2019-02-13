@@ -44,20 +44,24 @@ public:
 		//Copy the values of current to previous
 		m_previous = m_current;
 	}
+	virtual void handleInput(void* e) = 0;
 	void initialiseJoycon(int index)
 	{
 		SDL_JoystickEventState(SDL_ENABLE);
 		m_joycon = SDL_JoystickOpen(index);
+	}
 
-		std::cout << "Joycon has rumble? " << (SDL_JoystickIsHaptic(m_joycon) == SDL_TRUE ? "Yes" : "NO") << "\n";
-		m_rumble = SDL_GameControllerOpen(index);
-		//SDL_HapticRumbleInit(m_rumble);
-		int x = 0;
+	bool isButtonPressed(std::string btn)
+	{
+		return m_current[btn] && !m_previous[btn];
+	}
+	bool isButtonHeld(std::string btn)
+	{
+		return m_current[btn];
 	}
 		
 	const Uint8* m_keyStates;
 	SDL_Joystick* m_joycon;
-	SDL_GameController* m_rumble;
 	Input m_current;
 	Input m_previous;
 };
