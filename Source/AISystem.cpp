@@ -27,6 +27,17 @@ void AISystem::initialiseActions()
 		cast_comp->attackOne = new Action("Attack 1", 75);
 		cast_comp->attackTwo = new Action("Attack 2", 60);
 		cast_comp->jump = new Action("Jump", 80);
+		cast_comp->getNearest = new Action("Nearest", 100);
+		cast_comp->closeEnough = new Action("close", 100);
+		cast_comp->checkPlayerDirection = new Action("PlayerDir", 100);
+		cast_comp->isHealthHigh = new Action("Health", 100);
+		cast_comp->Flee = new Action("Flee", 75);
+		cast_comp->isPlayerAbove = new Action("PlayerAbove", 100);
+		cast_comp->isPlayerHealthLow = new Action("Health low", 100);
+		cast_comp->canKick = new Action("Can kick", 100);
+		cast_comp->punch = new Action("Punch", 80);
+		cast_comp->moveToClosestPlayer = new Action("MoveTo", 90);
+		cast_comp->drop = new Action("Drop", 100);
 	}
 }
 

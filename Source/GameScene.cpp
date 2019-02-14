@@ -99,6 +99,24 @@ Entity * GameScene::createPlayer(int index,int posX, int posY)
 	return p; //Return the created entity
 }
 
+/// <summary>
+/// 
+/// </summary>
+/// <param name="index"></param>
+/// <param name="posX"></param>
+/// <param name="posY"></param>
+/// <returns></returns>
+Entity * GameScene::createAI(int index, int posX, int posY)
+{
+	auto ai = new Entity("AI");
+	ai->addComponent("Pos", new PositionComponent(0, 0));
+
+	auto behaviour = new AIComponent();
+	Scene::systems()["AI"]->addComponent(behaviour);
+
+	return nullptr;
+}
+
 void GameScene::draw(SDL_Renderer & renderer)
 {
 	SDL_Rect rect;

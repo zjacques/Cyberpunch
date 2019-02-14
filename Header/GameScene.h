@@ -7,6 +7,7 @@
 #include "AttackSystem.h"
 #include "PlayerPhysicsComponent.h"
 #include "PlayerInputComponent.h"
+#include "AIComponent.h"
 
 class GameScene : public Scene
 {
@@ -16,10 +17,13 @@ public:
 	void stop();
 	void update(double dt);
 	Entity* createPlayer(int index, int posX, int posY);
+	Entity* createAI(int index, int posX, int posY);
 	void draw(SDL_Renderer& renderer);
 	void handleInput(InputSystem& input);
 private:
 	std::vector<Entity*> m_localPlayers;
+	std::vector<Entity*> m_AIPlayers;
+	std::vector<InputSystem*> m_localInputs;
 	int m_numOfLocalPlayers;
 	PickUp m_pickUp;
 	//Physics variables

@@ -7,7 +7,6 @@ Game::Game(int fps) :
 	m_quit(false),
 	m_resources("./Resources/")
 {
-
 	//Create our systems and add them to our system map
 	m_systems["Render"] = new RenderSystem();
 	m_systems["Animation"] = new AnimationSystem();
@@ -46,6 +45,17 @@ void Game::processEvents(SDL_Event& e)
 		{
 			//Set our bool to true
 			m_quit = true;
+		}
+
+		//If keydown event
+		if (e.type == SDL_KEYDOWN)
+		{
+			//If key is escape
+			if (e.key.keysym.sym == SDLK_ESCAPE)
+			{
+				//Exit game
+				m_quit = true;
+			}
 		}
 	}
 }

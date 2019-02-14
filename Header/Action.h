@@ -2,18 +2,18 @@
 #define ACTION_H
 
 #include "BehaviourTree.h"
-#include "MovementSystem.h"
+
 
 class Action : public BehaviourTree::Node
 {
 private:
-	//MovementSystem * m_moveSystem;
+
 public:
-	MovementSystem * m_moveSystem;
+	//MovementSystem * m_moveSystem;
 	std::string m_name;
 	int successRate;
 	Action(const std::string newName, int p) : m_name(newName), successRate(p) {}
-	void addMovementSystem(MovementSystem * m) { m_moveSystem = m; }
+	//void addMovementSystem(MovementSystem * m) { m_moveSystem = m; }
 private:
 	virtual bool run() override
 	{
@@ -39,7 +39,7 @@ class WalkLeftAction : public Action
 		{
 			std::cout << "Walking left" << std::endl;
 			//Move the player left
-			m_moveSystem->Left();
+			//m_moveSystem->Left();
 			return true;
 		}
 		return false;
@@ -58,7 +58,7 @@ class WalkRightAction : public Action
 		if (std::rand() % 100 < successRate)
 		{
 			std::cout << "Walking right" << std::endl;
-			m_moveSystem->Right();
+			//m_moveSystem->Right();
 			return true;
 		}
 		return false;
@@ -77,7 +77,7 @@ class JumpAction : public Action
 		if (std::rand() % 100 < successRate)
 		{
 			std::cout << "Jump" << std::endl;
-			m_moveSystem->Jump();
+			//m_moveSystem->Jump();
 			return true;
 		}
 		return false;
