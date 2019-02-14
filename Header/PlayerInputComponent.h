@@ -31,6 +31,10 @@ public:
 		{
 			m_currentCMD = &m_kickCMD;
 		}
+		else if (isButtonPressed("STICKDOWN"))
+		{
+			m_currentCMD = &m_phaseDownCMD;
+		}
 		else if (isButtonHeld("STICKLEFT") || isButtonHeld("STICKDOWNLEFT") || isButtonHeld("STICKUPLEFT"))
 		{
 			m_currentCMD = &m_moveLeftCMD;
@@ -46,44 +50,6 @@ public:
 			auto entity = static_cast<Entity*>(e);
 			m_currentCMD->execute(*entity);
 		}
-
-
-
-		//if (input.isButtonHeld("STICKRIGHT") || input.isButtonHeld("STICKDOWNRIGHT") || input.isButtonHeld("STICKUPRIGHT"))
-		//{
-		//	m_moveRightCMD.execute(*m_moveSystem);
-		//}
-		//if (input.isButtonHeld("STICKLEFT") || input.isButtonHeld("STICKDOWNLEFT") || input.isButtonHeld("STICKUPLEFT"))
-		//{
-		//	m_moveLeftCMD.execute(*m_moveSystem);
-		//}
-		////Upercut
-		//if (input.isButtonHeld("STICKUP") && input.isButtonPressed("XBTN"))
-		//{
-		//	//if on the ground upercut an enemy
-		//	//if (m_canJump)
-		//	//	upperCut();
-		//	//else //If in air punch above you
-		//	//	punchUp();
-		//}
-
-		////else if (input.isButtonPressed("XBTN"))
-		////{
-		////	punch();
-		////}
-		////if (input.isButtonPressed("ABTN"))
-		////{
-		////	kick();
-		////}
-
-		//if (input.isButtonPressed("STICKDOWN"))
-		//{
-		//	//If we can fall, call our jump down command
-		//	if (m_canFall)
-		//	{
-		//		m_jumpDwnCMD.execute(*m_moveSystem);
-		//	}
-		//}
 	}
 
 private:
@@ -94,6 +60,7 @@ private:
 	PunchCommand m_punchCMD;
 	KickCommand m_kickCMD;
 	UppercutCommand m_uppercutCMD;
+	PhaseDownCommand m_phaseDownCMD;
 	Command* m_currentCMD;
 };
 

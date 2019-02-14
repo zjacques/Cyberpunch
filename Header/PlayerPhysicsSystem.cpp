@@ -23,8 +23,10 @@ void PlayerPhysicsSystem::update(double dt)
 		//if we are to move, call move and the direction to move (-1, 1)
 		if (p->m_desiredVel.x != 0)
 			p->move(p->m_desiredVel.x);
-		if (p->m_desiredVel.y != 0)
-			p->moveUp(p->m_desiredVel.y);
+		if (p->m_desiredVel.y == -1)
+			p->moveUp();
+		if (p->m_desiredVel.y == 1)
+			p->moveDown();
 
 		if (p->m_desiredVel.x == 0)
 			p->m_currentVel.x *= .98f;

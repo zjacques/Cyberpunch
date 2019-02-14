@@ -73,7 +73,7 @@ public:
 			auto phys = static_cast<PlayerPhysicsComponent*>(&e.getComponent("Player Physics"));
 
 			auto tag = "Attack";
-			auto offset = Vector2f(phys->isMovingLeft() ? -40 : 40, phys->isGravityFlipped() ? -12.5f : 12.5f);
+			auto offset = Vector2f(phys->isMovingLeft() ? -40 : 40, phys->isGravityFlipped() ? 12.5f : -12.5f);
 
 			hit->attack(offset, Vector2f(30, 25), e, tag, .175f, 0);
 			hit->setAttackProperties(2, phys->isMovingLeft() ? -250 : 250, phys->isGravityFlipped() ? -30 : 30);
@@ -95,7 +95,7 @@ public:
 			auto phys = static_cast<PlayerPhysicsComponent*>(&e.getComponent("Player Physics"));
 
 			auto tag = "Attack";
-			auto offset = Vector2f(phys->isMovingLeft() ? -50 : 50, phys->isGravityFlipped() ? 12.5f : -12.5f);
+			auto offset = Vector2f(phys->isMovingLeft() ? -50 : 50, phys->isGravityFlipped() ? -12.5f : 12.5f);
 
 			hit->attack(offset, Vector2f(50, 25), e, tag, .4f, 0);
 			hit->setAttackProperties(5, phys->isMovingLeft() ? -300 : 300, phys->isGravityFlipped() ? -45 : 45);
@@ -117,10 +117,31 @@ public:
 			auto phys = static_cast<PlayerPhysicsComponent*>(&e.getComponent("Player Physics"));
 
 			auto tag = "Attack";
-			auto offset = Vector2f(phys->isMovingLeft() ? -37.5f : 37.5f, phys->isGravityFlipped() ? 12.5f : -12.5f);
+			auto offset = Vector2f(phys->isMovingLeft() ? -37.5f : 37.5f, 0);
 
 			hit->attack(offset, Vector2f(25, 45), e, tag, .4f, 0);
 			hit->setAttackProperties(5, phys->isMovingLeft() ? -10 : 10, phys->isGravityFlipped() ? -75 : 75);
+		}
+	}
+};
+
+class PhaseDownCommand : public Command
+{
+public:
+	PhaseDownCommand() {}
+	void execute(Entity& e)
+	{
+		//get the attack component from the entity
+		auto hit = static_cast<AttackComponent*>(&e.getComponent("Attack"));
+
+		if (hit->attackActive() == false)
+		{
+			auto phys = static_cast<PlayerPhysicsComponent*>(&e.getComponent("Player Physics"));
+
+			if (phys->canJump())
+			{
+				phys->jumpDown();
+			}
 		}
 	}
 };

@@ -14,7 +14,8 @@ public:
 	void moveLeft();
 	void moveRight();
 	void move(int direction);
-	void moveUp(int direction);
+	void moveUp();
+	void moveDown();
 	void damage(int dmg) { m_dmgPercentage += dmg; };
 	void applyDamageImpulse(float x, float y);
 	void flipGravity();
