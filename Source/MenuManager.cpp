@@ -3,6 +3,10 @@
 MenuManager::MenuManager() :
 	m_current(nullptr)
 {
+	if (TTF_Init() < 0)
+	{
+		printf("TTF_Init: %s\n", TTF_GetError());
+	}
 	m_scenes["Main Menu"] = new MainMenuScene();
 	m_scenes["Options"] = new OptionsScene();
 	m_scenes["Game"] = new GameScene();
@@ -50,8 +54,14 @@ void MenuManager::setResourceHandler(ResourceHandler & resources)
 	{
 		scene.second->setResourceHandler(resources);
 	}
+}
 
-	//m_scenes["Main Menu"]->setResourceHandler(resources);
+void MenuManager::setSystemPtr(std::map<std::string, System*>& systems)
+{
+	for (auto& scene : m_scenes)
+	{
+		scene.second->setSystemsPtr(systems);
+	}
 }
 
 void MenuManager::setScene(std::string scene)

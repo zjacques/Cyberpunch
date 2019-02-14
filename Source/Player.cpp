@@ -4,7 +4,6 @@
 Player::Player() :
 	m_canJump(false),
 	m_gravFlipped(false),
-	m_moveSystem(nullptr),
 	m_canFall(false),
 	m_falling(false),
 	m_movingL(false),
@@ -79,8 +78,6 @@ void Player::createPlayer(Box2DBridge& world, PhysicsSystem& system)
 
 void Player::deletePlayer()
 {
-	delete m_moveSystem;
-	m_moveSystem = nullptr;
 	m_canJump = false;
 	m_canFall = false;
 	m_gravFlipped = false;
@@ -100,10 +97,6 @@ void Player::deletePlayer()
 
 void Player::update(double dt)
 {
-	if (nullptr != m_moveSystem)
-	{
-		m_moveSystem->update(dt);
-	}
 
 	//Check if we can punch
 	checkForPunch(dt);
@@ -226,12 +219,6 @@ void Player::draw(SDL_Renderer & renderer)
 
 void Player::handleInput(InputSystem& input)
 {
-	if (nullptr == m_moveSystem)
-	{
-		m_moveSystem = new MovementSystem(&input);
-		m_moveSystem->addPlayer(this);
-	}
-	bool buttonPressed = false;
 	//Get the current velocity of the body
 	m_currentVel = m_physComponent.m_body->getBody()->GetLinearVelocity();
 
@@ -241,57 +228,48 @@ void Player::handleInput(InputSystem& input)
 	if (m_stunned == false)
 	{
 
-		if (input.isButtonPressed("YBTN"))
-		{
-			if (m_canJump)
-			{
-				m_jumpCMD.execute(*m_moveSystem);
-				buttonPressed = true;
-			}
-		}
-	
-		if (input.isButtonHeld("STICKRIGHT") || input.isButtonHeld("STICKDOWNRIGHT") || input.isButtonHeld("STICKUPRIGHT"))
-		{
-			m_moveRightCMD.execute(*m_moveSystem);
-			buttonPressed = true;
-		}
-		if (input.isButtonHeld("STICKLEFT") || input.isButtonHeld("STICKDOWNLEFT") || input.isButtonHeld("STICKUPLEFT"))
-		{
-			m_moveLeftCMD.execute(*m_moveSystem);
-			buttonPressed = true;
-		}
-		//Upercut
-		if (input.isButtonHeld("STICKUP") && input.isButtonPressed("XBTN"))
-		{
-			//if on the ground upercut an enemy
-			if (m_canJump)
-				upperCut();
-			else //If in air punch above you
-				punchUp();
+		//if (input.isButtonPressed("YBTN"))
+		//{
+		//	if (m_canJump)
+		//	{
+		//		m_jumpCMD.execute(*m_moveSystem);
+		//	}
+		//}
+		//if (input.isButtonHeld("STICKRIGHT") || input.isButtonHeld("STICKDOWNRIGHT") || input.isButtonHeld("STICKUPRIGHT"))
+		//{
+		//	m_moveRightCMD.execute(*m_moveSystem);
+		//}
+		//if (input.isButtonHeld("STICKLEFT") || input.isButtonHeld("STICKDOWNLEFT") || input.isButtonHeld("STICKUPLEFT"))
+		//{
+		//	m_moveLeftCMD.execute(*m_moveSystem);
+		//}
+		////Upercut
+		//if (input.isButtonHeld("STICKUP") && input.isButtonPressed("XBTN"))
+		//{
+		//	//if on the ground upercut an enemy
+		//	if (m_canJump)
+		//		upperCut();
+		//	else //If in air punch above you
+		//		punchUp();
+		//}
 
-			buttonPressed = true;
-		}
+		//else if (input.isButtonPressed("XBTN"))
+		//{
+		//	punch();
+		//}
+		//if (input.isButtonPressed("ABTN"))
+		//{
+		//	kick();
+		//}
 
-		else if (input.isButtonPressed("XBTN"))
-		{
-			punch();
-			buttonPressed = true;
-		}
-		if (input.isButtonPressed("ABTN"))
-		{
-			kick();
-			buttonPressed = true;
-		}
-
-		if (input.isButtonPressed("STICKDOWN"))
-		{
-			//If we can fall, call our jump down command
-			if (m_canFall)
-			{
-				m_jumpDwnCMD.execute(*m_moveSystem);
-				buttonPressed = true;
-			}
-		}
+		//if (input.isButtonPressed("STICKDOWN"))
+		//{
+		//	//If we can fall, call our jump down command
+		//	if (m_canFall)
+		//	{
+		//		m_jumpDwnCMD.execute(*m_moveSystem);
+		//	}
+		//}
 	}
 
 	if (m_desiredVel.x == 0)

@@ -24,9 +24,12 @@ public:
 	std::string getNewScene() { return m_stgt; }
 	void resetSceneChange() { m_cs = false; }
 	void setResourceHandler(ResourceHandler& resources) { m_resources = &resources; }
+	void setSystemsPtr(std::map<std::string, System*>& map) { m_systems = &map; }
 	ResourceHandler& resources() { return *m_resources; }
+	std::map<std::string, System*>& systems() { return *m_systems; };
 private:
 	ResourceHandler * m_resources;
+	std::map<std::string, System*> * m_systems;
 	std::string m_stgt;
 	bool m_cs;
 };

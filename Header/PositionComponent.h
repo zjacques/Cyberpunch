@@ -2,7 +2,7 @@
 #include "Component.h"
 #include "Vector2f.h"
 
-class PositionComponent
+class PositionComponent : public Component
 {
 public:
 	PositionComponent(float x, float y) : position(x, y) {}

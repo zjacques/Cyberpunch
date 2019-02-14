@@ -81,8 +81,13 @@
       <AdditionalIncludeDirectories>$(projectDir)/Libraries/SDL2/include/;$(projectDir)/Libraries/;$(projectDir)/Header/;$(projectDir)/Libraries/nlohmann;$(projectDir)/Libraries/SDL2_net/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
+<<<<<<< HEAD
       <AdditionalLibraryDirectories>$(projectDir)/Libraries/SDL2/lib/;$(projectDir)/Libraries/Box2D/lib/;$(projectDir)/Libraries/SDL_image/lib/;$(projectDir)/Libraries/SDL2_net/lib/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_net.lib;SDL2_image.lib;Box2D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+=======
+      <AdditionalLibraryDirectories>$(projectDir)/Libraries/SDL2/lib/;$(projectDir)/Libraries/Box2D/lib/;$(projectDir)/Libraries/SDL_TTF/lib/;$(projectDir)/Libraries/SDL_image/lib/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;Box2D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+>>>>>>> master
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
@@ -124,12 +129,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\ClientSocket.cpp" />
+    <ClCompile Include="Header\PlayerPhysicsComponent.cpp" />
+    <ClCompile Include="Header\PlayerPhysicsSystem.cpp" />
+    <ClCompile Include="Source\AIComponent.cpp" />
+    <ClCompile Include="Source\AISystem.cpp" />
+    <ClCompile Include="Source\Button.cpp" />
     <ClCompile Include="Source\CollisionListener.cpp" />
     <ClCompile Include="Source\OnlineInputSystem.cpp" />
     <ClCompile Include="Source\OnlineSendComponent.cpp" />
     <ClCompile Include="Source\PickUp.cpp" />
     <ClCompile Include="Source\Platform.cpp" />
-    <ClCompile Include="Source\MovementSystem.cpp" />
     <ClCompile Include="Source\AnimationSystem.cpp" />
     <ClCompile Include="Source\AnimationComponent.cpp" />
     <ClCompile Include="Source\GameScene.cpp" />
@@ -147,16 +156,23 @@
     <ClCompile Include="Source\Vector2f.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Header\Action.h" />
+    <ClInclude Include="Header\AIComponent.h" />
+    <ClInclude Include="Header\AISystem.h" />
     <ClInclude Include="Header\AnimationComponent.h" />
     <ClInclude Include="Header\AnimationSystem.h" />
+    <ClInclude Include="Header\BehaviourTree.h" />
     <ClInclude Include="Header\Box2DBridge.h" />
     <ClInclude Include="Header\ClientSocket.h" />
+    <ClInclude Include="Header\Button.h" />
     <ClInclude Include="Header\CollisionListener.h" />
-    <ClInclude Include="Header\CommandPattern.h" />
+    <ClInclude Include="Header\Commands.h" />
     <ClInclude Include="Header\Component.h" />
     <ClInclude Include="Header\Game.h" />
     <ClInclude Include="Header\Entity.h" />
-    <ClInclude Include="Header\MovementSystem.h" />
+    <ClInclude Include="Header\PlayerInputComponent.h" />
+    <ClInclude Include="Header\PlayerInputSystem.h" />
+    <ClInclude Include="Header\PlayerPhysicsComponent.h" />
     <ClInclude Include="Header\GameScene.h" />
     <ClInclude Include="Header\MainMenuScene.h" />
     <ClInclude Include="Header\MenuManager.h" />
@@ -166,6 +182,7 @@
     <ClInclude Include="Header\PickUp.h" />
     <ClInclude Include="Header\Platform.h" />
     <ClInclude Include="Header\Player.h" />
+    <ClInclude Include="Header\PlayerPhysicsSystem.h" />
     <ClInclude Include="Header\RenderComponent.h" />
     <ClInclude Include="Header\RenderSystem.h" />
     <ClInclude Include="Header\InputComponent.h" />

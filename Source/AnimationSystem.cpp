@@ -1,6 +1,6 @@
 #include "AnimationSystem.h"
 
-void AnimationSystem::addComponents(Component * comp)
+void AnimationSystem::addComponent(Component * comp)
 {
 	m_components.push_back(comp);
 }

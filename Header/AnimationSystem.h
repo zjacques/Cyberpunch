@@ -6,7 +6,7 @@ class AnimationSystem : public System
 {
 public:
 	AnimationSystem() {};
-	void addComponents(Component * comp);
+	void addComponent(Component * comp);
 	void update(double dt);
 private:
 };

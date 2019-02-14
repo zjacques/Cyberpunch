@@ -7,29 +7,25 @@ Game::Game(int fps) :
 	m_quit(false),
 	m_resources("./Resources/")
 {
-	testComponent = new RenderComponent();
-	testSystem = new RenderSystem();
 
-	testSystem->addComponent(testComponent);
-
-	m_input.addComponent(&m_inputComp);
+	//Create our systems and add them to our system map
+	m_systems["Render"] = new RenderSystem();
+	m_systems["Animation"] = new AnimationSystem();
+	m_systems["Input"] = new InputSystem();
+	m_systems["Physics"] = new PhysicsSystem();
+	m_systems["Player Physics"] = new PlayerPhysicsSystem();
+	m_systems["AI"] = new AISystem();
 }
 
 void Game::update(double dt)
 {
-	testSystem->update(dt);
-
-	//Updat ethe input handler
-	m_input.update(dt);
-
 	//Update the menu manager
 	m_mManager.update(dt);
 }
 
 void Game::draw()
 {
-	//Clear the screen with a colour of black
-	SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
+	//Clear the screen
 	SDL_RenderClear(m_renderer);
 
 	//Draw the current scene
@@ -56,7 +52,6 @@ void Game::processEvents(SDL_Event& e)
 
 void Game::run()
 {
-	m_inputComp.initialiseJoycon(0);
 
 	//Create our SDL event variable
 	SDL_Event e;
@@ -73,8 +68,11 @@ void Game::run()
 		//Process any events that have occured
 		processEvents(e);
 
+		//Get the input system and pass it to the handleInput
+		auto input = static_cast<InputSystem*>(m_systems["Input"]);
+
 		//handle input in the scenes
-		m_mManager.handleInput(m_input);
+		m_mManager.handleInput(*input);
 
 		//Update the game
 		update(dt);
@@ -112,6 +110,11 @@ bool Game::init()
 		}
 		else
 		{
+			if (TTF_Init() < 0)
+			{
+				printf("TTF_Init: %s\n", TTF_GetError());
+			}
+
 			//Initialize PNG loading 
 			int imgFlags = IMG_INIT_PNG; 
 			if( !( IMG_Init( imgFlags ) & imgFlags ) )
@@ -134,7 +137,9 @@ bool Game::loadMedia()
 	//Load any media here, we call our resource manager here
 	m_resources.loadTextures(*m_renderer);
 	m_mManager.setResourceHandler(m_resources);
+	m_mManager.setSystemPtr(m_systems);
 
+	//Set the scene after the systems ptr has been set and the resource manager has been passed over
 	m_mManager.setScene("Game");
 
 	return success;
@@ -145,6 +150,8 @@ void Game::close()
 	//Destroy window
 	SDL_DestroyWindow(m_window);
 	m_window = NULL;
+
+	TTF_Quit();
 
 	//Quit SDL subsystems
 	SDL_Quit();

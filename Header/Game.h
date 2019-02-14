@@ -1,4 +1,6 @@
-#pragma once
+#ifndef GAME_H
+#define GAME_H
+
 #include <SDL.h>
 #include <stdio.h>
 #include <iostream>
@@ -7,13 +9,14 @@
 #include <bitset>
 #include <thread>
 
-
-#include "InputSystem.h"
 #include "MenuManager.h" //For menus
 #include "ResourceManager.h" //For resource loading
-#include "Component.h"
-#include "RenderComponent.h"
+
+//Systems
+#include "AnimationSystem.h"
 #include "RenderSystem.h"
+#include "PlayerPhysicsSystem.h"
+#include "AISystem.h"
 
 class Game
 {
@@ -50,20 +53,14 @@ private:
 
 	float m_msPerFrame;
 	bool m_quit;
-	InputSystem m_input;
-	InputComponent m_inputComp;
-	
 
 	//Our menu manager to handle our scenes
 	MenuManager m_mManager;
 	//Our resource handler
 	ResourceHandler m_resources;
 
-	//Components
-	RenderComponent * testComponent;
-
-	//Systems
-	RenderSystem * testSystem;
-
-	//Entities
+	//Our map of systems
+	std::map<std::string, System*> m_systems;
 };
+
+#endif

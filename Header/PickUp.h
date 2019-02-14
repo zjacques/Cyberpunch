@@ -4,8 +4,6 @@
 #include "SDL.h"
 #include "Box2DBridge.h"
 #include "PhysicsSystem.h"
-#include "MovementSystem.h"
-#include "CommandPattern.h"
 #include "ResourceManager.h"
 
 class PickUp
