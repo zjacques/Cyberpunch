@@ -30,6 +30,7 @@ void Game::draw()
 
 	//Draw the current scene
 	m_mManager.draw(*m_renderer);
+	//testSystem->render(*m_renderer);
 
 	//Render everything drawn to the renderer
 	SDL_RenderPresent(m_renderer);

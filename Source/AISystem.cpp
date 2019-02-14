@@ -7,6 +7,8 @@
 void AISystem::addComponent(Component * c)
 {
 	m_components.push_back(c);
+	initialiseActions();
+	createTree();
 }
 
 /// <summary>
@@ -86,5 +88,5 @@ void AISystem::runTree()
 /// <param name="dt"></param>
 void AISystem::update(double dt)
 {
-
+	runTree();
 }
