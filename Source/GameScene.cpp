@@ -109,10 +109,34 @@ Entity * GameScene::createPlayer(int index,int posX, int posY)
 Entity * GameScene::createAI(int index, int posX, int posY)
 {
 	auto ai = new Entity("AI");
-	ai->addComponent("Pos", new PositionComponent(0, 0));
+	auto pos = new PositionComponent(0, 0);
+	ai->addComponent("Pos", pos);
 
 	auto behaviour = new AIComponent();
 	Scene::systems()["AI"]->addComponent(behaviour);
+
+	//Add the players attack component to the attack system
+	Scene::systems()["Attack"]->addComponent(&ai->getComponent("Attack"));
+
+	//Create the physics component and set up the bodies
+	auto phys = new PlayerPhysicsComponent(&ai->getComponent("Pos"));
+	phys->m_body = m_physicsWorld.createBox(posX, posY, 50, 50, false, false, b2BodyType::b2_dynamicBody);
+	phys->m_jumpSensor = m_physicsWorld.createBox(posX, posY + 22.5f, 45, 5, false, false, b2BodyType::b2_dynamicBody);
+
+	m_physicsWorld.addProperties(*phys->m_body, 1, 0.05f, 0.0f, false, new PhysicsComponent::ColData("Player Body", ai));
+	m_physicsWorld.addProperties(*phys->m_jumpSensor, 1, 0.05f, 0.0f, true, new PhysicsComponent::ColData("Jump Sensor", ai));
+
+	//Set the gravity scale to 2, this makes the player less floaty
+	phys->m_body->getBody()->SetGravityScale(2.0f);
+
+	//Create the joint between the player and the jump sensor
+	phys->createJoint(m_physicsWorld);
+
+	//Add the components to the entity
+	ai->addComponent("Player Physics", phys);
+
+	//Add the physics component to the playe rphysics system
+	Scene::systems()["Player Physics"]->addComponent(phys);
 
 	return nullptr;
 }

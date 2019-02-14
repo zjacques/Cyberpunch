@@ -5,6 +5,7 @@
 #include "PickUp.h"
 #include "Entity.h"
 #include "AttackSystem.h"
+#include "PhysicsComponent.h"
 #include "PlayerPhysicsComponent.h"
 #include "PlayerInputComponent.h"
 #include "AIComponent.h"
