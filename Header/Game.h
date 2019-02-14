@@ -17,6 +17,7 @@
 #include "RenderSystem.h"
 #include "PlayerPhysicsSystem.h"
 #include "AISystem.h"
+#include "AttackSystem.h"
 
 class Game
 {
