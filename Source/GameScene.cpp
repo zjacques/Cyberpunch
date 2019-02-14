@@ -40,6 +40,9 @@ void GameScene::start()
 		//Add the properties of the physics body
 		m_physicsWorld.addProperties(*newPlat.getPhysComp().m_body, 0, .1f, 0, false, new PhysicsComponent::ColData(newPlat.getTag(), &newPlat));
 
+		newPlat.setTexture(Scene::resources(), "Green");
+		newPlat.setAmountOfTiles(); //Set the amount of tiles for the platform/Floor
+
 		m_platforms.push_back(newPlat); //Create a new platform
 	}
 }
@@ -119,6 +122,7 @@ void GameScene::draw(SDL_Renderer & renderer)
 	{
 		SDL_SetRenderDrawColor(&renderer, 255, 0, 0, 255);
 		auto phys = static_cast<PlayerPhysicsComponent*>(&m_localPlayers.at(i)->getComponent("Player Physics"));
+		auto hit = static_cast<AttackComponent*>(&m_localPlayers.at(i)->getComponent("Attack"));
 		SDL_Rect rect;
 		rect.w = phys->m_body->getSize().x;
 		rect.h = phys->m_body->getSize().y;
@@ -132,6 +136,16 @@ void GameScene::draw(SDL_Renderer & renderer)
 		rect.y = phys->m_jumpSensor->getPosition().y - (rect.h / 2);
 		SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
 		SDL_RenderDrawRect(&renderer, &rect);
+
+		if (nullptr != hit->m_currentAttack)
+		{
+			rect.w = hit->m_currentAttack->m_body->getSize().x;
+			rect.h = hit->m_currentAttack->m_body->getSize().y;
+			rect.x = hit->m_currentAttack->m_body->getPosition().x - (rect.w / 2);
+			rect.y = hit->m_currentAttack->m_body->getPosition().y - (rect.h / 2);
+			SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
+			SDL_RenderDrawRect(&renderer, &rect);
+		}
 	}
 	
 
