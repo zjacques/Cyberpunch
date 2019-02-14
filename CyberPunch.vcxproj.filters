@@ -105,7 +105,6 @@
     <ClCompile Include="Source\PickUp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-<<<<<<< Updated upstream
     <ClCompile Include="Source\Button.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -124,17 +123,6 @@
     <ClCompile Include="Source\AnimationSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
-=======
-    <ClInclude Include="Source\AIComponent.cpp">
-      <Filter>Source Files\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AISystem.cpp">
-      <Filter>Source Files\Systems</Filter>
-    </ClInclude>
-        <ClInclude Include="Source\Button.cpp">
-      <Filter>Source Files</Filter>
-    </ClInclude>
->>>>>>> Stashed changes
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\Game.h">
@@ -215,13 +203,11 @@
     <ClInclude Include="Header\PickUp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-<<<<<<< Updated upstream
     <ClInclude Include="Header\Button.h">
       <Filter>Header Files</Filter>
-=======
+    </ClInclude>
     <ClInclude Include="Header\AIComponent.h">
       <Filter>Header Files\Components</Filter>
->>>>>>> Stashed changes
     </ClInclude>
     <ClInclude Include="Header\PlayerPhysicsComponent.h">
       <Filter>Header Files\Components</Filter>
