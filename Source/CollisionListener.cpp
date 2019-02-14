@@ -1,6 +1,7 @@
 #include "CollisionListener.h"
 #include "Entity.h"
 #include "PlayerPhysicsComponent.h"
+#include "AttackComponent.h"
 #include "Platform.h"
 
 void CollisionListener::BeginContact(b2Contact * contact)
@@ -88,83 +89,54 @@ void CollisionListener::EndContact(b2Contact * contact)
 
 void CollisionListener::checkPlayerAttack(b2Contact * contact)
 {
-	//Cant handle attacks with othe rplayers yet, must get the player entities and convert them to Attacking/physics components etc..
-	//auto dataA = static_cast<PhysicsComponent::ColData *>(contact->GetFixtureA()->GetUserData());
-	//auto dataB = static_cast<PhysicsComponent::ColData *>(contact->GetFixtureB()->GetUserData());
-	//PlayerPhysicsComponent* attackingP = nullptr;
-	//PlayerPhysicsComponent* otherP = nullptr;
-	//float xImpulse;
-	//float yImpulse;
-	//int dmgP;
-	//bool applyDmg = false;
+	//Cant handle attacks with other players yet, must get the player entities and convert them to Attacking/physics components etc..
+	auto dataA = static_cast<PhysicsComponent::ColData *>(contact->GetFixtureA()->GetUserData());
+	auto dataB = static_cast<PhysicsComponent::ColData *>(contact->GetFixtureB()->GetUserData());
+	Entity* attackingP = nullptr;
+	Entity* otherP = nullptr;
+	PlayerPhysicsComponent* otherPPhys = nullptr;
+	AttackComponent* attackHit = nullptr;
+	float xImpulse;
+	float yImpulse;
+	int dmgP;
+	bool applyDmg = false;
 
 
-	////If a player has attacked and hit a player
-	//if ((dataA->Tag() == "Attack Left" && dataB->Tag() == "Player Body")
-	//|| (dataB->Tag() == "Attack Left" && dataA->Tag() == "Player Body")
-	//|| (dataB->Tag() == "Attack Right" && dataA->Tag() == "Player Body")
-	//|| (dataA->Tag() == "Attack Right" && dataB->Tag() == "Player Body"))
-	//{
-	//	auto direction = dataA->Tag() == "Attack Left" || dataA->Tag() == "Attack Right" ? dataA->Tag() : dataB->Tag();
-	//	//get our player pointers
-	//	attackingP = static_cast<Player*>((dataA->Tag() == "Attack Left"  || dataA->Tag() == "Attack Right")? dataA->Data() : dataB->Data());
-	//	otherP = static_cast<Player*>(dataA->Tag() == "Player Body" ? dataA->Data() : dataB->Data());
+	//If a player has attacked and hit a player
+	if ((dataA->Tag() == "Attack" && dataB->Tag() == "Player Body")
+	|| (dataB->Tag() == "Attack" && dataA->Tag() == "Player Body"))
+	{
+		//get our player pointers
+		attackingP = static_cast<Entity*>(dataA->Tag() == "Attack" ? dataA->Data() : dataB->Data());
+		otherP = static_cast<Entity*>(dataA->Tag() == "Player Body" ? dataA->Data() : dataB->Data());
+		otherPPhys = static_cast<PlayerPhysicsComponent*>(&otherP->getComponent("Player Physics"));
 
-	//	if (attackingP == otherP)
-	//		return;
+		if (attackingP == otherP)
+			return;
 
-	//	//If the attacking player punched
-	//	if (attackingP->attacked() && !attackingP->stunned())
-	//	{
-	//		applyDmg = true;
-	//		dmgP = attackingP->punched() ? 2 : 5;
-	//		if(direction == "Attack Right")
-	//			xImpulse = dmgP == 2 ? 250 : 300;
-	//		else
-	//			xImpulse = dmgP == 2 ? -250 : -300;
+		auto attackPhys = static_cast<PlayerPhysicsComponent*>(&attackingP->getComponent("Player Physics"));
+		attackHit = static_cast<AttackComponent*>(&attackingP->getComponent("Attack"));
 
-	//		yImpulse = 0 + (attackingP->punched() ? 30 : 45);
-	//	}
-	//}
-	////If a player has attacked right and hit a player
-	//else if ((dataA->Tag() == "UpperCut Right" && dataB->Tag() == "Player Body")
-	//|| (dataB->Tag() == "UpperCut Right" && dataA->Tag() == "Player Body")
-	//|| (dataB->Tag() == "UpperCut Left" && dataA->Tag() == "Player Body")
-	//|| (dataA->Tag() == "UpperCut Left" && dataB->Tag() == "Player Body"))
-	//{
+		//If the attacking player punched
+		if (attackHit->attacked() && !attackPhys->stunned())
+		{
+			applyDmg = true;
+			dmgP = attackHit->damage(); //Get the damage
+			xImpulse = attackHit->xImpulse();
+			yImpulse = attackHit->yImpulse();
+		}
+	}
 
-	//	auto direction = dataA->Tag() == "UpperCut Left" || dataA->Tag() == "UpperCut Right" ? dataA->Tag() : dataB->Tag();
-	//	//get our player pointers
-	//	attackingP = static_cast<Player*>((dataA->Tag() == "UpperCut Right" || dataA->Tag() == "UpperCut Left") ? dataA->Data() : dataB->Data());
-	//	otherP = static_cast<Player*>(dataA->Tag() == "Player Body" ? dataA->Data() : dataB->Data());
-
-	//	if (attackingP == otherP)
-	//		return;
-
-	//	//If the attacking player punched
-	//	if (attackingP->attacked() && !attackingP->stunned())
-	//	{
-	//		applyDmg = true;
-	//		dmgP = 4;
-	//		if (direction == "UpperCut Left")
-	//			xImpulse = -10;
-	//		else
-	//			xImpulse = 10;
-	//		//Make the impulse on the y higher to knock up the player
-	//		yImpulse = !m_gravFlipped ? 75 : -75;
-	//	}
-	//}
-
-	////If the player was not found return
-	//if (nullptr == attackingP || nullptr == otherP)
-	//	return;
-	//else if(applyDmg)
-	//{
-	//	otherP->damage(dmgP); //Add damage of the punch to the other players damage percentage
-	//	otherP->applyDmgImpulse(xImpulse, yImpulse); //Knock back the other player back
-	//	otherP->stun();
-	//	attackingP->deleteAttackBody();
-	//}
+	//If the player was not found return
+	if (nullptr == attackingP || nullptr == otherP)
+		return;
+	else if(applyDmg)
+	{
+		otherPPhys->damage(dmgP); //Add damage of the punch to the other players damage percentage
+		otherPPhys->applyDamageImpulse(xImpulse, yImpulse); //Knock back the other player back
+		otherPPhys->stun();
+		attackHit->destroyAttack() = true;
+	}
 
 }
 
@@ -178,23 +150,23 @@ void CollisionListener::PreSolve(b2Contact * contact, const b2Manifold * oldMani
 	if ((dataA->Tag() == "Player Body" && dataB->Tag() == "Platform")
 		|| (dataB->Tag() == "Player Body" && dataA->Tag() == "Platform"))
 	{
-		////Convert the collision data to a player pointer and call the allow jump method
-		//auto player = dataA->Tag() == "Player Body" ? contact->GetFixtureA() : contact->GetFixtureB();
-		//auto platform = dataA->Tag() == "Platform" ? contact->GetFixtureA() : contact->GetFixtureB();
+		//Convert the collision data to a player pointer and call the allow jump method
+		auto player = dataA->Tag() == "Player Body" ? contact->GetFixtureA() : contact->GetFixtureB();
+		auto platform = dataA->Tag() == "Platform" ? contact->GetFixtureA() : contact->GetFixtureB();
 
-		//auto pHeight = player->GetBody()->GetFixtureList()->GetAABB(0).GetExtents().y; //get height of the player
+		auto pHeight = player->GetBody()->GetFixtureList()->GetAABB(0).GetExtents().y; //get height of the player
 
-		////Convert the collision data to a player pointer and call the allow jump method
-		//auto pPtr = static_cast<Player*>(dataA->Tag() == "Player Body" ? dataA->Data() : dataB->Data());
+		//Convert the collision data to a player physics pointer and call the allow jump method
+		auto pPtr = static_cast<PlayerPhysicsComponent*>(dataA->Tag() == "Player Body" ? dataA->Data() : dataB->Data());
 
-		////If the player is jumping up from below a platform, set it sensor to true
-		//if ((!m_gravFlipped && player->GetBody()->GetPosition().y + pHeight > platform->GetBody()->GetPosition().y)
-		//	|| (m_gravFlipped && player->GetBody()->GetPosition().y - pHeight < platform->GetBody()->GetPosition().y)
-		//	|| (pPtr->falling()))
-		//{
-		//	//Set contact as disabled so the player can move through floors
-		//	contact->SetEnabled(false);
-		//}
+		//If the player is jumping up from below a platform, set it sensor to true
+		if ((!m_gravFlipped && player->GetBody()->GetPosition().y + pHeight > platform->GetBody()->GetPosition().y)
+			|| (m_gravFlipped && player->GetBody()->GetPosition().y - pHeight < platform->GetBody()->GetPosition().y)
+			|| (pPtr->falling()))
+		{
+			//Set contact as disabled so the player can move through floors
+			contact->SetEnabled(false);
+		}
 	}
 }
 

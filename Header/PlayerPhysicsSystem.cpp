@@ -32,8 +32,19 @@ void PlayerPhysicsSystem::update(double dt)
 		//Set the velocity of the player
 		p->m_body->getBody()->SetLinearVelocity(p->m_currentVel);
 
-		//Reste desired velocity
+		//Reset desired velocity
 		p->m_desiredVel = b2Vec2(0,0);
+
+		//check if to unstun the player
+		if (p->stunned())
+		{
+			p->stunLeft() -= dt;
+
+			if (p->stunLeft() <= 0)
+			{
+				p->stunned() = false;
+			}
+		}
 	}
 }
 

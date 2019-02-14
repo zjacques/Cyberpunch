@@ -16,6 +16,7 @@ public:
 	void move(int direction);
 	void moveUp(int direction);
 	void damage(int dmg) { m_dmgPercentage += dmg; };
+	void applyDamageImpulse(float x, float y);
 	void flipGravity();
 	void createJoint(Box2DBridge& world);
 
@@ -24,6 +25,9 @@ public:
 	bool& canJump() { return m_canJump; }
 	bool& canFall() { return m_canFall; }
 	bool& falling() { return m_falling; }
+	bool& isGravityFlipped() { return m_gravFlipped; }
+	bool& isMovingLeft() { return m_movingL; }
+	bool& isMovingRight() { return m_movingR; }
 	float& stunLeft() { return m_stunLeft; }
 
 	//Setters

@@ -57,6 +57,18 @@ void PlayerPhysicsComponent::moveRight()
 	m_movingL = false;
 }
 
+void PlayerPhysicsComponent::applyDamageImpulse(float x, float y)
+{
+	auto imp = Vector2f(x, y);
+	//Get the damage multiplier
+	float dmgMultiplier = m_dmgPercentage / 100.0f;
+	auto impulse = Vector2f(x < 0 ? -1 : 1, .75f);
+	impulse = impulse.normalise() * ((impulse * imp) * dmgMultiplier);
+
+	//Apply knockback
+	m_body->getBody()->ApplyLinearImpulse(b2Vec2(impulse.x, -impulse.y), m_body->getBody()->GetWorldCenter(), true);
+}
+
 void PlayerPhysicsComponent::flipGravity()
 {
 	m_gravFlipped = !m_gravFlipped;

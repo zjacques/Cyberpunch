@@ -123,6 +123,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Header\AttackComponent.cpp" />
+    <ClCompile Include="Header\AttackSystem.cpp" />
     <ClCompile Include="Header\PlayerPhysicsComponent.cpp" />
     <ClCompile Include="Header\PlayerPhysicsSystem.cpp" />
     <ClCompile Include="Source\AIComponent.cpp" />
@@ -153,6 +155,8 @@
     <ClInclude Include="Header\AISystem.h" />
     <ClInclude Include="Header\AnimationComponent.h" />
     <ClInclude Include="Header\AnimationSystem.h" />
+    <ClInclude Include="Header\AttackComponent.h" />
+    <ClInclude Include="Header\AttackSystem.h" />
     <ClInclude Include="Header\BehaviourTree.h" />
     <ClInclude Include="Header\Box2DBridge.h" />
     <ClInclude Include="Header\Button.h" />

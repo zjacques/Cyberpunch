@@ -23,6 +23,7 @@
 #include "AISystem.h"
 #include "RenderSystem.h"
 #include "Entity.h"
+#include "AttackSystem.h"
 
 class Game
 {
