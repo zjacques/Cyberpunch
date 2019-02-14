@@ -141,10 +141,10 @@ void GameScene::draw(SDL_Renderer & renderer)
 		SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
 		SDL_RenderDrawRect(&renderer, &rect);
 	}
-	for (int i = 0; i < m_numOfOnlinePlayers; i++)
+	/*for (int i = 0; i < m_numOfOnlinePlayers; i++)
 	{
 		m_onlinePlayers.at(i).draw(renderer);
-	}
+	}*/
 
 	//m_pickUp.draw(renderer);
 }
