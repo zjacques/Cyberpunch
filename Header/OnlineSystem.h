@@ -16,6 +16,7 @@ public:
 	void update(double dt);
 
 	void SendCommands();
+	void ReceiveCommands();
 
 	bool ConnectToServer();
 

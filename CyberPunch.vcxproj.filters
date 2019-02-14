@@ -111,8 +111,6 @@
     <ClCompile Include="Source\OnlineSendComponent.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Source\OnlineInputSystem.cpp">
-    </ClCompile>
     <ClCompile Include="Source\Button.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -139,6 +137,9 @@
     </ClCompile>
     <ClCompile Include="Source\OnlineSystem.cpp">
       <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\OnlineInputComponent.cpp">
+      <Filter>Source Files\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -229,9 +230,6 @@
     <ClInclude Include="Header\PickUp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header\OnlineInputSystem.h">
-      <Filter>Header Files\Systems</Filter>
-    </ClInclude>
     <ClInclude Include="Header\Button.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -270,6 +268,9 @@
     </ClInclude>
     <ClInclude Include="Header\OnlineSystem.h">
       <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\OnlineInputComponent.h">
+      <Filter>Header Files\Components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

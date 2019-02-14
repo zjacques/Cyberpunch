@@ -39,6 +39,25 @@ void OnlineSystem::SendCommands()
 	}
 }
 
+void OnlineSystem::ReceiveCommands()
+{
+	// Check if we've received a message
+	//string receivedMessage = m_inputSocket->checkForIncomingMessages();
+
+	//m_input->m_previous = m_input->m_current; //Set our previous
+
+	/*for (auto const& x : m_input->m_current)
+	{
+		m_input->m_current[x.first] = false;
+	}*/
+
+	// If so then...
+	//if (receivedMessage != "")
+	//{
+	//deserialize(receivedMessage);
+	//}
+}
+
 
 bool OnlineSystem::ConnectToServer()
 {
