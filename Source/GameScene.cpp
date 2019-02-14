@@ -28,6 +28,15 @@ void GameScene::start()
 		exit(-1);
 	}
 
+	//try to create the online system and connect
+	//refactor to another spot once we get the full lobby system going I guess.
+	static_cast<OnlineSystem*>(Scene::systems()["Network"])->ConnectToServer();
+	/*auto net = new OnlineSystem();
+	if (net->ConnectToServer())
+		Scene::systems()["Network"] = net;
+	else
+		delete net;*/
+
 	//Create players for extra inputs
 	for (int i = 0; i < m_numOfLocalPlayers; i++)
 	{
@@ -96,6 +105,15 @@ Entity * GameScene::createPlayer(int index,int posX, int posY)
 
 	//Create the joint between the player and the jump sensor
 	phys->createJoint(m_physicsWorld);
+
+	//Try to add a sender to the server
+	auto netSys = static_cast<OnlineSystem*>(Scene::systems()["Network"]);
+	if (netSys->isConnected)
+	{
+		auto net = new OnlineSendComponent();
+		p->addComponent("Send", net);
+		netSys->addSendingPlayer(net);
+	} //if it can't connect to the server, it didn't need to be online anyway
 
 	//Add the components to the entity
 	p->addComponent("Input", input);

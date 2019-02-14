@@ -134,6 +134,7 @@
     <ClCompile Include="Source\CollisionListener.cpp" />
     <ClCompile Include="Source\OnlineInputSystem.cpp" />
     <ClCompile Include="Source\OnlineSendComponent.cpp" />
+    <ClCompile Include="Source\OnlineSystem.cpp" />
     <ClCompile Include="Source\PickUp.cpp" />
     <ClCompile Include="Source\Platform.cpp" />
     <ClCompile Include="Source\AnimationSystem.cpp" />
@@ -169,6 +170,7 @@
     <ClInclude Include="Header\Component.h" />
     <ClInclude Include="Header\Game.h" />
     <ClInclude Include="Header\Entity.h" />
+    <ClInclude Include="Header\OnlineSystem.h" />
     <ClInclude Include="Header\PlayerInputComponent.h" />
     <ClInclude Include="Header\PlayerInputSystem.h" />
     <ClInclude Include="Header\PlayerPhysicsComponent.h" />

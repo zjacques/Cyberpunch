@@ -5,8 +5,10 @@
 #include "PickUp.h"
 #include "Entity.h"
 #include "AttackSystem.h"
+#include "OnlineSystem.h"
 #include "PlayerPhysicsComponent.h"
 #include "PlayerInputComponent.h"
+#include "OnlineSendComponent.h"
 #include <SDL_net.h>
 
 class GameScene : public Scene

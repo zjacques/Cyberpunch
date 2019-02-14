@@ -1,25 +1,19 @@
 #pragma once
 #include "Component.h"
 #include "InputSystem.h"
-#include <SDL_net.h>
-#include "ClientSocket.h"
-#include "SocketException.h"
 #include <queue>
 
 using std::queue;
-using std::pair;
+using std::string;
 
 class OnlineSendComponent : public Component{
 public:
 	OnlineSendComponent();
 
-	void ConnectToServer();
-	void SerializeInputs(InputSystem& input);
-	void Send();
+	queue<string>* Send();
+	void addCommand(string cmd) { m_commandsToSend.push(cmd); }
 
 private:
 
-
-	ClientSocket* m_outputSocket;
 	queue<string> m_commandsToSend;
 };
