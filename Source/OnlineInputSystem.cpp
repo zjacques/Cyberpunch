@@ -31,12 +31,12 @@ void OnlineInputSystem::update(double dt)
 	// Check if we've received a message
 	//string receivedMessage = m_inputSocket->checkForIncomingMessages();
 
-	m_input->m_previous = m_input->m_current; //Set our previous
+	/*m_input->m_previous = m_input->m_current; //Set our previous
 
 	for (auto const& x : m_input->m_current)
 	{
 		m_input->m_current[x.first] = false;
-	}
+	}*/
 
 	// If so then...
 	//if (receivedMessage != "")
@@ -47,7 +47,7 @@ void OnlineInputSystem::update(double dt)
 
 void OnlineInputSystem::addComponent(Component * component)
 {
-	m_input = static_cast<InputComponent*>(component);
+	//m_input = static_cast<InputComponent*>(component);
 }
 
 void OnlineInputSystem::deserialize(string jsonInput)
@@ -59,7 +59,7 @@ void OnlineInputSystem::deserialize(string jsonInput)
 		vector<string> commands = currentPacket["list"];
 		for (auto iter = commands.begin(); iter != commands.end(); iter++)
 		{
-			m_input->m_current[*iter] = true;
+			//m_input->m_current[*iter] = true;
 		}
 	}
 }

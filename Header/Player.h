@@ -61,7 +61,7 @@ private:
 	bool m_canJump, m_gravFlipped, m_movingL, m_movingR;
 	SDL_Rect m_rect;
 
-	OnlineSendComponent* m_client;
+	//OnlineSendComponent* m_client;
 	bool is_online = false;
 
 	PhysicsSystem* m_physPtr;

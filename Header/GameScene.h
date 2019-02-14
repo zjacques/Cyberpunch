@@ -6,6 +6,7 @@
 #include "Entity.h"
 #include "PlayerPhysicsComponent.h"
 #include "PlayerInputComponent.h"
+#include <SDL_net.h>
 
 class GameScene : public Scene
 {
@@ -23,7 +24,7 @@ private:
 	int m_numOfLocalPlayers;
 	//online
 	std::vector<Player> m_onlinePlayers;
-	std::vector<OnlineInputSystem*> m_onlineInputs;
+	//std::vector<OnlineInputSystem*> m_onlineInputs;
 	int m_numOfOnlinePlayers;
 
 	PickUp m_pickUp;

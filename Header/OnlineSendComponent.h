@@ -4,7 +4,6 @@
 #include <SDL_net.h>
 #include "ClientSocket.h"
 #include "SocketException.h"
-#include "CommandPattern.h"
 #include <queue>
 
 using std::queue;

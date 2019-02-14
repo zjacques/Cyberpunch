@@ -81,13 +81,8 @@
       <AdditionalIncludeDirectories>$(projectDir)/Libraries/SDL2/include/;$(projectDir)/Libraries/;$(projectDir)/Header/;$(projectDir)/Libraries/nlohmann;$(projectDir)/Libraries/SDL2_net/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-<<<<<<< HEAD
-      <AdditionalLibraryDirectories>$(projectDir)/Libraries/SDL2/lib/;$(projectDir)/Libraries/Box2D/lib/;$(projectDir)/Libraries/SDL_image/lib/;$(projectDir)/Libraries/SDL2_net/lib/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_net.lib;SDL2_image.lib;Box2D.lib;%(AdditionalDependencies)</AdditionalDependencies>
-=======
-      <AdditionalLibraryDirectories>$(projectDir)/Libraries/SDL2/lib/;$(projectDir)/Libraries/Box2D/lib/;$(projectDir)/Libraries/SDL_TTF/lib/;$(projectDir)/Libraries/SDL_image/lib/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;Box2D.lib;%(AdditionalDependencies)</AdditionalDependencies>
->>>>>>> master
+      <AdditionalLibraryDirectories>$(projectDir)/Libraries/SDL2/lib/;$(projectDir)/Libraries/Box2D/lib/;$(projectDir)/Libraries/SDL_TTF/lib/;$(projectDir)/Libraries/SDL_image/lib/;$(projectDir)/Libraries/SDL2_net/lib/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_net.lib;SDL2_image.lib;SDL2_ttf.lib;Box2D.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>

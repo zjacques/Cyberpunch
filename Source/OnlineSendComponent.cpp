@@ -31,7 +31,7 @@ void OnlineSendComponent::SerializeInputs(InputSystem& input)
 	bool isFirst = true;
 	std::vector<string> buttons = {"YBTN","STICKUP","STICKRIGHT","STICKDOWNRIGHT","STICKUPRIGHT","STICKLEFT", "STICKDOWNLEFT","STICKUPLEFT","STICKDOWN","XBTN","ABTN" };
 	//std::vector<string> heldButtons = {"YBTN","STICKUP","STICKRIGHT","STICKDOWNRIGHT","STICKUPRIGHT","STICKLEFT" "STICKDOWNLEFT","STICKUPLEFT","STICKDOWN","XBTN","ABTN" };
-	for (auto const& x : buttons)
+	/*for (auto const& x : buttons)
 	{
 		if (input.isButtonHeld(x) || input.isButtonPressed(x))
 		{
@@ -39,7 +39,7 @@ void OnlineSendComponent::SerializeInputs(InputSystem& input)
 			else { isFirst = false; }
 			jsonString += "\""+x+"\"";
 		}
-	}
+	}*/
 
 	/*if (input.isButtonPressed("YBTN") || input.isButtonPressed("STICKUP"))
 	{

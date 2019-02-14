@@ -279,18 +279,18 @@ void Player::handleInput(InputSystem& input)
 	m_physComponent.m_body->getBody()->SetLinearVelocity(m_currentVel);
 
 	//Online
-	if (is_online && buttonPressed)
+	/*if (is_online && buttonPressed)
 	{
 		//m_client->SerializeInputs(input);
 		//m_client->Send();
-	}
+	}*/
 }
 
 void Player::addClient()
 {
-	m_client = new OnlineSendComponent();
+	/*m_client = new OnlineSendComponent();
 	m_client->ConnectToServer();
-	is_online = true;
+	is_online = true;*/
 
 }
 

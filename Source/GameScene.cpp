@@ -97,7 +97,7 @@ Entity * GameScene::createPlayer(int index,int posX, int posY)
 	p->addComponent("Input", input);
 	p->addComponent("Player Physics", phys);
 
-	//Add the physics component to the playe rphysics system
+	//Add the physics component to the player physics system
 	Scene::systems()["Player Physics"]->addComponent(phys);
 
 	return p; //Return the created entity
@@ -148,10 +148,10 @@ void GameScene::handleInput(InputSystem & input)
 		auto input = static_cast<InputComponent*>(&m_localPlayers.at(i)->getComponent("Input"));
 		input->handleInput(m_localPlayers.at(i));
 	}
-	for (int i = 0; i < m_numOfOnlinePlayers; i++)
+	/*for (int i = 0; i < m_numOfOnlinePlayers; i++)
 	{
 		m_onlinePlayers.at(i).handleInput(*m_onlineInputs.at(i));
-	}
+	}*/
 
 
 
