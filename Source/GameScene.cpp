@@ -10,6 +10,9 @@ void GameScene::start()
 	m_physicsWorld.initWorld(); //Create the physics world
 	m_physicsWorld.addContactListener(m_collisionListener); //Add collision listener to the world
 
+	//Recreate the attack system
+	Scene::systems()["Attack"] = new AttackSystem(m_physicsWorld);
+
 	//m_player.createPlayer(m_physicsWorld, m_physicsSystem);
 	m_pickUp.createPickUp(m_physicsWorld, m_physicsSystem);
 
@@ -51,10 +54,6 @@ void GameScene::start()
 
 void GameScene::stop()
 {
-	//for (auto& player : m_localPlayers)
-	//	player.deletePlayer();
-
-	//m_localInputs.clear();
 	m_physicsWorld.deleteWorld(); //Delete the physics world
 	m_platforms.clear(); //Delete the platforms of the game
 	m_numOfLocalPlayers = 0;
@@ -67,12 +66,17 @@ void GameScene::update(double dt)
 	m_physicsWorld.update(dt);
 	//Update the player physics system
 	Scene::systems()["Player Physics"]->update(dt);
+	Scene::systems()["Attack"]->update(dt);
 }
 
 Entity * GameScene::createPlayer(int index,int posX, int posY)
 {
 	auto p = new Entity("Player");
 	p->addComponent("Pos", new PositionComponent(0, 0));
+	p->addComponent("Attack", new AttackComponent());
+
+	//Add the players attack component to the attack system
+	Scene::systems()["Attack"]->addComponent(&p->getComponent("Attack"));
 
 	//Create and initiliase the input component
 	auto input = new PlayerInputComponent();
@@ -82,7 +86,7 @@ Entity * GameScene::createPlayer(int index,int posX, int posY)
 	//Create the physics component and set up the bodies
 	auto phys = new PlayerPhysicsComponent(&p->getComponent("Pos"));
 	phys->m_body = m_physicsWorld.createBox(posX, posY, 50, 50, false, false, b2BodyType::b2_dynamicBody);
-	phys->m_jumpSensor = m_physicsWorld.createBox(posX, posY + 25, 50, 50, false, false, b2BodyType::b2_dynamicBody);
+	phys->m_jumpSensor = m_physicsWorld.createBox(posX, posY + 22.5f, 45, 5, false, false, b2BodyType::b2_dynamicBody);
 
 	m_physicsWorld.addProperties(*phys->m_body, 1, 0.05f, 0.0f, false, new PhysicsComponent::ColData("Player Body", p));
 	m_physicsWorld.addProperties(*phys->m_jumpSensor, 1, 0.05f, 0.0f, true, new PhysicsComponent::ColData("Jump Sensor", p));
@@ -129,6 +133,13 @@ void GameScene::draw(SDL_Renderer & renderer)
 		rect.x = phys->m_body->getPosition().x - (rect.w / 2);
 		rect.y = phys->m_body->getPosition().y - (rect.h / 2);
 		SDL_RenderFillRect(&renderer, &rect);
+
+		rect.w = phys->m_jumpSensor->getSize().x;
+		rect.h = phys->m_jumpSensor->getSize().y;
+		rect.x = phys->m_jumpSensor->getPosition().x - (rect.w / 2);
+		rect.y = phys->m_jumpSensor->getPosition().y - (rect.h / 2);
+		SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
+		SDL_RenderDrawRect(&renderer, &rect);
 	}
 	for (int i = 0; i < m_numOfOnlinePlayers; i++)
 	{

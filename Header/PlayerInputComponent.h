@@ -20,6 +20,17 @@ public:
 		{
 			m_currentCMD = &m_jumpCMD;
 		}
+		else if(isButtonPressed("XBTN"))
+		{
+			if (isButtonHeld("STICKUP"))
+				m_currentCMD = &m_uppercutCMD;
+			else
+				m_currentCMD = &m_punchCMD;
+		}
+		else if (isButtonPressed("ABTN"))
+		{
+			m_currentCMD = &m_kickCMD;
+		}
 		else if (isButtonHeld("STICKLEFT") || isButtonHeld("STICKDOWNLEFT") || isButtonHeld("STICKUPLEFT"))
 		{
 			m_currentCMD = &m_moveLeftCMD;
@@ -80,6 +91,9 @@ private:
 	JumpCommand m_jumpCMD;
 	MoveLeftCommand m_moveLeftCMD;
 	MoveRightCommand m_moveRightCMD;
+	PunchCommand m_punchCMD;
+	KickCommand m_kickCMD;
+	UppercutCommand m_uppercutCMD;
 	Command* m_currentCMD;
 };
 

@@ -4,6 +4,7 @@
 #include "Scene.h"
 #include "PickUp.h"
 #include "Entity.h"
+#include "AttackSystem.h"
 #include "PlayerPhysicsComponent.h"
 #include "PlayerInputComponent.h"
 #include <SDL_net.h>
@@ -20,7 +21,6 @@ public:
 	void handleInput(InputSystem& input);
 private:
 	std::vector<Entity*> m_localPlayers;
-	std::vector<InputSystem*> m_localInputs;
 	int m_numOfLocalPlayers;
 	//online
 	std::vector<Player> m_onlinePlayers;
