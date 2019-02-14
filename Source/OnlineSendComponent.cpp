@@ -29,8 +29,19 @@ void OnlineSendComponent::SerializeInputs(InputSystem& input)
 {
 	string jsonString = "{ \"type\" : \"COMMANDS\", \"list\":[";
 	bool isFirst = true;
+	std::vector<string> buttons = {"YBTN","STICKUP","STICKRIGHT","STICKDOWNRIGHT","STICKUPRIGHT","STICKLEFT", "STICKDOWNLEFT","STICKUPLEFT","STICKDOWN","XBTN","ABTN" };
+	//std::vector<string> heldButtons = {"YBTN","STICKUP","STICKRIGHT","STICKDOWNRIGHT","STICKUPRIGHT","STICKLEFT" "STICKDOWNLEFT","STICKUPLEFT","STICKDOWN","XBTN","ABTN" };
+	for (auto const& x : buttons)
+	{
+		if (input.isButtonHeld(x) || input.isButtonPressed(x))
+		{
+			if (!isFirst) {jsonString += ",";}
+			else { isFirst = false; }
+			jsonString += "\""+x+"\"";
+		}
+	}
 
-	if (input.isButtonPressed("YBTN") || input.isButtonPressed("STICKUP"))
+	/*if (input.isButtonPressed("YBTN") || input.isButtonPressed("STICKUP"))
 	{
 		if (!isFirst) {
 			jsonString += ",";
@@ -77,7 +88,7 @@ void OnlineSendComponent::SerializeInputs(InputSystem& input)
 		}
 		else isFirst = false;
 		jsonString += "\"ABTN\" ";
-	}
+	}*/
 
 	jsonString += " ]}";
 

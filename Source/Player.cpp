@@ -268,6 +268,8 @@ void Player::handleInput(InputSystem& input)
 				upperCut();
 			else //If in air punch above you
 				punchUp();
+
+			buttonPressed = true;
 		}
 
 		else if (input.isButtonPressed("XBTN"))
@@ -301,8 +303,8 @@ void Player::handleInput(InputSystem& input)
 	//Online
 	if (is_online && buttonPressed)
 	{
-		m_client->SerializeInputs(input);
-		m_client->Send();
+		//m_client->SerializeInputs(input);
+		//m_client->Send();
 	}
 }
 

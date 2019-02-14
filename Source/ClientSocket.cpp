@@ -6,7 +6,7 @@ const std::string  ClientSocket::SERVER_FULL               = "FULL";      // Ser
 const std::string  ClientSocket::SHUTDOWN_SIGNAL           = "/shutdown"; // What you type to shutdown the server
 const std::string  ClientSocket::QUIT_SIGNAL               = "/quit";     // What you type to shutdown the client
 const unsigned int ClientSocket::CONNECTION_TIMEOUT_PERIOD = 5000;        // 5 second connection timeout
-const unsigned int ClientSocket::SOCKET_SET_POLL_PERIOD    = 10;          // 10ms, so poll 100 times/second
+const unsigned int ClientSocket::SOCKET_SET_POLL_PERIOD    = 1;          // 16ms, so poll 60 times/second
 
 // ClientSocket constructor
 ClientSocket::ClientSocket(string theServerAddress, unsigned int theServerPort, unsigned int theBufferSize)

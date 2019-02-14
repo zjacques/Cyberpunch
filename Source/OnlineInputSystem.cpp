@@ -29,7 +29,7 @@ void OnlineInputSystem::update(double dt)
 {
 
 	// Check if we've received a message
-	string receivedMessage = m_inputSocket->checkForIncomingMessages();
+	//string receivedMessage = m_inputSocket->checkForIncomingMessages();
 
 	m_input->m_previous = m_input->m_current; //Set our previous
 
@@ -39,10 +39,10 @@ void OnlineInputSystem::update(double dt)
 	}
 
 	// If so then...
-	if (receivedMessage != "")
-	{
-		deserialize(receivedMessage);
-	}
+	//if (receivedMessage != "")
+	//{
+		//deserialize(receivedMessage);
+	//}
 }
 
 void OnlineInputSystem::addComponent(Component * component)
