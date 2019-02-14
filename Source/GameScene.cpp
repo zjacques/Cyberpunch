@@ -24,6 +24,7 @@ void GameScene::start()
 	for (int i = 0; i < m_numOfLocalPlayers; i++)
 	{
 		m_localPlayers.push_back(createPlayer(i,600 + 150 * i, 360));
+		m_AIPlayers.push_back(createAI(i, 600 + 150 * i, 360));
 	}
 
 
@@ -138,7 +139,7 @@ Entity * GameScene::createAI(int index, int posX, int posY)
 	//Add the physics component to the playe rphysics system
 	Scene::systems()["Player Physics"]->addComponent(phys);
 
-	return nullptr;
+	return ai;
 }
 
 void GameScene::draw(SDL_Renderer & renderer)
@@ -175,6 +176,25 @@ void GameScene::draw(SDL_Renderer & renderer)
 		SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
 		SDL_RenderDrawRect(&renderer, &rect);
 	}
+
+	for (auto i : m_AIPlayers)
+	{
+		SDL_SetRenderDrawColor(&renderer, 255, 0, 0, 255);
+		auto phys = static_cast<PlayerPhysicsComponent*>(&i->getComponent("Player Physics"));
+		SDL_Rect rect;
+		rect.w = phys->m_body->getSize().x;
+		rect.h = phys->m_body->getSize().y;
+		rect.x = phys->m_body->getPosition().x - (rect.w / 2);
+		rect.y = phys->m_body->getPosition().y - (rect.h / 2);
+		SDL_RenderFillRect(&renderer, &rect);
+
+		rect.w = phys->m_jumpSensor->getSize().x;
+		rect.h = phys->m_jumpSensor->getSize().y;
+		rect.x = phys->m_jumpSensor->getPosition().x - (rect.w / 2);
+		rect.y = phys->m_jumpSensor->getPosition().y - (rect.h / 2);
+		SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
+		SDL_RenderDrawRect(&renderer, &rect);
+	}
 	
 
 	//m_pickUp.draw(renderer);
@@ -190,8 +210,6 @@ void GameScene::handleInput(InputSystem & input)
 		auto input = static_cast<InputComponent*>(&m_localPlayers.at(i)->getComponent("Input"));
 		input->handleInput(m_localPlayers.at(i));
 	}
-
-
 
 	//Handle input for all players
 	//for (int i = 0; i < m_numOfLocalPlayers; i++)
