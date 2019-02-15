@@ -9,6 +9,7 @@
 #include "PlayerInputComponent.h"
 #include "OnlineSendComponent.h"
 #include "OnlineInputComponent.h"
+#include "Camera.h"
 #include <SDL_net.h>
 
 class GameScene : public Scene
@@ -18,6 +19,7 @@ public:
 	void start();
 	void stop();
 	void update(double dt);
+	void updateCamera(double dt);
 	void createPlatforms(SDL_Renderer& renderer);
 	SDL_Rect createRect(int x, int y, int w, int h);
 	Entity* createPlayer(int index, int posX, int posY, bool local);
@@ -40,4 +42,6 @@ private:
 	CollisionListener m_collisionListener;
 	//Platforms of the game
 	std::vector<Entity*> m_platforms;
+
+	Camera m_camera;
 };

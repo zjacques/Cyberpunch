@@ -123,6 +123,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Header\Camera.cpp" />
     <ClCompile Include="Source\ClientSocket.cpp" />
     <ClCompile Include="Header\AttackComponent.cpp" />
     <ClCompile Include="Header\AttackSystem.cpp" />
@@ -162,6 +163,7 @@
     <ClInclude Include="Header\AttackSystem.h" />
     <ClInclude Include="Header\BehaviourTree.h" />
     <ClInclude Include="Header\Box2DBridge.h" />
+    <ClInclude Include="Header\Camera.h" />
     <ClInclude Include="Header\ClientSocket.h" />
     <ClInclude Include="Header\Button.h" />
     <ClInclude Include="Header\CollisionListener.h" />
