@@ -16,7 +16,9 @@ public:
 	void execute(Entity& e)
 	{
 		auto hit = static_cast<AttackComponent*>(&e.getComponent("Attack"));
-		if (hit->attackActive() == false)
+		auto phys = static_cast<PlayerPhysicsComponent*>(&e.getComponent("Player Physics"));
+
+		if (hit->attackActive() == false && phys->stunned() == false)
 		{
 			auto phys = static_cast<PlayerPhysicsComponent*>(&e.getComponent("Player Physics"));
 			//If the physics component can jump, then jump
@@ -36,9 +38,14 @@ public:
 	{
 		auto hit = static_cast<AttackComponent*>(&e.getComponent("Attack"));
 		auto phys = static_cast<PlayerPhysicsComponent*>(&e.getComponent("Player Physics"));
-		if (hit->attackActive() == false || !phys->canJump())
+
+		//Only perform the command if the playe ris not stunned
+		if (phys->stunned() == false)
 		{
-			phys->moveLeft();
+			if (hit->attackActive() == false || !phys->canJump())
+			{
+				phys->moveLeft();
+			}
 		}
 	}
 };
@@ -52,9 +59,14 @@ public:
 		//get the attack component from the entity
 		auto hit = static_cast<AttackComponent*>(&e.getComponent("Attack"));
 		auto phys = static_cast<PlayerPhysicsComponent*>(&e.getComponent("Player Physics"));
-		if (hit->attackActive() == false || !phys->canJump())
+
+		//Only perform the command if the playe ris not stunned
+		if (phys->stunned() == false)
 		{
-			phys->moveRight();
+			if (hit->attackActive() == false || !phys->canJump())
+			{
+				phys->moveRight();
+			}
 		}
 	}
 };
@@ -67,8 +79,9 @@ public:
 	{
 		//get the attack component from the entity
 		auto hit = static_cast<AttackComponent*>(&e.getComponent("Attack"));
+		auto phys = static_cast<PlayerPhysicsComponent*>(&e.getComponent("Player Physics"));
 
-		if (hit->attackActive() == false)
+		if (hit->attackActive() == false && phys->stunned() == false)
 		{
 			auto phys = static_cast<PlayerPhysicsComponent*>(&e.getComponent("Player Physics"));
 
@@ -89,8 +102,9 @@ public:
 	{
 		//get the attack component from the entity
 		auto hit = static_cast<AttackComponent*>(&e.getComponent("Attack"));
+		auto phys = static_cast<PlayerPhysicsComponent*>(&e.getComponent("Player Physics"));
 
-		if (hit->attackActive() == false)
+		if (hit->attackActive() == false && phys->stunned() == false)
 		{
 			auto phys = static_cast<PlayerPhysicsComponent*>(&e.getComponent("Player Physics"));
 
@@ -111,8 +125,9 @@ public:
 	{
 		//get the attack component from the entity
 		auto hit = static_cast<AttackComponent*>(&e.getComponent("Attack"));
+		auto phys = static_cast<PlayerPhysicsComponent*>(&e.getComponent("Player Physics"));
 
-		if (hit->attackActive() == false)
+		if (hit->attackActive() == false && phys->stunned() == false)
 		{
 			auto phys = static_cast<PlayerPhysicsComponent*>(&e.getComponent("Player Physics"));
 
@@ -120,7 +135,7 @@ public:
 			auto offset = Vector2f(phys->isMovingLeft() ? -37.5f : 37.5f, 0);
 
 			hit->attack(offset, Vector2f(25, 45), e, tag, .4f, 0);
-			hit->setAttackProperties(5, phys->isMovingLeft() ? -10 : 10, phys->isGravityFlipped() ? -75 : 75);
+			hit->setAttackProperties(5, phys->isMovingLeft() ? -10 : 10, phys->isGravityFlipped() ? -50 : 50);
 		}
 	}
 };
@@ -133,8 +148,9 @@ public:
 	{
 		//get the attack component from the entity
 		auto hit = static_cast<AttackComponent*>(&e.getComponent("Attack"));
+		auto phys = static_cast<PlayerPhysicsComponent*>(&e.getComponent("Player Physics"));
 
-		if (hit->attackActive() == false)
+		if (hit->attackActive() == false && phys->stunned() == false)
 		{
 			auto phys = static_cast<PlayerPhysicsComponent*>(&e.getComponent("Player Physics"));
 

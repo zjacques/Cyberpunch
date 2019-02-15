@@ -198,6 +198,18 @@ void GameScene::draw(SDL_Renderer & renderer)
 		auto phys = static_cast<PlayerPhysicsComponent*>(&m_localPlayers.at(i)->getComponent("Player Physics"));
 		auto hit = static_cast<AttackComponent*>(&m_localPlayers.at(i)->getComponent("Attack"));
 
+		//If the player is stunned, draw a yellow rectangle
+		if (phys->stunned())
+		{
+			rect.w = phys->m_body->getSize().x;
+			rect.h = phys->m_body->getSize().y;
+			rect.x = phys->m_body->getPosition().x - (rect.w / 2);
+			rect.y = phys->m_body->getPosition().y - (rect.h / 2);
+			SDL_SetRenderDrawColor(&renderer, 255, 255, 0, 255);
+			SDL_RenderFillRect(&renderer, &rect);
+		}
+
+
 		rect.w = phys->m_jumpSensor->getSize().x;
 		rect.h = phys->m_jumpSensor->getSize().y;
 		rect.x = phys->m_jumpSensor->getPosition().x - (rect.w / 2);
