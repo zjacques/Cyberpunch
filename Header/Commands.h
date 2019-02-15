@@ -1,6 +1,8 @@
 #pragma once
 #include "Entity.h"
 #include "PlayerPhysicsComponent.h"
+#include "OnlineSendComponent.h"
+#include "AttackComponent.h"
 
 class Command
 {
@@ -26,6 +28,11 @@ public:
 			{
 				phys->jump();
 			}
+			auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
+			if (net != NULL) 
+			{
+				net->addCommand("JUMP");
+			}
 		}
 	}
 };
@@ -47,6 +54,11 @@ public:
 				phys->moveLeft();
 			}
 		}
+		auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
+		if (net != NULL)
+		{
+			net->addCommand("MOVE LEFT");
+		}
 	}
 };
 
@@ -67,6 +79,11 @@ public:
 			{
 				phys->moveRight();
 			}
+		}
+		auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
+		if (net != NULL)
+		{
+			net->addCommand("MOVE RIGHT");
 		}
 	}
 };
@@ -91,6 +108,11 @@ public:
 			hit->attack(offset, Vector2f(30, 25), e, tag, .175f, 0);
 			hit->setAttackProperties(2, phys->isMovingLeft() ? -250 : 250, phys->isGravityFlipped() ? -30 : 30);
 		}
+		auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
+		if (net != NULL)
+		{
+			net->addCommand("PUNCH");
+		}
 	}
 };
 
@@ -114,6 +136,11 @@ public:
 			hit->attack(offset, Vector2f(50, 25), e, tag, .4f, 0);
 			hit->setAttackProperties(5, phys->isMovingLeft() ? -300 : 300, phys->isGravityFlipped() ? -45 : 45);
 		}
+		auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
+		if (net != NULL)
+		{
+			net->addCommand("KICK");
+		}
 	}
 };
 
@@ -136,6 +163,11 @@ public:
 
 			hit->attack(offset, Vector2f(25, 45), e, tag, .4f, 0);
 			hit->setAttackProperties(5, phys->isMovingLeft() ? -10 : 10, phys->isGravityFlipped() ? -50 : 50);
+		}
+		auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
+		if (net != NULL)
+		{
+			net->addCommand("UPPERCUT");
 		}
 	}
 };

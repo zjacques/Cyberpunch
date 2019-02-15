@@ -40,6 +40,10 @@ public:
 		m_current["STICKDOWN"] = false;
 		m_current["STICKLEFT"] = false;
 		m_current["STICKRIGHT"] = false;
+		m_current["STICKDOWNLEFT"] = false;
+		m_current["STICKDOWNRIGHT"] = false;
+		m_current["STICKUPLEFT"] = false;
+		m_current["STICKUPRIGHT"] = false;
 
 		//Copy the values of current to previous
 		m_previous = m_current;

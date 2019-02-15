@@ -219,7 +219,6 @@ void Player::draw(SDL_Renderer & renderer)
 
 void Player::handleInput(InputSystem& input)
 {
-
 	//Get the current velocity of the body
 	m_currentVel = m_physComponent.m_body->getBody()->GetLinearVelocity();
 
@@ -278,6 +277,21 @@ void Player::handleInput(InputSystem& input)
 
 	//Set the velocity of the players body
 	m_physComponent.m_body->getBody()->SetLinearVelocity(m_currentVel);
+
+	//Online
+	/*if (is_online && buttonPressed)
+	{
+		//m_client->SerializeInputs(input);
+		//m_client->Send();
+	}*/
+}
+
+void Player::addClient()
+{
+	/*m_client = new OnlineSendComponent();
+	m_client->ConnectToServer();
+	is_online = true;*/
+
 }
 
 void Player::flipGravity()

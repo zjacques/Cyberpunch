@@ -47,7 +47,7 @@ void ResourceHandler::loadLevelData()
 	std::string content((std::istreambuf_iterator<char>(ifs)),
 		(std::istreambuf_iterator<char>()));
 
-	//Pars ethe loaded in file to a json object
+	//Parse the loaded in file to a json object
 	m_gameData = json::parse(content);
 }
 
