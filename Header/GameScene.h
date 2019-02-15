@@ -5,8 +5,12 @@
 #include "PickUp.h"
 #include "Entity.h"
 #include "AttackSystem.h"
+#include "OnlineSystem.h"
 #include "PlayerPhysicsComponent.h"
 #include "PlayerInputComponent.h"
+#include "OnlineSendComponent.h"
+#include "OnlineInputComponent.h"
+#include <SDL_net.h>
 
 class GameScene : public Scene
 {
@@ -15,12 +19,17 @@ public:
 	void start();
 	void stop();
 	void update(double dt);
-	Entity* createPlayer(int index, int posX, int posY);
+	Entity* createPlayer(int index, int posX, int posY, bool local);
 	void draw(SDL_Renderer& renderer);
 	void handleInput(InputSystem& input);
 private:
 	std::vector<Entity*> m_localPlayers;
 	int m_numOfLocalPlayers;
+	//online
+	std::vector<Entity*> m_onlinePlayers;
+	//std::vector<OnlineInputSystem*> m_onlineInputs;
+	int m_numOfOnlinePlayers;
+
 	PickUp m_pickUp;
 	//Physics variables
 	PhysicsSystem m_physicsSystem; //Add all physics components to the system
