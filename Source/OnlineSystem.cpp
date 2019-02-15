@@ -29,7 +29,9 @@ void OnlineSystem::SendCommands()
 		if (cmds->size() > 0)
 		{
 			bool isFirst = true;
-			string jsonString = "{ \"type\" : \"COMMANDS\", \"list\":[";
+			string jsonString = "{ \"type\" : \"COMMANDS\", \"player\" : "+ 
+				std::to_string(plyr->m_playerNumber) +
+				",\"list\":[";
 			while (cmds->size() > 0)
 			{
 				if (!isFirst) { jsonString += ","; }
@@ -66,12 +68,15 @@ void OnlineSystem::ReceiveCommands()
 		{
 			if (currentPacket["type"] == "COMMANDS")
 			{
-				vector<string> commands = currentPacket["list"];
-				for (auto iter = commands.begin(); iter != commands.end(); iter++)
+				if (currentPacket["player"] == plyr->m_playerNumber)
 				{
-					plyr->addCommand(*iter);
-					//m_commandsToSend.push(*iter);
-					//m_input->m_current[*iter] = true;
+					vector<string> commands = currentPacket["list"];
+					for (auto iter = commands.begin(); iter != commands.end(); iter++)
+					{
+						plyr->addCommand(*iter);
+						//m_commandsToSend.push(*iter);
+						//m_input->m_current[*iter] = true;
+					}
 				}
 			}
 		}

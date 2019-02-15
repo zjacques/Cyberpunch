@@ -13,6 +13,7 @@ public:
 	queue<string>* Send();
 	void addCommand(string cmd) { m_commandsToSend.push(cmd); }
 
+	int m_playerNumber;
 private:
 
 	queue<string> m_commandsToSend;

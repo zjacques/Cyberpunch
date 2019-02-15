@@ -98,11 +98,13 @@ Entity * GameScene::createPlayer(int index,int posX, int posY, bool local)
 		auto input = new PlayerInputComponent();
 		Scene::systems()["Input"]->addComponent(input);
 		input->initialiseJoycon(index);
+		input->m_playerNumber = index;
 		p->addComponent("Input", input);
 	}
 	else {
 		auto input = new OnlineInputComponent();
 		static_cast<OnlineSystem*>(Scene::systems()["Network"])->addReceivingPlayer(input);
+		input->m_playerNumber = index;
 		p->addComponent("Input", input);
 	}
 
@@ -126,6 +128,7 @@ Entity * GameScene::createPlayer(int index,int posX, int posY, bool local)
 	if (netSys->isConnected && local)
 	{
 		auto net = new OnlineSendComponent();
+		net->m_playerNumber = index;
 		p->addComponent("Send", net);
 		netSys->addSendingPlayer(net);
 	} //if it can't connect to the server, it didn't need to be online anyway
