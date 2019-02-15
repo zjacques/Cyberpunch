@@ -107,3 +107,31 @@ bool OnlineSystem::ConnectToServer()
 		return false;
 	}
 }
+
+vector<OnlineSystem::LobbyInfo> OnlineSystem::getLobbies()
+{
+	string jsonString = "{ \"type\" : \"LOBBY REQUEST\"}";
+
+	m_Socket->sendString(jsonString);
+	string receivedMessage;
+	do {
+		receivedMessage = m_Socket->checkForIncomingMessages();
+	} while (receivedMessage == "");
+	
+
+	json lobbies = json::parse(receivedMessage);
+	vector<OnlineSystem::LobbyInfo> retval;
+	if (lobbies["type"] == "LOBBY LIST")
+	{
+		vector<vector<string>> lobbyList = lobbies["list"];
+		for (auto info : lobbyList)
+		{
+			LobbyInfo l;
+			l.name = info[0];
+			l.players = info[1];
+			retval.push_back(l);
+		}
+	}
+
+	return retval;
+}

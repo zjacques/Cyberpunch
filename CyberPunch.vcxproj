@@ -123,6 +123,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Header\LobbyScene.cpp" />
     <ClCompile Include="Source\ClientSocket.cpp" />
     <ClCompile Include="Header\AttackComponent.cpp" />
     <ClCompile Include="Header\AttackSystem.cpp" />
@@ -170,6 +171,7 @@
     <ClInclude Include="Header\Component.h" />
     <ClInclude Include="Header\Game.h" />
     <ClInclude Include="Header\Entity.h" />
+    <ClInclude Include="Header\LobbyScene.h" />
     <ClInclude Include="Header\OnlineSystem.h" />
     <ClInclude Include="Header\PlayerInputComponent.h" />
     <ClInclude Include="Header\PlayerInputSystem.h" />
