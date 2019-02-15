@@ -22,11 +22,11 @@ void AISystem::initialiseActions()
 		//Cast all components as AIComponents
 		auto cast_comp = dynamic_cast<AIComponent *>(c);
 
-		cast_comp->walkLeft = new Action("Walk left", 50);
-		cast_comp->walkRight = new Action("Walk right", 50);
-		cast_comp->attackOne = new Action("Attack 1", 75);
-		cast_comp->attackTwo = new Action("Attack 2", 60);
-		cast_comp->jump = new Action("Jump", 80);
+		cast_comp->walkLeft = new WalkLeftAction("Walk left", 50);
+		cast_comp->walkRight = new WalkRightAction("Walk right", 50);
+		cast_comp->attackOne = new PunchAction("Attack 1", 75);
+		cast_comp->attackTwo = new PunchAction("Attack 2", 60);
+		cast_comp->jump = new JumpAction("Jump", 80);
 		cast_comp->getNearest = new Action("Nearest", 100);
 		cast_comp->closeEnough = new Action("close", 100);
 		cast_comp->checkPlayerDirection = new Action("PlayerDir", 100);

@@ -3,17 +3,14 @@
 
 #include "BehaviourTree.h"
 
-
 class Action : public BehaviourTree::Node
 {
 private:
 
 public:
-	//MovementSystem * m_moveSystem;
 	std::string m_name;
 	int successRate;
 	Action(const std::string newName, int p) : m_name(newName), successRate(p) {}
-	//void addMovementSystem(MovementSystem * m) { m_moveSystem = m; }
 private:
 	virtual bool run() override
 	{
@@ -33,6 +30,13 @@ private:
 
 class WalkLeftAction : public Action
 {
+public:
+	WalkLeftAction(std::string newName, int p)
+		: Action(newName, p)
+	{
+
+	}
+
 	bool run() override
 	{
 		if (std::rand() % 100 < successRate)
@@ -53,6 +57,12 @@ class WalkLeftAction : public Action
 
 class WalkRightAction : public Action
 {
+public:
+	WalkRightAction(std::string newName, int p)
+		: Action(newName, p)
+	{
+
+	}
 	bool run() override
 	{
 		if (std::rand() % 100 < successRate)
@@ -72,6 +82,12 @@ class WalkRightAction : public Action
 
 class JumpAction : public Action
 {
+public:
+	JumpAction(std::string newName, int p)
+		: Action(newName, p)
+	{
+
+	}
 	bool run() override
 	{
 		if (std::rand() % 100 < successRate)
@@ -91,6 +107,12 @@ class JumpAction : public Action
 
 class PunchAction : public Action
 {
+public:
+	PunchAction(std::string newName, int p)
+		: Action(newName, p)
+	{
+
+	}
 	bool run() override
 	{
 		if (std::rand() % 100 < successRate)
