@@ -24,6 +24,7 @@
 #include "RenderSystem.h"
 #include "Entity.h"
 #include "AttackSystem.h"
+#include "OnlineSystem.h"
 
 class Game
 {

@@ -10,16 +10,19 @@ class Platform
 public:
 	Platform(std::string tag);
 
-
 	void draw(SDL_Renderer& renderer);
-	void addContact() { m_numberOfContacts++; }
-	void removeContact() { m_numberOfContacts--; }
 	PhysicsComponent& getPhysComp() { return m_physicsComponents; }
 	std::string& getTag() { return m_tag; }
+
+	void setTexture(ResourceHandler& resources, std::string colour);
+	void setAmountOfTiles();
 private:
-	int m_numberOfContacts;
+	Vector2f m_startpos, m_offset;
+	Vector2f m_size;
+	int m_numberofTiles; //The number of tiles for the platform
 	std::string m_tag;
-	SDL_Rect m_rect;
+	SDL_Rect m_rect, m_srcRect;
+	SDL_Texture* m_startCap, *m_middle, *m_endCap;
 
 	PhysicsComponent m_physicsComponents;
 };

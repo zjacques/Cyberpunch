@@ -19,14 +19,34 @@ void GameScene::start()
 	m_bG = Scene::resources().getTexture("Game BG");
 
 	m_numOfLocalPlayers = SDL_NumJoysticks();
+	m_numOfOnlinePlayers = 0;
+
+	// Initialise SDL_net (Note: We don't initialise or use normal SDL at all - only the SDL_net library!)
+	if (SDLNet_Init() == -1)
+	{
+		std::cerr << "Failed to intialise SDL_net: " << SDLNet_GetError() << std::endl;
+		exit(-1);
+	}
+
+	//try to create the online system and connect
+	//refactor to another spot once we get the full lobby system going I guess.
+	static_cast<OnlineSystem*>(Scene::systems()["Network"])->ConnectToServer();
+	/*auto net = new OnlineSystem();
+	if (net->ConnectToServer())
+		Scene::systems()["Network"] = net;
+	else
+		delete net;*/
 
 	//Create players for extra inputs
 	for (int i = 0; i < m_numOfLocalPlayers; i++)
 	{
-		m_localPlayers.push_back(createPlayer(i,600 + 150 * i, 360));
 		m_AIPlayers.push_back(createAI(i, 600 + 150 * i, 360));
+		m_localPlayers.push_back(createPlayer(i,600 + 150 * i, 360, true));
 	}
-
+	for (int i = 0; i < m_numOfOnlinePlayers; i++)
+	{
+		m_onlinePlayers.push_back(createPlayer(i+ m_numOfLocalPlayers, 600 + 150 * i+ m_numOfLocalPlayers, 360, false));
+	}
 
 	//Create all of the platforms for the game
 	for (auto& platform : Scene::resources().getLevelData()["Platforms"])
@@ -40,6 +60,9 @@ void GameScene::start()
 		newPlat.getPhysComp().m_body = m_physicsWorld.createBox(x, y, w, h, false, true, b2BodyType::b2_staticBody);
 		//Add the properties of the physics body
 		m_physicsWorld.addProperties(*newPlat.getPhysComp().m_body, 0, .1f, 0, false, new PhysicsComponent::ColData(newPlat.getTag(), &newPlat));
+
+		newPlat.setTexture(Scene::resources(), "Green");
+		newPlat.setAmountOfTiles(); //Set the amount of tiles for the platform/Floor
 
 		m_platforms.push_back(newPlat); //Create a new platform
 	}
@@ -62,7 +85,7 @@ void GameScene::update(double dt)
 	Scene::systems()["Attack"]->update(dt);
 }
 
-Entity * GameScene::createPlayer(int index,int posX, int posY)
+Entity * GameScene::createPlayer(int index,int posX, int posY, bool local)
 {
 	auto p = new Entity("Player");
 	p->addComponent("Pos", new PositionComponent(0, 0));
@@ -72,9 +95,18 @@ Entity * GameScene::createPlayer(int index,int posX, int posY)
 	Scene::systems()["Attack"]->addComponent(&p->getComponent("Attack"));
 
 	//Create and initiliase the input component
-	auto input = new PlayerInputComponent();
-	Scene::systems()["Input"]->addComponent(input);
-	input->initialiseJoycon(index);
+	if (local) {
+		auto input = new PlayerInputComponent();
+		Scene::systems()["Input"]->addComponent(input);
+		input->initialiseJoycon(index);
+		p->addComponent("Input", input);
+	}
+	else {
+		auto input = new OnlineInputComponent();
+		static_cast<OnlineSystem*>(Scene::systems()["Network"])->addReceivingPlayer(input);
+		p->addComponent("Input", input);
+	}
+
 
 	//Create the physics component and set up the bodies
 	auto phys = new PlayerPhysicsComponent(&p->getComponent("Pos"));
@@ -90,11 +122,19 @@ Entity * GameScene::createPlayer(int index,int posX, int posY)
 	//Create the joint between the player and the jump sensor
 	phys->createJoint(m_physicsWorld);
 
+	//Try to add a sender to the server
+	auto netSys = static_cast<OnlineSystem*>(Scene::systems()["Network"]);
+	if (netSys->isConnected && local)
+	{
+		auto net = new OnlineSendComponent();
+		p->addComponent("Send", net);
+		netSys->addSendingPlayer(net);
+	} //if it can't connect to the server, it didn't need to be online anyway
+
 	//Add the components to the entity
-	p->addComponent("Input", input);
 	p->addComponent("Player Physics", phys);
 
-	//Add the physics component to the playe rphysics system
+	//Add the physics component to the player physics system
 	Scene::systems()["Player Physics"]->addComponent(phys);
 
 	return p; //Return the created entity
@@ -162,6 +202,7 @@ void GameScene::draw(SDL_Renderer & renderer)
 	{
 		SDL_SetRenderDrawColor(&renderer, 255, 0, 0, 255);
 		auto phys = static_cast<PlayerPhysicsComponent*>(&m_localPlayers.at(i)->getComponent("Player Physics"));
+		auto hit = static_cast<AttackComponent*>(&m_localPlayers.at(i)->getComponent("Attack"));
 		SDL_Rect rect;
 		rect.w = phys->m_body->getSize().x;
 		rect.h = phys->m_body->getSize().y;
@@ -175,12 +216,28 @@ void GameScene::draw(SDL_Renderer & renderer)
 		rect.y = phys->m_jumpSensor->getPosition().y - (rect.h / 2);
 		SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
 		SDL_RenderDrawRect(&renderer, &rect);
+
+		if (nullptr != hit->m_currentAttack)
+		{
+			rect.w = hit->m_currentAttack->m_body->getSize().x;
+			rect.h = hit->m_currentAttack->m_body->getSize().y;
+			rect.x = hit->m_currentAttack->m_body->getPosition().x - (rect.w / 2);
+			rect.y = hit->m_currentAttack->m_body->getPosition().y - (rect.h / 2);
+			SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
+			SDL_RenderDrawRect(&renderer, &rect);
+		}
 	}
 
 	for (auto i : m_AIPlayers)
 	{
 		SDL_SetRenderDrawColor(&renderer, 255, 0, 0, 255);
 		auto phys = static_cast<PlayerPhysicsComponent*>(&i->getComponent("Player Physics"));
+
+	for (int i = 0; i < m_numOfOnlinePlayers; i++)
+	{
+		SDL_SetRenderDrawColor(&renderer, 255, 0, 0, 255);
+		auto phys = static_cast<PlayerPhysicsComponent*>(&m_onlinePlayers.at(i)->getComponent("Player Physics"));
+
 		SDL_Rect rect;
 		rect.w = phys->m_body->getSize().x;
 		rect.h = phys->m_body->getSize().y;
@@ -195,8 +252,11 @@ void GameScene::draw(SDL_Renderer & renderer)
 		SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
 		SDL_RenderDrawRect(&renderer, &rect);
 	}
-	
 
+	/*for (int i = 0; i < m_numOfOnlinePlayers; i++)
+	{
+		m_onlinePlayers.at(i).draw(renderer);
+	}*/
 	//m_pickUp.draw(renderer);
 }
 
@@ -209,6 +269,12 @@ void GameScene::handleInput(InputSystem & input)
 	{
 		auto input = static_cast<InputComponent*>(&m_localPlayers.at(i)->getComponent("Input"));
 		input->handleInput(m_localPlayers.at(i));
+	}
+	for (int i = 0; i < m_numOfOnlinePlayers; i++)
+	{
+		auto input = static_cast<OnlineInputComponent*>(&m_onlinePlayers.at(i)->getComponent("Input"));
+		input->handleInput(m_onlinePlayers.at(i));
+		//m_onlinePlayers.at(i).handleInput(*m_onlineInputs.at(i));
 	}
 
 	//Handle input for all players
