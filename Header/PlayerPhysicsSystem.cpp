@@ -47,6 +47,9 @@ void PlayerPhysicsSystem::update(double dt)
 				p->stunned() = false;
 			}
 		}
+
+		//set the position component of the player
+		p->posPtr->position = p->m_body->getPosition();
 	}
 }
 

@@ -1,32 +1,47 @@
 #ifndef SPRITECOMPONENT_H
 #define SPRITECOMPONENT_H
 
-#include "Component.h"
 #include <SDL.h>
+#include "PositionComponent.h"
 #include "Vector2f.h"
 
 class SpriteComponent : public Component
 {
 public:
-	SpriteComponent(Vector2f p, Vector2f b, SDL_Texture * t):
-		m_position(p),
-		m_bounds(b),
-		m_texture(t) 
+	//Sprite component take sin the position component (where its placed), the overallSize of the sprite
+	//the size of a single frame (this can be the same as overall size if its a 1 frame sprite)
+	//the texture itself and the layer of the sprite
+	SpriteComponent(Component* pos, Vector2f overallSize, Vector2f singleFramebounds, SDL_Texture * texture, int layer = 0):
+		m_bounds(overallSize),
+		m_singleFrameBounds(singleFramebounds),
+		m_texture(texture),
+		m_layer(layer),
+		m_posPtr(pos)
 	{
-		m_src = { m_position.x, m_position.y, m_bounds.x, m_bounds.y };
-		m_dst = { 0, 0, m_bounds.x, m_bounds.y };
+		m_src = { 0, 0, (int)overallSize.x, (int)overallSize.y };
+		m_dst = { 0, 0, (int)singleFramebounds.x, (int)singleFramebounds.y };
 	}
-	Vector2f getPosition() { return m_position; }
+
+	//Setters
+	void setTexture(SDL_Texture* texture) { m_texture = texture; }
+	void setCurrentFrame(SDL_Rect& frame) { m_src = frame; }
+
+	//Getters
+
+	Vector2f& getPosition() { return static_cast<PositionComponent*>(m_posPtr)->position; }
 	Vector2f getBounds() { return m_bounds; }
-	SDL_Texture * getTexture() { return m_texture; }
+	Vector2f getFrameSize() { return m_singleFrameBounds; }
+	SDL_Texture* getTexture() { return m_texture; }
 	SDL_Rect getSourceRect() { return m_src; }
 	SDL_Rect getDestRect() { return m_dst; }
+	int getLayer() { return m_layer; }
 private:
-	Vector2f m_position;
-	Vector2f m_bounds;
+	Component* m_posPtr;
+	Vector2f m_bounds, m_singleFrameBounds;
 	SDL_Rect m_src;
 	SDL_Rect m_dst;
 	SDL_Texture * m_texture;
+	int m_layer;
 };
 
 #endif

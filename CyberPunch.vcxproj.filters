@@ -93,9 +93,6 @@
     <ClCompile Include="Source\Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Platform.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\PhysicsSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
@@ -146,9 +143,6 @@
     <ClInclude Include="Header\Vector2f.h">
       <Filter>Header Files\Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="Header\RenderComponent.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
     <ClInclude Include="Header\RenderSystem.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
@@ -198,9 +192,6 @@
       <Filter>Header Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="Header\Player.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\Platform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Header\CollisionListener.h">
