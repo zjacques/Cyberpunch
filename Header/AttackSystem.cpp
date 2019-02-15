@@ -30,24 +30,28 @@ void AttackSystem::update(double dt)
 			hit->spawn(*m_worldPtr);
 		}
 
-		//If a hit is active,  minus from its time to live
-		if (hit->attackActive())
+		//If a hit time to live is greater than 0,  minus from its time to live
+		if (hit->timeToLive() > 0 && hit->delay() <= 0)
 		{
 			//minus dt from the time to live
 			hit->timeToLive() -= dt;
 
 			if (hit->timeToLive() <= 0)
 			{
-				hit->setDestoryAttack(true);
+				hit->attackActive() = false;
+
+				if (nullptr != hit->m_currentAttack)
+					hit->deleteAttack(*m_worldPtr);
 			}
 			else
 			{
-				hit->updatePosition();
+				if (nullptr != hit->m_currentAttack)
+					hit->updatePosition();
 			}
 		}
 
 		//If the bool to destroy an attack is true, then delete the attack body
-		if (hit->destroyAttack())
+		if (hit->destroyAttack() && nullptr != hit->m_currentAttack)
 		{
 			hit->deleteAttack(*m_worldPtr);
 		}

@@ -1,5 +1,4 @@
 #pragma once
-#include "Platform.h"
 #include "Player.h"
 #include "Scene.h"
 #include "PickUp.h"
@@ -19,10 +18,14 @@ public:
 	void start();
 	void stop();
 	void update(double dt);
+	void createPlatforms(SDL_Renderer& renderer);
+	SDL_Rect createRect(int x, int y, int w, int h);
 	Entity* createPlayer(int index, int posX, int posY, bool local);
 	void draw(SDL_Renderer& renderer);
 	void handleInput(InputSystem& input);
 private:
+	bool m_platformsCreated;
+	Entity m_bgEntity;
 	std::vector<Entity*> m_localPlayers;
 	int m_numOfLocalPlayers;
 	//online
@@ -35,7 +38,6 @@ private:
 	PhysicsSystem m_physicsSystem; //Add all physics components to the system
 	Box2DBridge m_physicsWorld;
 	CollisionListener m_collisionListener;
-	SDL_Texture* m_bG;
 	//Platforms of the game
-	std::vector<Platform> m_platforms;
+	std::vector<Entity*> m_platforms;
 };

@@ -2,7 +2,7 @@
 #include "Box2DBridge.h"
 #include "PositionComponent.h"
 
-class PhysicsComponent
+class PhysicsComponent : public Component
 {
 public:
 	PhysicsComponent(PositionComponent* pos) : m_body(nullptr) {}
