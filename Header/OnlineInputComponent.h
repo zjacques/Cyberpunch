@@ -14,8 +14,9 @@ public:
 	OnlineInputComponent();
 
 	void handleInput(void* e);
+	int addCommand(string);
 private:
-	void deserialize(string jsonInput);
+	Command * m_currentCMD;
 
 	JumpCommand m_jumpCMD;
 	MoveLeftCommand m_moveLeftCMD;
@@ -25,6 +26,5 @@ private:
 	UppercutCommand m_uppercutCMD;
 
 	queue<string> m_commandsToSend;
-	Command* m_currentCMD;
 
 };

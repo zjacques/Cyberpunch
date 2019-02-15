@@ -2,6 +2,7 @@
 #include "System.h"
 #include "ClientSocket.h"
 #include "OnlineSendComponent.h"
+#include "OnlineInputComponent.h"
 
 using std::vector;
 using std::string;
@@ -12,6 +13,7 @@ public:
 	virtual ~OnlineSystem() {}
 	void addComponent(Component *);
 	void addSendingPlayer(OnlineSendComponent*);
+	void addReceivingPlayer(OnlineInputComponent*);
 
 	void update(double dt);
 
@@ -25,4 +27,5 @@ public:
 private:
 	ClientSocket* m_Socket;
 	vector<OnlineSendComponent*> m_sendingPlayers;
+	vector<OnlineInputComponent*> m_receivingPlayers;
 };

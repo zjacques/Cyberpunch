@@ -10,9 +10,15 @@ void OnlineSystem::addSendingPlayer(OnlineSendComponent * component)
 	m_sendingPlayers.push_back(component);
 }
 
+void OnlineSystem::addReceivingPlayer(OnlineInputComponent * component)
+{
+	m_receivingPlayers.push_back(component);
+}
+
 void OnlineSystem::update(double dt)
 {
 	SendCommands();
+	ReceiveCommands();
 }
 
 void OnlineSystem::SendCommands()
@@ -42,7 +48,7 @@ void OnlineSystem::SendCommands()
 void OnlineSystem::ReceiveCommands()
 {
 	// Check if we've received a message
-	//string receivedMessage = m_inputSocket->checkForIncomingMessages();
+	string receivedMessage = m_Socket->checkForIncomingMessages();
 
 	//m_input->m_previous = m_input->m_current; //Set our previous
 
@@ -51,11 +57,25 @@ void OnlineSystem::ReceiveCommands()
 		m_input->m_current[x.first] = false;
 	}*/
 
-	// If so then...
-	//if (receivedMessage != "")
-	//{
-	//deserialize(receivedMessage);
-	//}
+	 //If so then...
+	if (receivedMessage != "")
+	{
+		//deserialize(receivedMessage);
+		json currentPacket = json::parse(receivedMessage);
+		for (auto& plyr : m_receivingPlayers)
+		{
+			if (currentPacket["type"] == "COMMANDS")
+			{
+				vector<string> commands = currentPacket["list"];
+				for (auto iter = commands.begin(); iter != commands.end(); iter++)
+				{
+					plyr->addCommand(*iter);
+					//m_commandsToSend.push(*iter);
+					//m_input->m_current[*iter] = true;
+				}
+			}
+		}
+	}
 }
 
 

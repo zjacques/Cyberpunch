@@ -2,6 +2,7 @@
 #include "Entity.h"
 #include "PlayerPhysicsComponent.h"
 #include "OnlineSendComponent.h"
+#include "AttackComponent.h"
 
 class Command
 {
