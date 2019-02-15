@@ -1,14 +1,30 @@
 #include "Camera.h"
 
-Camera::Camera()
+Camera::Camera() :
+	m_scalar(MIN_ZOOM)
 {
-	zoom(1.f);
+	zoom(MIN_ZOOM);
 
 	//Set the view
 	m_view.x = 0;
 	m_view.y = 0;
 	m_view.w = SCREEN_WIDTH;
 	m_view.h = SCREEN_HEIGHT;
+}
+
+void Camera::update(double dt)
+{
+	if (m_scalar != m_desiredScalar)
+	{
+		if (m_desiredScalar > m_scalar)
+		{
+			m_scalar += .5 * dt;
+		}
+		else
+		{
+			m_scalar -= .5 * dt;
+		}
+	}
 }
 
 void Camera::centerCamera(float x, float y)
@@ -26,12 +42,12 @@ void Camera::centerCamera(Vector2f pos)
 
 void Camera::zoom(float scalar)
 {
-	m_scalar = scalar;
+	m_desiredScalar = scalar;
 
-	if (m_scalar < MIN_ZOOM)
-		m_scalar = MIN_ZOOM;
-	if (m_scalar > MAX_ZOOM)
-		m_scalar = MAX_ZOOM;
+	if (m_desiredScalar < MIN_ZOOM)
+		m_desiredScalar = MIN_ZOOM;
+	if (m_desiredScalar > MAX_ZOOM)
+		m_desiredScalar = MAX_ZOOM;
 }
 
 void Camera::setZoom(SDL_Renderer * renderer)
@@ -49,6 +65,7 @@ void Camera::center()
 	m_view.x = m_centerPoint.x * m_scalar - (SCREEN_WIDTH / 2);
 	m_view.y = m_centerPoint.y * m_scalar - (SCREEN_HEIGHT / 2);
 
+	//Clamping the view
 	//if (m_view.x < 0)
 	//	m_view.x = 0;
 	//if (m_view.y < 0)

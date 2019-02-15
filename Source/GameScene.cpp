@@ -85,7 +85,6 @@ void GameScene::updateCamera(double dt)
 	float maxDist = 0.0f;
 	auto center = Vector2f();
 
-
 	Vector2f lastP;
 	int divisors = 0;
 
@@ -113,18 +112,20 @@ void GameScene::updateCamera(double dt)
 	{
 		maxDist += 50;
 
-		auto minZoom = Vector2f(1920, 1080);
-		auto maxZoom = Vector2f(1920 * 1.25f, 1080 * 1.25f);
+		auto minZoom = Vector2f(1920 / 2, 1080 / 2);
+		auto maxZoom = Vector2f(1920 * m_camera.MAX_ZOOM / 2, 1080 * m_camera.MAX_ZOOM / 2);
 
 		auto diff = minZoom.distance(maxZoom);
 		maxDist = maxDist > diff ? diff : maxDist;
 
 		float percentage = maxDist / diff;
 
-		m_camera.zoom(1.65f - percentage * .65f);
+		m_camera.zoom(m_camera.MAX_ZOOM - percentage * .85f);
 	}
 
-	m_camera.centerCamera(avgPos / (divisors + 0));
+	m_camera.centerCamera(avgPos / (divisors + 1));
+	//Update the camera
+	m_camera.update(dt);
 }
 
 Entity * GameScene::createPlayer(int index,int posX, int posY, bool local)
