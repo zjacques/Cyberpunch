@@ -17,8 +17,8 @@ public:
 	float y() { return m_view.y; }
 	float getScale() { return m_scalar; }
 
-	const float MAX_ZOOM = 1.45f;
-	const float MIN_ZOOM = .85f;
+	const float MAX_ZOOM = 1.55f;
+	const float MIN_ZOOM = 1.0f;
 private:
 	void center();
 

@@ -24,6 +24,12 @@ void Camera::update(double dt)
 		{
 			m_scalar -= .5 * dt;
 		}
+
+		if ((m_scalar - m_desiredScalar) > 0.01
+			|| (m_scalar - m_desiredScalar) < 0.01)
+		{
+			m_scalar = m_desiredScalar;
+		}
 	}
 }
 
@@ -54,8 +60,8 @@ void Camera::setZoom(SDL_Renderer * renderer)
 {
 	SDL_RenderSetScale(renderer, m_scalar, m_scalar);
 
-	m_view.x /= m_scalar;
-	m_view.y /= m_scalar;
+	//m_view.x /= m_scalar;
+	//m_view.y /= m_scalar;
 	m_view.w = SCREEN_WIDTH / m_scalar;
 	m_view.h = SCREEN_HEIGHT / m_scalar;
 }
@@ -66,12 +72,12 @@ void Camera::center()
 	m_view.y = m_centerPoint.y * m_scalar - (SCREEN_HEIGHT / 2);
 
 	//Clamping the view
-	//if (m_view.x < 0)
-	//	m_view.x = 0;
-	//if (m_view.y < 0)
-	//	m_view.y = 0;
-	//if (m_view.x + m_view.w > SCREEN_WIDTH)
-	//	m_view.x = SCREEN_WIDTH - (SCREEN_WIDTH / m_scalar) /2;
-	/*if (m_view.y + m_view.h > SCREEN_HEIGHT)
-		m_view.y = SCREEN_HEIGHT - m_view.h; */
+	if (m_view.x < 0)
+		m_view.x = 0;
+	if (m_view.y < 0)
+		m_view.y = 0;
+	if (m_view.x + m_view.w > SCREEN_WIDTH * m_scalar)
+		m_view.x = (SCREEN_WIDTH / m_scalar) - m_view.w;
+	if (m_view.y + m_view.h > (SCREEN_HEIGHT / m_scalar))
+		m_view.y = (SCREEN_HEIGHT / m_scalar) / 4;
 }
