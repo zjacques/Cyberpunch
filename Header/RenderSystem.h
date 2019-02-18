@@ -2,27 +2,34 @@
 #define RENDERSYSTEM_H
 
 #include "System.h"
+#include "Camera.h"
+#include <algorithm>
 #include <SDL.h>
-#include "../Header/RenderComponent.h"
-#include "../Libraries/SDL_image/include/SDL_image.h"
+#include "SpriteComponent.h"
 
 class RenderSystem : public System
 {
 public:
-	void initWindow(SDL_Window *, SDL_Surface *, SDL_Renderer *);
+	RenderSystem();
 	void update(double dt);
 	void addComponent(Component *);
-	void render(SDL_Rect *, SDL_Rect *, SDL_Texture *);
+	void render(SDL_Renderer& renderer, Camera& camera);
 
 private:
-	SDL_Window * m_window;
-	SDL_Surface * m_drawSurface;
-	SDL_Renderer * m_renderer;
-	SDL_Rect * m_src;
-	SDL_Rect * m_dst;
+	SDL_Rect m_spritePos;
 
-	float SCREEN_WIDTH;
-	float SCREEN_HEIGHT;
+	//Struct used to sort the components based on their layer (smallest to biggest)
+	struct layerSorter
+	{
+		inline bool operator() (Component* l, Component* r)
+		{
+			auto lhs = static_cast<SpriteComponent*>(l);
+			auto rhs = static_cast<SpriteComponent*>(r);
+
+			return lhs->getLayer() < rhs->getLayer();
+		}
+	};
+
 };
 
 #endif

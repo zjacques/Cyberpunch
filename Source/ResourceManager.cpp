@@ -23,7 +23,8 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 	//If you had the player.png in another folder, then youd call it like this
 	//loadFromPath("Characters/Player.png")
 
-	m_map["Game BG"] = loadFromPath("Background.png", renderer);
+	m_map["Game BG"] = loadFromPath("Backgrounds-01.png", renderer);
+	m_map["Player"] = loadFromPath("Player/Player.png", renderer);
 
 	//The colours of the platforms
 	auto platforms = std::vector<std::string>({"Green", "Blue", "Orange", "Pink"});

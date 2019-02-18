@@ -1,6 +1,6 @@
 #include "AnimationComponent.h"
 
-AnimationComponent::AnimationComponent(int frames, float duration, bool loop = false) :
+AnimationComponent::AnimationComponent(SDL_Rect & overallSize, SDL_Rect & frameSize, int frames, float duration, bool loop) :
 	m_loop(loop),
 	m_duration(duration),
 	m_maxFrames(frames),
