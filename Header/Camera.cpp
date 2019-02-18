@@ -1,6 +1,7 @@
 #include "Camera.h"
 
-Camera::Camera() :
+Camera::Camera(bool use) :
+	m_useCamera(use),
 	m_scalar(MIN_ZOOM)
 {
 	zoom(MIN_ZOOM);
@@ -25,10 +26,10 @@ void Camera::update(double dt)
 			m_scalar -= .2 * dt;
 		}
 
-		if ((m_scalar - m_desiredScalar) > 0.01
-			|| (m_scalar - m_desiredScalar) < 0.01)
+		if ((m_scalar - m_desiredScalar) > 0.001
+			|| (m_scalar - m_desiredScalar) < 0.001)
 		{
-			//m_scalar = m_desiredScalar;
+			m_scalar = m_desiredScalar;
 		}
 	}
 }
@@ -58,12 +59,13 @@ void Camera::zoom(float scalar)
 
 void Camera::setZoom(SDL_Renderer * renderer)
 {
-	SDL_RenderSetScale(renderer, m_scalar, m_scalar);
+	if (m_useCamera)
+	{
+		SDL_RenderSetScale(renderer, m_scalar, m_scalar);
 
-	//m_view.x /= m_scalar;
-	//m_view.y /= m_scalar;
-	m_view.w = SCREEN_WIDTH / m_scalar;
-	m_view.h = SCREEN_HEIGHT / m_scalar;
+		m_view.w = SCREEN_WIDTH / m_scalar;
+		m_view.h = SCREEN_HEIGHT / m_scalar;
+	}
 }
 
 void Camera::center()

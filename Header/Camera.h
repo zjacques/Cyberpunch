@@ -5,7 +5,7 @@
 class Camera
 {
 public:
-	Camera();
+	Camera(bool b);
 
 	void update(double dt);
 	void centerCamera(float x, float y);
@@ -13,8 +13,8 @@ public:
 	void zoom(float scalar);
 	void setZoom(SDL_Renderer* renderer);
 
-	float x() { return m_view.x; }
-	float y() { return m_view.y; }
+	float x() { return m_useCamera ? m_view.x : 0; }
+	float y() { return m_useCamera ? m_view.y : 0; }
 	float getScale() { return m_scalar; }
 
 	const float MAX_ZOOM = 1.55f;
@@ -33,4 +33,5 @@ private:
 
 	float m_scalar;
 	float m_desiredScalar;
+	bool m_useCamera;
 };

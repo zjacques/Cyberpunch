@@ -3,7 +3,8 @@
 
 GameScene::GameScene() :
 	m_bgEntity("Game BG"),
-	m_platformsCreated(false)
+	m_platformsCreated(false),
+	m_camera(false)
 {
 
 }
@@ -405,8 +406,8 @@ void GameScene::draw(SDL_Renderer & renderer)
 		{
 			rect.w = phys->m_body->getSize().x;
 			rect.h = phys->m_body->getSize().y;
-			rect.x = phys->m_body->getPosition().x - (rect.w / 2);
-			rect.y = phys->m_body->getPosition().y - (rect.h / 2);
+			rect.x = phys->m_body->getPosition().x - (rect.w / 2) -m_camera.x();
+			rect.y = phys->m_body->getPosition().y - (rect.h / 2) - m_camera.y();
 			SDL_SetRenderDrawColor(&renderer, 255, 255, 0, 255);
 			SDL_RenderFillRect(&renderer, &rect);
 		}
@@ -414,8 +415,8 @@ void GameScene::draw(SDL_Renderer & renderer)
 
 		rect.w = phys->m_jumpSensor->getSize().x;
 		rect.h = phys->m_jumpSensor->getSize().y;
-		rect.x = phys->m_jumpSensor->getPosition().x - (rect.w / 2);
-		rect.y = phys->m_jumpSensor->getPosition().y - (rect.h / 2);
+		rect.x = phys->m_jumpSensor->getPosition().x - (rect.w / 2) - m_camera.x();
+		rect.y = phys->m_jumpSensor->getPosition().y - (rect.h / 2) - m_camera.y();
 		SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
 		SDL_RenderDrawRect(&renderer, &rect);
 
@@ -423,8 +424,8 @@ void GameScene::draw(SDL_Renderer & renderer)
 		{
 			rect.w = hit->m_currentAttack->m_body->getSize().x;
 			rect.h = hit->m_currentAttack->m_body->getSize().y;
-			rect.x = hit->m_currentAttack->m_body->getPosition().x - (rect.w / 2);
-			rect.y = hit->m_currentAttack->m_body->getPosition().y - (rect.h / 2);
+			rect.x = hit->m_currentAttack->m_body->getPosition().x - (rect.w / 2) - m_camera.x();
+			rect.y = hit->m_currentAttack->m_body->getPosition().y - (rect.h / 2) - m_camera.y();
 			SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
 			SDL_RenderDrawRect(&renderer, &rect);
 		}
@@ -443,14 +444,14 @@ void GameScene::draw(SDL_Renderer & renderer)
 			SDL_Rect rect;
 			rect.w = phys->m_body->getSize().x;
 			rect.h = phys->m_body->getSize().y;
-			rect.x = phys->m_body->getPosition().x - (rect.w / 2);
-			rect.y = phys->m_body->getPosition().y - (rect.h / 2);
+			rect.x = phys->m_body->getPosition().x - (rect.w / 2) -m_camera.x();
+			rect.y = phys->m_body->getPosition().y - (rect.h / 2) - m_camera.y();
 			SDL_RenderFillRect(&renderer, &rect);
 
 			rect.w = phys->m_jumpSensor->getSize().x;
 			rect.h = phys->m_jumpSensor->getSize().y;
-			rect.x = phys->m_jumpSensor->getPosition().x - (rect.w / 2);
-			rect.y = phys->m_jumpSensor->getPosition().y - (rect.h / 2);
+			rect.x = phys->m_jumpSensor->getPosition().x - (rect.w / 2) - m_camera.x();
+			rect.y = phys->m_jumpSensor->getPosition().y - (rect.h / 2) - m_camera.y();
 			SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
 			SDL_RenderDrawRect(&renderer, &rect);
 		}
@@ -469,8 +470,8 @@ void GameScene::draw(SDL_Renderer & renderer)
 		auto phys = static_cast<PhysicsComponent*>(&m_pickUp->getComponent("Physics"));
 		rect.w = phys->m_body->getSize().x;
 		rect.h = phys->m_body->getSize().y;
-		rect.x = phys->m_body->getPosition().x - (rect.w / 2);
-		rect.y = phys->m_body->getPosition().y - (rect.h / 2);
+		rect.x = phys->m_body->getPosition().x - (rect.w / 2) - m_camera.x();
+		rect.y = phys->m_body->getPosition().y - (rect.h / 2) - m_camera.y();
 		SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
 		SDL_RenderDrawRect(&renderer, &rect);
 	}
