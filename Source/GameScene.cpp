@@ -17,12 +17,10 @@ void GameScene::start()
 	//Recreate the attack system
 	Scene::systems()["Attack"] = new AttackSystem(m_physicsWorld);
 
-	//m_player.createPlayer(m_physicsWorld, m_physicsSystem);
-	// m_pickUp.createPickUp(m_physicsWorld, m_physicsSystem);
 	auto pickupSys = new PickUpSystem();
 	pickupSys->setWorld(m_physicsWorld);
 	Scene::systems()["PickUp"] = pickupSys;
-//	Scene::systems()["Booth"] = new DJBoothSystem();
+	//Scene::systems()["Booth"] = new DJBoothSystem();
 
 	//Create background entity
 	auto bgPos = new PositionComponent(1920 /2 , 1080 / 2);
@@ -39,24 +37,6 @@ void GameScene::start()
 	{
 		std::cerr << "Failed to intialise SDL_net: " << SDLNet_GetError() << std::endl;
 		exit(-1);
-	}
-
-	//Create all of the platforms for the game
-	for (auto& platform : Scene::resources().getLevelData()["Platforms"])
-	{
-		//Get the X,Y,Width and Height of the platform
-		int x = platform["X"], y = platform["Y"], w = platform["W"], h = platform["H"];
-		std::string tag = platform["Tag"];
-		auto newPlat = Platform(tag);
-
-		//Add a physics body to the platform
-		newPlat.getPhysComp().m_body = m_physicsWorld.createBox(x, y, w, h, false, true, b2BodyType::b2_staticBody);
-		//Add the properties of the physics body
-		m_physicsWorld.addProperties(*newPlat.getPhysComp().m_body, 0, .1f, 0, false, new PhysicsComponent::ColData(newPlat.getTag(), &newPlat));
-
-		m_platforms.push_back(newPlat); //Create a new platform
-
-
 	}
 
 	/*for(auto& m_djBooths : Scene::resources().getLevelData()["Booth"])
@@ -86,7 +66,7 @@ void GameScene::start()
 	m_pickUp = new Entity("pickup_entity");
 	auto pos = new PositionComponent(0,0);
 	m_pickUp->addComponent("Pos", pos);
-  m_pickUp->addComponent("PickUp",new PickUpComponent());
+	m_pickUp->addComponent("PickUp",new PickUpComponent());
 
 
 
@@ -195,15 +175,7 @@ Entity * GameScene::createPlayer(int index,int posX, int posY, bool local)
 //}
 
 void GameScene::createPlatforms(SDL_Renderer& renderer)
-{
-	SDL_Rect rect;
-	rect.x = 0;
-	rect.y = 0;
-	rect.w = 1920;
-	rect.h = 1080;
-
-	SDL_RenderCopy(&renderer, m_bG, &rect, &rect);
-	
+{	
 	//Create all of the platforms for the game
 	for (auto& platform : Scene::resources().getLevelData()["Platforms"])
 	{

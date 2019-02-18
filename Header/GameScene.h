@@ -41,8 +41,6 @@ private:
 	//std::vector<OnlineInputSystem*> m_onlineInputs;
 	int m_numOfOnlinePlayers;
 
-	PickUp m_pickUp;
-
 	//Physics variables
 	PhysicsSystem m_physicsSystem; //Add all physics components to the system
 	Box2DBridge m_physicsWorld;

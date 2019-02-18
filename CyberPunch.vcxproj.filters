@@ -111,10 +111,10 @@
     <ClCompile Include="Source\Button.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Header\PlayerPhysicsComponent.cpp">
+    <ClCompile Include="Source\PlayerPhysicsComponent.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Header\PlayerPhysicsSystem.cpp">
+    <ClCompile Include="Source\PlayerPhysicsSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
     <ClCompile Include="Source\AIComponent.cpp">
@@ -126,10 +126,10 @@
     <ClCompile Include="Source\AnimationSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
-    <ClCompile Include="Header\AttackComponent.cpp">
+    <ClCompile Include="Source\AttackComponent.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Header\AttackSystem.cpp">
+    <ClCompile Include="Source\AttackSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
     <ClCompile Include="Source\PickUpComponent.cpp">

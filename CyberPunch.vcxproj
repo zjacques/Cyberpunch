@@ -124,17 +124,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\ClientSocket.cpp" />
-    <ClCompile Include="Header\AttackComponent.cpp" />
-    <ClCompile Include="Header\AttackSystem.cpp" />
-    <ClCompile Include="Header\PlayerPhysicsComponent.cpp" />
-    <ClCompile Include="Header\PlayerPhysicsSystem.cpp" />
+    <ClCompile Include="Source\AttackComponent.cpp" />
+    <ClCompile Include="Source\AttackSystem.cpp" />
+    <ClCompile Include="Source\PlayerPhysicsComponent.cpp" />
+    <ClCompile Include="Source\PlayerPhysicsSystem.cpp" />
     <ClCompile Include="Source\AIComponent.cpp" />
     <ClCompile Include="Source\AISystem.cpp" />
     <ClCompile Include="Source\Button.cpp" />
     <ClCompile Include="Source\CollisionListener.cpp" />
     <ClCompile Include="Source\DJBoothComponent.cpp" />
     <ClCompile Include="Source\DJBoothSystem.cpp" />
-    <ClCompile Include="Source\PickUp.cpp" />
     <ClCompile Include="Source\PickUpComponent.cpp" />
     <ClCompile Include="Source\PickUpSystem.cpp" />
     <ClCompile Include="Source\OnlineInputComponent.cpp" />
