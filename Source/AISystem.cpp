@@ -7,6 +7,8 @@
 void AISystem::addComponent(Component * c)
 {
 	m_components.push_back(c);
+	initialiseActions();
+	createTree();
 }
 
 /// <summary>
@@ -20,11 +22,22 @@ void AISystem::initialiseActions()
 		//Cast all components as AIComponents
 		auto cast_comp = dynamic_cast<AIComponent *>(c);
 
-		cast_comp->walkLeft = new Action("Walk left", 50);
-		cast_comp->walkRight = new Action("Walk right", 50);
-		cast_comp->attackOne = new Action("Attack 1", 75);
-		cast_comp->attackTwo = new Action("Attack 2", 60);
-		cast_comp->jump = new Action("Jump", 80);
+		cast_comp->walkLeft = new WalkLeftAction("Walk left", 100);
+		cast_comp->walkRight = new WalkRightAction("Walk right", 100);
+		cast_comp->attackOne = new PunchAction("Attack 1", 100);
+		cast_comp->attackTwo = new PunchAction("Attack 2", 100);
+		cast_comp->jump = new JumpAction("Jump", 100);
+		cast_comp->getNearest = new CheckNearest("Nearest", 100);
+		cast_comp->closeEnough = new CloseEnough("close", 100);
+		cast_comp->checkPlayerDirection = new CheckPlayerDirection("PlayerDir", 100);
+		cast_comp->isHealthHigh = new JumpAction("Health", 100);
+		cast_comp->Flee = new JumpAction("Flee", 100);
+		cast_comp->isPlayerAbove = new JumpAction("PlayerAbove", 100);
+		cast_comp->isPlayerHealthLow = new JumpAction("Health low", 100);
+		cast_comp->canKick = new JumpAction("Can kick", 100);
+		cast_comp->punch = new JumpAction("Punch", 100);
+		cast_comp->moveToClosestPlayer = new JumpAction("MoveTo", 100);
+		cast_comp->drop = new JumpAction("Drop", 100);
 	}
 }
 
@@ -40,7 +53,11 @@ void AISystem::createTree()
 		auto cast_comp = dynamic_cast<AIComponent *>(c);
 
 		//Set Behaviour Tree Root node
-		cast_comp->BT.setRootChild(&cast_comp->m_selectors[0]);
+		cast_comp->BT.setRootChild(&cast_comp->m_sequences[0]);
+
+		cast_comp->m_sequences[0].addChildren({ cast_comp->getNearest, cast_comp->closeEnough });
+
+		/*
 
 		//Left sub tree
 		cast_comp->m_selectors[0].addChildren({&cast_comp->m_sequences[0], &cast_comp->m_selectors[5]});
@@ -57,6 +74,8 @@ void AISystem::createTree()
 		cast_comp->m_sequences[1].addChildren({ cast_comp->getNearest, cast_comp->closeEnough });
 		cast_comp->m_sequences[2].addChildren({ &cast_comp->m_succeeders[1], &cast_comp->m_selectors[6] });
 		cast_comp->m_selectors[6].addChildren({ cast_comp->isPlayerAbove, cast_comp->drop });
+
+		*/
 	}
 }
 
@@ -86,5 +105,5 @@ void AISystem::runTree()
 /// <param name="dt"></param>
 void AISystem::update(double dt)
 {
-
+	runTree();
 }

@@ -22,6 +22,8 @@ void GameScene::start()
 	Scene::systems()["PickUp"] = pickupSys;
 	//Scene::systems()["Booth"] = new DJBoothSystem();
 
+	m_AIPlayers.push_back(createAI(1, 600 + 150 * 1, 360));
+
 	//Create background entity
 	auto bgPos = new PositionComponent(1920 /2 , 1080 / 2);
 	m_bgEntity.addComponent("Pos", bgPos);
@@ -53,6 +55,7 @@ void GameScene::start()
 		Scene::systems()["Network"] = net;
 	else
 		delete net;*/
+	
 
 	//Create players for extra inputs
 	for (int i = 0; i < m_numOfLocalPlayers; i++)
@@ -97,6 +100,7 @@ void GameScene::update(double dt)
 	Scene::systems()["PickUp"]->update(dt);
 	//Scene::systems()["Booth"]->update(dt);
 	Scene::systems()["Animation"]->update(dt); //Update the animation components
+	Scene::systems()["AI"]->update(dt);
 
 	//Update camera
 	updateCamera(dt);
@@ -227,6 +231,57 @@ Entity * GameScene::createPlayer(int index,int posX, int posY, bool local)
 //	return booth; //Return the created entity
 //}
 
+/// <summary>
+/// 
+/// </summary>
+/// <param name="index"></param>
+/// <param name="posX"></param>
+/// <param name="posY"></param>
+/// <returns></returns>
+Entity * GameScene::createAI(int index, int posX, int posY)
+{
+	auto ai = new Entity("AI");
+	auto pos = new PositionComponent(0, 0);
+	ai->addComponent("Pos", pos);
+	ai->addComponent("Attack", new AttackComponent());
+	ai->addComponent("Sprite", new SpriteComponent(&ai->getComponent("Pos"), Vector2f(50, 50), Vector2f(50, 50), Scene::resources().getTexture("Player"), 2));
+	auto behaviour = new AIComponent();
+	Scene::systems()["AI"]->addComponent(behaviour);
+
+	//Add the players attack component to the attack system
+	Scene::systems()["Attack"]->addComponent(&ai->getComponent("Attack"));
+
+	Scene::systems()["Render"]->addComponent(&ai->getComponent("Sprite"));
+
+	//Create the physics component and set up the bodies
+	auto phys = new PlayerPhysicsComponent(&ai->getComponent("Pos"));
+	phys->m_body = m_physicsWorld.createBox(posX, posY, 50, 50, false, false, b2BodyType::b2_dynamicBody);
+	phys->m_jumpSensor = m_physicsWorld.createBox(posX, posY + 22.5f, 45, 5, false, false, b2BodyType::b2_dynamicBody);
+
+	m_physicsWorld.addProperties(*phys->m_body, 1, 0.05f, 0.0f, false, new PhysicsComponent::ColData("Player Body", ai));
+	m_physicsWorld.addProperties(*phys->m_jumpSensor, 1, 0.05f, 0.0f, true, new PhysicsComponent::ColData("Jump Sensor", ai));
+
+	//Set the gravity scale to 2, this makes the player less floaty
+	phys->m_body->getBody()->SetGravityScale(2.0f);
+
+	//Create the joint between the player and the jump sensor
+	phys->createJoint(m_physicsWorld);
+
+	//Add the components to the entity
+	ai->addComponent("Player Physics", phys);
+
+	//Add the physics component to the playe rphysics system
+	Scene::systems()["Player Physics"]->addComponent(phys);
+
+	return ai;
+}
+
+//void GameScene::draw(SDL_Renderer & renderer)
+
+/// <summary>
+/// 
+/// </summary>
+/// <param name="renderer"></param>
 void GameScene::createPlatforms(SDL_Renderer& renderer)
 {	
 	//Create all of the platforms for the game
@@ -303,6 +358,14 @@ void GameScene::createPlatforms(SDL_Renderer& renderer)
 	m_platformsCreated = true;
 }
 
+/// <summary>
+/// 
+/// </summary>
+/// <param name="x"></param>
+/// <param name="y"></param>
+/// <param name="w"></param>
+/// <param name="h"></param>
+/// <returns></returns>
 SDL_Rect GameScene::createRect(int x, int y, int w, int h)
 {
 	SDL_Rect rect;
@@ -313,6 +376,10 @@ SDL_Rect GameScene::createRect(int x, int y, int w, int h)
 	return rect;
 }
 
+/// <summary>
+/// 
+/// </summary>
+/// <param name="renderer"></param>
 void GameScene::draw(SDL_Renderer & renderer)
 {
 	if (m_platformsCreated == false)
@@ -359,17 +426,37 @@ void GameScene::draw(SDL_Renderer & renderer)
 			SDL_RenderDrawRect(&renderer, &rect);
 		}
 	}
-	for (int i = 0; i < m_numOfOnlinePlayers; i++)
+
+	for (auto i : m_AIPlayers)
 	{
 		SDL_SetRenderDrawColor(&renderer, 255, 0, 0, 255);
-		auto phys = static_cast<PlayerPhysicsComponent*>(&m_onlinePlayers.at(i)->getComponent("Player Physics"));
-		SDL_Rect rect;
-		rect.w = phys->m_body->getSize().x;
-		rect.h = phys->m_body->getSize().y;
-		rect.x = phys->m_body->getPosition().x - (rect.w / 2);
-		rect.y = phys->m_body->getPosition().y - (rect.h / 2);
-		SDL_RenderFillRect(&renderer, &rect);
+		auto phys = static_cast<PlayerPhysicsComponent*>(&i->getComponent("Player Physics"));
 
+		for (int i = 0; i < m_numOfOnlinePlayers; i++)
+		{
+			SDL_SetRenderDrawColor(&renderer, 255, 0, 0, 255);
+			auto phys = static_cast<PlayerPhysicsComponent*>(&m_onlinePlayers.at(i)->getComponent("Player Physics"));
+
+			SDL_Rect rect;
+			rect.w = phys->m_body->getSize().x;
+			rect.h = phys->m_body->getSize().y;
+			rect.x = phys->m_body->getPosition().x - (rect.w / 2);
+			rect.y = phys->m_body->getPosition().y - (rect.h / 2);
+			SDL_RenderFillRect(&renderer, &rect);
+
+			rect.w = phys->m_jumpSensor->getSize().x;
+			rect.h = phys->m_jumpSensor->getSize().y;
+			rect.x = phys->m_jumpSensor->getPosition().x - (rect.w / 2);
+			rect.y = phys->m_jumpSensor->getPosition().y - (rect.h / 2);
+			SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
+			SDL_RenderDrawRect(&renderer, &rect);
+		}
+
+		/*for (int i = 0; i < m_numOfOnlinePlayers; i++)
+		{
+			m_onlinePlayers.at(i).draw(renderer);
+		}*/
+		//m_pickUp.draw(renderer);
 	}
 
 
@@ -402,4 +489,27 @@ void GameScene::handleInput(InputSystem & input)
 		input->handleInput(m_onlinePlayers.at(i));
 		//m_onlinePlayers.at(i).handleInput(*m_onlineInputs.at(i));
 	}
+
+	//Handle input for all players
+	//for (int i = 0; i < m_numOfLocalPlayers; i++)
+	//{
+	//	m_localPlayers.at(i).handleInput(*m_localInputs.at(i));
+	//}
+
+	////If the pause button has been pressed on either joycon
+	//if (input.isButtonPressed("A"))
+	//{
+	//	Scene::goToScene("Main Menu");
+	//}
+	//if (input.isButtonPressed("Space"))
+	//{
+	//	//Flip the gravioty of the physics system and the physics world
+	//	m_physicsSystem.flipGravity();
+	//	m_physicsWorld.flipGravity();
+	//	for (int i = 0; i < m_numOfLocalPlayers; i++)
+	//	{
+	//		m_localPlayers.at(i).flipGravity();
+	//	}
+	//	m_collisionListener.flipGravity();
+	//}
 }

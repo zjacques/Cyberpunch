@@ -239,6 +239,9 @@
     <ClInclude Include="Header\Button.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Header\AIComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
     <ClInclude Include="Header\PlayerPhysicsComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef PHYSICSCOMPONENT_H
+#define PHYSICSCOMPONENT_H
+
 #include "Box2DBridge.h"
 #include "PositionComponent.h"
 
@@ -26,3 +28,5 @@ public:
 		void* objectData;
 	};
 };
+
+#endif
