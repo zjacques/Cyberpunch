@@ -66,7 +66,7 @@ void GameScene::start()
 		m_platforms.push_back(newPlat); //Create a new platform
 	}
 
-	static_cast<OnlineSystem*>(Scene::systems()["Network"])->getLobbies();
+	//static_cast<OnlineSystem*>(Scene::systems()["Network"])->getLobbies();
 
 }
 
