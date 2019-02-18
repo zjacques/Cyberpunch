@@ -123,15 +123,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Header\Camera.cpp" />
     <ClCompile Include="Source\ClientSocket.cpp" />
-    <ClCompile Include="Header\AttackComponent.cpp" />
-    <ClCompile Include="Header\AttackSystem.cpp" />
-    <ClCompile Include="Header\PlayerPhysicsComponent.cpp" />
-    <ClCompile Include="Header\PlayerPhysicsSystem.cpp" />
+    <ClCompile Include="Source\AttackComponent.cpp" />
+    <ClCompile Include="Source\AttackSystem.cpp" />
+    <ClCompile Include="Source\PlayerPhysicsComponent.cpp" />
+    <ClCompile Include="Source\PlayerPhysicsSystem.cpp" />
     <ClCompile Include="Source\AIComponent.cpp" />
     <ClCompile Include="Source\AISystem.cpp" />
     <ClCompile Include="Source\Button.cpp" />
     <ClCompile Include="Source\CollisionListener.cpp" />
+    <ClCompile Include="Source\DJBoothComponent.cpp" />
+    <ClCompile Include="Source\DJBoothSystem.cpp" />
+    <ClCompile Include="Source\PickUpComponent.cpp" />
+    <ClCompile Include="Source\PickUpSystem.cpp" />
     <ClCompile Include="Source\OnlineInputComponent.cpp" />
     <ClCompile Include="Source\OnlineSendComponent.cpp" />
     <ClCompile Include="Source\OnlineSystem.cpp" />
@@ -162,13 +167,18 @@
     <ClInclude Include="Header\AttackSystem.h" />
     <ClInclude Include="Header\BehaviourTree.h" />
     <ClInclude Include="Header\Box2DBridge.h" />
+    <ClInclude Include="Header\Camera.h" />
     <ClInclude Include="Header\ClientSocket.h" />
     <ClInclude Include="Header\Button.h" />
     <ClInclude Include="Header\CollisionListener.h" />
     <ClInclude Include="Header\Commands.h" />
     <ClInclude Include="Header\Component.h" />
+    <ClInclude Include="Header\DJboothComponent.h" />
+    <ClInclude Include="Header\DJBoothSystem.h" />
     <ClInclude Include="Header\Game.h" />
     <ClInclude Include="Header\Entity.h" />
+    <ClInclude Include="Header\PickUpComponent.h" />
+    <ClInclude Include="Header\PickUpSystem.h" />
     <ClInclude Include="Header\OnlineSystem.h" />
     <ClInclude Include="Header\PlayerInputComponent.h" />
     <ClInclude Include="Header\PlayerInputSystem.h" />

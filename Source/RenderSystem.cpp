@@ -22,8 +22,10 @@ void RenderSystem::addComponent(Component * c)
 /// object using parametres from 
 /// the component class
 /// </summary>
-void RenderSystem::render(SDL_Renderer& renderer)
+void RenderSystem::render(SDL_Renderer& renderer, Camera& camera)
 {
+	camera.setZoom(&renderer);
+
 	//Loop through all 
 	for (auto c : m_components)
 	{
@@ -32,11 +34,14 @@ void RenderSystem::render(SDL_Renderer& renderer)
 
 		m_spritePos = sprite->getDestRect(); //Can modify the position using the camera later
 
-		//S position of the destination rect using the position ptr
+		//position of the destination rect using the position ptr
 		m_spritePos.x = sprite->getPosition().x - (sprite->getFrameSize().x / 2);
 		m_spritePos.y = sprite->getPosition().y - (sprite->getFrameSize().y / 2);
 
 		//Minus camera when we do a camera
+		m_spritePos.x -= camera.x();
+		m_spritePos.y -= camera.y();
+		
 
 		//Draw the sprite
 		SDL_RenderCopy(&renderer, sprite->getTexture(), &sprite->getSourceRect(), &m_spritePos);

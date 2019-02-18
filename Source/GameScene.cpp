@@ -5,6 +5,7 @@ GameScene::GameScene() :
 	m_bgEntity("Game BG"),
 	m_platformsCreated(false)
 {
+
 }
 
 void GameScene::start()
@@ -16,15 +17,17 @@ void GameScene::start()
 	//Recreate the attack system
 	Scene::systems()["Attack"] = new AttackSystem(m_physicsWorld);
 
-	//m_player.createPlayer(m_physicsWorld, m_physicsSystem);
-	m_pickUp.createPickUp(m_physicsWorld, m_physicsSystem);
+	auto pickupSys = new PickUpSystem();
+	pickupSys->setWorld(m_physicsWorld);
+	Scene::systems()["PickUp"] = pickupSys;
+	//Scene::systems()["Booth"] = new DJBoothSystem();
 
 	m_AIPlayers.push_back(createAI(1, 600 + 150 * 1, 360));
 
 	//Create background entity
 	auto bgPos = new PositionComponent(1920 /2 , 1080 / 2);
 	m_bgEntity.addComponent("Pos", bgPos);
-	m_bgEntity.addComponent("Sprite", new SpriteComponent(bgPos, Vector2f(1920, 1080), Vector2f(1920, 1080), Scene::resources().getTexture("Game BG"), 0));
+	m_bgEntity.addComponent("Sprite", new SpriteComponent(bgPos, Vector2f(1920, 1080 ), Vector2f(1920 * 1.25f, 1080 * 1.25f), Scene::resources().getTexture("Game BG"), 0));
 	//Add bg sprite component to the render system
 	Scene::systems()["Render"]->addComponent(&m_bgEntity.getComponent("Sprite"));
 
@@ -38,6 +41,12 @@ void GameScene::start()
 		exit(-1);
 	}
 
+	/*for(auto& m_djBooths : Scene::resources().getLevelData()["Booth"])
+	{
+		int x = m_djBooths["X"], y = m_djBooths["Y"], w = m_djBooths["W"], h = m_djBooths["H"];
+		std::string tag = m_djBooths["Tag"];
+		auto newPlat = Platform(tag);*/
+	
 	//try to create the online system and connect
 	//refactor to another spot once we get the full lobby system going I guess.
 	static_cast<OnlineSystem*>(Scene::systems()["Network"])->ConnectToServer();
@@ -57,6 +66,20 @@ void GameScene::start()
 	{
 		m_onlinePlayers.push_back(createPlayer(i+ m_numOfLocalPlayers, 600 + 150 * i+ m_numOfLocalPlayers, 360, false));
 	}
+	m_pickUp = new Entity("pickup_entity");
+	auto pos = new PositionComponent(0,0);
+	m_pickUp->addComponent("Pos", pos);
+	m_pickUp->addComponent("PickUp",new PickUpComponent());
+
+
+
+	auto phys = new PhysicsComponent(pos);
+	phys->m_body = m_physicsWorld.createBox(1920 / 2, 1080 / 2, 50, 50, false, false, b2BodyType::b2_staticBody);
+	m_physicsWorld.addProperties(*phys->m_body, 0, 0, 0, true, new PhysicsComponent::ColData("PickUp", m_pickUp));
+	m_pickUp->addComponent("Physics", phys);
+
+	Scene::systems()["PickUp"]->addComponent(&m_pickUp->getComponent("PickUp"));
+	
 }
 
 void GameScene::stop()
@@ -64,7 +87,6 @@ void GameScene::stop()
 	m_physicsWorld.deleteWorld(); //Delete the physics world
 	m_platforms.clear(); //Delete the platforms of the game
 	m_numOfLocalPlayers = 0;
-	m_pickUp.deletePickUp();
 	m_platformsCreated = false;
 }
 
@@ -75,8 +97,63 @@ void GameScene::update(double dt)
 	//Update the player physics system
 	Scene::systems()["Player Physics"]->update(dt);
 	Scene::systems()["Attack"]->update(dt);
+	Scene::systems()["PickUp"]->update(dt);
+	//Scene::systems()["Booth"]->update(dt);
 	Scene::systems()["Animation"]->update(dt); //Update the animation components
 	Scene::systems()["AI"]->update(dt);
+
+	//Update camera
+	updateCamera(dt);
+}
+
+void GameScene::updateCamera(double dt)
+{
+	//The average position of the players
+	auto avgPos = Vector2f(1920 / 2 , 1080 / 2);
+	float maxDist = 0.0f;
+	auto center = Vector2f();
+
+	Vector2f lastP;
+	int divisors = 0;
+
+	for (auto& player : m_localPlayers)
+	{
+		auto pos = static_cast<PositionComponent*>(&player->getComponent("Pos"))->position;
+		divisors++;
+		avgPos += pos;
+
+		if (lastP.x != 0 && lastP.y != 0)
+		{
+			//Get distance
+			float dist = lastP.distance(pos);
+
+			if (dist > maxDist)
+			{
+				maxDist = dist;
+			}
+		}
+
+		lastP = pos;
+	}
+
+	if (divisors > 0)
+	{
+		maxDist += 50;
+
+		auto minZoom = Vector2f(1920 / 2, 1080 / 2);
+		auto maxZoom = Vector2f(1920 * m_camera.MAX_ZOOM / 2, 1080 * m_camera.MAX_ZOOM / 2);
+
+		auto diff = minZoom.distance(maxZoom);
+		maxDist = maxDist > diff ? diff : maxDist;
+
+		float percentage = maxDist / diff;
+
+		m_camera.zoom(m_camera.MAX_ZOOM - percentage * .55f);
+	}
+
+	m_camera.centerCamera(avgPos / (divisors + 1));
+	//Update the camera
+	m_camera.update(dt);
 }
 
 Entity * GameScene::createPlayer(int index,int posX, int posY, bool local)
@@ -136,6 +213,23 @@ Entity * GameScene::createPlayer(int index,int posX, int posY, bool local)
 
 	return p; //Return the created entity
 }
+//
+//Entity*  GameScene::createDJB(int index, int posX, int posY)
+//{
+//	auto booth = new Entity("Booth");
+//	auto pos = new PositionComponent(0, 0);
+//	booth->addComponent("Pos", pos);
+//
+//	auto phys = new PhysicsComponent(pos);
+//	phys->m_body = m_physicsWorld.createBox(posX, posY, 50, 50, false, false, b2BodyType::b2_dynamicBody);
+//
+//	m_physicsWorld.addProperties(*phys->m_body, 1, 0.05f, 0.0f, false, new PhysicsComponent::ColData("Booth", booth));
+//	booth->addComponent("Booth", phys);
+//
+////	Scene::systems()["Booth"]->addComponent(phys);
+//
+//	return booth; //Return the created entity
+//}
 
 /// <summary>
 /// 
@@ -189,7 +283,7 @@ Entity * GameScene::createAI(int index, int posX, int posY)
 /// </summary>
 /// <param name="renderer"></param>
 void GameScene::createPlatforms(SDL_Renderer& renderer)
-{
+{	
 	//Create all of the platforms for the game
 	for (auto& platform : Scene::resources().getLevelData()["Platforms"])
 	{
@@ -295,7 +389,7 @@ void GameScene::draw(SDL_Renderer & renderer)
 
 	//Draw sprites in the render system
 	auto renderSystem = static_cast<RenderSystem*>(Scene::systems()["Render"]);
-	renderSystem->render(renderer);
+	renderSystem->render(renderer, m_camera);
 
 	//Drawing the jump sensors and attack boxes for the player (For debug only, this will be deleted)
 	for (int i = 0; i < m_numOfLocalPlayers; i++)
@@ -363,6 +457,19 @@ void GameScene::draw(SDL_Renderer & renderer)
 			m_onlinePlayers.at(i).draw(renderer);
 		}*/
 		//m_pickUp.draw(renderer);
+	}
+
+
+	auto pC = static_cast<PickUpComponent*>(&m_pickUp->getComponent("PickUp"));
+	if (pC->spawned())
+	{
+		auto phys = static_cast<PhysicsComponent*>(&m_pickUp->getComponent("Physics"));
+		rect.w = phys->m_body->getSize().x;
+		rect.h = phys->m_body->getSize().y;
+		rect.x = phys->m_body->getPosition().x - (rect.w / 2);
+		rect.y = phys->m_body->getPosition().y - (rect.h / 2);
+		SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
+		SDL_RenderDrawRect(&renderer, &rect);
 	}
 }
 
