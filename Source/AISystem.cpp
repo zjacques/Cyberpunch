@@ -89,7 +89,7 @@ void AISystem::runTree()
 		auto cast_comp = dynamic_cast<AIComponent *>(c);
 		if (cast_comp->BT.run())
 		{
-			std::cout << "Behaviour tree exited with SUCCESS" << std::endl;
+			//std::cout << "Behaviour tree exited with SUCCESS" << std::endl;
 		}
 		else
 		{
