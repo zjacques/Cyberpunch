@@ -15,6 +15,7 @@ Game::Game(int fps) :
 	m_systems["Physics"] = new PhysicsSystem();
 	m_systems["Player Physics"] = new PlayerPhysicsSystem();
 	m_systems["AI"] = new AISystem();
+	m_systems["Pickup"] = new PickUpSystem();
 	m_systems["Network"] = new OnlineSystem();
 }
 
