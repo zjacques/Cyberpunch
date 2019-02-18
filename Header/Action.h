@@ -2,6 +2,7 @@
 #define ACTION_H
 
 #include "BehaviourTree.h"
+#include "Entity.h"
 
 class Action : public BehaviourTree::Node
 {

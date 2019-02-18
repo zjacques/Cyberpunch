@@ -11,7 +11,6 @@ public:
 	AIComponent() {}
 	~AIComponent() {}
 
-public:
 	//Declare Tree, selector nodes and sequence nodes
 	BehaviourTree BT;
 	BehaviourTree::Selector m_selectors[7];

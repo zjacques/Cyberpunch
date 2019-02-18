@@ -55,9 +55,6 @@ void AISystem::createTree()
 		//Set Behaviour Tree Root node
 		cast_comp->BT.setRootChild(&cast_comp->m_sequences[0]);
 
-		cast_comp->m_sequences[0].addChildren({ cast_comp->getNearest, cast_comp->closeEnough });
-
-		/*
 
 		//Left sub tree
 		cast_comp->m_selectors[0].addChildren({&cast_comp->m_sequences[0], &cast_comp->m_selectors[5]});
@@ -75,7 +72,6 @@ void AISystem::createTree()
 		cast_comp->m_sequences[2].addChildren({ &cast_comp->m_succeeders[1], &cast_comp->m_selectors[6] });
 		cast_comp->m_selectors[6].addChildren({ cast_comp->isPlayerAbove, cast_comp->drop });
 
-		*/
 	}
 }
 

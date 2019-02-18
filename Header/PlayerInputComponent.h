@@ -64,6 +64,4 @@ private:
 	Command* m_currentCMD;
 };
 
-
-
 #endif
