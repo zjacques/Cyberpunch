@@ -18,17 +18,17 @@ void Camera::update(double dt)
 	{
 		if (m_desiredScalar > m_scalar)
 		{
-			m_scalar += .5 * dt;
+			m_scalar += .2 * dt;
 		}
 		else
 		{
-			m_scalar -= .5 * dt;
+			m_scalar -= .2 * dt;
 		}
 
 		if ((m_scalar - m_desiredScalar) > 0.01
 			|| (m_scalar - m_desiredScalar) < 0.01)
 		{
-			m_scalar = m_desiredScalar;
+			//m_scalar = m_desiredScalar;
 		}
 	}
 }
@@ -76,8 +76,9 @@ void Camera::center()
 		m_view.x = 0;
 	if (m_view.y < 0)
 		m_view.y = 0;
-	if (m_view.x + m_view.w > SCREEN_WIDTH * m_scalar)
-		m_view.x = (SCREEN_WIDTH / m_scalar) - m_view.w;
-	if (m_view.y + m_view.h > (SCREEN_HEIGHT / m_scalar))
-		m_view.y = (SCREEN_HEIGHT / m_scalar) / 4;
+	if (m_view.x + m_view.w > SCREEN_WIDTH)
+		m_view.x = SCREEN_WIDTH - m_view.w;
+		//m_view.x = ((SCREEN_WIDTH / m_scalar) - m_view.w) ;
+	if (m_view.y + m_view.h > SCREEN_HEIGHT)
+		m_view.y = SCREEN_HEIGHT - m_view.h;
 }

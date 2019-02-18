@@ -120,7 +120,7 @@ void GameScene::updateCamera(double dt)
 
 		float percentage = maxDist / diff;
 
-		m_camera.zoom(m_camera.MAX_ZOOM - percentage * .85f);
+		m_camera.zoom(m_camera.MAX_ZOOM - percentage * .55f);
 	}
 
 	m_camera.centerCamera(avgPos / (divisors + 1));
