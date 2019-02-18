@@ -14,6 +14,7 @@
 #include "PlayerInputComponent.h"
 #include "OnlineSendComponent.h"
 #include "OnlineInputComponent.h"
+#include "Camera.h"
 #include <SDL_net.h>
 
 class GameScene : public Scene
@@ -23,6 +24,7 @@ public:
 	void start();
 	void stop();
 	void update(double dt);
+	void updateCamera(double dt);
 	Entity* createDJB(int index, int posX, int posY);
 	void createPlatforms(SDL_Renderer& renderer);
 	SDL_Rect createRect(int x, int y, int w, int h);
@@ -47,4 +49,6 @@ private:
 	CollisionListener m_collisionListener;
 	//Platforms of the game
 	std::vector<Entity*> m_platforms;
+
+	Camera m_camera;
 };

@@ -2,6 +2,7 @@
 #define RENDERSYSTEM_H
 
 #include "System.h"
+#include "Camera.h"
 #include <algorithm>
 #include <SDL.h>
 #include "SpriteComponent.h"
@@ -12,7 +13,7 @@ public:
 	RenderSystem();
 	void update(double dt);
 	void addComponent(Component *);
-	void render(SDL_Renderer& renderer);
+	void render(SDL_Renderer& renderer, Camera& camera);
 
 private:
 	SDL_Rect m_spritePos;

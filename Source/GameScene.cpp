@@ -25,7 +25,7 @@ void GameScene::start()
 	//Create background entity
 	auto bgPos = new PositionComponent(1920 /2 , 1080 / 2);
 	m_bgEntity.addComponent("Pos", bgPos);
-	m_bgEntity.addComponent("Sprite", new SpriteComponent(bgPos, Vector2f(1920, 1080), Vector2f(1920, 1080), Scene::resources().getTexture("Game BG"), 0));
+	m_bgEntity.addComponent("Sprite", new SpriteComponent(bgPos, Vector2f(1920, 1080 ), Vector2f(1920 * 1.25f, 1080 * 1.25f), Scene::resources().getTexture("Game BG"), 0));
 	//Add bg sprite component to the render system
 	Scene::systems()["Render"]->addComponent(&m_bgEntity.getComponent("Sprite"));
 
@@ -97,6 +97,59 @@ void GameScene::update(double dt)
 	Scene::systems()["PickUp"]->update(dt);
 	//Scene::systems()["Booth"]->update(dt);
 	Scene::systems()["Animation"]->update(dt); //Update the animation components
+
+	//Update camera
+	updateCamera(dt);
+}
+
+void GameScene::updateCamera(double dt)
+{
+	//The average position of the players
+	auto avgPos = Vector2f(1920 / 2 , 1080 / 2);
+	float maxDist = 0.0f;
+	auto center = Vector2f();
+
+	Vector2f lastP;
+	int divisors = 0;
+
+	for (auto& player : m_localPlayers)
+	{
+		auto pos = static_cast<PositionComponent*>(&player->getComponent("Pos"))->position;
+		divisors++;
+		avgPos += pos;
+
+		if (lastP.x != 0 && lastP.y != 0)
+		{
+			//Get distance
+			float dist = lastP.distance(pos);
+
+			if (dist > maxDist)
+			{
+				maxDist = dist;
+			}
+		}
+
+		lastP = pos;
+	}
+
+	if (divisors > 0)
+	{
+		maxDist += 50;
+
+		auto minZoom = Vector2f(1920 / 2, 1080 / 2);
+		auto maxZoom = Vector2f(1920 * m_camera.MAX_ZOOM / 2, 1080 * m_camera.MAX_ZOOM / 2);
+
+		auto diff = minZoom.distance(maxZoom);
+		maxDist = maxDist > diff ? diff : maxDist;
+
+		float percentage = maxDist / diff;
+
+		m_camera.zoom(m_camera.MAX_ZOOM - percentage * .55f);
+	}
+
+	m_camera.centerCamera(avgPos / (divisors + 1));
+	//Update the camera
+	m_camera.update(dt);
 }
 
 Entity * GameScene::createPlayer(int index,int posX, int posY, bool local)
@@ -269,7 +322,7 @@ void GameScene::draw(SDL_Renderer & renderer)
 
 	//Draw sprites in the render system
 	auto renderSystem = static_cast<RenderSystem*>(Scene::systems()["Render"]);
-	renderSystem->render(renderer);
+	renderSystem->render(renderer, m_camera);
 
 	//Drawing the jump sensors and attack boxes for the player (For debug only, this will be deleted)
 	for (int i = 0; i < m_numOfLocalPlayers; i++)
