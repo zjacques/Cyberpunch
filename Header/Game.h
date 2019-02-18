@@ -18,6 +18,7 @@
 #include "PlayerPhysicsSystem.h"
 #include "AISystem.h"
 #include "AttackSystem.h"
+#include "PickUpSystem.h"
 
 class Game
 {

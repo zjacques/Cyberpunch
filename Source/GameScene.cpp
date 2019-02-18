@@ -2,6 +2,7 @@
 
 GameScene::GameScene()
 {
+
 }
 
 void GameScene::start()
@@ -14,9 +15,14 @@ void GameScene::start()
 	Scene::systems()["Attack"] = new AttackSystem(m_physicsWorld);
 
 	//m_player.createPlayer(m_physicsWorld, m_physicsSystem);
-	m_pickUp.createPickUp(m_physicsWorld, m_physicsSystem);
+	// m_pickUp.createPickUp(m_physicsWorld, m_physicsSystem);
+	auto pickupSys = new PickUpSystem();
+	pickupSys->setWorld(m_physicsWorld);
+	Scene::systems()["PickUp"] = pickupSys;
+//	Scene::systems()["Booth"] = new DJBoothSystem();
 
 	m_bG = Scene::resources().getTexture("Game BG");
+//	m_recordt = Scene::resources().getTexture("Record.png");
 
 	m_numOfLocalPlayers = SDL_NumJoysticks();
 
@@ -25,7 +31,6 @@ void GameScene::start()
 	{
 		m_localPlayers.push_back(createPlayer(i,600 + 150 * i, 360));
 	}
-
 
 	//Create all of the platforms for the game
 	for (auto& platform : Scene::resources().getLevelData()["Platforms"])
@@ -41,7 +46,32 @@ void GameScene::start()
 		m_physicsWorld.addProperties(*newPlat.getPhysComp().m_body, 0, .1f, 0, false, new PhysicsComponent::ColData(newPlat.getTag(), &newPlat));
 
 		m_platforms.push_back(newPlat); //Create a new platform
+
+
 	}
+
+	/*for(auto& m_djBooths : Scene::resources().getLevelData()["Booth"])
+	{
+		int x = m_djBooths["X"], y = m_djBooths["Y"], w = m_djBooths["W"], h = m_djBooths["H"];
+		std::string tag = m_djBooths["Tag"];
+		auto newPlat = Platform(tag);
+	
+	}
+*/
+	m_pickUp = new Entity("pickup_entity");
+	auto pos = new PositionComponent(0,0);
+	m_pickUp->addComponent("Pos", pos);
+    m_pickUp->addComponent("PickUp",new PickUpComponent());
+
+
+
+	auto phys = new PhysicsComponent(pos);
+	phys->m_body = m_physicsWorld.createBox(1920 / 2, 1080 / 2, 50, 50, false, false, b2BodyType::b2_staticBody);
+	m_physicsWorld.addProperties(*phys->m_body, 0, 0, 0, true, new PhysicsComponent::ColData("PickUp", m_pickUp));
+	m_pickUp->addComponent("Physics", phys);
+
+	Scene::systems()["PickUp"]->addComponent(&m_pickUp->getComponent("PickUp"));
+	
 }
 
 void GameScene::stop()
@@ -49,7 +79,7 @@ void GameScene::stop()
 	m_physicsWorld.deleteWorld(); //Delete the physics world
 	m_platforms.clear(); //Delete the platforms of the game
 	m_numOfLocalPlayers = 0;
-	m_pickUp.deletePickUp();
+	//m_pickUp.deletePickUp();
 }
 
 void GameScene::update(double dt)
@@ -59,6 +89,12 @@ void GameScene::update(double dt)
 	//Update the player physics system
 	Scene::systems()["Player Physics"]->update(dt);
 	Scene::systems()["Attack"]->update(dt);
+	Scene::systems()["PickUp"]->update(dt);
+	//Scene::systems()["Booth"]->update(dt);
+
+
+	
+
 }
 
 Entity * GameScene::createPlayer(int index,int posX, int posY)
@@ -98,6 +134,23 @@ Entity * GameScene::createPlayer(int index,int posX, int posY)
 
 	return p; //Return the created entity
 }
+//
+//Entity*  GameScene::createDJB(int index, int posX, int posY)
+//{
+//	auto booth = new Entity("Booth");
+//	auto pos = new PositionComponent(0, 0);
+//	booth->addComponent("Pos", pos);
+//
+//	auto phys = new PhysicsComponent(pos);
+//	phys->m_body = m_physicsWorld.createBox(posX, posY, 50, 50, false, false, b2BodyType::b2_dynamicBody);
+//
+//	m_physicsWorld.addProperties(*phys->m_body, 1, 0.05f, 0.0f, false, new PhysicsComponent::ColData("Booth", booth));
+//	booth->addComponent("Booth", phys);
+//
+////	Scene::systems()["Booth"]->addComponent(phys);
+//
+//	return booth; //Return the created entity
+//}
 
 void GameScene::draw(SDL_Renderer & renderer)
 {
@@ -108,6 +161,7 @@ void GameScene::draw(SDL_Renderer & renderer)
 	rect.h = 1080;
 
 	SDL_RenderCopy(&renderer, m_bG, &rect, &rect);
+	
 	//Draw the platforms
 	for (auto& platform : m_platforms)
 	{
@@ -115,8 +169,21 @@ void GameScene::draw(SDL_Renderer & renderer)
 	}
 
 
+	/*for (int i = 0; i < m_numOfLocalPlayers; i++)
+	{
+		SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
+		auto phys = static_cast<PhysicsComponent*>(&m_djBooths.at(i)->getComponent("Booth"));
+		SDL_Rect rect;
+		rect.w = phys->m_body->getSize().x;
+		rect.h = phys->m_body->getSize().y;
+		rect.x = phys->m_body->getPosition().x - (rect.w / 2);
+		rect.y = phys->m_body->getPosition().y - (rect.h / 2);
+		SDL_RenderFillRect(&renderer, &rect);
+	}*/
+	
 	for (int i = 0; i < m_numOfLocalPlayers; i++)
 	{
+	
 		SDL_SetRenderDrawColor(&renderer, 255, 0, 0, 255);
 		auto phys = static_cast<PlayerPhysicsComponent*>(&m_localPlayers.at(i)->getComponent("Player Physics"));
 		SDL_Rect rect;
@@ -126,16 +193,20 @@ void GameScene::draw(SDL_Renderer & renderer)
 		rect.y = phys->m_body->getPosition().y - (rect.h / 2);
 		SDL_RenderFillRect(&renderer, &rect);
 
-		rect.w = phys->m_jumpSensor->getSize().x;
-		rect.h = phys->m_jumpSensor->getSize().y;
-		rect.x = phys->m_jumpSensor->getPosition().x - (rect.w / 2);
-		rect.y = phys->m_jumpSensor->getPosition().y - (rect.h / 2);
+	}
+
+
+	auto pC = static_cast<PickUpComponent*>(&m_pickUp->getComponent("PickUp"));
+	if (pC->spawned())
+	{
+		auto phys = static_cast<PhysicsComponent*>(&m_pickUp->getComponent("Physics"));
+		rect.w = phys->m_body->getSize().x;
+		rect.h = phys->m_body->getSize().y;
+		rect.x = phys->m_body->getPosition().x - (rect.w / 2);
+		rect.y = phys->m_body->getPosition().y - (rect.h / 2);
 		SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
 		SDL_RenderDrawRect(&renderer, &rect);
 	}
-	
-
-	//m_pickUp.draw(renderer);
 }
 
 void GameScene::handleInput(InputSystem & input)
