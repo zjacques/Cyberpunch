@@ -28,7 +28,7 @@ void GameScene::start()
 	//Create background entity
 	auto bgPos = new PositionComponent(1920 /2 , 1080 / 2);
 	m_bgEntity.addComponent("Pos", bgPos);
-	m_bgEntity.addComponent("Sprite", new SpriteComponent(bgPos, Vector2f(1920, 1080 ), Vector2f(1920 * 1.25f, 1080 * 1.25f), Scene::resources().getTexture("Game BG"), 0));
+	m_bgEntity.addComponent("Sprite", new SpriteComponent(bgPos, Vector2f(1920, 1080 ), Vector2f(1920, 1080), Scene::resources().getTexture("Game BG"), 0));
 	//Add bg sprite component to the render system
 	Scene::systems()["Render"]->addComponent(&m_bgEntity.getComponent("Sprite"));
 

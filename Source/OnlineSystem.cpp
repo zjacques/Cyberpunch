@@ -17,8 +17,11 @@ void OnlineSystem::addReceivingPlayer(OnlineInputComponent * component)
 
 void OnlineSystem::update(double dt)
 {
-	SendCommands();
-	ReceiveCommands();
+	if (isConnected)
+	{
+		SendCommands();
+		ReceiveCommands();
+	}
 }
 
 void OnlineSystem::SendCommands()
