@@ -2,7 +2,6 @@
 #include "Entity.h"
 #include "PlayerPhysicsComponent.h"
 #include "AttackComponent.h"
-#include "Platform.h"
 
 void CollisionListener::BeginContact(b2Contact * contact)
 {

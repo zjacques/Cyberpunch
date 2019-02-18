@@ -22,22 +22,22 @@ void AISystem::initialiseActions()
 		//Cast all components as AIComponents
 		auto cast_comp = dynamic_cast<AIComponent *>(c);
 
-		cast_comp->walkLeft = new WalkLeftAction("Walk left", 50);
-		cast_comp->walkRight = new WalkRightAction("Walk right", 50);
-		cast_comp->attackOne = new PunchAction("Attack 1", 75);
-		cast_comp->attackTwo = new PunchAction("Attack 2", 60);
-		cast_comp->jump = new JumpAction("Jump", 80);
-		cast_comp->getNearest = new Action("Nearest", 100);
-		cast_comp->closeEnough = new Action("close", 100);
-		cast_comp->checkPlayerDirection = new Action("PlayerDir", 100);
-		cast_comp->isHealthHigh = new Action("Health", 100);
-		cast_comp->Flee = new Action("Flee", 75);
-		cast_comp->isPlayerAbove = new Action("PlayerAbove", 100);
-		cast_comp->isPlayerHealthLow = new Action("Health low", 100);
-		cast_comp->canKick = new Action("Can kick", 100);
-		cast_comp->punch = new Action("Punch", 80);
-		cast_comp->moveToClosestPlayer = new Action("MoveTo", 90);
-		cast_comp->drop = new Action("Drop", 100);
+		cast_comp->walkLeft = new WalkLeftAction("Walk left", 100);
+		cast_comp->walkRight = new WalkRightAction("Walk right", 100);
+		cast_comp->attackOne = new PunchAction("Attack 1", 100);
+		cast_comp->attackTwo = new PunchAction("Attack 2", 100);
+		cast_comp->jump = new JumpAction("Jump", 100);
+		cast_comp->getNearest = new CheckNearest("Nearest", 100);
+		cast_comp->closeEnough = new CloseEnough("close", 100);
+		cast_comp->checkPlayerDirection = new CheckPlayerDirection("PlayerDir", 100);
+		cast_comp->isHealthHigh = new JumpAction("Health", 100);
+		cast_comp->Flee = new JumpAction("Flee", 100);
+		cast_comp->isPlayerAbove = new JumpAction("PlayerAbove", 100);
+		cast_comp->isPlayerHealthLow = new JumpAction("Health low", 100);
+		cast_comp->canKick = new JumpAction("Can kick", 100);
+		cast_comp->punch = new JumpAction("Punch", 100);
+		cast_comp->moveToClosestPlayer = new JumpAction("MoveTo", 100);
+		cast_comp->drop = new JumpAction("Drop", 100);
 	}
 }
 

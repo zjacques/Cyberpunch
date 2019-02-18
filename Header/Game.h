@@ -18,7 +18,7 @@
 #include "PlayerPhysicsSystem.h"
 #include "AISystem.h"
 #include "Component.h"
-#include "RenderComponent.h"
+//#include "RenderComponent.h"
 #include "AIComponent.h"
 #include "AISystem.h"
 #include "RenderSystem.h"

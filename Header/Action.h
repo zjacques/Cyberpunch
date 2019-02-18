@@ -11,16 +11,8 @@ public:
 	std::string m_name;
 	int successRate;
 	Action(const std::string newName, int p) : m_name(newName), successRate(p) {}
-private:
-	virtual bool run() override
-	{
-		if (std::rand() % 100 < successRate)
-		{
-			std::cout << "Success" << std::endl;
-			return true;
-		}
-		return false;
-	}
+
+	virtual bool run() = 0;
 };
 
 #endif
@@ -34,7 +26,6 @@ public:
 	WalkLeftAction(std::string newName, int p)
 		: Action(newName, p)
 	{
-
 	}
 
 	bool run() override
@@ -42,8 +33,6 @@ public:
 		if (std::rand() % 100 < successRate)
 		{
 			std::cout << "Walking left" << std::endl;
-			//Move the player left
-			//m_moveSystem->Left();
 			return true;
 		}
 		return false;
@@ -61,14 +50,12 @@ public:
 	WalkRightAction(std::string newName, int p)
 		: Action(newName, p)
 	{
-
 	}
 	bool run() override
 	{
 		if (std::rand() % 100 < successRate)
 		{
 			std::cout << "Walking right" << std::endl;
-			//m_moveSystem->Right();
 			return true;
 		}
 		return false;
@@ -86,14 +73,12 @@ public:
 	JumpAction(std::string newName, int p)
 		: Action(newName, p)
 	{
-
 	}
 	bool run() override
 	{
 		if (std::rand() % 100 < successRate)
 		{
 			std::cout << "Jump" << std::endl;
-			//m_moveSystem->Jump();
 			return true;
 		}
 		return false;
@@ -111,7 +96,6 @@ public:
 	PunchAction(std::string newName, int p)
 		: Action(newName, p)
 	{
-
 	}
 	bool run() override
 	{
@@ -125,3 +109,76 @@ public:
 };
 
 #endif
+
+#ifndef CHECKNEAREST_H
+#define CHECKNEAREST_H
+
+class CheckNearest : public Action
+{
+public:
+	CheckNearest(std::string newName, int p) :
+		Action(newName, p)
+	{
+	}
+
+	bool run() override
+	{
+		if (std::rand() % 100 < successRate)
+		{
+			std::cout << "Getting nearest player" << std::endl;
+			return true;
+		}
+		return false;
+	}
+};
+
+#endif
+
+#ifndef CLOSEENOUGH_H
+#define CLOSEENOUGH_H
+
+class CloseEnough : public Action
+{
+public:
+	CloseEnough(std::string newName, int p) :
+		Action(newName, p)
+	{
+	}
+
+	bool run() override
+	{
+		if (std::rand() % 100 < successRate)
+		{
+			std::cout << "Close enough" << std::endl;
+			return true;
+		}
+		return false;
+	}
+};
+
+#endif
+
+#ifndef CHECKPLAYERDIRECTION_H
+#define CHECKPLAYERDIRECTION_H
+
+class CheckPlayerDirection : public Action
+{
+public:
+	CheckPlayerDirection(std::string newName, int p) :
+		Action(newName, p)
+	{
+	}
+
+	bool run() override
+	{
+		if (std::rand() % 100 < successRate)
+		{
+			std::cout << "Check direction" << std::endl;
+			return true;
+		}
+		return false;
+	}
+};
+
+#endif
+

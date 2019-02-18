@@ -1,16 +1,7 @@
 #include "../Header/RenderSystem.h"
 
-/// <summary>
-/// 
-/// </summary>
-void RenderSystem::initWindow(SDL_Window * window, SDL_Surface * surface, SDL_Renderer * renderer)
+RenderSystem::RenderSystem()
 {
-	m_window = window;
-	m_drawSurface = surface;
-	m_renderer = renderer;
-
-	SCREEN_WIDTH = 1920.f;
-	SCREEN_HEIGHT = 1080.f;
 }
 
 /// <summary>
@@ -21,6 +12,9 @@ void RenderSystem::initWindow(SDL_Window * window, SDL_Surface * surface, SDL_Re
 void RenderSystem::addComponent(Component * c)
 {
 	m_components.push_back(c);
+
+	//Sort the sprite components based on their layers
+	std::sort(m_components.begin(), m_components.end(), layerSorter());
 }
 
 /// <summary>
@@ -28,9 +22,25 @@ void RenderSystem::addComponent(Component * c)
 /// object using parametres from 
 /// the component class
 /// </summary>
-void RenderSystem::render(SDL_Rect * src, SDL_Rect * dst, SDL_Texture * t)
+void RenderSystem::render(SDL_Renderer& renderer)
 {
-	SDL_RenderCopy(m_renderer, t, src, dst);
+	//Loop through all 
+	for (auto c : m_components)
+	{
+		//Convert component to a sprite
+		auto sprite = dynamic_cast<SpriteComponent*>(c);
+
+		m_spritePos = sprite->getDestRect(); //Can modify the position using the camera later
+
+		//S position of the destination rect using the position ptr
+		m_spritePos.x = sprite->getPosition().x - (sprite->getFrameSize().x / 2);
+		m_spritePos.y = sprite->getPosition().y - (sprite->getFrameSize().y / 2);
+
+		//Minus camera when we do a camera
+
+		//Draw the sprite
+		SDL_RenderCopy(&renderer, sprite->getTexture(), &sprite->getSourceRect(), &m_spritePos);
+	}
 }
 
 /// <summary>
@@ -40,12 +50,5 @@ void RenderSystem::render(SDL_Rect * src, SDL_Rect * dst, SDL_Texture * t)
 /// </summary>
 void RenderSystem::update(double dt)
 {
-	for (auto c : m_components)
-	{
-		RenderComponent * temp = dynamic_cast<RenderComponent *>(c);
-		m_src = temp->getSourceRect();
-		m_dst = temp->getDestRect();
 
-		render(m_src, m_dst, temp->getTexture());
-	}
 }

@@ -28,7 +28,7 @@ void PlayerPhysicsComponent::stun()
 	float stunMultiplier = m_dmgPercentage / 100.0f;
 
 	//Multiply our stun left by our stun multiplier
-	m_stunLeft = .2f * stunMultiplier;
+	m_stunLeft = .3f * stunMultiplier;
 }
 
 void PlayerPhysicsComponent::jump()

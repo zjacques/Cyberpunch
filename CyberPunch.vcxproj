@@ -136,7 +136,6 @@
     <ClCompile Include="Source\OnlineSendComponent.cpp" />
     <ClCompile Include="Source\OnlineSystem.cpp" />
     <ClCompile Include="Source\PickUp.cpp" />
-    <ClCompile Include="Source\Platform.cpp" />
     <ClCompile Include="Source\AnimationSystem.cpp" />
     <ClCompile Include="Source\AnimationComponent.cpp" />
     <ClCompile Include="Source\GameScene.cpp" />
@@ -181,10 +180,8 @@
     <ClInclude Include="Header\OnlineSendComponent.h" />
     <ClInclude Include="Header\OptionsScene.h" />
     <ClInclude Include="Header\PickUp.h" />
-    <ClInclude Include="Header\Platform.h" />
     <ClInclude Include="Header\Player.h" />
     <ClInclude Include="Header\PlayerPhysicsSystem.h" />
-    <ClInclude Include="Header\RenderComponent.h" />
     <ClInclude Include="Header\RenderSystem.h" />
     <ClInclude Include="Header\InputComponent.h" />
     <ClInclude Include="Header\InputSystem.h" />

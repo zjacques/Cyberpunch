@@ -1,6 +1,9 @@
 #include "GameScene.h"
+#include "RenderSystem.h"
 
-GameScene::GameScene()
+GameScene::GameScene() :
+	m_bgEntity("Game BG"),
+	m_platformsCreated(false)
 {
 }
 
@@ -16,7 +19,14 @@ void GameScene::start()
 	//m_player.createPlayer(m_physicsWorld, m_physicsSystem);
 	m_pickUp.createPickUp(m_physicsWorld, m_physicsSystem);
 
-	m_bG = Scene::resources().getTexture("Game BG");
+	m_AIPlayers.push_back(createAI(1, 600 + 150 * 1, 360));
+
+	//Create background entity
+	auto bgPos = new PositionComponent(1920 /2 , 1080 / 2);
+	m_bgEntity.addComponent("Pos", bgPos);
+	m_bgEntity.addComponent("Sprite", new SpriteComponent(bgPos, Vector2f(1920, 1080), Vector2f(1920, 1080), Scene::resources().getTexture("Game BG"), 0));
+	//Add bg sprite component to the render system
+	Scene::systems()["Render"]->addComponent(&m_bgEntity.getComponent("Sprite"));
 
 	m_numOfLocalPlayers = SDL_NumJoysticks();
 	m_numOfOnlinePlayers = 0;
@@ -36,36 +46,16 @@ void GameScene::start()
 		Scene::systems()["Network"] = net;
 	else
 		delete net;*/
-	m_AIPlayers.push_back(createAI(1, 600 + 150 * 1, 360));
+	
 
 	//Create players for extra inputs
 	for (int i = 0; i < m_numOfLocalPlayers; i++)
 	{
-
 		m_localPlayers.push_back(createPlayer(i,600 + 150 * i, 360, true));
 	}
 	for (int i = 0; i < m_numOfOnlinePlayers; i++)
 	{
 		m_onlinePlayers.push_back(createPlayer(i+ m_numOfLocalPlayers, 600 + 150 * i+ m_numOfLocalPlayers, 360, false));
-	}
-
-	//Create all of the platforms for the game
-	for (auto& platform : Scene::resources().getLevelData()["Platforms"])
-	{
-		//Get the X,Y,Width and Height of the platform
-		int x = platform["X"], y = platform["Y"], w = platform["W"], h = platform["H"];
-		std::string tag = platform["Tag"];
-		auto newPlat = Platform(tag);
-
-		//Add a physics body to the platform
-		newPlat.getPhysComp().m_body = m_physicsWorld.createBox(x, y, w, h, false, true, b2BodyType::b2_staticBody);
-		//Add the properties of the physics body
-		m_physicsWorld.addProperties(*newPlat.getPhysComp().m_body, 0, .1f, 0, false, new PhysicsComponent::ColData(newPlat.getTag(), &newPlat));
-
-		newPlat.setTexture(Scene::resources(), "Green");
-		newPlat.setAmountOfTiles(); //Set the amount of tiles for the platform/Floor
-
-		m_platforms.push_back(newPlat); //Create a new platform
 	}
 }
 
@@ -75,6 +65,7 @@ void GameScene::stop()
 	m_platforms.clear(); //Delete the platforms of the game
 	m_numOfLocalPlayers = 0;
 	m_pickUp.deletePickUp();
+	m_platformsCreated = false;
 }
 
 void GameScene::update(double dt)
@@ -84,13 +75,18 @@ void GameScene::update(double dt)
 	//Update the player physics system
 	Scene::systems()["Player Physics"]->update(dt);
 	Scene::systems()["Attack"]->update(dt);
+	Scene::systems()["Animation"]->update(dt); //Update the animation components
+	Scene::systems()["AI"]->update(dt);
 }
 
 Entity * GameScene::createPlayer(int index,int posX, int posY, bool local)
 {
 	auto p = new Entity("Player");
-	p->addComponent("Pos", new PositionComponent(0, 0));
+	p->addComponent("Pos", new PositionComponent(0,0));
 	p->addComponent("Attack", new AttackComponent());
+	p->addComponent("Sprite", new SpriteComponent(&p->getComponent("Pos"), Vector2f(50,50), Vector2f(50, 50), Scene::resources().getTexture("Player"), 2));
+
+	Scene::systems()["Render"]->addComponent(&p->getComponent("Sprite"));
 
 	//Add the players attack component to the attack system
 	Scene::systems()["Attack"]->addComponent(&p->getComponent("Attack"));
@@ -154,12 +150,14 @@ Entity * GameScene::createAI(int index, int posX, int posY)
 	auto pos = new PositionComponent(0, 0);
 	ai->addComponent("Pos", pos);
 	ai->addComponent("Attack", new AttackComponent());
-
+	ai->addComponent("Sprite", new SpriteComponent(&ai->getComponent("Pos"), Vector2f(50, 50), Vector2f(50, 50), Scene::resources().getTexture("Player"), 2));
 	auto behaviour = new AIComponent();
 	Scene::systems()["AI"]->addComponent(behaviour);
 
 	//Add the players attack component to the attack system
 	Scene::systems()["Attack"]->addComponent(&ai->getComponent("Attack"));
+
+	Scene::systems()["Render"]->addComponent(&ai->getComponent("Sprite"));
 
 	//Create the physics component and set up the bodies
 	auto phys = new PlayerPhysicsComponent(&ai->getComponent("Pos"));
@@ -184,33 +182,121 @@ Entity * GameScene::createAI(int index, int posX, int posY)
 	return ai;
 }
 
-void GameScene::draw(SDL_Renderer & renderer)
+//void GameScene::draw(SDL_Renderer & renderer)
+void GameScene::createPlatforms(SDL_Renderer& renderer)
 {
-	SDL_Rect rect;
-	rect.x = 0;
-	rect.y = 0;
-	rect.w = 1920;
-	rect.h = 1080;
-
-	SDL_RenderCopy(&renderer, m_bG, &rect, &rect);
-	//Draw the platforms
-	for (auto& platform : m_platforms)
+	//Create all of the platforms for the game
+	for (auto& platform : Scene::resources().getLevelData()["Platforms"])
 	{
-		platform.draw(renderer);
+		//Get the X,Y,Width and Height of the platform
+		int x = platform["X"], y = platform["Y"], w = platform["W"], h = platform["H"];
+		std::string tag = platform["Tag"];
+
+		//Creta ethe platform entity
+		auto newPlat = new Entity("Platform");
+		auto platPos = new PositionComponent(x, y);
+		newPlat->addComponent("Pos", platPos);
+		auto phys = new PhysicsComponent(platPos);
+		phys->m_body = m_physicsWorld.createBox(x, y, w, h, false, true, b2BodyType::b2_staticBody);
+		m_physicsWorld.addProperties(*phys->m_body, 0, .1f, 0, false, new PhysicsComponent::ColData(tag, newPlat));
+		newPlat->addComponent("Physics", phys);
+		Scene::systems()["Physics"]->addComponent(phys);
+
+		//Create the texture for the platform
+		auto texture = SDL_CreateTexture(&renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_TARGET, w, h);
+		SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
+		//Set it to draw to the texture we just created
+		SDL_SetRenderTarget(&renderer, texture);
+
+
+		SDL_Rect rect, srcRect;
+
+		auto size = Vector2f(50 * (tag == "Floor" ? 1 : .5f), 50 * (tag == "Floor" ? 1 : .5f));
+		auto smallW = tag == "Floor" ? 50 : 25;
+		auto offset = Vector2f(size.x - w, size.y - w);
+		auto start = Vector2f((int)x - ((int)w / 2), (int)y - ((int)h / 2));
+		int numOfTiles = w / (tag == "Floor" ? 50 : 25);
+
+		srcRect.x = 0;
+		srcRect.y = 0;
+		srcRect.w = 50;
+		srcRect.h = 50;
+
+		//Loop through the tiles and draw to the texture we just created the shape of the platform
+		for (int i = 0; i < numOfTiles; i++)
+		{
+			rect.w = size.x;
+			rect.h = size.y;
+			rect.x = 0 + i * smallW;
+			rect.y = 0;
+
+			if (i == 0)
+			{
+				SDL_RenderCopy(&renderer, Scene::resources().getTexture("Platform Green 0"), &srcRect, &rect);
+				SDL_RenderCopy(&renderer, Scene::resources().getTexture("Platform Green 0"), &srcRect, &rect);
+			}
+			else if (i == (numOfTiles - 1))
+			{
+				SDL_RenderCopy(&renderer, Scene::resources().getTexture("Platform Green 2"), &srcRect, &rect);
+				SDL_RenderCopy(&renderer, Scene::resources().getTexture("Platform Green 2"), &srcRect, &rect);
+			}
+			else
+			{
+				SDL_RenderCopy(&renderer, Scene::resources().getTexture("Platform Green 1"), &srcRect, &rect);
+				SDL_RenderCopy(&renderer, Scene::resources().getTexture("Platform Green 1"), &srcRect, &rect);
+			}
+		}
+		SDL_SetRenderTarget(&renderer, NULL);
+		SDL_RenderCopy(&renderer, texture, NULL, &rect);
+		
+
+		newPlat->addComponent("Sprite", new SpriteComponent(platPos, Vector2f(w, h), Vector2f(w, h), texture, 1));
+
+		Scene::systems()["Render"]->addComponent(&newPlat->getComponent("Sprite"));
 	}
 
+	//Set platforms created as true
+	m_platformsCreated = true;
+}
 
+SDL_Rect GameScene::createRect(int x, int y, int w, int h)
+{
+	SDL_Rect rect;
+	rect.x = x;
+	rect.y = y;
+	rect.w = w;
+	rect.h = h;
+	return rect;
+}
+
+void GameScene::draw(SDL_Renderer & renderer)
+{
+	if (m_platformsCreated == false)
+		createPlatforms(renderer);
+
+	SDL_Rect rect;
+
+	//Draw sprites in the render system
+	auto renderSystem = static_cast<RenderSystem*>(Scene::systems()["Render"]);
+	renderSystem->render(renderer);
+
+	//Drawing the jump sensors and attack boxes for the player (For debug only, this will be deleted)
 	for (int i = 0; i < m_numOfLocalPlayers; i++)
 	{
-		SDL_SetRenderDrawColor(&renderer, 255, 0, 0, 255);
 		auto phys = static_cast<PlayerPhysicsComponent*>(&m_localPlayers.at(i)->getComponent("Player Physics"));
 		auto hit = static_cast<AttackComponent*>(&m_localPlayers.at(i)->getComponent("Attack"));
-		SDL_Rect rect;
-		rect.w = phys->m_body->getSize().x;
-		rect.h = phys->m_body->getSize().y;
-		rect.x = phys->m_body->getPosition().x - (rect.w / 2);
-		rect.y = phys->m_body->getPosition().y - (rect.h / 2);
-		SDL_RenderFillRect(&renderer, &rect);
+
+		//If the player is stunned, draw a yellow rectangle
+		if (phys->stunned())
+		{
+			rect.w = phys->m_body->getSize().x;
+			rect.h = phys->m_body->getSize().y;
+			rect.x = phys->m_body->getPosition().x - (rect.w / 2);
+			rect.y = phys->m_body->getPosition().y - (rect.h / 2);
+			SDL_SetRenderDrawColor(&renderer, 255, 255, 0, 255);
+			SDL_RenderFillRect(&renderer, &rect);
+		}
+
 
 		rect.w = phys->m_jumpSensor->getSize().x;
 		rect.h = phys->m_jumpSensor->getSize().y;

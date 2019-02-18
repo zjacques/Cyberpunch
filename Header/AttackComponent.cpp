@@ -55,7 +55,6 @@ void AttackComponent::spawn(Box2DBridge& world)
 
 void AttackComponent::deleteAttack(Box2DBridge & world)
 {
-	m_attackActive = false;
 	m_destroyAttack = false;
 	m_attacked = false;
 
