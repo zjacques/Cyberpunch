@@ -183,6 +183,11 @@ Entity * GameScene::createAI(int index, int posX, int posY)
 }
 
 //void GameScene::draw(SDL_Renderer & renderer)
+
+/// <summary>
+/// 
+/// </summary>
+/// <param name="renderer"></param>
 void GameScene::createPlatforms(SDL_Renderer& renderer)
 {
 	//Create all of the platforms for the game
@@ -259,6 +264,14 @@ void GameScene::createPlatforms(SDL_Renderer& renderer)
 	m_platformsCreated = true;
 }
 
+/// <summary>
+/// 
+/// </summary>
+/// <param name="x"></param>
+/// <param name="y"></param>
+/// <param name="w"></param>
+/// <param name="h"></param>
+/// <returns></returns>
 SDL_Rect GameScene::createRect(int x, int y, int w, int h)
 {
 	SDL_Rect rect;
@@ -269,6 +282,10 @@ SDL_Rect GameScene::createRect(int x, int y, int w, int h)
 	return rect;
 }
 
+/// <summary>
+/// 
+/// </summary>
+/// <param name="renderer"></param>
 void GameScene::draw(SDL_Renderer & renderer)
 {
 	if (m_platformsCreated == false)
