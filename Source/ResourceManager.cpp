@@ -26,6 +26,13 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 	m_map["Game BG"] = loadFromPath("Backgrounds-01.png", renderer);
 	m_map["Player"] = loadFromPath("Player/Player.png", renderer);
 
+	//Loading in GUI
+	m_map["Button Off"] = loadFromPath("GUI/ButtonOff.png", renderer);
+	m_map["Exit Button"] = loadFromPath("GUI/ExitButton.png", renderer);
+	m_map["Local Play Button"] = loadFromPath("GUI/LocalButton.png", renderer);
+	m_map["Multiplayer Button"] = loadFromPath("GUI/MultiButton.png", renderer);
+	m_map["Options Button"] = loadFromPath("GUI/OptionsButton.png", renderer);
+
 	//The colours of the platforms
 	auto platforms = std::vector<std::string>({"Green", "Blue", "Orange", "Pink"});
 	for (auto& colour : platforms)

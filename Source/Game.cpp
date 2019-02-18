@@ -157,7 +157,7 @@ bool Game::loadMedia()
 	m_mManager.setSystemPtr(m_systems);
 
 	//Set the scene after the systems ptr has been set and the resource manager has been passed over
-	m_mManager.setScene("Game");
+	m_mManager.setScene("Main Menu");
 
 	return success;
 }
