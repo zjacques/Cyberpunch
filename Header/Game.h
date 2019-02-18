@@ -19,6 +19,7 @@
 #include "AISystem.h"
 #include "AttackSystem.h"
 #include "PickUpSystem.h"
+#include "OnlineSystem.h"
 
 class Game
 {

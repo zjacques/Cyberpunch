@@ -16,6 +16,7 @@ Game::Game(int fps) :
 	m_systems["Player Physics"] = new PlayerPhysicsSystem();
 	m_systems["AI"] = new AISystem();
 	m_systems["Pickup"] = new PickUpSystem();
+	m_systems["Network"] = new OnlineSystem();
 }
 
 void Game::update(double dt)
@@ -74,6 +75,10 @@ void Game::run()
 
 		//handle input in the scenes
 		m_mManager.handleInput(*input);
+
+		//update networked aspects
+		auto net = static_cast<OnlineSystem*>(m_systems["Network"]);
+		net->update(dt);
 
 		//Update the game
 		update(dt);

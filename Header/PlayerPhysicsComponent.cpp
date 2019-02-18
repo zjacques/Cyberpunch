@@ -12,7 +12,7 @@ PlayerPhysicsComponent::PlayerPhysicsComponent(Component * pos) :
 	m_falling(false),
 	m_stunLeft(0),
 	m_jumpSpeed(40.0f),
-	m_jumpDownSpeed(-20.0f),
+	m_jumpDownSpeed(20.0f),
 	m_moveSpeed(10),
 	m_dmgPercentage(0)
 {
@@ -28,7 +28,7 @@ void PlayerPhysicsComponent::stun()
 	float stunMultiplier = m_dmgPercentage / 100.0f;
 
 	//Multiply our stun left by our stun multiplier
-	m_stunLeft = .2f * stunMultiplier;
+	m_stunLeft = .3f * stunMultiplier;
 }
 
 void PlayerPhysicsComponent::jump()
@@ -38,9 +38,9 @@ void PlayerPhysicsComponent::jump()
 
 void PlayerPhysicsComponent::jumpDown()
 {
+	m_desiredVel.y = 1;
 	//Set the body as falling
 	m_falling = true;
-	m_currentVel.y -= m_gravFlipped ? -m_jumpDownSpeed : m_jumpDownSpeed;
 }
 
 void PlayerPhysicsComponent::moveLeft()
@@ -101,8 +101,15 @@ void PlayerPhysicsComponent::move(int direction)
 	m_currentVel.x = clamp(-m_moveSpeed, m_currentVel.x, m_moveSpeed);
 }
 
-void PlayerPhysicsComponent::moveUp(int direction)
+void PlayerPhysicsComponent::moveUp()
 {
 	m_currentVel.y = 0;
 	m_currentVel.y -= m_gravFlipped ? -m_jumpSpeed : m_jumpSpeed;
+}
+
+void PlayerPhysicsComponent::moveDown()
+{
+	m_currentVel.y = 0;
+	m_currentVel.y -= m_gravFlipped ? m_jumpDownSpeed : -m_jumpDownSpeed;
+	m_falling = true;
 }

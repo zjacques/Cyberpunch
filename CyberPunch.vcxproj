@@ -78,11 +78,11 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(projectDir)/Libraries/SDL2/include/;$(projectDir)/Libraries/;$(projectDir)/Header/;$(projectDir)/Libraries/nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(projectDir)/Libraries/SDL2/include/;$(projectDir)/Libraries/;$(projectDir)/Header/;$(projectDir)/Libraries/nlohmann;$(projectDir)/Libraries/SDL2_net/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(projectDir)/Libraries/SDL2/lib/;$(projectDir)/Libraries/Box2D/lib/;$(projectDir)/Libraries/SDL_TTF/lib/;$(projectDir)/Libraries/SDL_image/lib/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;Box2D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(projectDir)/Libraries/SDL2/lib/;$(projectDir)/Libraries/Box2D/lib/;$(projectDir)/Libraries/SDL_TTF/lib/;$(projectDir)/Libraries/SDL_image/lib/;$(projectDir)/Libraries/SDL2_net/lib/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_net.lib;SDL2_image.lib;SDL2_ttf.lib;Box2D.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
@@ -123,6 +123,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\ClientSocket.cpp" />
     <ClCompile Include="Header\AttackComponent.cpp" />
     <ClCompile Include="Header\AttackSystem.cpp" />
     <ClCompile Include="Header\PlayerPhysicsComponent.cpp" />
@@ -136,7 +137,10 @@
     <ClCompile Include="Source\PickUp.cpp" />
     <ClCompile Include="Source\PickUpComponent.cpp" />
     <ClCompile Include="Source\PickUpSystem.cpp" />
-    <ClCompile Include="Source\Platform.cpp" />
+    <ClCompile Include="Source\OnlineInputComponent.cpp" />
+    <ClCompile Include="Source\OnlineSendComponent.cpp" />
+    <ClCompile Include="Source\OnlineSystem.cpp" />
+    <ClCompile Include="Source\PickUp.cpp" />
     <ClCompile Include="Source\AnimationSystem.cpp" />
     <ClCompile Include="Source\AnimationComponent.cpp" />
     <ClCompile Include="Source\GameScene.cpp" />
@@ -163,6 +167,7 @@
     <ClInclude Include="Header\AttackSystem.h" />
     <ClInclude Include="Header\BehaviourTree.h" />
     <ClInclude Include="Header\Box2DBridge.h" />
+    <ClInclude Include="Header\ClientSocket.h" />
     <ClInclude Include="Header\Button.h" />
     <ClInclude Include="Header\CollisionListener.h" />
     <ClInclude Include="Header\Commands.h" />
@@ -173,18 +178,19 @@
     <ClInclude Include="Header\Entity.h" />
     <ClInclude Include="Header\PickUpComponent.h" />
     <ClInclude Include="Header\PickUpSystem.h" />
+    <ClInclude Include="Header\OnlineSystem.h" />
     <ClInclude Include="Header\PlayerInputComponent.h" />
     <ClInclude Include="Header\PlayerInputSystem.h" />
     <ClInclude Include="Header\PlayerPhysicsComponent.h" />
     <ClInclude Include="Header\GameScene.h" />
     <ClInclude Include="Header\MainMenuScene.h" />
     <ClInclude Include="Header\MenuManager.h" />
+    <ClInclude Include="Header\OnlineInputComponent.h" />
+    <ClInclude Include="Header\OnlineSendComponent.h" />
     <ClInclude Include="Header\OptionsScene.h" />
     <ClInclude Include="Header\PickUp.h" />
-    <ClInclude Include="Header\Platform.h" />
     <ClInclude Include="Header\Player.h" />
     <ClInclude Include="Header\PlayerPhysicsSystem.h" />
-    <ClInclude Include="Header\RenderComponent.h" />
     <ClInclude Include="Header\RenderSystem.h" />
     <ClInclude Include="Header\InputComponent.h" />
     <ClInclude Include="Header\InputSystem.h" />
@@ -192,6 +198,7 @@
     <ClInclude Include="Header\PhysicsSystem.h" />
     <ClInclude Include="Header\PositionComponent.h" />
     <ClInclude Include="Header\Scene.h" />
+    <ClInclude Include="Header\SocketException.h" />
     <ClInclude Include="Header\SpriteComponent.h" />
     <ClInclude Include="Header\ResourceManager.h" />
     <ClInclude Include="Header\System.h" />

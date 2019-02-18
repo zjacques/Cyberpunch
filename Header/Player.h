@@ -21,6 +21,8 @@ public:
 	void draw(SDL_Renderer& renderer);
 	void handleInput(InputSystem& input);
 
+	void addClient();
+
 	void flipGravity();
 	void jump();
 	void jumpDown();
@@ -58,6 +60,9 @@ private:
 	float m_jumpSpeed, m_jumpDownSpeed;
 	bool m_canJump, m_gravFlipped, m_movingL, m_movingR;
 	SDL_Rect m_rect;
+
+	//OnlineSendComponent* m_client;
+	bool is_online = false;
 
 	PhysicsSystem* m_physPtr;
 	PhysicsComponent m_physComponent, m_floorSensor;

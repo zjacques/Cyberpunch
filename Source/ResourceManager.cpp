@@ -24,6 +24,18 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 	//loadFromPath("Characters/Player.png")
 
 	m_map["Game BG"] = loadFromPath("Backgrounds-01.png", renderer);
+	m_map["Player"] = loadFromPath("Player/Player.png", renderer);
+
+	//The colours of the platforms
+	auto platforms = std::vector<std::string>({"Green", "Blue", "Orange", "Pink"});
+	for (auto& colour : platforms)
+	{
+		//Load all 3 platform pieces for each colour
+		for (int i = 0; i < 3; i++)
+		{
+			m_map["Platform " + colour + " " + std::to_string(i)] = loadFromPath("Platforms/" + colour + "/" + std::to_string(i) + ".png", renderer);
+		}
+	}
 }
 
 void ResourceHandler::loadLevelData()
@@ -35,7 +47,7 @@ void ResourceHandler::loadLevelData()
 	std::string content((std::istreambuf_iterator<char>(ifs)),
 		(std::istreambuf_iterator<char>()));
 
-	//Pars ethe loaded in file to a json object
+	//Parse the loaded in file to a json object
 	m_gameData = json::parse(content);
 }
 
