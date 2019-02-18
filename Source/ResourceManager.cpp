@@ -84,6 +84,18 @@ void ResourceHandler::destroyTextures()
 	}
 }
 
+TTF_Font* ResourceHandler::loadFont(std::string filePath, std::string name)
+{
+	const char * path = filePath.c_str();
+	m_fontMap[name] = TTF_OpenFont(path, 32);
+	return m_fontMap[name];
+}
+
+TTF_Font * ResourceHandler::getFont(std::string name)
+{
+	return m_fontMap[name];
+}
+
 SDL_Texture * ResourceHandler::getTexture(std::string name)
 {
 	return m_map.at(name);

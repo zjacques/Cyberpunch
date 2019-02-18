@@ -63,7 +63,8 @@ public:
 	{
 		return m_current[btn];
 	}
-		
+
+	int m_playerNumber;
 	const Uint8* m_keyStates;
 	SDL_Joystick* m_joycon;
 	Input m_current;

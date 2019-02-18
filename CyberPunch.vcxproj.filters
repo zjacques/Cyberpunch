@@ -150,6 +150,9 @@
     <ClCompile Include="Source\OnlineInputComponent.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
+    <ClCompile Include="Header\LobbyScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Header\Camera.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
@@ -292,6 +295,9 @@
     </ClInclude>
     <ClInclude Include="Header\OnlineInputComponent.h">
       <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\LobbyScene.h">
+      <Filter>Header Files\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="Header\Camera.h">
       <Filter>Header Files\Utilities</Filter>

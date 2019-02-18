@@ -9,6 +9,10 @@ using std::string;
 
 class OnlineSystem : public System {
 public:
+	struct LobbyInfo {
+		string name;
+		string players;
+	};
 	OnlineSystem() {};
 	virtual ~OnlineSystem() {}
 	void addComponent(Component *);
@@ -22,7 +26,11 @@ public:
 
 	bool ConnectToServer();
 
+	vector<LobbyInfo> getLobbies(); /////////////////
+
 	bool isConnected = false;
+
+
 
 private:
 	ClientSocket* m_Socket;

@@ -15,7 +15,10 @@ public:
 
 	void handleInput(void* e);
 	int addCommand(string);
+
+	int m_playerNumber;
 private:
+
 	Command * m_currentCMD;
 
 	JumpCommand m_jumpCMD;
