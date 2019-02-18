@@ -15,10 +15,10 @@ void MainMenuScene::start()
 	m_currentIndex = 0; //Start main menu at hovering over local play button
 
 	//Create the buttons for the game
-	m_buttons.push_back(createButton(Vector2f(960, 270 - 135), Scene::resources().getTexture("Local Play Button"), "Local", true));
-	m_buttons.push_back(createButton(Vector2f(960, 270 * 2 - 135), Scene::resources().getTexture("Multiplayer Button"), "Multiplayer", false));
-	m_buttons.push_back(createButton(Vector2f(960, 270 * 3 - 135), Scene::resources().getTexture("Options Button"), "Options", false));
-	m_buttons.push_back(createButton(Vector2f(960, 270 * 4 - 135), Scene::resources().getTexture("Exit Button"), "Exit", false));
+	m_buttons.push_back(createButton(Vector2f(960, 455), Scene::resources().getTexture("Local Play Button"), "Local", true));
+	m_buttons.push_back(createButton(Vector2f(960, 455 + 168.75f), Scene::resources().getTexture("Multiplayer Button"), "Multiplayer", false));
+	m_buttons.push_back(createButton(Vector2f(960, 455 + 168.75f * 2), Scene::resources().getTexture("Options Button"), "Options", false));
+	m_buttons.push_back(createButton(Vector2f(960, 455 + 168.75f * 3), Scene::resources().getTexture("Exit Button"), "Exit", false));
 }
 
 void MainMenuScene::stop()
@@ -124,11 +124,11 @@ void MainMenuScene::handleButtonPressed()
 	}
 	else if (tag == "Multiplayer")
 	{
-
+		Scene::goToScene("Main Menu"); // Temp, dont have a pre game lobby screen
 	}
 	else if (tag == "Options")
 	{
-
+		Scene::goToScene("Options");
 	}
 	else if (tag == "Exit")
 	{
