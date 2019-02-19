@@ -2,6 +2,7 @@
 #include "Entity.h"
 #include "PlayerPhysicsComponent.h"
 #include "AttackComponent.h"
+#include "DustTriggerComponent.h"
 
 void CollisionListener::BeginContact(b2Contact * contact)
 {
@@ -38,6 +39,9 @@ void CollisionListener::BeginContact(b2Contact * contact)
 		}
 		else
 			playerPhys->setCanJump(true);
+
+		//Create a dust particle for landing on the ground
+		static_cast<DustTriggerComponent*>(&player->getComponent("Dust Trigger"))->setCreate();
 	}
 
 	//Check if a player has attacked another player
