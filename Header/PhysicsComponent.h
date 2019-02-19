@@ -7,7 +7,7 @@
 class PhysicsComponent : public Component
 {
 public:
-	PhysicsComponent(PositionComponent* pos) : m_body(nullptr) {}
+	PhysicsComponent(PositionComponent* pos) : m_body(nullptr), posPtr(pos){}
 
 	//The body of the physics component
 	Box2DBody* m_body;
