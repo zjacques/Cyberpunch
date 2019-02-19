@@ -25,6 +25,13 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 
 	m_map["Game BG"] = loadFromPath("Backgrounds-01.png", renderer);
 	m_map["Player"] = loadFromPath("Player/Player.png", renderer);
+	m_map["Record"] = loadFromPath("Record/Record.png", renderer);
+	//Load all 3 platform pieces for each colour
+	for (int i = 0; i < 3; i++)
+	{
+		m_map["Booth" + std::to_string(i)] = loadFromPath("DJBooth/DJBooth" + std::to_string(i) + ".png", renderer);
+	}
+
 
 	//The colours of the platforms
 	auto platforms = std::vector<std::string>({"Green", "Blue", "Orange", "Pink"});
