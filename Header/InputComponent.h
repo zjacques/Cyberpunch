@@ -48,7 +48,7 @@ public:
 		//Copy the values of current to previous
 		m_previous = m_current;
 	}
-	virtual void handleInput(void* e) = 0;
+	virtual void handleInput(void* e) {}
 	void initialiseJoycon(int index)
 	{
 		SDL_JoystickEventState(SDL_ENABLE);

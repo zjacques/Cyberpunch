@@ -126,7 +126,7 @@ public:
 	{
 		if (std::rand() % 100 < successRate)
 		{
-			std::cout << "Getting nearest player" << std::endl;
+			//std::cout << "Getting nearest player" << std::endl;
 			return true;
 		}
 		return false;
