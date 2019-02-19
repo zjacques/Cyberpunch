@@ -42,9 +42,8 @@ void RenderSystem::render(SDL_Renderer& renderer, Camera& camera)
 		m_spritePos.x -= camera.x();
 		m_spritePos.y -= camera.y();
 		
-
 		//Draw the sprite
-		SDL_RenderCopy(&renderer, sprite->getTexture(), &sprite->getSourceRect(), &m_spritePos);
+		SDL_RenderCopyEx(&renderer, sprite->getTexture(), &sprite->getSourceRect(), &m_spritePos, 0, 0, sprite->getFlip());
 	}
 }
 
