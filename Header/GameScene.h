@@ -43,6 +43,7 @@ public:
 	void handleInput(InputSystem& input);
 private:
 	bool m_platformsCreated;
+	bool m_boothCreated;
 	Entity m_bgEntity;
 	std::vector<Entity*> m_localPlayers;
 	std::vector<Entity*> m_AIPlayers;

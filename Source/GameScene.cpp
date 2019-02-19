@@ -4,7 +4,7 @@
 GameScene::GameScene() :
 	m_bgEntity("Game BG"),
 	m_platformsCreated(false),
-	m_camera(false)
+	m_camera(true)
 {
 
 }
@@ -21,7 +21,7 @@ void GameScene::start()
 	auto pickupSys = new PickUpSystem();
 	pickupSys->setWorld(m_physicsWorld);
 	Scene::systems()["PickUp"] = pickupSys;
-	//Scene::systems()["Booth"] = new DJBoothSystem();
+	Scene::systems()["Booth"] = new DJBoothSystem();
 
 	m_AIPlayers.push_back(createAI(1, 600 + 150 * 1, 360));
 
@@ -42,11 +42,6 @@ void GameScene::start()
 		exit(-1);
 	}
 
-	/*for(auto& m_djBooths : Scene::resources().getLevelData()["Booth"])
-	{
-		int x = m_djBooths["X"], y = m_djBooths["Y"], w = m_djBooths["W"], h = m_djBooths["H"];
-		std::string tag = m_djBooths["Tag"];
-		auto newPlat = Platform(tag);*/
 	
 	//try to create the online system and connect
 	//refactor to another spot once we get the full lobby system going I guess.
@@ -67,20 +62,37 @@ void GameScene::start()
 	{
 		m_onlinePlayers.push_back(createPlayer(i+ m_numOfLocalPlayers, 600 + 150 * i+ m_numOfLocalPlayers, 360, false));
 	}
-	m_pickUp = new Entity("pickup_entity");
+	
+	m_pickUp = new Entity("PickUp");
 	auto pos = new PositionComponent(0,0);
 	m_pickUp->addComponent("Pos", pos);
 	m_pickUp->addComponent("PickUp",new PickUpComponent());
 
 
-
 	auto phys = new PhysicsComponent(pos);
-	phys->m_body = m_physicsWorld.createBox(1920 / 2, 1080 / 2, 50, 50, false, false, b2BodyType::b2_staticBody);
-	m_physicsWorld.addProperties(*phys->m_body, 0, 0, 0, true, new PhysicsComponent::ColData("PickUp", m_pickUp));
-	m_pickUp->addComponent("Physics", phys);
+	//auto phys = new PhysicsComponent(m_pickUp->getComponent("Pos"));
+	
+	//auto pC = static_cast<PickUpComponent*>(&m_pickUp->getComponent("PickUp"));
+	//if (pC->spawned())
+	//{
+		phys->m_body = m_physicsWorld.createBox(1920 / 2, 1080 / 2, 50, 50, false, false, b2BodyType::b2_staticBody);
+		m_physicsWorld.addProperties(*phys->m_body, 0, 0, 0, true, new PhysicsComponent::ColData("PickUp", m_pickUp));
+		m_pickUp->addComponent("Sprite", new SpriteComponent(&m_pickUp->getComponent("Pos"), Vector2f(50, 50), Vector2f(50, 50), Scene::resources().getTexture("Record"), 1));
+		Scene::systems()["Render"]->addComponent(&m_pickUp->getComponent("Sprite"));
+		m_pickUp->addComponent("Physics", phys);
+		Scene::systems()["Physics"]->addComponent(phys);
 
-	Scene::systems()["PickUp"]->addComponent(&m_pickUp->getComponent("PickUp"));
-	//static_cast<OnlineSystem*>(Scene::systems()["Network"])->getLobbies();
+		Scene::systems()["PickUp"]->addComponent(&m_pickUp->getComponent("PickUp"));
+		//static_cast<OnlineSystem*>(Scene::systems()["Network"])->getLobbies();
+//	}
+
+
+		auto& booths = Scene::resources().getLevelData()["Booth"];
+
+		for (int i = 0; i < booths.size(); i++)
+		{
+			m_djBooths.push_back(createDJB(i, booths.at(i)["X"], booths.at(i)["Y"]));
+		}
 }
 
 void GameScene::stop()
@@ -97,9 +109,10 @@ void GameScene::update(double dt)
 	m_physicsWorld.update(dt);
 	//Update the player physics system
 	Scene::systems()["Player Physics"]->update(dt);
+	Scene::systems()["Physics"]->update(dt);
 	Scene::systems()["Attack"]->update(dt);
 	Scene::systems()["PickUp"]->update(dt);
-	//Scene::systems()["Booth"]->update(dt);
+	Scene::systems()["Booth"]->update(dt);
 	Scene::systems()["Animation"]->update(dt); //Update the animation components
 	Scene::systems()["AI"]->update(dt);
 
@@ -217,23 +230,22 @@ Entity * GameScene::createPlayer(int index,int posX, int posY, bool local)
 
 	return p; //Return the created entity
 }
-//
-//Entity*  GameScene::createDJB(int index, int posX, int posY)
-//{
-//	auto booth = new Entity("Booth");
-//	auto pos = new PositionComponent(0, 0);
-//	booth->addComponent("Pos", pos);
-//
-//	auto phys = new PhysicsComponent(pos);
-//	phys->m_body = m_physicsWorld.createBox(posX, posY, 50, 50, false, false, b2BodyType::b2_dynamicBody);
-//
-//	m_physicsWorld.addProperties(*phys->m_body, 1, 0.05f, 0.0f, false, new PhysicsComponent::ColData("Booth", booth));
-//	booth->addComponent("Booth", phys);
-//
-////	Scene::systems()["Booth"]->addComponent(phys);
-//
-//	return booth; //Return the created entity
-//}
+
+Entity* GameScene::createDJB(int index, int posX, int posY)
+{
+	auto booth = new Entity("Booth");
+	auto pos = new PositionComponent(0, 0);
+	booth->addComponent("Pos", pos);
+
+	auto phys = new PhysicsComponent(pos);
+	phys->m_body = m_physicsWorld.createBox(posX, posY, 150, 50, false, false, b2BodyType::b2_staticBody);
+	m_physicsWorld.addProperties(*phys->m_body, 1, 0.05f, 0.0f, false, new PhysicsComponent::ColData("Booth", booth));
+	booth->addComponent("Physics", phys);
+	Scene::systems()["Physics"]->addComponent(phys);
+	booth->addComponent("Sprite", new SpriteComponent(pos, Vector2f(152, 93), Vector2f(152, 93), Scene::resources().getTexture("Booth" + std::to_string(index)), 1));
+	Scene::systems()["Render"]->addComponent(&booth->getComponent("Sprite"));
+	return booth;
+}
 
 /// <summary>
 /// 
@@ -388,7 +400,7 @@ void GameScene::draw(SDL_Renderer & renderer)
 {
 	if (m_platformsCreated == false)
 		createPlatforms(renderer);
-
+	
 	SDL_Rect rect;
 
 	//Draw sprites in the render system
@@ -472,6 +484,7 @@ void GameScene::draw(SDL_Renderer & renderer)
 		rect.h = phys->m_body->getSize().y;
 		rect.x = phys->m_body->getPosition().x - (rect.w / 2) - m_camera.x();
 		rect.y = phys->m_body->getPosition().y - (rect.h / 2) - m_camera.y();
+	//	SDL_RenderFillRect(&renderer, &rect);
 		SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
 		SDL_RenderDrawRect(&renderer, &rect);
 	}
@@ -494,26 +507,4 @@ void GameScene::handleInput(InputSystem & input)
 		//m_onlinePlayers.at(i).handleInput(*m_onlineInputs.at(i));
 	}
 
-	//Handle input for all players
-	//for (int i = 0; i < m_numOfLocalPlayers; i++)
-	//{
-	//	m_localPlayers.at(i).handleInput(*m_localInputs.at(i));
-	//}
-
-	////If the pause button has been pressed on either joycon
-	//if (input.isButtonPressed("A"))
-	//{
-	//	Scene::goToScene("Main Menu");
-	//}
-	//if (input.isButtonPressed("Space"))
-	//{
-	//	//Flip the gravioty of the physics system and the physics world
-	//	m_physicsSystem.flipGravity();
-	//	m_physicsWorld.flipGravity();
-	//	for (int i = 0; i < m_numOfLocalPlayers; i++)
-	//	{
-	//		m_localPlayers.at(i).flipGravity();
-	//	}
-	//	m_collisionListener.flipGravity();
-	//}
 }
