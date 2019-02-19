@@ -1,5 +1,6 @@
 #pragma once
 #include "Entity.h"
+#include "SpriteComponent.h"
 #include "PlayerPhysicsComponent.h"
 #include "OnlineSendComponent.h"
 #include "AttackComponent.h"
@@ -52,6 +53,8 @@ public:
 			if (hit->attackActive() == false || !phys->canJump())
 			{
 				phys->moveLeft();
+				auto s = static_cast<SpriteComponent*>(&e.getComponent("Sprite"));
+				s->setScale(1, s->getScale().y);
 			}
 		}
 		auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
@@ -78,6 +81,8 @@ public:
 			if (hit->attackActive() == false || !phys->canJump())
 			{
 				phys->moveRight();
+				auto s = static_cast<SpriteComponent*>(&e.getComponent("Sprite"));
+				s->setScale(-1, s->getScale().y);
 			}
 		}
 		auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));

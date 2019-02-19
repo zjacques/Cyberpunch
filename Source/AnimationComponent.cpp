@@ -7,10 +7,10 @@ AnimationComponent::AnimationComponent(Component* sprite) :
 
 }
 
-void AnimationComponent::addAnimation(std::string name, std::vector<SDL_Rect> frames, int maxFrames, float duration)
+void AnimationComponent::addAnimation(std::string name, std::vector<SDL_Rect> frames, float duration)
 {
 	//Add the animation to our map
-	m_animations[name] = Animation(frames, maxFrames, duration);
+	m_animations[name] = Animation(frames, frames.size(), duration);
 }
 
 void AnimationComponent::playAnimation(std::string name, bool loop)

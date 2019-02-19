@@ -163,7 +163,7 @@ Entity * GameScene::createPlayer(int index,int posX, int posY, bool local)
 	auto p = new Entity("Player");
 	p->addComponent("Pos", new PositionComponent(0,0));
 	p->addComponent("Attack", new AttackComponent());
-	p->addComponent("Sprite", new SpriteComponent(&p->getComponent("Pos"), Vector2f(1214,83), Vector2f(61, 83), Scene::resources().getTexture("Player Idle"), 2));
+	p->addComponent("Sprite", new SpriteComponent(&p->getComponent("Pos"), Vector2f(1214,83), Vector2f(61, 83), Scene::resources().getTexture("Player Run"), 2));
 	auto animation = new AnimationComponent(&p->getComponent("Sprite"));
 	p->addComponent("Animation", animation);
 
@@ -174,8 +174,8 @@ Entity * GameScene::createPlayer(int index,int posX, int posY, bool local)
 		m_idleRects.push_back({61 * i, 0, 61, 83});
 	}
 
-	animation->addAnimation("Idle", m_idleRects, 20, 1.f);
-	animation->playAnimation("Idle", true); //Play the animation
+	animation->addAnimation("Run", m_idleRects, .75f);
+	animation->playAnimation("Run", true); //Play the animation
 
 
 	//Add components to the system
@@ -263,7 +263,7 @@ Entity * GameScene::createAI(int index, int posX, int posY)
 	auto pos = new PositionComponent(0, 0);
 	ai->addComponent("Pos", pos);
 	ai->addComponent("Attack", new AttackComponent());
-	ai->addComponent("Sprite", new SpriteComponent(&ai->getComponent("Pos"), Vector2f(50, 50), Vector2f(50, 50), Scene::resources().getTexture("Player Idle"), 2));
+	ai->addComponent("Sprite", new SpriteComponent(&ai->getComponent("Pos"), Vector2f(50, 50), Vector2f(50, 50), Scene::resources().getTexture("Player Run"), 2));
 	auto behaviour = new AIComponent();
 	Scene::systems()["AI"]->addComponent(behaviour);
 
@@ -417,16 +417,15 @@ void GameScene::draw(SDL_Renderer & renderer)
 		auto hit = static_cast<AttackComponent*>(&m_localPlayers.at(i)->getComponent("Attack"));
 
 		//If the player is stunned, draw a yellow rectangle
-		if (phys->stunned())
+		if (phys->stunned() == true)
 		{
 			rect.w = phys->m_body->getSize().x;
 			rect.h = phys->m_body->getSize().y;
-			rect.x = phys->m_body->getPosition().x - (rect.w / 2) -m_camera.x();
+			rect.x = phys->m_body->getPosition().x - (rect.w / 2) - m_camera.x();
 			rect.y = phys->m_body->getPosition().y - (rect.h / 2) - m_camera.y();
-			SDL_SetRenderDrawColor(&renderer, 255, 255, 0, 255);
+			SDL_SetRenderDrawColor(&renderer, 255, 255, 0, 55);
 			SDL_RenderFillRect(&renderer, &rect);
 		}
-
 
 		rect.w = phys->m_jumpSensor->getSize().x;
 		rect.h = phys->m_jumpSensor->getSize().y;

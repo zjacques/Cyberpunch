@@ -24,7 +24,7 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 	//loadFromPath("Characters/Player.png")
 
 	m_map["Game BG"] = loadFromPath("Backgrounds-01.png", renderer);
-	m_map["Player Idle"] = loadFromPath("Player/Player_Idle.png", renderer);
+	m_map["Player Run"] = loadFromPath("Player/Player_Run.png", renderer);
 
 	//Loading in GUI
 	m_map["Button Off"] = loadFromPath("GUI/ButtonOff.png", renderer);

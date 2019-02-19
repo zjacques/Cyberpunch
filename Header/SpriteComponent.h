@@ -27,6 +27,20 @@ public:
 	//Setters
 	void setTexture(SDL_Texture* texture) { m_texture = texture; }
 	void setTextureRect(SDL_Rect frame) { m_src = frame; }
+	void setScale(float x, float y)
+	{
+		//Sets the scale of the image
+		m_scale = Vector2f(x,y);
+
+		if (m_scale.x == -1 && m_scale.y == -1)
+			m_flip = SDL_RendererFlip(SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL);
+		else if(m_scale.y == -1)
+			m_flip = SDL_RendererFlip(SDL_FLIP_VERTICAL);
+		else if(m_scale.x == -1)
+			m_flip = SDL_RendererFlip(SDL_FLIP_HORIZONTAL);
+		else
+			m_flip = SDL_RendererFlip(SDL_FLIP_NONE);
+	}
 
 	//Getters
 	Vector2f& getPosition() { return static_cast<PositionComponent*>(m_posPtr)->position; }

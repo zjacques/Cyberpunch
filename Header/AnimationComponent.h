@@ -36,7 +36,7 @@ public:
 
 	AnimationComponent(Component* sprite);
 
-	void addAnimation(std::string name, std::vector<SDL_Rect> frames, int maxFrames, float duration);
+	void addAnimation(std::string name, std::vector<SDL_Rect> frames, float duration);
 	void playAnimation(std::string name, bool loop);
 
 	
