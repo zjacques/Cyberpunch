@@ -5,9 +5,12 @@
 GameScene::GameScene() :
 	m_bgEntity("Game BG"),
 	m_platformsCreated(false),
-	m_camera(true)
+	m_camera(false)
 {
-
+	for (int i = 0; i < 20; i++)
+	{
+		m_dustFrames.push_back({i* 90, 0, 90, 50});
+	}
 }
 
 void GameScene::start()
@@ -78,11 +81,18 @@ void GameScene::start()
 	//{
 		phys->m_body = m_physicsWorld.createBox(1920 / 2, 1080 / 2, 50, 50, false, false, b2BodyType::b2_staticBody);
 		m_physicsWorld.addProperties(*phys->m_body, 0, 0, 0, true, new PhysicsComponent::ColData("PickUp", m_pickUp));
-		m_pickUp->addComponent("Sprite", new SpriteComponent(&m_pickUp->getComponent("Pos"), Vector2f(50, 50), Vector2f(50, 50), Scene::resources().getTexture("Record"), 1));
+		m_pickUp->addComponent("Sprite", new SpriteComponent(&m_pickUp->getComponent("Pos"), Vector2f(1500, 50), Vector2f(50, 50), Scene::resources().getTexture("Record"), 1));
 		Scene::systems()["Render"]->addComponent(&m_pickUp->getComponent("Sprite"));
 		m_pickUp->addComponent("Physics", phys);
 		Scene::systems()["Physics"]->addComponent(phys);
-
+		auto anim = new AnimationComponent(&m_pickUp->getComponent("Sprite"));		
+		std::vector<SDL_Rect> m_spinAnimation;
+		for (int i = 0; i < 30; i++)
+			m_spinAnimation.push_back({i*50, 0, 50, 50});
+		anim->addAnimation("Spin", m_spinAnimation, 1.75f);
+		anim->playAnimation("Spin", true);
+		Scene::systems()["Animation"]->addComponent(anim);
+		m_pickUp->addComponent("Animation", anim);
 		Scene::systems()["PickUp"]->addComponent(&m_pickUp->getComponent("PickUp"));
 		//static_cast<OnlineSystem*>(Scene::systems()["Network"])->getLobbies();
 //	}
@@ -119,6 +129,71 @@ void GameScene::update(double dt)
 
 	//Update camera
 	updateCamera(dt);
+
+	//Checks if dust needs to be created or removed
+	checkDust(dt);
+}
+
+void GameScene::checkDust(double dt)
+{
+	//Loops through all the players
+	for (auto& player : m_localPlayers)
+	{
+		if (static_cast<DustTriggerComponent*>(&player->getComponent("Dust Trigger"))->toCreate())
+		{
+			auto pPhys = static_cast<PlayerPhysicsComponent*>(&player->getComponent("Player Physics"));
+			static_cast<DustTriggerComponent*>(&player->getComponent("Dust Trigger"))->toCreate() = false; //Reset the trigger
+
+			auto d = new Entity("Dust");
+			auto pos = new PositionComponent(pPhys->m_body->getPosition().x, pPhys->m_body->getPosition().y + 25);
+			d->addComponent("Pos", pos);
+			d->addComponent("Dust", new DustComponent());
+			d->addComponent("Sprite", new SpriteComponent(pos, Vector2f(1800, 50), Vector2f(90, 50), Scene::resources().getTexture("Player Dust"), 1));
+			auto anim = new AnimationComponent(&d->getComponent("Sprite"));
+			anim->addAnimation("Destroy", m_dustFrames, .5f);
+			anim->playAnimation("Destroy", false);
+			d->addComponent("Animation", anim);
+			Scene::systems()["Animation"]->addComponent(anim);
+			Scene::systems()["Render"]->addComponent(&d->getComponent("Sprite"));
+
+			//Add the dust particle to the vector
+			m_dustParticles.push_back(d);
+		}
+	}
+
+	//Loop through all dust particles and check if they need to be deleted
+	for (auto& dust : m_dustParticles)
+	{
+		auto dComp = static_cast<DustComponent*>(&dust->getComponent("Dust"));
+
+		dComp->getTTL() -= dt;
+
+		//If the time to live is up, delete the dust particle from the systems
+		if (dComp->getTTL() <= 0)
+		{
+			m_dustToDelete.push_back(dust); //Add to the vector to delete
+		}
+	}
+
+	//If the dust to delete is not empty, then delete them all
+	if(!m_dustToDelete.empty())
+	{
+		for (auto& dust : m_dustToDelete)
+		{
+			Scene::systems()["Animation"]->deleteComponent(&dust->getComponent("Animation"));
+			Scene::systems()["Render"]->deleteComponent(&dust->getComponent("Sprite"));
+			m_dustParticles.erase(std::remove(m_dustParticles.begin(), m_dustParticles.end(), dust), m_dustParticles.end());
+
+			for (auto& c : dust->m_components)
+			{
+				delete c.second;
+			}
+
+			delete dust;
+		}
+		
+		m_dustToDelete.clear();
+	}
 }
 
 void GameScene::updateCamera(double dt)
@@ -175,8 +250,9 @@ Entity * GameScene::createPlayer(int index,int posX, int posY, bool local)
 {
 	auto p = new Entity("Player");
 	p->addComponent("Pos", new PositionComponent(0,0));
+	p->addComponent("Dust Trigger", new DustTriggerComponent());
 	p->addComponent("Attack", new AttackComponent());
-	p->addComponent("Sprite", new SpriteComponent(&p->getComponent("Pos"), Vector2f(1214,83), Vector2f(61, 83), Scene::resources().getTexture("Player Run"), 2));
+	p->addComponent("Sprite", new SpriteComponent(&p->getComponent("Pos"), Vector2f(1220,85), Vector2f(61, 85), Scene::resources().getTexture("Player Run"), 2));
 	auto animation = new AnimationComponent(&p->getComponent("Sprite"));
 	p->addComponent("Animation", animation);
 
@@ -184,7 +260,7 @@ Entity * GameScene::createPlayer(int index,int posX, int posY, bool local)
 
 	for (int i = 0; i < 20; i++)
 	{
-		m_idleRects.push_back({61 * i, 0, 61, 83});
+		m_idleRects.push_back({61 * i, 0, 61, 85});
 	}
 
 	animation->addAnimation("Run", m_idleRects, .75f);
@@ -274,6 +350,7 @@ Entity * GameScene::createAI(int index, int posX, int posY)
 	auto ai = new Entity("AI");
 	auto pos = new PositionComponent(0, 0);
 	ai->addComponent("Pos", pos);
+	ai->addComponent("Dust Trigger", new DustTriggerComponent());
 	ai->addComponent("Attack", new AttackComponent());
 	ai->addComponent("Sprite", new SpriteComponent(&ai->getComponent("Pos"), Vector2f(50, 50), Vector2f(50, 50), Scene::resources().getTexture("Player Run"), 2));
 	auto behaviour = new AIComponent();
