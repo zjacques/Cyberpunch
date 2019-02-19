@@ -261,7 +261,7 @@ Entity * GameScene::createAI(int index, int posX, int posY)
 	ai->addComponent("Pos", pos);
 	ai->addComponent("Attack", new AttackComponent());
 	ai->addComponent("Sprite", new SpriteComponent(&ai->getComponent("Pos"), Vector2f(50, 50), Vector2f(50, 50), Scene::resources().getTexture("Player"), 2));
-	auto behaviour = new AIComponent();
+	auto behaviour = new AIComponent(m_localPlayers);
 	Scene::systems()["AI"]->addComponent(behaviour);
 
 	//Add the players attack component to the attack system
@@ -291,8 +291,6 @@ Entity * GameScene::createAI(int index, int posX, int posY)
 
 	return ai;
 }
-
-//void GameScene::draw(SDL_Renderer & renderer)
 
 /// <summary>
 /// 

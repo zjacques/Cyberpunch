@@ -27,7 +27,7 @@ void AISystem::initialiseActions()
 		cast_comp->attackOne = new PunchAction("Attack 1", 100);
 		cast_comp->attackTwo = new PunchAction("Attack 2", 100);
 		cast_comp->jump = new JumpAction("Jump", 100);
-		cast_comp->getNearest = new CheckNearest("Nearest", 100);
+		cast_comp->getNearest = new CheckNearest("Nearest", 100, cast_comp->m_entities, cast_comp->m_self);
 		cast_comp->closeEnough = new CloseEnough("close", 100);
 		cast_comp->checkPlayerDirection = new CheckPlayerDirection("PlayerDir", 100);
 		cast_comp->isHealthHigh = new JumpAction("Health", 100);
@@ -55,7 +55,6 @@ void AISystem::createTree()
 		//Set Behaviour Tree Root node
 		cast_comp->BT.setRootChild(&cast_comp->m_sequences[0]);
 
-
 		//Left sub tree
 		cast_comp->m_selectors[0].addChildren({&cast_comp->m_sequences[0], &cast_comp->m_selectors[5]});
 		cast_comp->m_sequences[0].addChildren({ cast_comp->getNearest, cast_comp->closeEnough, 
@@ -71,7 +70,6 @@ void AISystem::createTree()
 		cast_comp->m_sequences[1].addChildren({ cast_comp->getNearest, cast_comp->closeEnough });
 		cast_comp->m_sequences[2].addChildren({ &cast_comp->m_succeeders[1], &cast_comp->m_selectors[6] });
 		cast_comp->m_selectors[6].addChildren({ cast_comp->isPlayerAbove, cast_comp->drop });
-
 	}
 }
 
@@ -102,4 +100,5 @@ void AISystem::runTree()
 void AISystem::update(double dt)
 {
 	runTree();
+
 }

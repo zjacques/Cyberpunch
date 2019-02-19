@@ -3,11 +3,12 @@
 
 #include "BehaviourTree.h"
 #include "Entity.h"
+#include "Component.h"
+#include "PositionComponent.h"
+#include "AIComponent.h"
 
 class Action : public BehaviourTree::Node
 {
-private:
-
 public:
 	std::string m_name;
 	int successRate;
@@ -117,8 +118,10 @@ public:
 class CheckNearest : public Action
 {
 public:
-	CheckNearest(std::string newName, int p) :
-		Action(newName, p)
+	CheckNearest(std::string newName, int p, std::vector<Entity *> e, Entity * s) :
+		Action(newName, p),
+		m_entities(e),
+		self(s)
 	{
 	}
 
@@ -126,13 +129,44 @@ public:
 	{
 		if (std::rand() % 100 < successRate)
 		{
-			//std::cout << "Getting nearest player" << std::endl;
+			std::cout << "Getting nearest player" << std::endl;
+
+			Entity* nearest;
+			float nearest_dist;
+
+			for (auto i : m_entities)
+			{
+				nearest = i;
+
+				auto p = dynamic_cast<PositionComponent *>(&nearest->getComponent("Pos"));
+				auto self_pos = dynamic_cast<PositionComponent *>(&self->getComponent("Pos"));
+				nearest_dist = dist(p->position, self_pos->position);
+				if (dist(p->position, self_pos->position) < nearest_dist)
+				{
+					nearest_dist = dist(p->position, self_pos->position);
+					nearest = i;
+				}
+			}
+			//auto me = dynamic_cast<AIComponent *>(&self->getComponent("AI"));
+			//me->nearestPlayer = nearest;
 			return true;
 		}
 		return false;
 	}
-};
 
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="p1"></param>
+	/// <param name="p2"></param>
+	/// <returns></returns>
+	float dist(Vector2f p1, Vector2f p2)
+	{
+		return sqrt((p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y));
+	}
+	std::vector<Entity *> m_entities;
+	Entity * self;
+};
 #endif
 
 #ifndef CLOSEENOUGH_H
