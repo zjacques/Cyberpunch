@@ -349,14 +349,16 @@ Entity * GameScene::createAI(int index, int posX, int posY)
 {
 	auto ai = new Entity("AI");
 	auto pos = new PositionComponent(0, 0);
+	auto behaviour = new AIComponent(m_localPlayers);
 	ai->addComponent("Pos", pos);
+	ai->addComponent("AI", behaviour);
 	ai->addComponent("Dust Trigger", new DustTriggerComponent());
 	ai->addComponent("Attack", new AttackComponent());
-	ai->addComponent("Sprite", new SpriteComponent(&ai->getComponent("Pos"), Vector2f(50, 50), Vector2f(50, 50), Scene::resources().getTexture("Player"), 2));
-	auto behaviour = new AIComponent(m_localPlayers);
+
 	ai->addComponent("Sprite", new SpriteComponent(&ai->getComponent("Pos"), Vector2f(50, 50), Vector2f(50, 50), Scene::resources().getTexture("Player Run"), 2));
-	auto behaviour = new AIComponent();
-	Scene::systems()["AI"]->addComponent(behaviour);
+
+	//Add the AI component to the AI system
+	Scene::systems()["AI"]->addComponent(&ai->getComponent("AI"));
 
 	//Add the players attack component to the attack system
 	Scene::systems()["Attack"]->addComponent(&ai->getComponent("Attack"));

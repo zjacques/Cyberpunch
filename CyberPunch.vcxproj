@@ -125,7 +125,6 @@
   <ItemGroup>
     <ClCompile Include="Header\LobbyScene.cpp" />
     <ClCompile Include="Header\Camera.cpp" />
-    <ClCompile Include="Source\Action.cpp" />
     <ClCompile Include="Source\ClientSocket.cpp" />
     <ClCompile Include="Source\AttackComponent.cpp" />
     <ClCompile Include="Source\AttackSystem.cpp" />

@@ -156,9 +156,6 @@
     <ClCompile Include="Header\Camera.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Action.cpp">
-      <Filter>Source Files\AI</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\Game.h">

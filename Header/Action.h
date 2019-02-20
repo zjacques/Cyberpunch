@@ -10,9 +10,7 @@
 class Action : public BehaviourTree::Node
 {
 public:
-	std::string m_name;
-	int successRate;
-	Action(const std::string newName, int p) : m_name(newName), successRate(p) {}
+	Action() {}
 
 	virtual bool run() = 0;
 };
@@ -25,9 +23,15 @@ public:
 class WalkLeftAction : public Action
 {
 public:
-	WalkLeftAction(std::string newName, int p);
+	WalkLeftAction()
+	{
+	}
 
-	bool run() override;
+	bool run() override
+	{
+		std::cout << "Jump" << std::endl;
+		return true;
+	}
 };
 
 #endif
@@ -35,13 +39,19 @@ public:
 #ifndef WALKRIGHTACTION_H
 #define WALKRIGHTACTION_H
 
-#include "Action.h"
-
 class WalkRightAction : public Action
 {
 public:
-	WalkRightAction(std::string newName, int p);
-	bool run() override;
+	WalkRightAction()
+	{
+
+	}
+
+	bool run() override
+	{
+		std::cout << "Jump" << std::endl;
+		return true;
+	}
 };
 
 #endif
@@ -52,18 +62,13 @@ public:
 class JumpAction : public Action
 {
 public:
-	JumpAction(std::string newName, int p)
-		: Action(newName, p)
+	JumpAction()
 	{
 	}
 	bool run() override
 	{
-		if (std::rand() % 100 < successRate)
-		{
-			std::cout << "Jump" << std::endl;
-			return true;
-		}
-		return false;
+		std::cout << "Jump" << std::endl;
+		return true;
 	}
 };
 
@@ -72,16 +77,18 @@ public:
 #ifndef PUNCHACTION_H
 #define PUNCHACTION_H
 
-#include "Action.h"
-
 class PunchAction : public Action
 {
 public:
-	PunchAction(std::string newName, int p)
-		: Action(newName, p)
+	PunchAction()
 	{
 	}
-	bool run() override;
+
+	bool run() override
+	{
+		std::cout << "Jump" << std::endl;
+		return true;
+	}
 };
 
 #endif
@@ -89,12 +96,10 @@ public:
 #ifndef CHECKNEAREST_H
 #define CHECKNEAREST_H
 
-
 class CheckNearest : public Action
 {
 public:
-	CheckNearest(std::string newName, int p, std::vector<Entity *> e, Entity * s) :
-		Action(newName, p),
+	CheckNearest(std::vector<Entity *> e, Entity * s) :
 		m_entities(e),
 		self(s)
 	{
@@ -102,30 +107,23 @@ public:
 
 	bool run() override
 	{
-		if (std::rand() % 100 < successRate)
-		{
-			std::cout << "Getting nearest player" << std::endl;
+		std::cout << "Getting nearest player" << std::endl;
 
-			Entity* nearest;
-			float nearest_dist;
-			//nearest = i;
-			for (auto i : m_entities)
-			{
-				auto p = dynamic_cast<PositionComponent *>(&nearest->getComponent("Pos"));
-				auto self_pos = dynamic_cast<PositionComponent *>(&self->getComponent("Pos"));
-				nearest_dist = dist(p->position, self_pos->position);
-				if (dist(p->position, self_pos->position) < nearest_dist)
-				{
-					nearest_dist = dist(p->position, self_pos->position);
-					nearest = i;
-				}
-			}
-			auto me = dynamic_cast<AIComponent *>(&self->getComponent("AI"));
-			me->nearestPlayer = nearest;
-
-			return true;
-		}
-		return false;
+		//Entity* nearest;
+		//float nearest_dist;
+		////nearest = i;
+		//for (auto i : m_entities)
+		//{
+		//	auto p = dynamic_cast<PositionComponent *>(&nearest->getComponent("Pos"));
+		//	auto self_pos = dynamic_cast<PositionComponent *>(&self->getComponent("Pos"));
+		//	nearest_dist = dist(p->position, self_pos->position);
+		//	if (dist(p->position, self_pos->position) < nearest_dist)
+		//	{
+		//		nearest_dist = dist(p->position, self_pos->position);
+		//		nearest = i;
+		//	}
+		//}
+		return true;
 	}
 
 	/// <summary>
@@ -149,19 +147,14 @@ public:
 class CloseEnough : public Action
 {
 public:
-	CloseEnough(std::string newName, int p) :
-		Action(newName, p)
+	CloseEnough()
 	{
 	}
 
 	bool run() override
 	{
-		if (std::rand() % 100 < successRate)
-		{
-			std::cout << "Close enough" << std::endl;
-			return true;
-		}
-		return false;
+		std::cout << "Close enough" << std::endl;
+		return true;
 	}
 };
 
@@ -173,19 +166,104 @@ public:
 class CheckPlayerDirection : public Action
 {
 public:
-	CheckPlayerDirection(std::string newName, int p) :
-		Action(newName, p)
+	CheckPlayerDirection() 
 	{
 	}
 
 	bool run() override
 	{
-		if (std::rand() % 100 < successRate)
-		{
-			std::cout << "Check direction" << std::endl;
-			return true;
-		}
-		return false;
+		std::cout << "Check direction" << std::endl;
+		return true;
+	}
+};
+
+#endif
+
+#ifndef CHECKHEALTH_H
+#define CHECKHEALTH_H
+
+class CheckHealth : public Action
+{
+public:
+	CheckHealth()
+	{
+	}
+
+	bool run() override
+	{
+		std::cout << "Check health" << std::endl;
+		return true;
+	}
+};
+
+#endif
+
+#ifndef FLEEACTION_H
+#define FLEEACTION_H
+
+class FleeAction : public Action
+{
+public:
+	FleeAction()
+	{
+
+	}
+
+	bool run() override
+	{
+		std::cout << "Fleeing" << std::endl;
+		return true;
+	}
+};
+
+#endif
+
+#ifndef CHECKABOVE_H
+#define CHECKABOVE_H
+
+class CheckAbove : public Action
+{
+public:
+	CheckAbove() {}
+
+	bool run() override
+	{
+		std::cout << "Check if player above" << std::endl;
+		return true;
+	}
+};
+
+#endif
+
+#ifndef CHECKPLAYERHEALTH_H
+#define CHECKPLAYERHEALTH_H
+
+class CheckPlayerHealth : public Action
+{
+public:
+	CheckPlayerHealth() {}
+
+	bool run() override
+	{
+		std::cout << "Check player health" << std::endl;
+		return true;
+	}
+};
+
+#endif
+
+#ifndef DROPACTION_H
+#define DROPACTION_H
+
+class DropAction : public Action
+{
+public:
+	DropAction() {}
+
+	bool run() override
+	{
+		std::cout << "Drop down" << std::endl;
+		return true;
 	}
 };
 
