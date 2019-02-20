@@ -10,9 +10,12 @@
 class Action : public BehaviourTree::Node
 {
 public:
-	Action() {}
+	Action(Entity * e) :
+	m_entity(e)
+	{}
 
 	virtual bool run() = 0;
+	Entity * m_entity;
 };
 
 #endif
@@ -23,7 +26,8 @@ public:
 class WalkLeftAction : public Action
 {
 public:
-	WalkLeftAction()
+	WalkLeftAction(Entity * e) :
+		Action(e)
 	{
 	}
 
@@ -42,9 +46,9 @@ public:
 class WalkRightAction : public Action
 {
 public:
-	WalkRightAction()
+	WalkRightAction(Entity * e)
+		: Action(e)
 	{
-
 	}
 
 	bool run() override
@@ -62,12 +66,15 @@ public:
 class JumpAction : public Action
 {
 public:
-	JumpAction()
+	JumpAction(Entity * e)
+		: Action(e)
 	{
 	}
 	bool run() override
 	{
 		std::cout << "Jump" << std::endl;
+
+		
 		return true;
 	}
 };
@@ -80,7 +87,8 @@ public:
 class PunchAction : public Action
 {
 public:
-	PunchAction()
+	PunchAction(Entity * e)
+		: Action(e)
 	{
 	}
 
@@ -100,8 +108,7 @@ class CheckNearest : public Action
 {
 public:
 	CheckNearest(std::vector<Entity *> e, Entity * s) :
-		m_entities(e),
-		self(s)
+		m_entities(e), Action(s)
 	{
 	}
 
@@ -109,20 +116,20 @@ public:
 	{
 		std::cout << "Getting nearest player" << std::endl;
 
-		//Entity* nearest;
-		//float nearest_dist;
-		////nearest = i;
-		//for (auto i : m_entities)
-		//{
-		//	auto p = dynamic_cast<PositionComponent *>(&nearest->getComponent("Pos"));
-		//	auto self_pos = dynamic_cast<PositionComponent *>(&self->getComponent("Pos"));
-		//	nearest_dist = dist(p->position, self_pos->position);
-		//	if (dist(p->position, self_pos->position) < nearest_dist)
-		//	{
-		//		nearest_dist = dist(p->position, self_pos->position);
-		//		nearest = i;
-		//	}
-		//}
+		Entity* nearest;
+		float nearest_dist;
+		//nearest = i;
+		for (auto i : m_entities)
+		{
+			/*auto p = dynamic_cast<PositionComponent *>(&nearest->getComponent("Pos"));
+			auto self_pos = dynamic_cast<PositionComponent *>(&m_entity->getComponent("Pos"));
+			nearest_dist = dist(p->position, self_pos->position);
+			if (dist(p->position, self_pos->position) < nearest_dist)
+			{
+				nearest_dist = dist(p->position, self_pos->position);
+				nearest = i;
+			}*/
+		}
 		return true;
 	}
 
@@ -137,7 +144,6 @@ public:
 		return sqrt((p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y));
 	}
 	std::vector<Entity *> m_entities;
-	Entity * self;
 };
 #endif
 
@@ -147,7 +153,8 @@ public:
 class CloseEnough : public Action
 {
 public:
-	CloseEnough()
+	CloseEnough(Entity * e)
+		: Action(e)
 	{
 	}
 
@@ -166,7 +173,8 @@ public:
 class CheckPlayerDirection : public Action
 {
 public:
-	CheckPlayerDirection() 
+	CheckPlayerDirection(Entity * e)
+		: Action(e)
 	{
 	}
 
@@ -185,7 +193,8 @@ public:
 class CheckHealth : public Action
 {
 public:
-	CheckHealth()
+	CheckHealth(Entity * e)
+		: Action(e)
 	{
 	}
 
@@ -204,7 +213,8 @@ public:
 class FleeAction : public Action
 {
 public:
-	FleeAction()
+	FleeAction(Entity * e)
+		: Action(e)
 	{
 
 	}
@@ -224,7 +234,9 @@ public:
 class CheckAbove : public Action
 {
 public:
-	CheckAbove() {}
+	CheckAbove(Entity * e)
+		: Action(e)
+	{}
 
 	bool run() override
 	{
@@ -241,7 +253,9 @@ public:
 class CheckPlayerHealth : public Action
 {
 public:
-	CheckPlayerHealth() {}
+	CheckPlayerHealth(Entity * e)
+		: Action(e)
+	{}
 
 	bool run() override
 	{
@@ -258,7 +272,9 @@ public:
 class DropAction : public Action
 {
 public:
-	DropAction() {}
+	DropAction(Entity * e) 
+		: Action(e)
+	{}
 
 	bool run() override
 	{

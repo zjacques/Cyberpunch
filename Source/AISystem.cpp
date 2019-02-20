@@ -22,28 +22,30 @@ void AISystem::createTree()
 	{
 		auto cast_comp = dynamic_cast<AIComponent *>(c);
 
+		auto e = cast_comp->m_self;
+
 		//Set Behaviour Tree Root node
 		cast_comp->BT.setRootChild(&cast_comp->m_sequences[0]);
 
 		//Left sub tree
 		cast_comp->m_selectors[0].addChildren({&cast_comp->m_sequences[0], &cast_comp->m_selectors[5]});
-		cast_comp->m_sequences[0].addChildren({ new CheckNearest(cast_comp->m_entities, cast_comp->m_self), new CloseEnough(), 
+		cast_comp->m_sequences[0].addChildren({ new CheckNearest(cast_comp->m_entities, e), new CloseEnough(e), 
 			&cast_comp->m_succeeders[0], &cast_comp->m_selectors[1], &cast_comp->punchSequence});
-		cast_comp->m_succeeders[0].setChild(new CheckPlayerDirection());
-		cast_comp->m_selectors[1].addChildren({ new CheckHealth(), &cast_comp->m_selectors[2] });
-		cast_comp->m_selectors[2].addChildren({ new PunchAction(), new FleeAction() });
+		cast_comp->m_succeeders[0].setChild(new CheckPlayerDirection(e));
+		cast_comp->m_selectors[1].addChildren({ new CheckHealth(e), &cast_comp->m_selectors[2] });
+		cast_comp->m_selectors[2].addChildren({ new PunchAction(e), new FleeAction(e) });
 
 		//cast_comp->m_selectors[3].addChildren({ new CheckAbove(), &cast_comp->m_selectors[4] });
 		//cast_comp->m_selectors[4].addChildren({ new CheckPlayerHealth(), new PunchAction() });
 
-		cast_comp->punchSequence.addChildren({ new CheckAbove(), &cast_comp->m_selectors[4] });
-		cast_comp->m_selectors[4].addChildren({ new PunchAction(), new PunchAction() });
+		cast_comp->punchSequence.addChildren({ new CheckAbove(e), &cast_comp->m_selectors[4] });
+		cast_comp->m_selectors[4].addChildren({ new PunchAction(e), new PunchAction(e) });
 
 		//Right sub tree
 		cast_comp->m_selectors[5].addChildren({ &cast_comp->m_sequences[1], &cast_comp->m_sequences[2] });
-		cast_comp->m_sequences[1].addChildren({ new CheckNearest(cast_comp->m_entities, cast_comp->m_self), new CloseEnough() });
+		cast_comp->m_sequences[1].addChildren({ new CheckNearest(cast_comp->m_entities, cast_comp->m_self), new CloseEnough(e) });
 		cast_comp->m_sequences[2].addChildren({ &cast_comp->m_succeeders[1], &cast_comp->m_selectors[6] });
-		cast_comp->m_selectors[6].addChildren({ new CheckAbove(), new DropAction() });
+		cast_comp->m_selectors[6].addChildren({ new CheckAbove(e), new DropAction(e) });
 	}
 }
 
@@ -74,5 +76,4 @@ void AISystem::runTree()
 void AISystem::update(double dt)
 {
 	runTree();
-
 }
