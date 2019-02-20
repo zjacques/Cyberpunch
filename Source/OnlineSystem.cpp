@@ -130,7 +130,7 @@ vector<OnlineSystem::LobbyInfo> OnlineSystem::getLobbies()
 	vector<OnlineSystem::LobbyInfo> retval;
 	if (lobbies["type"] == "LOBBY LIST")
 	{
-		vector<vector<string>> lobbyList = lobbies["list"];
+		vector<vector<int>> lobbyList = lobbies["list"];
 		for (auto info : lobbyList)
 		{
 			LobbyInfo l;
