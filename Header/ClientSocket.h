@@ -7,6 +7,7 @@
 #include <conio.h>           // Needed for kbhit and getch
 #include <string.h>
 #include <nlohmann/json.hpp>
+#include <iterator>
 
 #include "SDL_net.h"         // Include SDL_net, which includes SDL.h for us
 
