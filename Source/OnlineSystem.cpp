@@ -29,7 +29,7 @@ void OnlineSystem::SendCommands()
 	for (auto& plyr : m_sendingPlayers)
 	{
 		auto cmds = plyr->Send();
-		if (cmds->size() > 0)
+		if (cmds->size() == 1)
 		{
 			bool isFirst = true;
 			string jsonString = "{ \"type\" : \"COMMANDS\", \"player\" : "+ 
@@ -46,6 +46,10 @@ void OnlineSystem::SendCommands()
 			}
 			jsonString += " ]}";
 			m_Socket->sendString(jsonString);
+		}
+		else if(cmds->size() > 1){
+			cout << "pop queue" << endl;
+			cmds->pop();
 		}
 	}
 }
@@ -126,7 +130,7 @@ vector<OnlineSystem::LobbyInfo> OnlineSystem::getLobbies()
 	vector<OnlineSystem::LobbyInfo> retval;
 	if (lobbies["type"] == "LOBBY LIST")
 	{
-		vector<vector<string>> lobbyList = lobbies["list"];
+		vector<vector<int>> lobbyList = lobbies["list"];
 		for (auto info : lobbyList)
 		{
 			LobbyInfo l;
