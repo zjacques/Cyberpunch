@@ -3,6 +3,8 @@
 #include "PlayerPhysicsComponent.h"
 #include "AttackComponent.h"
 #include "PickUpComponent.h"
+#include "DustTriggerComponent.h"
+
 
 void CollisionListener::BeginContact(b2Contact * contact)
 {
@@ -39,25 +41,23 @@ void CollisionListener::BeginContact(b2Contact * contact)
 		}
 		else
 			playerPhys->setCanJump(true);
+
+		//Create a dust particle for landing on the ground
+		static_cast<DustTriggerComponent*>(&player->getComponent("Dust Trigger"))->setCreate();
 	}
 
-	if ((dataA->Tag() == "Player Body" && dataB->Tag() == "PickUp Body")
-		|| (dataB->Tag() == "Player Body" && dataA->Tag() == "PickUp Body"))
-	{
-		auto player = static_cast<Entity*>(dataA->Tag() == "Player Body" ? dataA->Data() : dataB->Data());
-		auto pickUp = static_cast<PickUpComponent*>(dataA->Tag() == "PickUp Body" ? dataA->Data() : dataB->Data());
-
-
-		if (dataA->Tag() == "PickUp Body" || dataB->Tag() == "PickUp Body")
-		{
-		//	pickUp->despawn(world);
-
-		}
 		
+	if ((dataA->Tag() == "Player Body" && dataB->Tag() == "Pickup")
+		|| (dataB->Tag() == "Player Body" && dataA->Tag() == "Pickup"))
+	{
+		auto player = dataA->Tag() == "Player Body" ? dataA->Data() : dataB->Data();
+		auto pickUp = dataB->Tag() == "Pickup" ? dataB->Data() : dataA->Data();
+		std::cout << "Hit" << std::endl;
+
 	}
 
 
-
+	
 	//Check if a player has attacked another player
 	checkPlayerAttack(contact);
 }
@@ -189,6 +189,8 @@ void CollisionListener::PreSolve(b2Contact * contact, const b2Manifold * oldMani
 			contact->SetEnabled(false);
 		}
 	}
+
+
 }
 
 void CollisionListener::PostSolve(b2Contact * contact, const b2ContactImpulse * impulse)
