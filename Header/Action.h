@@ -25,20 +25,9 @@ public:
 class WalkLeftAction : public Action
 {
 public:
-	WalkLeftAction(std::string newName, int p)
-		: Action(newName, p)
-	{
-	}
+	WalkLeftAction(std::string newName, int p);
 
-	bool run() override
-	{
-		if (std::rand() % 100 < successRate)
-		{
-			std::cout << "Walking left" << std::endl;
-			return true;
-		}
-		return false;
-	}
+	bool run() override;
 };
 
 #endif
@@ -46,22 +35,13 @@ public:
 #ifndef WALKRIGHTACTION_H
 #define WALKRIGHTACTION_H
 
+#include "Action.h"
+
 class WalkRightAction : public Action
 {
 public:
-	WalkRightAction(std::string newName, int p)
-		: Action(newName, p)
-	{
-	}
-	bool run() override
-	{
-		if (std::rand() % 100 < successRate)
-		{
-			std::cout << "Walking right" << std::endl;
-			return true;
-		}
-		return false;
-	}
+	WalkRightAction(std::string newName, int p);
+	bool run() override;
 };
 
 #endif
@@ -92,6 +72,8 @@ public:
 #ifndef PUNCHACTION_H
 #define PUNCHACTION_H
 
+#include "Action.h"
+
 class PunchAction : public Action
 {
 public:
@@ -99,21 +81,14 @@ public:
 		: Action(newName, p)
 	{
 	}
-	bool run() override
-	{
-		if (std::rand() % 100 < successRate)
-		{
-			std::cout << "Punch" << std::endl;
-			return true;
-		}
-		return false;
-	}
+	bool run() override;
 };
 
 #endif
 
 #ifndef CHECKNEAREST_H
 #define CHECKNEAREST_H
+
 
 class CheckNearest : public Action
 {
@@ -133,11 +108,9 @@ public:
 
 			Entity* nearest;
 			float nearest_dist;
-
+			//nearest = i;
 			for (auto i : m_entities)
 			{
-				nearest = i;
-
 				auto p = dynamic_cast<PositionComponent *>(&nearest->getComponent("Pos"));
 				auto self_pos = dynamic_cast<PositionComponent *>(&self->getComponent("Pos"));
 				nearest_dist = dist(p->position, self_pos->position);
@@ -147,8 +120,9 @@ public:
 					nearest = i;
 				}
 			}
-			//auto me = dynamic_cast<AIComponent *>(&self->getComponent("AI"));
-			//me->nearestPlayer = nearest;
+			auto me = dynamic_cast<AIComponent *>(&self->getComponent("AI"));
+			me->nearestPlayer = nearest;
+
 			return true;
 		}
 		return false;
