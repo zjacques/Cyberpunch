@@ -3,6 +3,7 @@
 #include "ClientSocket.h"
 #include "OnlineSendComponent.h"
 #include "OnlineInputComponent.h"
+#include <Windows.h>
 
 using std::vector;
 using std::string;

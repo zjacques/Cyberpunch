@@ -25,7 +25,7 @@ ClientSocket::ClientSocket(string theServerAddress, unsigned int theServerPort, 
 
 	try
 	{
-		pBuffer = new char[bufferSize]; // Create the transmission buffer character array
+		pBuffer = new char[bufferSize](); // Create the transmission buffer character array
 
 		// Create a socket set big enough to hold the server socket and our own client socket
 		socketSet = SDLNet_AllocSocketSet(2);
@@ -298,8 +298,8 @@ void ClientSocket::getUserInput()
 			//if (debug) { cout << "User pressed return - will attempt to send message..." << endl; }
 
 			// Copy our user's string into our char array called "buffer"
-			//strcpy( pBuffer, userInput.c_str() );
-			pBuffer = _strdup(userInput.c_str());
+			strcpy_s( pBuffer, userInput.length(),userInput.c_str() );
+			//pBuffer = _strdup(userInput.c_str());
 
 			// Calculate the length of our input and then add 1 (for the terminating character) to get the total number of characters we need to send
 			inputLength = strlen(pBuffer) + 1;
@@ -343,10 +343,21 @@ void ClientSocket::sendString(string stringToSend)
 		// If we've got normal input then...
 		if (stringToSend != ClientSocket::QUIT_SIGNAL)
 		{
-			pBuffer = _strdup(stringToSend.c_str());
+			strcpy_s(pBuffer, stringToSend.length()+1, stringToSend.c_str());
+			//pBuffer = _strdup(stringToSend.c_str());
 			inputLength = strlen(pBuffer) + 1;
+			int ret = 0;
+			//int size = *(&pBuffer + 1) - pBuffer; 
+			//delete pBuffer;
+			//pBuffer = new char[bufferSize];
+			/*int size1 = sizeof(pBuffer);
+			int size2 = sizeof(pBuffer[0]);
+			char a = pBuffer[250];
+			int size3 = size1 / size2;*/
 			// ...attempt to send the message to the server
-			if (SDLNet_TCP_Send(clientSocket, (void *)pBuffer, inputLength) < inputLength)
+			ret = SDLNet_TCP_Send(clientSocket, (void *)pBuffer, inputLength);
+			cout << ret << endl;
+			if (ret < inputLength)
 			{
 				string msg = "Error: Failed to send message: ";
 				msg += SDLNet_GetError();
