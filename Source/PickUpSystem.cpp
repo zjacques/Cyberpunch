@@ -1,4 +1,5 @@
 #include "PickUpSystem.h"
+#include "PlayerPhysicsComponent.h"
 
 void PickUpSystem::setWorld(Box2DBridge & world)
 {
@@ -27,8 +28,25 @@ void PickUpSystem::update(double dt)
 				pickup->spawn(*m_worldPtr);
 		}
 
+
 		if (pickup->spawned())
 		{
+			//If ye have to teleport  aplayer
+			if (pickup->toTeleport())
+			{
+				auto p = static_cast<PlayerPhysicsComponent*>(&pickup->getPlayer()->getComponent("Player Physics"));
+				p->m_body->setPosition(pickup->getTeleportLocation().x, pickup->getTeleportLocation().y);
+
+				pickup->getTimeInBooth() -= dt;
+
+				if (pickup->getTimeInBooth() <= 0)
+				{
+					p->m_body->setPosition(400, 400);
+				}
+
+				pickup->toTeleport() = false;
+			}
+
 			if (pickup->getTimeLive() > 0)
 			{
 				pickup->getTimeLive() -= dt;
@@ -39,6 +57,7 @@ void PickUpSystem::update(double dt)
 				}
 			}
 		}
+		
 	}
 }
 

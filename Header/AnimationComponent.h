@@ -12,11 +12,13 @@ public:
 	{
 	public:
 		Animation() {  }
-		Animation(std::vector<SDL_Rect> frames, int maxFrames, float duration);
+		Animation(SDL_Texture* texture, std::string name, std::vector<SDL_Rect> frames, int maxFrames, float duration);
 		void setLoop(bool b);
 		void resetAnimation();
 
+		std::string& getName() { return m_name; }
 		SDL_Rect getCurrentTextureRect() { return m_frames.at(m_currentFrame); };
+		SDL_Texture* getTexture() { return m_texture; }
 		bool& getLoop();
 		bool& getCompleted();
 		int& getCurrentFrame();
@@ -24,6 +26,8 @@ public:
 		float& getTimeGone();
 		float& getTimePerFrame();
 	private:
+		std::string m_name; //Name of the animation
+		SDL_Texture* m_texture; //The texture to animate
 		std::vector<SDL_Rect> m_frames; //Frames of the animation
 		int m_currentFrame; //The current frame of the animation
 		int m_maxFrames; //Maximum frames in the animation
@@ -36,10 +40,10 @@ public:
 
 	AnimationComponent(Component* sprite);
 
-	void addAnimation(std::string name, std::vector<SDL_Rect> frames, float duration);
+	void addAnimation(std::string name, SDL_Texture* texture, std::vector<SDL_Rect> frames, float duration);
 	void playAnimation(std::string name, bool loop);
 
-	
+	std::string getCurrentID() { return m_current->getName(); }
 	Animation* getCurrentAnimation() { return m_current; }
 	SpriteComponent* getSprite() { return static_cast<SpriteComponent*>(m_spriteToAnimate); }
 private:

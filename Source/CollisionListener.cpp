@@ -37,23 +37,29 @@ void CollisionListener::BeginContact(b2Contact * contact)
 			{
 				playerPhys->setCanFall(true);
 				playerPhys->setCanJump(true);
+				//Create a dust particle for landing on the ground
+				static_cast<DustTriggerComponent*>(&player->getComponent("Dust Trigger"))->setCreate();
 			}
 		}
-		else
+		else if ((dataA->Tag() == "Jump Sensor" && dataB->Tag() == "Floor")
+			|| (dataB->Tag() == "Jump Sensor" && dataA->Tag() == "Floor"))
+		{
 			playerPhys->setCanJump(true);
-
-		//Create a dust particle for landing on the ground
-		static_cast<DustTriggerComponent*>(&player->getComponent("Dust Trigger"))->setCreate();
+			//Create a dust particle for landing on the ground
+			static_cast<DustTriggerComponent*>(&player->getComponent("Dust Trigger"))->setCreate();
+		}
 	}
 
 		
 	if ((dataA->Tag() == "Player Body" && dataB->Tag() == "Pickup")
 		|| (dataB->Tag() == "Player Body" && dataA->Tag() == "Pickup"))
 	{
-		auto player = dataA->Tag() == "Player Body" ? dataA->Data() : dataB->Data();
-		auto pickUp = dataB->Tag() == "Pickup" ? dataB->Data() : dataA->Data();
-		std::cout << "Hit" << std::endl;
+		auto player = static_cast<Entity*>(dataA->Tag() == "Player Body" ? dataA->Data() : dataB->Data());
+		auto pickUp = static_cast<Entity*>(dataB->Tag() == "Pickup" ? dataB->Data() : dataA->Data());
 
+
+		std::cout << "Hit" << std::endl;
+		static_cast<PickUpComponent*>(&pickUp->getComponent("PickUp"))->teleport(player);
 	}
 
 
