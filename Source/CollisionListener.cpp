@@ -2,6 +2,7 @@
 #include "Entity.h"
 #include "PlayerPhysicsComponent.h"
 #include "AttackComponent.h"
+#include "PickUpComponent.h"
 
 void CollisionListener::BeginContact(b2Contact * contact)
 {
@@ -39,6 +40,23 @@ void CollisionListener::BeginContact(b2Contact * contact)
 		else
 			playerPhys->setCanJump(true);
 	}
+
+	if ((dataA->Tag() == "Player Body" && dataB->Tag() == "PickUp Body")
+		|| (dataB->Tag() == "Player Body" && dataA->Tag() == "PickUp Body"))
+	{
+		auto player = static_cast<Entity*>(dataA->Tag() == "Player Body" ? dataA->Data() : dataB->Data());
+		auto pickUp = static_cast<PickUpComponent*>(dataA->Tag() == "PickUp Body" ? dataA->Data() : dataB->Data());
+
+
+		if (dataA->Tag() == "PickUp Body" || dataB->Tag() == "PickUp Body")
+		{
+		//	pickUp->despawn(world);
+
+		}
+		
+	}
+
+
 
 	//Check if a player has attacked another player
 	checkPlayerAttack(contact);

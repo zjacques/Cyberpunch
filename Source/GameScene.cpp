@@ -64,6 +64,7 @@ void GameScene::start()
 		m_onlinePlayers.push_back(createPlayer(i+ m_numOfLocalPlayers, 600 + 150 * i+ m_numOfLocalPlayers, 360, false));
 	}
 	
+	//pickup Entity
 	m_pickUp = new Entity("PickUp");
 	auto pos = new PositionComponent(0,0);
 	m_pickUp->addComponent("Pos", pos);
@@ -79,7 +80,7 @@ void GameScene::start()
 		phys->m_body = m_physicsWorld.createBox(1920 / 2, 1080 / 2, 50, 50, false, false, b2BodyType::b2_staticBody);
 		m_physicsWorld.addProperties(*phys->m_body, 0, 0, 0, true, new PhysicsComponent::ColData("PickUp", m_pickUp));
 		m_pickUp->addComponent("Sprite", new SpriteComponent(&m_pickUp->getComponent("Pos"), Vector2f(50, 50), Vector2f(50, 50), Scene::resources().getTexture("Record"), 1));
-		Scene::systems()["Render"]->addComponent(&m_pickUp->getComponent("Sprite"));
+		
 		m_pickUp->addComponent("Physics", phys);
 		Scene::systems()["Physics"]->addComponent(phys);
 
@@ -87,7 +88,7 @@ void GameScene::start()
 		//static_cast<OnlineSystem*>(Scene::systems()["Network"])->getLobbies();
 //	}
 
-
+		//DJBooths created here 
 		auto& booths = Scene::resources().getLevelData()["Booth"];
 
 		for (int i = 0; i < booths.size(); i++)
@@ -252,6 +253,7 @@ Entity* GameScene::createDJB(int index, int posX, int posY)
 	auto pos = new PositionComponent(0, 0);
 	booth->addComponent("Pos", pos);
 
+	//creates a Box2d body for the djbooth defines its propoerties and applies a sprite
 	auto phys = new PhysicsComponent(pos);
 	phys->m_body = m_physicsWorld.createBox(posX, posY, 150, 50, false, false, b2BodyType::b2_staticBody);
 	m_physicsWorld.addProperties(*phys->m_body, 1, 0.05f, 0.0f, false, new PhysicsComponent::ColData("Booth", booth));
@@ -499,6 +501,7 @@ void GameScene::draw(SDL_Renderer & renderer)
 		rect.x = phys->m_body->getPosition().x - (rect.w / 2) - m_camera.x();
 		rect.y = phys->m_body->getPosition().y - (rect.h / 2) - m_camera.y();
 	//	SDL_RenderFillRect(&renderer, &rect);
+		Scene::systems()["Render"]->addComponent(&m_pickUp->getComponent("Sprite"));
 		SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
 		SDL_RenderDrawRect(&renderer, &rect);
 	}
