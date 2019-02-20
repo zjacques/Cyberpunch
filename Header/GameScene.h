@@ -7,6 +7,8 @@
 #include "PhysicsComponent.h"
 #include "PlayerInputComponent.h"
 #include "AIComponent.h"
+#include "DustTriggerComponent.h"
+#include "DustComponent.h"
 
 #include "PickUpComponent.h"
 #include "PickUpSystem.h"
@@ -28,6 +30,7 @@ public:
 	void start();
 	void stop();
 	void update(double dt);
+	void checkDust(double dt);
 
 	Entity* createAI(int index, int posX, int posY);
 
@@ -43,9 +46,11 @@ public:
 	void handleInput(InputSystem& input);
 private:
 	bool m_platformsCreated;
+	bool m_boothCreated;
 	Entity m_bgEntity;
 	std::vector<Entity*> m_localPlayers;
 	std::vector<Entity*> m_AIPlayers;
+	std::vector<Entity*> m_dustParticles, m_dustToDelete;
 	std::vector<InputSystem*> m_localInputs;
 	int m_numOfLocalPlayers;
 	Entity* m_pickUp;
@@ -61,6 +66,9 @@ private:
 	CollisionListener m_collisionListener;
 	//Platforms of the game
 	std::vector<Entity*> m_platforms;
+
+	//Dust particles rectangles
+	std::vector<SDL_Rect> m_dustFrames;
 
 	Camera m_camera;
 };

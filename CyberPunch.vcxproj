@@ -168,6 +168,7 @@
     <ClInclude Include="Header\AttackSystem.h" />
     <ClInclude Include="Header\BehaviourTree.h" />
     <ClInclude Include="Header\Box2DBridge.h" />
+    <ClInclude Include="Header\ButtonComponent.h" />
     <ClInclude Include="Header\Camera.h" />
     <ClInclude Include="Header\ClientSocket.h" />
     <ClInclude Include="Header\Button.h" />
@@ -176,6 +177,8 @@
     <ClInclude Include="Header\Component.h" />
     <ClInclude Include="Header\DJboothComponent.h" />
     <ClInclude Include="Header\DJBoothSystem.h" />
+    <ClInclude Include="Header\DustComponent.h" />
+    <ClInclude Include="Header\DustTriggerComponent.h" />
     <ClInclude Include="Header\Game.h" />
     <ClInclude Include="Header\Entity.h" />
     <ClInclude Include="Header\LobbyScene.h" />
