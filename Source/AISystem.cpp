@@ -28,15 +28,16 @@ void AISystem::createTree()
 		//Left sub tree
 		cast_comp->m_selectors[0].addChildren({&cast_comp->m_sequences[0], &cast_comp->m_selectors[5]});
 		cast_comp->m_sequences[0].addChildren({ new CheckNearest(cast_comp->m_entities, cast_comp->m_self), new CloseEnough(), 
-			&cast_comp->m_succeeders[0], &cast_comp->m_selectors[1], &cast_comp->m_selectors[3] });
+			&cast_comp->m_succeeders[0], &cast_comp->m_selectors[1], &cast_comp->punchSequence});
 		cast_comp->m_succeeders[0].setChild(new CheckPlayerDirection());
 		cast_comp->m_selectors[1].addChildren({ new CheckHealth(), &cast_comp->m_selectors[2] });
-		cast_comp->m_selectors[2].addChildren({ &cast_comp->m_succeeders[1], new FleeAction() });
+		cast_comp->m_selectors[2].addChildren({ new PunchAction(), new FleeAction() });
+
 		//cast_comp->m_selectors[3].addChildren({ new CheckAbove(), &cast_comp->m_selectors[4] });
 		//cast_comp->m_selectors[4].addChildren({ new CheckPlayerHealth(), new PunchAction() });
 
-		cast_comp->m_selectors[3].addChildren({ new CheckAbove(), &cast_comp->punchSequence });
-		cast_comp->punchSequence.addChildren({ new CheckPlayerHealth(), new PunchAction() });
+		cast_comp->punchSequence.addChildren({ new CheckAbove(), &cast_comp->m_selectors[4] });
+		cast_comp->m_selectors[4].addChildren({ new PunchAction(), new PunchAction() });
 
 		//Right sub tree
 		cast_comp->m_selectors[5].addChildren({ &cast_comp->m_sequences[1], &cast_comp->m_sequences[2] });

@@ -27,7 +27,7 @@ void GameScene::start()
 	Scene::systems()["PickUp"] = pickupSys;
 	Scene::systems()["Booth"] = new DJBoothSystem();
 
-	//m_AIPlayers.push_back(createAI(1, 600 + 150 * 1, 360));
+	m_AIPlayers.push_back(createAI(1, 600 + 150 * 1, 360));
 
 	//Create background entity
 	auto bgPos = new PositionComponent(1920 /2 , 1080 / 2);

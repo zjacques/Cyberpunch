@@ -29,7 +29,7 @@ public:
 
 	bool run() override
 	{
-		std::cout << "Jump" << std::endl;
+		std::cout << "Walking left" << std::endl;
 		return true;
 	}
 };
@@ -49,7 +49,7 @@ public:
 
 	bool run() override
 	{
-		std::cout << "Jump" << std::endl;
+		std::cout << "Waling right" << std::endl;
 		return true;
 	}
 };
@@ -86,7 +86,7 @@ public:
 
 	bool run() override
 	{
-		std::cout << "Jump" << std::endl;
+		std::cout << "Punch" << std::endl;
 		return true;
 	}
 };
