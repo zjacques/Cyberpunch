@@ -35,13 +35,17 @@ void CollisionListener::BeginContact(b2Contact * contact)
 			{
 				playerPhys->setCanFall(true);
 				playerPhys->setCanJump(true);
+				//Create a dust particle for landing on the ground
+				static_cast<DustTriggerComponent*>(&player->getComponent("Dust Trigger"))->setCreate();
 			}
 		}
-		else
+		else if ((dataA->Tag() == "Jump Sensor" && dataB->Tag() == "Floor")
+			|| (dataB->Tag() == "Jump Sensor" && dataA->Tag() == "Floor"))
+		{
 			playerPhys->setCanJump(true);
-
-		//Create a dust particle for landing on the ground
-		static_cast<DustTriggerComponent*>(&player->getComponent("Dust Trigger"))->setCreate();
+			//Create a dust particle for landing on the ground
+			static_cast<DustTriggerComponent*>(&player->getComponent("Dust Trigger"))->setCreate();
+		}
 	}
 
 	//Check if a player has attacked another player

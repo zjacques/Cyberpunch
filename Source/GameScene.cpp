@@ -89,7 +89,7 @@ void GameScene::start()
 		std::vector<SDL_Rect> m_spinAnimation;
 		for (int i = 0; i < 30; i++)
 			m_spinAnimation.push_back({i*50, 0, 50, 50});
-		anim->addAnimation("Spin", m_spinAnimation, 1.75f);
+		anim->addAnimation("Spin", Scene::resources().getTexture("Record"), m_spinAnimation, 1.75f);
 		anim->playAnimation("Spin", true);
 		Scene::systems()["Animation"]->addComponent(anim);
 		m_pickUp->addComponent("Animation", anim);
@@ -150,7 +150,7 @@ void GameScene::checkDust(double dt)
 			d->addComponent("Dust", new DustComponent());
 			d->addComponent("Sprite", new SpriteComponent(pos, Vector2f(1800, 50), Vector2f(90, 50), Scene::resources().getTexture("Player Dust"), 1));
 			auto anim = new AnimationComponent(&d->getComponent("Sprite"));
-			anim->addAnimation("Destroy", m_dustFrames, .5f);
+			anim->addAnimation("Destroy", Scene::resources().getTexture("Player Dust"), m_dustFrames, .5f);
 			anim->playAnimation("Destroy", false);
 			d->addComponent("Animation", anim);
 			Scene::systems()["Animation"]->addComponent(anim);
@@ -256,15 +256,17 @@ Entity * GameScene::createPlayer(int index,int posX, int posY, bool local)
 	auto animation = new AnimationComponent(&p->getComponent("Sprite"));
 	p->addComponent("Animation", animation);
 
-	std::vector<SDL_Rect> m_idleRects; //The rectangles for the idle animation
+	std::vector<SDL_Rect> m_animRects; //The rectangles for the animations
 
 	for (int i = 0; i < 20; i++)
 	{
-		m_idleRects.push_back({61 * i, 0, 61, 85});
+		m_animRects.push_back({61 * i, 0, 61, 85});
 	}
 
-	animation->addAnimation("Run", m_idleRects, .75f);
-	animation->playAnimation("Run", true); //Play the animation
+	animation->addAnimation("Run", Scene::resources().getTexture("Player Run"), m_animRects, .75f);
+	animation->addAnimation("Idle", Scene::resources().getTexture("Player Idle"), m_animRects, .5f);
+	animation->addAnimation("Ground Kick", Scene::resources().getTexture("Player Ground Kick"), m_animRects, .4f);
+	animation->playAnimation("Idle", true); //Play the idle animation from the start
 
 
 	//Add components to the system
@@ -291,8 +293,8 @@ Entity * GameScene::createPlayer(int index,int posX, int posY, bool local)
 
 	//Create the physics component and set up the bodies
 	auto phys = new PlayerPhysicsComponent(&p->getComponent("Pos"));
-	phys->m_body = m_physicsWorld.createBox(posX, posY, 50, 50, false, false, b2BodyType::b2_dynamicBody);
-	phys->m_jumpSensor = m_physicsWorld.createBox(posX, posY + 22.5f, 45, 5, false, false, b2BodyType::b2_dynamicBody);
+	phys->m_body = m_physicsWorld.createBox(posX, posY, 30, 78, false, false, b2BodyType::b2_dynamicBody);
+	phys->m_jumpSensor = m_physicsWorld.createBox(posX, posY, 27, 5, false, false, b2BodyType::b2_dynamicBody);
 
 	m_physicsWorld.addProperties(*phys->m_body, 1, 0.05f, 0.0f, false, new PhysicsComponent::ColData("Player Body", p));
 	m_physicsWorld.addProperties(*phys->m_jumpSensor, 1, 0.05f, 0.0f, true, new PhysicsComponent::ColData("Jump Sensor", p));
@@ -383,8 +385,6 @@ Entity * GameScene::createAI(int index, int posX, int posY)
 
 	return ai;
 }
-
-//void GameScene::draw(SDL_Renderer & renderer)
 
 /// <summary>
 /// 
@@ -505,14 +505,19 @@ void GameScene::draw(SDL_Renderer & renderer)
 		auto phys = static_cast<PlayerPhysicsComponent*>(&m_localPlayers.at(i)->getComponent("Player Physics"));
 		auto hit = static_cast<AttackComponent*>(&m_localPlayers.at(i)->getComponent("Attack"));
 
+		//Draw the players outline for the hitbox
+
+		rect.w = phys->m_body->getSize().x;
+		rect.h = phys->m_body->getSize().y;
+		rect.x = phys->m_body->getPosition().x - (rect.w / 2) - m_camera.x();
+		rect.y = phys->m_body->getPosition().y - (rect.h / 2) - m_camera.y();
+		SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
+		SDL_RenderDrawRect(&renderer, &rect);
+
 		//If the player is stunned, draw a yellow rectangle
-		if (phys->stunned() == true)
+		if (phys->stunned())
 		{
-			rect.w = phys->m_body->getSize().x;
-			rect.h = phys->m_body->getSize().y;
-			rect.x = phys->m_body->getPosition().x - (rect.w / 2) - m_camera.x();
-			rect.y = phys->m_body->getPosition().y - (rect.h / 2) - m_camera.y();
-			SDL_SetRenderDrawColor(&renderer, 255, 255, 0, 55);
+			SDL_SetRenderDrawColor(&renderer, 255, 255, 0, 20);
 			SDL_RenderFillRect(&renderer, &rect);
 		}
 
