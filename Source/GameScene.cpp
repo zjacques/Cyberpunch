@@ -37,19 +37,18 @@ void GameScene::start()
 	Scene::systems()["Render"]->addComponent(&m_bgEntity.getComponent("Sprite"));
 
 	m_numOfLocalPlayers = SDL_NumJoysticks();
-	m_numOfOnlinePlayers = 0;
+	m_numOfOnlinePlayers = 0;//get the number of players from the network system
 
 	// Initialise SDL_net (Note: We don't initialise or use normal SDL at all - only the SDL_net library!)
-	if (SDLNet_Init() == -1)
+	/*if (SDLNet_Init() == -1)
 	{
 		std::cerr << "Failed to intialise SDL_net: " << SDLNet_GetError() << std::endl;
 		exit(-1);
 	}
-
 	
 	//try to create the online system and connect
 	//refactor to another spot once we get the full lobby system going I guess.
-	static_cast<OnlineSystem*>(Scene::systems()["Network"])->ConnectToServer();
+	static_cast<OnlineSystem*>(Scene::systems()["Network"])->ConnectToServer();*/
 	/*auto net = new OnlineSystem();
 	if (net->ConnectToServer())
 		Scene::systems()["Network"] = net;

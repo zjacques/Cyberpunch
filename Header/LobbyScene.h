@@ -1,6 +1,9 @@
 #pragma once
 #include "Scene.h"
+#include "Camera.h"
+#include "Entity.h"
 #include "OnlineSystem.h"
+#include "ButtonComponent.h"
 
 class LobbyScene : public Scene {
 public:
@@ -18,5 +21,10 @@ private:
 	SDL_Texture * m_textTexture;
 
 	OnlineSystem* m_network;
-	
+
+	int m_currentIndex;
+	Camera m_camera;
+	bool m_addedInput;
+
+	std::vector<Entity*> m_buttons;
 };

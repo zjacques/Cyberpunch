@@ -71,9 +71,9 @@ void OnlineSystem::ReceiveCommands()
 	{
 		//deserialize(receivedMessage);
 		json currentPacket = json::parse(receivedMessage);
-		for (auto& plyr : m_receivingPlayers)
+		if (currentPacket["type"] == "COMMANDS")
 		{
-			if (currentPacket["type"] == "COMMANDS")
+			for (auto& plyr : m_receivingPlayers)
 			{
 				if (currentPacket["player"] == plyr->m_playerNumber)
 				{
