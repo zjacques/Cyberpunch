@@ -16,26 +16,45 @@ public:
 		m_singleFrameBounds(singleFramebounds),
 		m_texture(texture),
 		m_layer(layer),
-		m_posPtr(pos)
+		m_posPtr(pos),
+		m_scale(1,1), //Scale is 1, 1, sprite is not flipped
+		m_flip(SDL_FLIP_NONE)
 	{
-		m_src = { 0, 0, (int)overallSize.x, (int)overallSize.y };
+		m_src = { 0, 0, (int)singleFramebounds.x, (int)singleFramebounds.y };
 		m_dst = { 0, 0, (int)singleFramebounds.x, (int)singleFramebounds.y };
 	}
 
 	//Setters
 	void setTexture(SDL_Texture* texture) { m_texture = texture; }
-	void setCurrentFrame(SDL_Rect& frame) { m_src = frame; }
+	void setTextureRect(SDL_Rect frame) { m_src = frame; }
+	void setScale(float x, float y)
+	{
+		//Sets the scale of the image
+		m_scale = Vector2f(x,y);
+
+		if (m_scale.x == -1 && m_scale.y == -1)
+			m_flip = SDL_RendererFlip(SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL);
+		else if(m_scale.y == -1)
+			m_flip = SDL_RendererFlip(SDL_FLIP_VERTICAL);
+		else if(m_scale.x == -1)
+			m_flip = SDL_RendererFlip(SDL_FLIP_HORIZONTAL);
+		else
+			m_flip = SDL_RendererFlip(SDL_FLIP_NONE);
+	}
 
 	//Getters
-
 	Vector2f& getPosition() { return static_cast<PositionComponent*>(m_posPtr)->position; }
 	Vector2f getBounds() { return m_bounds; }
 	Vector2f getFrameSize() { return m_singleFrameBounds; }
+	Vector2f getScale() { return m_scale; }
 	SDL_Texture* getTexture() { return m_texture; }
 	SDL_Rect getSourceRect() { return m_src; }
 	SDL_Rect getDestRect() { return m_dst; }
+	SDL_RendererFlip& getFlip() { return m_flip; }
 	int getLayer() { return m_layer; }
 private:
+	Vector2f m_scale;
+	SDL_RendererFlip m_flip;
 	Component* m_posPtr;
 	Vector2f m_bounds, m_singleFrameBounds;
 	SDL_Rect m_src;
