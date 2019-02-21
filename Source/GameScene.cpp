@@ -251,6 +251,11 @@ Entity * GameScene::createPlayer(int index,int posX, int posY, bool local)
 
 	animation->addAnimation("Run", Scene::resources().getTexture("Player Run"), m_animRects, .75f);
 	animation->addAnimation("Idle", Scene::resources().getTexture("Player Idle"), m_animRects, .5f);
+	m_animRects.clear();
+	for (int i = 0; i < 20; i++)
+	{
+		m_animRects.push_back({71 * i, 0, 71, 83 });
+	}
 	animation->addAnimation("Ground Kick", Scene::resources().getTexture("Player Ground Kick"), m_animRects, .4f);
 	animation->playAnimation("Idle", true); //Play the idle animation from the start
 
@@ -494,12 +499,12 @@ void GameScene::draw(SDL_Renderer & renderer)
 
 		//Draw the players outline for the hitbox
 
-		rect.w = phys->m_body->getSize().x;
-		rect.h = phys->m_body->getSize().y;
-		rect.x = phys->m_body->getPosition().x - (rect.w / 2) - m_camera.x();
-		rect.y = phys->m_body->getPosition().y - (rect.h / 2) - m_camera.y();
-		SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
-		SDL_RenderDrawRect(&renderer, &rect);
+		//rect.w = phys->m_body->getSize().x;
+		//rect.h = phys->m_body->getSize().y;
+		//rect.x = phys->m_body->getPosition().x - (rect.w / 2) - m_camera.x();
+		//rect.y = phys->m_body->getPosition().y - (rect.h / 2) - m_camera.y();
+		//SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
+		//SDL_RenderDrawRect(&renderer, &rect);
 
 		//If the player is stunned, draw a yellow rectangle
 		if (phys->stunned())

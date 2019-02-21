@@ -18,6 +18,7 @@ public:
 
 		std::string& getName() { return m_name; }
 		SDL_Rect getCurrentTextureRect() { return m_frames.at(m_currentFrame); };
+		SDL_Rect getOverallSize() { return m_overallSize; }
 		SDL_Texture* getTexture() { return m_texture; }
 		bool& getLoop();
 		bool& getCompleted();
@@ -25,10 +26,12 @@ public:
 		int& getMaxFrames();
 		float& getTimeGone();
 		float& getTimePerFrame();
+		std::vector<SDL_Rect> getFrames() { return m_frames; }
 	private:
 		std::string m_name; //Name of the animation
 		SDL_Texture* m_texture; //The texture to animate
 		std::vector<SDL_Rect> m_frames; //Frames of the animation
+		SDL_Rect m_overallSize; //Size of the entire animation
 		int m_currentFrame; //The current frame of the animation
 		int m_maxFrames; //Maximum frames in the animation
 		float m_duration; //The duration of the animation

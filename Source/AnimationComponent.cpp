@@ -26,6 +26,13 @@ void AnimationComponent::playAnimation(std::string name, bool loop)
 	m_current->setLoop(loop);
 	//Set texture of the sprite based on the animation that is being played
 	getSprite()->setTexture(m_current->getTexture());
+	//Set the destination width and height
+	auto sDst = getSprite()->getDestRect();
+	auto aDst = m_current->getCurrentTextureRect();
+	sDst.w = aDst.w;
+	sDst.h = aDst.h;
+	getSprite()->setDestRect(sDst);
+	getSprite()->setSourceRect(aDst);
 }
 
 AnimationComponent::Animation::Animation(SDL_Texture* texture, std::string name, std::vector<SDL_Rect> frames, int maxFrames, float duration) :
@@ -41,6 +48,8 @@ AnimationComponent::Animation::Animation(SDL_Texture* texture, std::string name,
 {
 	//Get the time per frame
 	m_timePerFrame = m_duration / m_maxFrames;
+
+	m_overallSize = { 0,0, frames.at(0).w * m_maxFrames, frames.at(0).h };
 }
 
 void AnimationComponent::Animation::setLoop(bool b)
