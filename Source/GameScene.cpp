@@ -5,7 +5,7 @@
 GameScene::GameScene() :
 	m_bgEntity("Game BG"),
 	m_platformsCreated(false),
-	m_camera(false)
+	m_camera(true)
 {
 	for (int i = 0; i < 20; i++)
 	{
@@ -67,6 +67,7 @@ void GameScene::start()
 		m_onlinePlayers.push_back(createPlayer(i+ m_numOfLocalPlayers, 600 + 150 * i+ m_numOfLocalPlayers, 360, false));
 	}
 	
+	//pickup Entity
 	m_pickUp = new Entity("PickUp");
 	auto pos = new PositionComponent(0,0);
 	m_pickUp->addComponent("Pos", pos);
@@ -150,7 +151,7 @@ void GameScene::checkDust(double dt)
 			d->addComponent("Dust", new DustComponent());
 			d->addComponent("Sprite", new SpriteComponent(pos, Vector2f(1800, 50), Vector2f(90, 50), Scene::resources().getTexture("Player Dust"), 1));
 			auto anim = new AnimationComponent(&d->getComponent("Sprite"));
-			anim->addAnimation("Destroy", m_dustFrames, .5f);
+			anim->addAnimation("Destroy", Scene::resources().getTexture("Player Dust"), m_dustFrames, .5f);
 			anim->playAnimation("Destroy", false);
 			d->addComponent("Animation", anim);
 			Scene::systems()["Animation"]->addComponent(anim);
@@ -252,19 +253,26 @@ Entity * GameScene::createPlayer(int index,int posX, int posY, bool local)
 	p->addComponent("Pos", new PositionComponent(0,0));
 	p->addComponent("Dust Trigger", new DustTriggerComponent());
 	p->addComponent("Attack", new AttackComponent());
-	p->addComponent("Sprite", new SpriteComponent(&p->getComponent("Pos"), Vector2f(1220,85), Vector2f(61, 85), Scene::resources().getTexture("Player Run"), 2));
+	p->addComponent("Sprite", new SpriteComponent(&p->getComponent("Pos"), Vector2f(1220,85), Vector2f(61, 85), Scene::resources().getTexture("Player Idle"), 2));
 	auto animation = new AnimationComponent(&p->getComponent("Sprite"));
 	p->addComponent("Animation", animation);
 
-	std::vector<SDL_Rect> m_idleRects; //The rectangles for the idle animation
+	std::vector<SDL_Rect> m_animRects; //The rectangles for the animations
 
 	for (int i = 0; i < 20; i++)
 	{
-		m_idleRects.push_back({61 * i, 0, 61, 85});
+		m_animRects.push_back({61 * i, 0, 61, 85});
 	}
 
-	animation->addAnimation("Run", m_idleRects, .75f);
-	animation->playAnimation("Run", true); //Play the animation
+	animation->addAnimation("Run", Scene::resources().getTexture("Player Run"), m_animRects, .75f);
+	animation->addAnimation("Idle", Scene::resources().getTexture("Player Idle"), m_animRects, .5f);
+	m_animRects.clear();
+	for (int i = 0; i < 20; i++)
+	{
+		m_animRects.push_back({71 * i, 0, 71, 83 });
+	}
+	animation->addAnimation("Ground Kick", Scene::resources().getTexture("Player Ground Kick"), m_animRects, .4f);
+	animation->playAnimation("Idle", true); //Play the idle animation from the start
 
 
 	//Add components to the system
@@ -291,8 +299,8 @@ Entity * GameScene::createPlayer(int index,int posX, int posY, bool local)
 
 	//Create the physics component and set up the bodies
 	auto phys = new PlayerPhysicsComponent(&p->getComponent("Pos"));
-	phys->m_body = m_physicsWorld.createBox(posX, posY, 50, 50, false, false, b2BodyType::b2_dynamicBody);
-	phys->m_jumpSensor = m_physicsWorld.createBox(posX, posY + 22.5f, 45, 5, false, false, b2BodyType::b2_dynamicBody);
+	phys->m_body = m_physicsWorld.createBox(posX, posY, 30, 78, false, false, b2BodyType::b2_dynamicBody);
+	phys->m_jumpSensor = m_physicsWorld.createBox(posX, posY, 27, 5, false, false, b2BodyType::b2_dynamicBody);
 
 	m_physicsWorld.addProperties(*phys->m_body, 1, 0.05f, 0.0f, false, new PhysicsComponent::ColData("Player Body", p));
 	m_physicsWorld.addProperties(*phys->m_jumpSensor, 1, 0.05f, 0.0f, true, new PhysicsComponent::ColData("Jump Sensor", p));
@@ -328,6 +336,7 @@ Entity* GameScene::createDJB(int index, int posX, int posY)
 	auto pos = new PositionComponent(0, 0);
 	booth->addComponent("Pos", pos);
 
+	//creates a Box2d body for the djbooth defines its propoerties and applies a sprite
 	auto phys = new PhysicsComponent(pos);
 	phys->m_body = m_physicsWorld.createBox(posX, posY, 150, 50, false, false, b2BodyType::b2_staticBody);
 	m_physicsWorld.addProperties(*phys->m_body, 1, 0.05f, 0.0f, false, new PhysicsComponent::ColData("Booth", booth));
@@ -511,14 +520,19 @@ void GameScene::draw(SDL_Renderer & renderer)
 		auto phys = static_cast<PlayerPhysicsComponent*>(&m_localPlayers.at(i)->getComponent("Player Physics"));
 		auto hit = static_cast<AttackComponent*>(&m_localPlayers.at(i)->getComponent("Attack"));
 
+		//Draw the players outline for the hitbox
+
+		//rect.w = phys->m_body->getSize().x;
+		//rect.h = phys->m_body->getSize().y;
+		//rect.x = phys->m_body->getPosition().x - (rect.w / 2) - m_camera.x();
+		//rect.y = phys->m_body->getPosition().y - (rect.h / 2) - m_camera.y();
+		//SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
+		//SDL_RenderDrawRect(&renderer, &rect);
+
 		//If the player is stunned, draw a yellow rectangle
-		if (phys->stunned() == true)
+		if (phys->stunned())
 		{
-			rect.w = phys->m_body->getSize().x;
-			rect.h = phys->m_body->getSize().y;
-			rect.x = phys->m_body->getPosition().x - (rect.w / 2) - m_camera.x();
-			rect.y = phys->m_body->getPosition().y - (rect.h / 2) - m_camera.y();
-			SDL_SetRenderDrawColor(&renderer, 255, 255, 0, 55);
+			SDL_SetRenderDrawColor(&renderer, 255, 255, 0, 20);
 			SDL_RenderFillRect(&renderer, &rect);
 		}
 
@@ -576,12 +590,13 @@ void GameScene::draw(SDL_Renderer & renderer)
 	auto pC = static_cast<PickUpComponent*>(&m_pickUp->getComponent("PickUp"));
 	if (pC->spawned())
 	{
-		auto phys = static_cast<PhysicsComponent*>(&m_pickUp->getComponent("Physics"));
+		auto phys = pC->getBody();
 		rect.w = phys->m_body->getSize().x;
 		rect.h = phys->m_body->getSize().y;
 		rect.x = phys->m_body->getPosition().x - (rect.w / 2) - m_camera.x();
 		rect.y = phys->m_body->getPosition().y - (rect.h / 2) - m_camera.y();
 	//	SDL_RenderFillRect(&renderer, &rect);
+		Scene::systems()["Render"]->addComponent(&m_pickUp->getComponent("Sprite"));
 		SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
 		SDL_RenderDrawRect(&renderer, &rect);
 	}

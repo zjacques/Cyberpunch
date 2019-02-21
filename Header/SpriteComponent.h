@@ -42,6 +42,9 @@ public:
 			m_flip = SDL_RendererFlip(SDL_FLIP_NONE);
 	}
 
+	void setSourceRect(SDL_Rect size) { m_src = size; };
+	void setDestRect(SDL_Rect size) { m_dst = size; }
+
 	//Getters
 	Vector2f& getPosition() { return static_cast<PositionComponent*>(m_posPtr)->position; }
 	Vector2f getBounds() { return m_bounds; }

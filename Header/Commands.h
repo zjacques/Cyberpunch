@@ -6,6 +6,7 @@
 #include "PlayerPhysicsComponent.h"
 #include "OnlineSendComponent.h"
 #include "AttackComponent.h"
+#include "AnimationComponent.h"
 
 class Command
 {
@@ -55,9 +56,15 @@ public:
 			if (hit->attackActive() == false || !phys->canJump())
 			{
 				phys->moveLeft();
+				//Play run animation
+				auto a = static_cast<AnimationComponent*>(&e.getComponent("Animation"));
+				a->playAnimation("Run", true);
 				auto s = static_cast<SpriteComponent*>(&e.getComponent("Sprite"));
 				s->setScale(1, s->getScale().y);
+				s->setTexture(a->getCurrentAnimation()->getTexture());
 			}
+			else if(hit->attackActive() == false)
+				static_cast<AnimationComponent*>(&e.getComponent("Animation"))->playAnimation("Idle", true);
 		}
 		auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
 		if (net != NULL)
@@ -83,9 +90,14 @@ public:
 			if (hit->attackActive() == false || !phys->canJump())
 			{
 				phys->moveRight();
+				auto a = static_cast<AnimationComponent*>(&e.getComponent("Animation"));
+				a->playAnimation("Run", true);
 				auto s = static_cast<SpriteComponent*>(&e.getComponent("Sprite"));
 				s->setScale(-1, s->getScale().y);
+				s->setTexture(a->getCurrentAnimation()->getTexture());
 			}
+			else if(hit->attackActive() == false)
+				static_cast<AnimationComponent*>(&e.getComponent("Animation"))->playAnimation("Idle", true);
 		}
 		auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
 		if (net != NULL)
@@ -142,7 +154,12 @@ public:
 
 			hit->attack(offset, Vector2f(50, 25), e, tag, .4f, 0);
 			hit->setAttackProperties(5, phys->isMovingLeft() ? -300 : 300, phys->isGravityFlipped() ? -45 : 45);
+
+			auto a = static_cast<AnimationComponent*>(&e.getComponent("Animation"));
+			a->playAnimation("Ground Kick", false);
+			static_cast<SpriteComponent*>(&e.getComponent("Sprite"))->setTexture(a->getCurrentAnimation()->getTexture());
 		}
+
 		auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
 		if (net != NULL)
 		{
