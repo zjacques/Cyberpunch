@@ -2,7 +2,9 @@
 #include "Entity.h"
 #include "PlayerPhysicsComponent.h"
 #include "AttackComponent.h"
+#include "PickUpComponent.h"
 #include "DustTriggerComponent.h"
+
 
 void CollisionListener::BeginContact(b2Contact * contact)
 {
@@ -48,6 +50,20 @@ void CollisionListener::BeginContact(b2Contact * contact)
 		}
 	}
 
+		
+	if ((dataA->Tag() == "Player Body" && dataB->Tag() == "Pickup")
+		|| (dataB->Tag() == "Player Body" && dataA->Tag() == "Pickup"))
+	{
+		auto player = static_cast<Entity*>(dataA->Tag() == "Player Body" ? dataA->Data() : dataB->Data());
+		auto pickUp = static_cast<Entity*>(dataB->Tag() == "Pickup" ? dataB->Data() : dataA->Data());
+
+
+		std::cout << "Hit" << std::endl;
+		static_cast<PickUpComponent*>(&pickUp->getComponent("PickUp"))->teleport(player);
+	}
+
+
+	
 	//Check if a player has attacked another player
 	checkPlayerAttack(contact);
 }
@@ -179,6 +195,8 @@ void CollisionListener::PreSolve(b2Contact * contact, const b2Manifold * oldMani
 			contact->SetEnabled(false);
 		}
 	}
+
+
 }
 
 void CollisionListener::PostSolve(b2Contact * contact, const b2ContactImpulse * impulse)
