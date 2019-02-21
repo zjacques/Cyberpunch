@@ -1,6 +1,9 @@
 #pragma once
 #include "Scene.h"
+#include "Camera.h"
+#include "Entity.h"
 #include "OnlineSystem.h"
+#include "ButtonComponent.h"
 
 class LobbyScene : public Scene {
 public:
@@ -12,11 +15,24 @@ public:
 	void handleInput(InputSystem& input);
 
 private:
+	void handleButtonPressed();
+	void createLobbyButtons();
+	Entity* createButton(Vector2f pos, SDL_Texture* selectedTexture, std::string btnTag, bool selected);
+	void requestHost();
+
 	TTF_Font * m_font;
 	SDL_Rect m_textRect;
 	SDL_Color  * m_textColour;
 	SDL_Texture * m_textTexture;
 
 	OnlineSystem* m_network;
-	
+
+	int m_currentIndex;
+	Camera m_camera;
+	InputComponent m_input;
+	bool m_addedInput;
+
+	vector<OnlineSystem::LobbyInfo> m_lobbies;
+
+	std::vector<Entity*> m_buttons;
 };

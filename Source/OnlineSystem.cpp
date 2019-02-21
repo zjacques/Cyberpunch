@@ -71,9 +71,9 @@ void OnlineSystem::ReceiveCommands()
 	{
 		//deserialize(receivedMessage);
 		json currentPacket = json::parse(receivedMessage);
-		for (auto& plyr : m_receivingPlayers)
+		if (currentPacket["type"] == "COMMANDS")
 		{
-			if (currentPacket["type"] == "COMMANDS")
+			for (auto& plyr : m_receivingPlayers)
 			{
 				if (currentPacket["player"] == plyr->m_playerNumber)
 				{
@@ -98,7 +98,7 @@ bool OnlineSystem::ConnectToServer()
 		// Now try to instantiate the client socket
 		// Parameters: server address, port number, buffer size (i.e. max message size)
 		// Note: You can provide the serverURL as a dot-quad ("1.2.3.4") or a hostname ("server.foo.com")
-		m_Socket = new ClientSocket("127.0.0.1", 1234, 512);
+		m_Socket = new ClientSocket("149.153.106.152", 1234, 512);
 
 		m_Socket->connectToServer();
 		isConnected = true;
