@@ -138,9 +138,6 @@
     <ClCompile Include="Source\PickUpSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
-    <ClCompile Include="Source\DJBoothComponent.cpp">
-      <Filter>Source Files\Components</Filter>
-    </ClCompile>
     <ClCompile Include="Source\DJBoothSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
@@ -309,6 +306,15 @@
       <Filter>Header Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="Header\DustTriggerComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\GravityBoothComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\PlatformBoothComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\SlowBoothComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
   </ItemGroup>

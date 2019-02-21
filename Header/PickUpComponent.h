@@ -29,7 +29,7 @@ private:
 	float m_timeInBooth = 10;
 	bool m_spawned;
 	float m_timeTillSpawn;
-	Vector2f m_teleportLocation = Vector2f(80, 80);
+	Vector2f m_teleportLocation = Vector2f(500, 80);
 	Vector2f m_teleportLocationB;
 	PhysicsComponent* m_body;
 	Entity* m_playerToTele, *m_pickupEntity;
