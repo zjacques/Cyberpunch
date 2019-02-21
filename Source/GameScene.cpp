@@ -37,7 +37,7 @@ void GameScene::start()
 	Scene::systems()["Render"]->addComponent(&m_bgEntity.getComponent("Sprite"));
 
 	m_numOfLocalPlayers = SDL_NumJoysticks();
-	m_numOfOnlinePlayers = 1;//get the number of players from the network system
+	m_numOfOnlinePlayers = 0;//get the number of players from the network system
 
 	// Initialise SDL_net (Note: We don't initialise or use normal SDL at all - only the SDL_net library!)
 	/*if (SDLNet_Init() == -1)
