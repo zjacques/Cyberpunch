@@ -99,7 +99,8 @@ public:
 	bool run() override
 	{
 		std::cout << "Punch" << std::endl;
-		m_input->handleInput("XBTN", m_entity);
+		//m_input->handleInput("XBTN", m_entity);
+		m_input->handleInput("STICKLEFT", m_entity);
 		return true;
 	}
 };

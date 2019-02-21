@@ -27,8 +27,6 @@ void GameScene::start()
 	Scene::systems()["PickUp"] = pickupSys;
 	Scene::systems()["Booth"] = new DJBoothSystem();
 
-
-
 	//Create background entity
 	auto bgPos = new PositionComponent(1920 /2 , 1080 / 2);
 	m_bgEntity.addComponent("Pos", bgPos);
@@ -95,7 +93,7 @@ void GameScene::start()
 		Scene::systems()["PickUp"]->addComponent(&m_pickUp->getComponent("PickUp"));
 		//static_cast<OnlineSystem*>(Scene::systems()["Network"])->getLobbies();
 //	}
-		m_AIPlayers.push_back(createAI(1, 600 + 150 * 1, 360));
+		m_AIPlayers.push_back(createAI(1, 1500 + 150 * 1, 360));
 
 		auto& booths = Scene::resources().getLevelData()["Booth"];
 
@@ -375,14 +373,24 @@ Entity * GameScene::createAI(int index, int posX, int posY)
 	auto ai = new Entity("AI");
 	auto pos = new PositionComponent(0, 0);
 	auto input = new AiInputComponent();
+
 	auto behaviour = new AIComponent(m_localPlayers, input, ai);
 	ai->addComponent("Pos", pos);
 	ai->addComponent("AI", behaviour);
 	ai->addComponent("Dust Trigger", new DustTriggerComponent());
 	ai->addComponent("Attack", new AttackComponent());
-
 	ai->addComponent("Sprite", new SpriteComponent(&ai->getComponent("Pos"), Vector2f(50, 50), Vector2f(50, 50), Scene::resources().getTexture("Player Run"), 2));
+	auto animation = new AnimationComponent(&ai->getComponent("Sprite"));
 
+	std::vector<SDL_Rect> m_animRects; //The rectangles for the animations
+
+	for (int i = 0; i < 20; i++)
+	{
+		m_animRects.push_back({ 61 * i, 0, 61, 85 });
+	}
+	animation->addAnimation("Run", Scene::resources().getTexture("Player Run"), m_animRects, .75f);
+	ai->addComponent("Animation", animation);
+	
 	//Add the AI component to the AI system
 	Scene::systems()["AI"]->addComponent(&ai->getComponent("AI"));
 
@@ -394,10 +402,12 @@ Entity * GameScene::createAI(int index, int posX, int posY)
 
 	Scene::systems()["Render"]->addComponent(&ai->getComponent("Sprite"));
 
+	Scene::systems()["Animation"]->addComponent(&ai->getComponent("Animation"));
+
 	//Create the physics component and set up the bodies
 	auto phys = new PlayerPhysicsComponent(&ai->getComponent("Pos"));
-	phys->m_body = m_physicsWorld.createBox(posX, posY, 50, 50, false, false, b2BodyType::b2_dynamicBody);
-	phys->m_jumpSensor = m_physicsWorld.createBox(posX, posY + 22.5f, 45, 5, false, false, b2BodyType::b2_dynamicBody);
+	phys->m_body = m_physicsWorld.createBox(posX, posY, 30, 78, false, false, b2BodyType::b2_dynamicBody);
+	phys->m_jumpSensor = m_physicsWorld.createBox(posX, posY, 27, 5, false, false, b2BodyType::b2_dynamicBody);
 
 	m_physicsWorld.addProperties(*phys->m_body, 1, 0.05f, 0.0f, false, new PhysicsComponent::ColData("Player Body", ai));
 	m_physicsWorld.addProperties(*phys->m_jumpSensor, 1, 0.05f, 0.0f, true, new PhysicsComponent::ColData("Jump Sensor", ai));
