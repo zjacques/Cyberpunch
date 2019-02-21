@@ -6,8 +6,8 @@ PlayerPhysicsComponent::PlayerPhysicsComponent(Component * pos) :
 	m_stunned(false),
 	m_canFall(false),
 	m_canJump(false),
-	m_movingL(false),
-	m_movingR(true),
+	m_movingL(true),
+	m_movingR(false),
 	m_gravFlipped(false),
 	m_falling(false),
 	m_stunLeft(0),
@@ -80,7 +80,7 @@ void PlayerPhysicsComponent::createJoint(Box2DBridge & world)
 	m_sensorJointDef.bodyA = m_body->getBody();
 	m_sensorJointDef.bodyB = m_jumpSensor->getBody();
 	m_sensorJointDef.collideConnected = false;
-	m_sensorJointDef.localAnchorA.Set(0, .9f);
+	m_sensorJointDef.localAnchorA.Set(0, 1.35f);
 
 	//Create the joints
 	m_sensorJoint = (b2RevoluteJoint*)world.getWorld().CreateJoint(&m_sensorJointDef);

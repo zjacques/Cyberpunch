@@ -7,23 +7,30 @@ AnimationComponent::AnimationComponent(Component* sprite) :
 
 }
 
-void AnimationComponent::addAnimation(std::string name, std::vector<SDL_Rect> frames, float duration)
+void AnimationComponent::addAnimation(std::string name, SDL_Texture* texture, std::vector<SDL_Rect> frames, float duration)
 {
 	//Add the animation to our map
-	m_animations[name] = Animation(frames, frames.size(), duration);
+	m_animations[name] = Animation(texture, name, frames, frames.size(), duration);
 }
 
 void AnimationComponent::playAnimation(std::string name, bool loop)
 {
 	//If there is an animation playing then stop it, and play the ne wone
 	if (nullptr != m_current)
-		m_current->resetAnimation();
+	{
+		if(m_current->getName() != name)
+			m_current->resetAnimation();
+	}
 
 	m_current = &m_animations[name];
 	m_current->setLoop(loop);
+	//Set texture of the sprite based on the animation that is being played
+	getSprite()->setTexture(m_current->getTexture());
 }
 
-AnimationComponent::Animation::Animation(std::vector<SDL_Rect> frames, int maxFrames, float duration) :
+AnimationComponent::Animation::Animation(SDL_Texture* texture, std::string name, std::vector<SDL_Rect> frames, int maxFrames, float duration) :
+	m_texture(texture),
+	m_name(name),
 	m_loop(false),
 	m_frames(frames),
 	m_duration(duration),
