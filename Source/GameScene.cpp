@@ -1,16 +1,14 @@
 #include "GameScene.h"
 #include "RenderSystem.h"
 #include "AnimationComponent.h"
+#include "DustSystem.h"
 
 GameScene::GameScene() :
 	m_bgEntity("Game BG"),
 	m_platformsCreated(false),
 	m_camera(true)
 {
-	for (int i = 0; i < 20; i++)
-	{
-		m_dustFrames.push_back({i* 90, 0, 90, 50});
-	}
+
 }
 
 void GameScene::start()
@@ -21,6 +19,8 @@ void GameScene::start()
 
 	//Recreate the attack system
 	Scene::systems()["Attack"] = new AttackSystem(m_physicsWorld);
+	//Recreate the dust system
+	Scene::systems()["Dust"] = new DustSystem(&Scene::systems(), &m_localPlayers, &Scene::resources());
 
 	auto pickupSys = new PickUpSystem();
 	pickupSys->setWorld(m_physicsWorld);
@@ -111,74 +111,10 @@ void GameScene::update(double dt)
 	Scene::systems()["Booth"]->update(dt);
 	Scene::systems()["Animation"]->update(dt); //Update the animation components
 	Scene::systems()["AI"]->update(dt);
+	Scene::systems()["Dust"]->update(dt);
 
 	//Update camera
 	updateCamera(dt);
-
-	//Checks if dust needs to be created or removed
-	checkDust(dt);
-}
-
-void GameScene::checkDust(double dt)
-{
-	//Loops through all the players
-	for (auto& player : m_localPlayers)
-	{
-		if (static_cast<DustTriggerComponent*>(&player->getComponent("Dust Trigger"))->toCreate())
-		{
-			auto pPhys = static_cast<PlayerPhysicsComponent*>(&player->getComponent("Player Physics"));
-			static_cast<DustTriggerComponent*>(&player->getComponent("Dust Trigger"))->toCreate() = false; //Reset the trigger
-
-			auto d = new Entity("Dust");
-			auto pos = new PositionComponent(pPhys->m_body->getPosition().x, pPhys->m_body->getPosition().y + 25);
-			d->addComponent("Pos", pos);
-			d->addComponent("Dust", new DustComponent());
-			d->addComponent("Sprite", new SpriteComponent(pos, Vector2f(1800, 50), Vector2f(90, 50), Scene::resources().getTexture("Player Dust"), 1));
-			auto anim = new AnimationComponent(&d->getComponent("Sprite"));
-			anim->addAnimation("Destroy", Scene::resources().getTexture("Player Dust"), m_dustFrames, .5f);
-			anim->playAnimation("Destroy", false);
-			d->addComponent("Animation", anim);
-			Scene::systems()["Animation"]->addComponent(anim);
-			Scene::systems()["Render"]->addComponent(&d->getComponent("Sprite"));
-
-			//Add the dust particle to the vector
-			m_dustParticles.push_back(d);
-		}
-	}
-
-	//Loop through all dust particles and check if they need to be deleted
-	for (auto& dust : m_dustParticles)
-	{
-		auto dComp = static_cast<DustComponent*>(&dust->getComponent("Dust"));
-
-		dComp->getTTL() -= dt;
-
-		//If the time to live is up, delete the dust particle from the systems
-		if (dComp->getTTL() <= 0)
-		{
-			m_dustToDelete.push_back(dust); //Add to the vector to delete
-		}
-	}
-
-	//If the dust to delete is not empty, then delete them all
-	if(!m_dustToDelete.empty())
-	{
-		for (auto& dust : m_dustToDelete)
-		{
-			Scene::systems()["Animation"]->deleteComponent(&dust->getComponent("Animation"));
-			Scene::systems()["Render"]->deleteComponent(&dust->getComponent("Sprite"));
-			m_dustParticles.erase(std::remove(m_dustParticles.begin(), m_dustParticles.end(), dust), m_dustParticles.end());
-
-			for (auto& c : dust->m_components)
-			{
-				delete c.second;
-			}
-
-			delete dust;
-		}
-		
-		m_dustToDelete.clear();
-	}
 }
 
 void GameScene::updateCamera(double dt)
@@ -473,24 +409,6 @@ void GameScene::createPlatforms(SDL_Renderer& renderer)
 
 	//Set platforms created as true
 	m_platformsCreated = true;
-}
-
-/// <summary>
-/// 
-/// </summary>
-/// <param name="x"></param>
-/// <param name="y"></param>
-/// <param name="w"></param>
-/// <param name="h"></param>
-/// <returns></returns>
-SDL_Rect GameScene::createRect(int x, int y, int w, int h)
-{
-	SDL_Rect rect;
-	rect.x = x;
-	rect.y = y;
-	rect.w = w;
-	rect.h = h;
-	return rect;
 }
 
 /// <summary>

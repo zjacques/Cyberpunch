@@ -179,7 +179,7 @@ public:
 			auto offset = Vector2f(phys->isMovingLeft() ? -37.5f : 37.5f, 0);
 
 			hit->attack(offset, Vector2f(25, 45), e, tag, .4f, 0);
-			hit->setAttackProperties(50, phys->isMovingLeft() ? -10 : 10, phys->isGravityFlipped() ? -85 : 85);
+			hit->setAttackProperties(4, phys->isMovingLeft() ? -10 : 10, phys->isGravityFlipped() ? -85 : 85);
 		}
 		auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
 		if (net != NULL)
