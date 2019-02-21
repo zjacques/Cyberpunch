@@ -42,7 +42,8 @@ public:
 
 	void createPlatforms(SDL_Renderer& renderer);
 
-	Entity* createPlayer(int index, int posX, int posY, bool local);
+	Entity* createPlayer(int index, int posX, int posY, bool local, std::vector<Vector2f> spawnPositions);
+	Entity* createKillBox(int posX, int posY, int width, int height);
 	
 	void draw(SDL_Renderer& renderer);
 	void handleInput(InputSystem& input);
@@ -50,6 +51,7 @@ private:
 	bool m_platformsCreated;
 	bool m_boothCreated;
 	Entity m_bgEntity;
+	std::vector<Entity*> m_killboxes;
 	std::vector<Entity*> m_localPlayers;
 	std::vector<Entity*> m_AIPlayers;
 	std::vector<InputSystem*> m_localInputs;

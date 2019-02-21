@@ -1,5 +1,6 @@
 #include "GameScene.h"
 #include "RenderSystem.h"
+#include "PlayerRespawnSystem.h"
 #include "AnimationComponent.h"
 #include "DustSystem.h"
 
@@ -21,6 +22,7 @@ void GameScene::start()
 	Scene::systems()["Attack"] = new AttackSystem(m_physicsWorld);
 	//Recreate the dust system
 	Scene::systems()["Dust"] = new DustSystem(&Scene::systems(), &m_localPlayers, &Scene::resources());
+	Scene::systems()["Respawn"] = new PlayerRespawnSystem();
 
 	auto pickupSys = new PickUpSystem();
 	pickupSys->setWorld(m_physicsWorld);
@@ -56,14 +58,21 @@ void GameScene::start()
 		delete net;*/
 	
 
-	//Create players for extra inputs
+	//Create players, pass in the spawn locations to respawn players
+	std::vector<Vector2f> spawnPos;
+
+	for (int i = 0; i < Scene::resources().getLevelData()["Spawn Points"].size(); i++)
+	{
+		auto point = Scene::resources().getLevelData()["Spawn Points"].at(i);
+		spawnPos.push_back(Vector2f(point["X"], point["Y"]));
+	}
 	for (int i = 0; i < m_numOfLocalPlayers; i++)
 	{
-		m_localPlayers.push_back(createPlayer(i,600 + 150 * i, 360, true));
+		m_localPlayers.push_back(createPlayer(i,600 + 150 * i, 360, true, spawnPos));
 	}
 	for (int i = 0; i < m_numOfOnlinePlayers; i++)
 	{
-		m_onlinePlayers.push_back(createPlayer(i+ m_numOfLocalPlayers, 600 + 150 * i+ m_numOfLocalPlayers, 360, false));
+		m_onlinePlayers.push_back(createPlayer(i+ m_numOfLocalPlayers, 600 + 150 * i+ m_numOfLocalPlayers, 360, false, spawnPos));
 	}
 	
 	//pickup Entity
@@ -89,6 +98,12 @@ void GameScene::start()
 	{
 		m_djBooths.push_back(createDJB(i, booths.at(i)["X"], booths.at(i)["Y"]));
 	}
+
+	auto& kb = Scene::resources().getLevelData()["Kill Boxes"];
+	for (int i = 0; i < kb.size(); i++)
+	{
+		m_killboxes.push_back(createKillBox(kb.at(i)["X"], kb.at(i)["Y"], kb.at(i)["W"], kb.at(i)["H"]));
+	}
 }
 
 void GameScene::stop()
@@ -112,6 +127,7 @@ void GameScene::update(double dt)
 	Scene::systems()["Animation"]->update(dt); //Update the animation components
 	Scene::systems()["AI"]->update(dt);
 	Scene::systems()["Dust"]->update(dt);
+	Scene::systems()["Respawn"]->update(dt);
 
 	//Update camera
 	updateCamera(dt);
@@ -129,22 +145,25 @@ void GameScene::updateCamera(double dt)
 
 	for (auto& player : m_localPlayers)
 	{
-		auto pos = static_cast<PositionComponent*>(&player->getComponent("Pos"))->position;
-		divisors++;
-		avgPos += pos;
-
-		if (lastP.x != 0 && lastP.y != 0)
+		if (static_cast<PlayerComponent*>(&player->getComponent("Player"))->isDead() == false)
 		{
-			//Get distance
-			float dist = lastP.distance(pos);
+			auto pos = static_cast<PositionComponent*>(&player->getComponent("Pos"))->position;
+			divisors++;
+			avgPos += pos;
 
-			if (dist > maxDist)
+			if (lastP.x != 0 && lastP.y != 0)
 			{
-				maxDist = dist;
-			}
-		}
+				//Get distance
+				float dist = lastP.distance(pos);
 
-		lastP = pos;
+				if (dist > maxDist)
+				{
+					maxDist = dist;
+				}
+			}
+
+			lastP = pos;
+		}
 	}
 
 	if (divisors > 0)
@@ -167,12 +186,13 @@ void GameScene::updateCamera(double dt)
 	m_camera.update(dt);
 }
 
-Entity * GameScene::createPlayer(int index,int posX, int posY, bool local)
+Entity * GameScene::createPlayer(int index,int posX, int posY, bool local, std::vector<Vector2f> spawnPositions)
 {
 	auto p = new Entity("Player");
 	p->addComponent("Pos", new PositionComponent(0,0));
 	p->addComponent("Dust Trigger", new DustTriggerComponent());
 	p->addComponent("Attack", new AttackComponent());
+	p->addComponent("Player", new PlayerComponent(spawnPositions, p));
 	p->addComponent("Sprite", new SpriteComponent(&p->getComponent("Pos"), Vector2f(1220,85), Vector2f(61, 85), Scene::resources().getTexture("Player Idle"), 2));
 	auto animation = new AnimationComponent(&p->getComponent("Sprite"));
 	p->addComponent("Animation", animation);
@@ -200,6 +220,7 @@ Entity * GameScene::createPlayer(int index,int posX, int posY, bool local)
 	Scene::systems()["Render"]->addComponent(&p->getComponent("Sprite"));
 	//Add the players attack component to the attack system
 	Scene::systems()["Attack"]->addComponent(&p->getComponent("Attack"));
+	Scene::systems()["Respawn"]->addComponent(&p->getComponent("Player"));
 
 	//Create and initiliase the input component
 	if (local) {
@@ -248,6 +269,19 @@ Entity * GameScene::createPlayer(int index,int posX, int posY, bool local)
 	Scene::systems()["Player Physics"]->addComponent(phys);
 
 	return p; //Return the created entity
+}
+
+Entity * GameScene::createKillBox(int posX, int posY, int width, int height)
+{
+	auto kb = new Entity("KillBox");
+	auto pos = new PositionComponent(0,0);
+	kb->addComponent("Pos", pos);
+	auto phys = new PhysicsComponent(pos);
+	phys->m_body = m_physicsWorld.createBox(posX, posY, width, height, false, false, b2_staticBody);
+	m_physicsWorld.addProperties(*phys->m_body, 0, 0, 0, true, new PhysicsComponent::ColData("Kill Box", kb));
+	kb->addComponent("Physics", phys);
+	Scene::systems()["Physics"]->addComponent(phys);
+	return kb;
 }
 
 Entity* GameScene::createDJB(int index, int posX, int posY)

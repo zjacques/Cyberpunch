@@ -5,6 +5,7 @@
 #include "PickUpComponent.h"
 #include "DustTriggerComponent.h"
 #include "DJboothComponent.h"
+#include "PlayerComponent.h"
 
 
 void CollisionListener::BeginContact(b2Contact * contact)
@@ -69,6 +70,13 @@ void CollisionListener::BeginContact(b2Contact * contact)
 		static_cast<DJBoothComponent*>(&booth->getComponent("DJ Booth"))->run();
 	}
 
+	if ((dataA->Tag() == "Kill Box" && dataB->Tag() == "Player Body")
+		|| (dataB->Tag() == "Kill Box" && dataA->Tag() == "Player Body"))
+	{
+		auto player = static_cast<Entity*>(dataA->Tag() == "Player Body" ? dataA->Data() : dataB->Data());
+
+		static_cast<PlayerComponent*>(&player->getComponent("Player"))->respawn();
+	}
 	
 	//Check if a player has attacked another player
 	checkPlayerAttack(contact);

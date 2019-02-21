@@ -154,6 +154,7 @@
     <ClCompile Include="Source\InputSystem.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Player.cpp" />
+    <ClCompile Include="Source\PlayerRespawnSystem.cpp" />
     <ClCompile Include="Source\RenderSystem.cpp" />
     <ClCompile Include="Source\ResourceManager.cpp" />
     <ClCompile Include="Source\Vector2f.cpp" />
@@ -201,6 +202,7 @@
     <ClInclude Include="Header\PickUp.h" />
     <ClInclude Include="Header\Player.h" />
     <ClInclude Include="Header\PlayerPhysicsSystem.h" />
+    <ClInclude Include="Header\PlayerRespawnSystem.h" />
     <ClInclude Include="Header\RenderSystem.h" />
     <ClInclude Include="Header\InputComponent.h" />
     <ClInclude Include="Header\InputSystem.h" />
