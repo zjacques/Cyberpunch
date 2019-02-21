@@ -28,8 +28,8 @@ void PlayerPhysicsSystem::update(double dt)
 		if (p->m_desiredVel.y == 1)
 			p->moveDown();
 
-		if (p->m_desiredVel.x == 0)
-			p->m_currentVel.x *= .98f;
+		if (p->m_desiredVel.x == 0 && p->stunned() == false)
+			p->m_currentVel.x = 0;
 
 		//Set the velocity of the player
 		p->m_body->getBody()->SetLinearVelocity(p->m_currentVel);
@@ -44,8 +44,21 @@ void PlayerPhysicsSystem::update(double dt)
 
 			if (p->stunLeft() <= 0)
 			{
-				p->stunned() = false;
+				if (p->superStunned())
+					p->endSuperStun();
+				else
+					p->stunned() = false;
 			}
+		}
+		//If the player is supered
+		else if (p->isSupered())
+		{
+			//Take away from the super time left
+			p->superLeft() -= dt;
+
+			//If the time has gone for the super, end the super for the player
+			if (p->superLeft() <= 0)
+				p->endSuper();
 		}
 
 		//set the position component of the player

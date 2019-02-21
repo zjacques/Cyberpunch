@@ -10,25 +10,47 @@ PlayerPhysicsComponent::PlayerPhysicsComponent(Component * pos) :
 	m_movingR(false),
 	m_gravFlipped(false),
 	m_falling(false),
+	m_supered(false),
+	m_stunnedBySuper(false),
 	m_stunLeft(0),
 	m_jumpSpeed(40.0f),
 	m_jumpDownSpeed(20.0f),
 	m_moveSpeed(10),
-	m_dmgPercentage(0)
+	m_dmgPercentage(0),
+	m_superPercentage(0)
 {
 	posPtr = static_cast<PositionComponent*>(pos);
 }
 
 void PlayerPhysicsComponent::stun()
 {
+	//Only do regular stun if we arent already stunned by a super
+	if (m_stunnedBySuper == false)
+	{
+		//Set stunned to true
+		m_stunned = true;
+
+		//get the multiplier for a stun
+		float stunMultiplier = m_dmgPercentage / 100.0f;
+
+		//Multiply our stun left by our stun multiplier
+		m_stunLeft = .3f * stunMultiplier;
+	}
+}
+
+void PlayerPhysicsComponent::superStun()
+{
 	//Set stunned to true
 	m_stunned = true;
 
-	//get the multiplier for a stun
-	float stunMultiplier = m_dmgPercentage / 100.0f;
+	//Set stunned by super
+	m_stunnedBySuper = true;
 
-	//Multiply our stun left by our stun multiplier
-	m_stunLeft = .3f * stunMultiplier;
+	//Reset the super impulse
+	m_superImpulse = Vector2f();
+
+	//Set stun to 5.0f
+	m_stunLeft = 5.0f; 
 }
 
 void PlayerPhysicsComponent::jump()
@@ -65,8 +87,17 @@ void PlayerPhysicsComponent::applyDamageImpulse(float x, float y)
 	auto impulse = Vector2f(x < 0 ? -1 : 1, .75f);
 	impulse = impulse.normalise() * ((impulse * imp) * dmgMultiplier);
 
-	//Apply knockback
-	m_body->getBody()->ApplyLinearImpulse(b2Vec2(impulse.x, -impulse.y), m_body->getBody()->GetWorldCenter(), true);
+	//If stunne dby a super, build up the impulse
+	if (m_stunnedBySuper)
+	{
+		m_superImpulse += Vector2f(impulse.x * .2f, impulse.y * .5f);
+		std::cout << m_superImpulse << "\n";
+	}
+	else //If not hit by a super stun, apply knockback
+	{
+		//Apply knockback
+		m_body->getBody()->ApplyLinearImpulse(b2Vec2(impulse.x, -impulse.y), m_body->getBody()->GetWorldCenter(), true);
+	}
 }
 
 void PlayerPhysicsComponent::flipGravity()
@@ -112,4 +143,28 @@ void PlayerPhysicsComponent::moveDown()
 	m_currentVel.y = 0;
 	m_currentVel.y -= m_gravFlipped ? m_jumpDownSpeed : -m_jumpDownSpeed;
 	m_falling = true;
+}
+
+void PlayerPhysicsComponent::beginSuper()
+{
+	m_supered = true;
+	m_superTime = 5.0f;
+}
+
+void PlayerPhysicsComponent::endSuper()
+{
+	m_supered = false;
+	m_superTime = 0;
+}
+
+void PlayerPhysicsComponent::endSuperStun()
+{
+	m_stunned = false;
+	m_stunnedBySuper = false;
+
+	//Stun the player after being hit
+	stun();
+	
+	//Apply the impulse that has been built up by while super stunned
+	applyDamageImpulse(m_superImpulse.x, m_superImpulse.y);
 }

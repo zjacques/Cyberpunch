@@ -29,6 +29,10 @@ public:
 			else
 				m_currentCMD = &m_punchCMD;
 		}
+		else if (isButtonHeld("RBBTN") && isButtonHeld("LBBTN"))
+		{
+			m_currentCMD = &m_superCMD;
+		}
 		else if (isButtonPressed("ABTN"))
 		{
 			m_currentCMD = &m_kickCMD;
@@ -49,10 +53,20 @@ public:
 		//If the current command was set, execute the command
 		if (nullptr != m_currentCMD)
 		{
+			if ((m_currentCMD == (Command*)&m_moveLeftCMD
+			&& m_previousCMD != (Command*)&m_moveLeftCMD)
+			|| (m_currentCMD == (Command*)&m_moveRightCMD
+			&& m_previousCMD != (Command*)&m_moveRightCMD))
+			{
+				//Send the online update, as we will be setting the body position manually
+			}
+
 			m_currentCMD->execute(*entity);
 		}
 		else if(static_cast<AttackComponent*>(&entity->getComponent("Attack"))->attackActive() == false)
 			static_cast<AnimationComponent*>(&entity->getComponent("Animation"))->playAnimation("Idle", true);
+
+		m_previousCMD = m_currentCMD;
 	}
 
 private:
@@ -64,7 +78,8 @@ private:
 	KickCommand m_kickCMD;
 	UppercutCommand m_uppercutCMD;
 	PhaseDownCommand m_phaseDownCMD;
-	Command* m_currentCMD;
+	SuperCommand m_superCMD;
+	Command* m_currentCMD, *m_previousCMD;
 };
 
 
