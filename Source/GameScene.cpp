@@ -27,7 +27,7 @@ void GameScene::start()
 	Scene::systems()["PickUp"] = pickupSys;
 	Scene::systems()["Booth"] = new DJBoothSystem();
 
-	m_AIPlayers.push_back(createAI(1, 600 + 150 * 1, 360));
+
 
 	//Create background entity
 	auto bgPos = new PositionComponent(1920 /2 , 1080 / 2);
@@ -96,7 +96,7 @@ void GameScene::start()
 		Scene::systems()["PickUp"]->addComponent(&m_pickUp->getComponent("PickUp"));
 		//static_cast<OnlineSystem*>(Scene::systems()["Network"])->getLobbies();
 //	}
-
+		m_AIPlayers.push_back(createAI(1, 600 + 150 * 1, 360));
 
 		auto& booths = Scene::resources().getLevelData()["Booth"];
 
@@ -349,7 +349,8 @@ Entity * GameScene::createAI(int index, int posX, int posY)
 {
 	auto ai = new Entity("AI");
 	auto pos = new PositionComponent(0, 0);
-	auto behaviour = new AIComponent(m_localPlayers);
+	auto input = new AiInputComponent();
+	auto behaviour = new AIComponent(m_localPlayers, input, ai);
 	ai->addComponent("Pos", pos);
 	ai->addComponent("AI", behaviour);
 	ai->addComponent("Dust Trigger", new DustTriggerComponent());
@@ -359,6 +360,9 @@ Entity * GameScene::createAI(int index, int posX, int posY)
 
 	//Add the AI component to the AI system
 	Scene::systems()["AI"]->addComponent(&ai->getComponent("AI"));
+
+	//Add AIinput component to the input system
+	Scene::systems()["Input"]->addComponent(input);
 
 	//Add the players attack component to the attack system
 	Scene::systems()["Attack"]->addComponent(&ai->getComponent("Attack"));

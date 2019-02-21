@@ -311,7 +311,7 @@
     <ClInclude Include="Header\DustTriggerComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
-    <ClInclude Include="AiInputComponent.h">
+    <ClInclude Include="Header\AiInputComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
   </ItemGroup>

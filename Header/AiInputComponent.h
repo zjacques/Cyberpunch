@@ -3,6 +3,7 @@
 
 #include "InputComponent.h"
 #include "Commands.h"
+#include "Entity.h"
 
 class AiInputComponent : public InputComponent
 {
@@ -12,19 +13,40 @@ public:
 	{
 	}
 
-	void handleInput(std::string e)
+	void handleInput(std::string s, Entity * e)
 	{
 		m_currentCMD = nullptr;
 
-		if (e == "YBTN")
+		if (s == "YBTN")
 		{
 			m_currentCMD = &m_jumpCMD;
 		}
-		else if (e == "XBTN")
+		else if (s == "XBTN")
 		{
 			m_currentCMD = &m_punchCMD;
 		}
-		else if (e == "")
+		else if (s == "ABTN")
+		{
+			m_currentCMD = &m_kickCMD;
+		}
+		else if (s == "STICKDOWN")
+		{
+			m_currentCMD = &m_phaseDownCMD;
+		}
+		else if (s == "STICKLEFT")
+		{
+			m_currentCMD = &m_moveLeftCMD;
+		}
+		else if (s == "STICKRIGHT")
+		{
+			m_currentCMD = &m_moveRightCMD;
+		}
+
+		if (!s.empty())
+		{
+			//auto entity = static_cast<Entity*>(e);
+			m_currentCMD->execute(*e);
+		}
 
 	}
 

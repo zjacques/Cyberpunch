@@ -159,9 +159,9 @@
     <ClCompile Include="Source\Vector2f.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AiInputComponent.h" />
     <ClInclude Include="Header\Action.h" />
     <ClInclude Include="Header\AIComponent.h" />
+    <ClInclude Include="Header\AiInputComponent.h" />
     <ClInclude Include="Header\AISystem.h" />
     <ClInclude Include="Header\AnimationComponent.h" />
     <ClInclude Include="Header\AnimationSystem.h" />

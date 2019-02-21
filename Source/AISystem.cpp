@@ -24,28 +24,26 @@ void AISystem::createTree()
 
 		auto e = cast_comp->m_self;
 
+		auto input = dynamic_cast<AiInputComponent *>(cast_comp->m_input);
+		
 		//Set Behaviour Tree Root node
 		cast_comp->BT.setRootChild(&cast_comp->m_sequences[0]);
 
 		//Left sub tree
 		cast_comp->m_selectors[0].addChildren({&cast_comp->m_sequences[0], &cast_comp->m_selectors[5]});
-		cast_comp->m_sequences[0].addChildren({ new CheckNearest(cast_comp->m_entities, e), new CloseEnough(e), 
+		cast_comp->m_sequences[0].addChildren({ new CheckNearest(cast_comp->m_entities, e, input), new CloseEnough(e, input),
 			&cast_comp->m_succeeders[0], &cast_comp->m_selectors[1], &cast_comp->punchSequence});
-		cast_comp->m_succeeders[0].setChild(new CheckPlayerDirection(e));
-		cast_comp->m_selectors[1].addChildren({ new CheckHealth(e), &cast_comp->m_selectors[2] });
-		cast_comp->m_selectors[2].addChildren({ new PunchAction(e), new FleeAction(e) });
-
-		//cast_comp->m_selectors[3].addChildren({ new CheckAbove(), &cast_comp->m_selectors[4] });
-		//cast_comp->m_selectors[4].addChildren({ new CheckPlayerHealth(), new PunchAction() });
-
-		cast_comp->punchSequence.addChildren({ new CheckAbove(e), &cast_comp->m_selectors[4] });
-		cast_comp->m_selectors[4].addChildren({ new PunchAction(e), new PunchAction(e) });
+		cast_comp->m_succeeders[0].setChild(new CheckPlayerDirection(e, input));
+		cast_comp->m_selectors[1].addChildren({ new CheckHealth(e, input), &cast_comp->m_selectors[2] });
+		cast_comp->m_selectors[2].addChildren({ new PunchAction(e, input), new FleeAction(e, input) });
+		cast_comp->punchSequence.addChildren({ new CheckAbove(e, input), &cast_comp->m_selectors[4] });
+		cast_comp->m_selectors[4].addChildren({ new PunchAction(e, input), new PunchAction(e, input) });
 
 		//Right sub tree
 		cast_comp->m_selectors[5].addChildren({ &cast_comp->m_sequences[1], &cast_comp->m_sequences[2] });
-		cast_comp->m_sequences[1].addChildren({ new CheckNearest(cast_comp->m_entities, cast_comp->m_self), new CloseEnough(e) });
+		cast_comp->m_sequences[1].addChildren({ new CheckNearest(cast_comp->m_entities, cast_comp->m_self, input), new CloseEnough(e, input) });
 		cast_comp->m_sequences[2].addChildren({ &cast_comp->m_succeeders[1], &cast_comp->m_selectors[6] });
-		cast_comp->m_selectors[6].addChildren({ new CheckAbove(e), new DropAction(e) });
+		cast_comp->m_selectors[6].addChildren({ new CheckAbove(e, input), new DropAction(e, input) });
 	}
 }
 

@@ -6,16 +6,19 @@
 #include "Component.h"
 #include "PositionComponent.h"
 #include "AIComponent.h"
+#include "AiInputComponent.h"
 
 class Action : public BehaviourTree::Node
 {
 public:
-	Action(Entity * e) :
-	m_entity(e)
+	Action(Entity * e, AiInputComponent * a) :
+	m_entity(e),
+	m_input(a)
 	{}
 
 	virtual bool run() = 0;
 	Entity * m_entity;
+	AiInputComponent * m_input;
 };
 
 #endif
@@ -26,14 +29,15 @@ public:
 class WalkLeftAction : public Action
 {
 public:
-	WalkLeftAction(Entity * e) :
-		Action(e)
+	WalkLeftAction(Entity * e, AiInputComponent * a) :
+		Action(e, a)
 	{
 	}
 
 	bool run() override
 	{
 		std::cout << "Walking left" << std::endl;
+		m_input->handleInput("STICKLEFT", m_entity);
 		return true;
 	}
 };
@@ -46,14 +50,15 @@ public:
 class WalkRightAction : public Action
 {
 public:
-	WalkRightAction(Entity * e)
-		: Action(e)
+	WalkRightAction(Entity * e, AiInputComponent * a)
+		: Action(e, a)
 	{
 	}
 
 	bool run() override
 	{
-		std::cout << "Waling right" << std::endl;
+		std::cout << "Walking right" << std::endl;
+		m_input->handleInput("STICKRIGHT", m_entity);
 		return true;
 	}
 };
@@ -66,15 +71,14 @@ public:
 class JumpAction : public Action
 {
 public:
-	JumpAction(Entity * e)
-		: Action(e)
+	JumpAction(Entity * e, AiInputComponent * a)
+		: Action(e, a)
 	{
 	}
 	bool run() override
 	{
 		std::cout << "Jump" << std::endl;
-
-		
+		m_input->handleInput("YBTN", m_entity);
 		return true;
 	}
 };
@@ -87,14 +91,15 @@ public:
 class PunchAction : public Action
 {
 public:
-	PunchAction(Entity * e)
-		: Action(e)
+	PunchAction(Entity * e, AiInputComponent * a)
+		: Action(e, a)
 	{
 	}
 
 	bool run() override
 	{
 		std::cout << "Punch" << std::endl;
+		m_input->handleInput("XBTN", m_entity);
 		return true;
 	}
 };
@@ -107,8 +112,8 @@ public:
 class CheckNearest : public Action
 {
 public:
-	CheckNearest(std::vector<Entity *> e, Entity * s) :
-		m_entities(e), Action(s)
+	CheckNearest(std::vector<Entity *> e, Entity * s, AiInputComponent * a) :
+		m_entities(e), Action(s, a)
 	{
 	}
 
@@ -153,8 +158,8 @@ public:
 class CloseEnough : public Action
 {
 public:
-	CloseEnough(Entity * e)
-		: Action(e)
+	CloseEnough(Entity * e, AiInputComponent * a)
+		: Action(e, a)
 	{
 	}
 
@@ -173,8 +178,8 @@ public:
 class CheckPlayerDirection : public Action
 {
 public:
-	CheckPlayerDirection(Entity * e)
-		: Action(e)
+	CheckPlayerDirection(Entity * e, AiInputComponent * a)
+		: Action(e, a)
 	{
 	}
 
@@ -193,8 +198,8 @@ public:
 class CheckHealth : public Action
 {
 public:
-	CheckHealth(Entity * e)
-		: Action(e)
+	CheckHealth(Entity * e, AiInputComponent * a)
+		: Action(e, a)
 	{
 	}
 
@@ -213,8 +218,8 @@ public:
 class FleeAction : public Action
 {
 public:
-	FleeAction(Entity * e)
-		: Action(e)
+	FleeAction(Entity * e, AiInputComponent * a)
+		: Action(e, a)
 	{
 
 	}
@@ -234,8 +239,8 @@ public:
 class CheckAbove : public Action
 {
 public:
-	CheckAbove(Entity * e)
-		: Action(e)
+	CheckAbove(Entity * e, AiInputComponent * a)
+		: Action(e, a)
 	{}
 
 	bool run() override
@@ -253,8 +258,8 @@ public:
 class CheckPlayerHealth : public Action
 {
 public:
-	CheckPlayerHealth(Entity * e)
-		: Action(e)
+	CheckPlayerHealth(Entity * e, AiInputComponent * a)
+		: Action(e, a)
 	{}
 
 	bool run() override
@@ -272,8 +277,8 @@ public:
 class DropAction : public Action
 {
 public:
-	DropAction(Entity * e) 
-		: Action(e)
+	DropAction(Entity * e, AiInputComponent * a)
+		: Action(e, a)
 	{}
 
 	bool run() override

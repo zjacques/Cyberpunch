@@ -5,31 +5,17 @@
 #include "BehaviourTree.h"
 #include "Entity.h"
 #include <vector>
+#include "AiInputComponent.h"
 
 class AIComponent : public Component
 {
 public:
-	AIComponent(std::vector<Entity *> e) :
-		m_entities(e)
+	AIComponent(std::vector<Entity *> e, AiInputComponent * i, Entity * self) :
+		m_entities(e),
+		m_input(i),
+		m_self(self)
 	{
-		Entity* me = nullptr;
-		for (auto& entity : m_entities)
-		{
-			auto aiComp = dynamic_cast<AIComponent*>(&entity->getComponent("AI"));
 
-			if (nullptr != aiComp)
-			{
-				if (aiComp == this)
-				{
-					me = entity;
-					m_self = entity;
-				}
-			}
-		}
-		if (nullptr != me)
-		{
-			m_entities.erase(std::remove(m_entities.begin(), m_entities.end(), me), m_entities.end());
-		}
 	}
 	~AIComponent() {}
 
@@ -42,6 +28,7 @@ public:
 	std::vector<Entity *> m_entities;
 	Entity * m_self;
 	Entity * nearestPlayer;
+	AiInputComponent * m_input;
 	//Declare actions for AI
 };
 

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef COMMANDS_H
+#define COMMANDS_H
+
 #include "Entity.h"
 #include "SpriteComponent.h"
 #include "PlayerPhysicsComponent.h"
@@ -198,3 +200,5 @@ public:
 		}
 	}
 };
+
+#endif
