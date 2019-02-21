@@ -71,8 +71,7 @@ void GameScene::start()
 	m_pickUp = new Entity("PickUp");
 	auto pos = new PositionComponent(0,0);
 	m_pickUp->addComponent("Pos", pos);
-	m_pickUp->addComponent("PickUp",new PickUpComponent());
-
+	m_pickUp->addComponent("PickUp",new PickUpComponent(m_pickUp));
 
 	auto phys = new PhysicsComponent(pos);
 	//auto phys = new PhysicsComponent(m_pickUp->getComponent("Pos"));
@@ -90,7 +89,7 @@ void GameScene::start()
 		std::vector<SDL_Rect> m_spinAnimation;
 		for (int i = 0; i < 30; i++)
 			m_spinAnimation.push_back({i*50, 0, 50, 50});
-		anim->addAnimation("Spin", m_spinAnimation, 1.75f);
+		anim->addAnimation("Spin", Scene::resources().getTexture("Record"), m_spinAnimation, 1.75f);
 		anim->playAnimation("Spin", true);
 		Scene::systems()["Animation"]->addComponent(anim);
 		m_pickUp->addComponent("Animation", anim);
