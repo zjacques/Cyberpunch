@@ -2,7 +2,10 @@
 #include "Entity.h"
 #include "PlayerPhysicsComponent.h"
 #include "AttackComponent.h"
+#include "PickUpComponent.h"
 #include "DustTriggerComponent.h"
+#include "DJboothComponent.h"
+
 
 void CollisionListener::BeginContact(b2Contact * contact)
 {
@@ -35,15 +38,38 @@ void CollisionListener::BeginContact(b2Contact * contact)
 			{
 				playerPhys->setCanFall(true);
 				playerPhys->setCanJump(true);
+				//Create a dust particle for landing on the ground
+				static_cast<DustTriggerComponent*>(&player->getComponent("Dust Trigger"))->setCreate();
 			}
 		}
-		else
+		else if ((dataA->Tag() == "Jump Sensor" && dataB->Tag() == "Floor")
+			|| (dataB->Tag() == "Jump Sensor" && dataA->Tag() == "Floor"))
+		{
 			playerPhys->setCanJump(true);
-
-		//Create a dust particle for landing on the ground
-		static_cast<DustTriggerComponent*>(&player->getComponent("Dust Trigger"))->setCreate();
+			//Create a dust particle for landing on the ground
+			static_cast<DustTriggerComponent*>(&player->getComponent("Dust Trigger"))->setCreate();
+		}
 	}
 
+		
+	if ((dataA->Tag() == "Player Body" && dataB->Tag() == "Pickup")
+		|| (dataB->Tag() == "Player Body" && dataA->Tag() == "Pickup"))
+	{
+		auto player = static_cast<Entity*>(dataA->Tag() == "Player Body" ? dataA->Data() : dataB->Data());
+		auto pickUp = static_cast<Entity*>(dataB->Tag() == "Pickup" ? dataB->Data() : dataA->Data());
+
+
+		std::cout << "Hit" << std::endl;
+		static_cast<PickUpComponent*>(&pickUp->getComponent("PickUp"))->teleport(player);
+	}
+	if ((dataA->Tag() == "Attack" && dataB->Tag() == "Booth")
+		|| (dataB->Tag() == "Attack" && dataA->Tag() == "Booth"))
+	{
+		auto booth = static_cast<Entity*>(dataA->Tag() == "Booth" ? dataA->Data() : dataB->Data());
+		static_cast<DJBoothComponent*>(&booth->getComponent("DJ Booth"))->run();
+	}
+
+	
 	//Check if a player has attacked another player
 	checkPlayerAttack(contact);
 }
@@ -175,6 +201,8 @@ void CollisionListener::PreSolve(b2Contact * contact, const b2Manifold * oldMani
 			contact->SetEnabled(false);
 		}
 	}
+
+
 }
 
 void CollisionListener::PostSolve(b2Contact * contact, const b2ContactImpulse * impulse)

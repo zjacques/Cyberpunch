@@ -134,7 +134,6 @@
     <ClCompile Include="Source\AISystem.cpp" />
     <ClCompile Include="Source\Button.cpp" />
     <ClCompile Include="Source\CollisionListener.cpp" />
-    <ClCompile Include="Source\DJBoothComponent.cpp" />
     <ClCompile Include="Source\DJBoothSystem.cpp" />
     <ClCompile Include="Source\PickUpComponent.cpp" />
     <ClCompile Include="Source\PickUpSystem.cpp" />
@@ -181,10 +180,12 @@
     <ClInclude Include="Header\DustTriggerComponent.h" />
     <ClInclude Include="Header\Game.h" />
     <ClInclude Include="Header\Entity.h" />
+    <ClInclude Include="Header\GravityBoothComponent.h" />
     <ClInclude Include="Header\LobbyScene.h" />
     <ClInclude Include="Header\PickUpComponent.h" />
     <ClInclude Include="Header\PickUpSystem.h" />
     <ClInclude Include="Header\OnlineSystem.h" />
+    <ClInclude Include="Header\PlatformBoothComponent.h" />
     <ClInclude Include="Header\PlayerInputComponent.h" />
     <ClInclude Include="Header\PlayerInputSystem.h" />
     <ClInclude Include="Header\PlayerPhysicsComponent.h" />
@@ -204,6 +205,7 @@
     <ClInclude Include="Header\PhysicsSystem.h" />
     <ClInclude Include="Header\PositionComponent.h" />
     <ClInclude Include="Header\Scene.h" />
+    <ClInclude Include="Header\SlowBoothComponent.h" />
     <ClInclude Include="Header\SocketException.h" />
     <ClInclude Include="Header\SpriteComponent.h" />
     <ClInclude Include="Header\ResourceManager.h" />

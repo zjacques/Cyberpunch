@@ -1,6 +1,7 @@
 #ifndef PLAYERINPUTCOMPONENT_H
 #define PLAYERINPUTCOMPONENT_H
 #include "InputComponent.h"
+#include "AnimationComponent.h"
 #include "Commands.h"
 
 
@@ -15,6 +16,7 @@ public:
 	void handleInput(void* e) override
 	{
 		m_currentCMD = nullptr;
+		auto entity = static_cast<Entity*>(e);
 
 		if (isButtonPressed("YBTN"))
 		{
@@ -47,9 +49,10 @@ public:
 		//If the current command was set, execute the command
 		if (nullptr != m_currentCMD)
 		{
-			auto entity = static_cast<Entity*>(e);
 			m_currentCMD->execute(*entity);
 		}
+		else if(static_cast<AttackComponent*>(&entity->getComponent("Attack"))->attackActive() == false)
+			static_cast<AnimationComponent*>(&entity->getComponent("Animation"))->playAnimation("Idle", true);
 	}
 
 private:
