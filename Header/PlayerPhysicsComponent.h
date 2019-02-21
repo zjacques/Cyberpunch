@@ -9,6 +9,7 @@ public:
 
 	//methods for modifying the player
 	void stun();
+	void superStun();
 	void jump();
 	void jumpDown();
 	void moveLeft();
@@ -16,7 +17,11 @@ public:
 	void move(int direction);
 	void moveUp();
 	void moveDown();
-	void damage(int dmg) { m_dmgPercentage += dmg; };
+	void beginSuper();
+	void endSuper();
+	void endSuperStun();
+	void damage(int dmg) {m_dmgPercentage += m_stunnedBySuper == false ? dmg : 0; }
+	void addSuper(int amount) { m_superPercentage += m_supered == false ? amount : 0; }
 	void applyDamageImpulse(float x, float y);
 	void flipGravity();
 	void createJoint(Box2DBridge& world);
@@ -29,7 +34,11 @@ public:
 	bool& isGravityFlipped() { return m_gravFlipped; }
 	bool& isMovingLeft() { return m_movingL; }
 	bool& isMovingRight() { return m_movingR; }
+	bool& superStunned() { return m_stunnedBySuper; }
+	bool& isSupered() { return m_supered; }
+	bool canSuperUp() { return m_superPercentage >= 100; }
 	float& stunLeft() { return m_stunLeft; }
+	float& superLeft() { return m_superTime; }
 
 	//Setters
 	void setCanFall(bool b) { m_canFall = b; }
@@ -46,7 +55,10 @@ private:
 	float clamp(float min, float& val, float max);
 	b2RevoluteJointDef m_sensorJointDef;
 	b2RevoluteJoint * m_sensorJoint;
-	bool m_falling, m_stunned, m_canJump, m_canFall, m_movingL, m_movingR, m_gravFlipped;
+	bool m_falling, m_stunned, m_canJump, m_canFall, m_movingL, m_movingR, m_gravFlipped, m_supered, m_stunnedBySuper;
 	float m_stunLeft, m_moveSpeed, m_jumpDownSpeed, m_jumpSpeed;
-	int m_dmgPercentage;
+	float m_superTime;
+	int m_dmgPercentage, m_superPercentage;
+
+	Vector2f m_superImpulse; //The impulse applied to the player after a super is over
 };

@@ -24,7 +24,6 @@ public:
 
 		if (hit->attackActive() == false && phys->stunned() == false)
 		{
-			auto phys = static_cast<PlayerPhysicsComponent*>(&e.getComponent("Player Physics"));
 			//If the physics component can jump, then jump
 			if (phys->canJump())
 			{
@@ -117,13 +116,12 @@ public:
 
 		if (hit->attackActive() == false && phys->stunned() == false)
 		{
-			auto phys = static_cast<PlayerPhysicsComponent*>(&e.getComponent("Player Physics"));
 
 			auto tag = "Attack";
 			auto offset = Vector2f(phys->isMovingLeft() ? -40 : 40, phys->isGravityFlipped() ? 12.5f : -12.5f);
 
 			hit->attack(offset, Vector2f(30, 25), e, tag, .175f, 0);
-			hit->setAttackProperties(2, phys->isMovingLeft() ? -250 : 250, phys->isGravityFlipped() ? -30 : 30);
+			hit->setAttackProperties(2, phys->isMovingLeft() ? -100 : 100, phys->isGravityFlipped() ? -30 : 30);
 		}
 		auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
 		if (net != NULL)
@@ -145,13 +143,11 @@ public:
 
 		if (hit->attackActive() == false && phys->stunned() == false)
 		{
-			auto phys = static_cast<PlayerPhysicsComponent*>(&e.getComponent("Player Physics"));
-
 			auto tag = "Attack";
 			auto offset = Vector2f(phys->isMovingLeft() ? -50 : 50, phys->isGravityFlipped() ? -12.5f : 12.5f);
 
 			hit->attack(offset, Vector2f(50, 25), e, tag, .4f, 0);
-			hit->setAttackProperties(5, phys->isMovingLeft() ? -300 : 300, phys->isGravityFlipped() ? -45 : 45);
+			hit->setAttackProperties(5, phys->isMovingLeft() ? -175 : 175, phys->isGravityFlipped() ? -45 : 45);
 
 			auto a = static_cast<AnimationComponent*>(&e.getComponent("Animation"));
 			a->playAnimation("Ground Kick", false);
@@ -178,13 +174,12 @@ public:
 
 		if (hit->attackActive() == false && phys->stunned() == false)
 		{
-			auto phys = static_cast<PlayerPhysicsComponent*>(&e.getComponent("Player Physics"));
 
 			auto tag = "Attack";
 			auto offset = Vector2f(phys->isMovingLeft() ? -37.5f : 37.5f, 0);
 
 			hit->attack(offset, Vector2f(25, 45), e, tag, .4f, 0);
-			hit->setAttackProperties(5, phys->isMovingLeft() ? -10 : 10, phys->isGravityFlipped() ? -50 : 50);
+			hit->setAttackProperties(50, phys->isMovingLeft() ? -10 : 10, phys->isGravityFlipped() ? -85 : 85);
 		}
 		auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
 		if (net != NULL)
@@ -206,12 +201,29 @@ public:
 
 		if (hit->attackActive() == false && phys->stunned() == false)
 		{
-			auto phys = static_cast<PlayerPhysicsComponent*>(&e.getComponent("Player Physics"));
-
 			if (phys->canJump())
 			{
 				phys->jumpDown();
 			}
+		}
+	}
+};
+
+class SuperCommand : public Command
+{
+public:
+	SuperCommand() {}
+	void execute(Entity& e)
+	{
+		//get the attack component from the entity
+		auto hit = static_cast<AttackComponent*>(&e.getComponent("Attack"));
+		auto phys = static_cast<PlayerPhysicsComponent*>(&e.getComponent("Player Physics"));
+
+		//Only execute if we arent in the middle of attacking and we are not stunned
+		if (hit->attackActive() == false && phys->stunned() == false && phys->canSuperUp() && phys->isSupered() == false)
+		{
+			phys->beginSuper();
+			std::cout << "Player has used super up, they can now stun someone for 5 seconds if they hit within 5 seconds\n";
 		}
 	}
 };

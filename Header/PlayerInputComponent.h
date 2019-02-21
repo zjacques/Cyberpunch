@@ -29,6 +29,10 @@ public:
 			else
 				m_currentCMD = &m_punchCMD;
 		}
+		else if (isButtonHeld("RBBTN") && isButtonHeld("LBBTN"))
+		{
+			m_currentCMD = &m_superCMD;
+		}
 		else if (isButtonPressed("ABTN"))
 		{
 			m_currentCMD = &m_kickCMD;
@@ -64,6 +68,7 @@ private:
 	KickCommand m_kickCMD;
 	UppercutCommand m_uppercutCMD;
 	PhaseDownCommand m_phaseDownCMD;
+	SuperCommand m_superCMD;
 	Command* m_currentCMD;
 };
 

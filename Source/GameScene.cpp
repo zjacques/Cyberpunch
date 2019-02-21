@@ -498,20 +498,29 @@ void GameScene::draw(SDL_Renderer & renderer)
 		auto hit = static_cast<AttackComponent*>(&m_localPlayers.at(i)->getComponent("Attack"));
 
 		//Draw the players outline for the hitbox
+		rect.w = phys->m_body->getSize().x;
+		rect.h = phys->m_body->getSize().y;
+		rect.x = phys->m_body->getPosition().x - (rect.w / 2) - m_camera.x();
+		rect.y = phys->m_body->getPosition().y - (rect.h / 2) - m_camera.y();
 
-		//rect.w = phys->m_body->getSize().x;
-		//rect.h = phys->m_body->getSize().y;
-		//rect.x = phys->m_body->getPosition().x - (rect.w / 2) - m_camera.x();
-		//rect.y = phys->m_body->getPosition().y - (rect.h / 2) - m_camera.y();
-		//SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
-		//SDL_RenderDrawRect(&renderer, &rect);
-
+		if (phys->isSupered())
+		{
+			SDL_SetRenderDrawColor(&renderer, 255, 0, 0, 255);
+			SDL_RenderFillRect(&renderer, &rect);
+		}
+		//Draw orange if stunned by a super punch
+		else if (phys->superStunned())
+		{
+			SDL_SetRenderDrawColor(&renderer, 255, 110, 0, 55);
+			SDL_RenderFillRect(&renderer, &rect);
+		}
 		//If the player is stunned, draw a yellow rectangle
-		if (phys->stunned())
+		else if (phys->stunned())
 		{
 			SDL_SetRenderDrawColor(&renderer, 255, 255, 0, 20);
 			SDL_RenderFillRect(&renderer, &rect);
 		}
+
 
 		rect.w = phys->m_jumpSensor->getSize().x;
 		rect.h = phys->m_jumpSensor->getSize().y;
