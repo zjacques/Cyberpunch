@@ -1,16 +1,11 @@
 #pragma once
-#include "Box2DBridge.h"
-#include "PhysicsComponent.h"
+#include "Component.h"
+#include "iostream"
 
 class DJBoothComponent : public Component
 {
 public: 
-	DJBoothComponent();
-
-	void spawn(Box2DBridge& world);
-	
+	DJBoothComponent() {}
+	virtual void run() = 0;
 private:
-	
-	PhysicsComponent * m_body;
-
 };

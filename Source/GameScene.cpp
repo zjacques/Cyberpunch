@@ -324,11 +324,29 @@ Entity* GameScene::createDJB(int index, int posX, int posY)
 	//creates a Box2d body for the djbooth defines its propoerties and applies a sprite
 	auto phys = new PhysicsComponent(pos);
 	phys->m_body = m_physicsWorld.createBox(posX, posY, 150, 50, false, false, b2BodyType::b2_staticBody);
-	m_physicsWorld.addProperties(*phys->m_body, 1, 0.05f, 0.0f, false, new PhysicsComponent::ColData("Booth", booth));
+	m_physicsWorld.addProperties(*phys->m_body, 1, 0.05f, 0.0f, true, new PhysicsComponent::ColData("Booth", booth));
 	booth->addComponent("Physics", phys);
 	Scene::systems()["Physics"]->addComponent(phys);
 	booth->addComponent("Sprite", new SpriteComponent(pos, Vector2f(152, 93), Vector2f(152, 93), Scene::resources().getTexture("Booth" + std::to_string(index)), 1));
 	Scene::systems()["Render"]->addComponent(&booth->getComponent("Sprite"));
+
+	if (index == 0)
+	{
+		//this will call the gravity Component when the player punches it
+		booth->addComponent("DJ Booth", new GravityBoothComponent());
+	}
+	else if (index == 1)
+	{
+		//this will call the slow down Component when the player punches it
+		booth->addComponent("DJ Booth", new SlowBoothComponent());
+	}
+	else if (index == 2)
+	{
+		////this will call the platforming moving Component when the player punches it
+		booth->addComponent("DJ Booth", new PlatformBoothComponent());
+	}
+
+	Scene::systems()["Booth"]->addComponent(&booth->getComponent("DJ Booth"));
 	return booth;
 }
 

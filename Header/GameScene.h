@@ -14,7 +14,10 @@
 #include "PickUpSystem.h"
 #include "PlayerInputComponent.h"
 #include "DJBoothSystem.h"
-#include "DJboothComponent.h"
+#include "GravityBoothComponent.h"
+#include "PlatformBoothComponent.h"
+#include "SlowBoothComponent.h"
+
 
 #include "OnlineSystem.h"
 #include "PlayerPhysicsComponent.h"
