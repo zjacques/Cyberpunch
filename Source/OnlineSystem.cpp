@@ -124,8 +124,8 @@ vector<OnlineSystem::LobbyInfo> OnlineSystem::getLobbies()
 		for (auto info : lobbyList)
 		{
 			LobbyInfo l;
-			l.name = info[0];
-			l.players = info[1];
+			l.name = std::to_string(info[0]);
+			l.players = std::to_string(info[1]);
 			retval.push_back(l);
 		}
 	}
