@@ -20,14 +20,21 @@ void LobbyScene::start()
 		std::cerr << "Failed to intialise SDL_net: " << SDLNet_GetError() << std::endl;
 		exit(-1);
 	}
-	if (m_network->ConnectToServer())
+	if (!m_network->isConnected)
 	{
-		//if it can connect to the server, make the UI and fetch lobbies
-		m_lobbies = m_network->getLobbies();
+		if (m_network->ConnectToServer())
+		{
+			//if it can connect to the server, make the UI and fetch lobbies
+			m_lobbies = m_network->getLobbies();
 
+		}
+		else {
+			//else just tell the player to return to main menu
+			Scene::goToScene("Main Menu");
+		}
 	}
 	else {
-		//else just tell the player to return to main menu
+		m_lobbies = m_network->getLobbies();
 	}
 }
 
@@ -84,6 +91,7 @@ void LobbyScene::handleInput(InputSystem & input)
 		if (m_input.isButtonPressed("YBTN"))
 		{
 			m_lobbies = m_network->getLobbies();//Refresh the page from the server
+			//createLobbyButtons();
 		}
 		if (m_input.isButtonPressed("ABTN"))
 		{
@@ -91,7 +99,7 @@ void LobbyScene::handleInput(InputSystem & input)
 		}
 
 
-		if (newIndex < 0)
+		/*if (newIndex < 0)
 			newIndex = m_buttons.size() - 1;
 		else if (newIndex >= m_buttons.size())
 			newIndex = 0;
@@ -113,13 +121,25 @@ void LobbyScene::handleInput(InputSystem & input)
 			sprite = static_cast<SpriteComponent*>(&m_buttons.at(m_currentIndex)->getComponent("Sprite"));
 			btnComp->select();
 			sprite->setTexture(btnComp->getTexture());
-		}
+		}*/
 	}
 }
 
 void LobbyScene::handleButtonPressed()
 {
-	auto tag = static_cast<ButtonComponent*>(&m_buttons.at(m_currentIndex)->getComponent("Btn"))->getTag();
+	//placeholder
+
+	if (m_network->joinLobby(1))//plz to always be nonzero
+	{
+		Scene::goToScene("Game");
+	}
+	else {
+		//Give failure message, refresh
+		m_lobbies = m_network->getLobbies();
+		//createLobbyButtons();
+	}
+
+	/*auto tag = static_cast<ButtonComponent*>(&m_buttons.at(m_currentIndex)->getComponent("Btn"))->getTag();
 
 	if (tag == "Local")
 	{
@@ -136,11 +156,16 @@ void LobbyScene::handleButtonPressed()
 	else if (tag == "Exit")
 	{
 		// Need a way to exit the game
-	}
+	}*/
 }
 
 void LobbyScene::createLobbyButtons()
 {
+	for (auto but : m_buttons)
+	{
+		delete(but);
+	}
+	m_buttons.clear();
 	for (auto lob : m_lobbies) {
 		m_buttons.push_back(createButton(Vector2f(960, 455), Scene::resources().getTexture(lob.name), lob.name, true)); 
 		//make it say how many players there are somehow
@@ -166,4 +191,7 @@ Entity* LobbyScene::createButton(Vector2f position, SDL_Texture* selectedTexture
 
 void LobbyScene::requestHost()
 {
+	m_network->makeHost();
+	cout << "hosting" << endl;
+	//go to pregame lobby to wait for more players to join
 }
