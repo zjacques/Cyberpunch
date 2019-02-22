@@ -1,5 +1,6 @@
 #include "MainMenuScene.h"
 #include "RenderSystem.h"
+#include "AnimationComponent.h"
 
 MainMenuScene::MainMenuScene() :
 	m_currentIndex(0),
@@ -12,13 +13,13 @@ void MainMenuScene::start()
 {
 	//Setup the input using the first joycon connected
 	m_input.initialiseJoycon(0);
-	m_currentIndex = 0; //Start main menu at hovering over local play button
 
 	//Create the buttons for the game
-	m_buttons.push_back(createButton(Vector2f(960, 455), Scene::resources().getTexture("Local Play Button"), "Local", true));
-	m_buttons.push_back(createButton(Vector2f(960, 455 + 168.75f), Scene::resources().getTexture("Multiplayer Button"), "Multiplayer", false));
-	m_buttons.push_back(createButton(Vector2f(960, 455 + 168.75f * 2), Scene::resources().getTexture("Options Button"), "Options", false));
-	m_buttons.push_back(createButton(Vector2f(960, 455 + 168.75f * 3), Scene::resources().getTexture("Exit Button"), "Exit", false));
+	m_buttons.push_back(createButton(Vector2f(960, 445), Scene::resources().getTexture("Local Play Button"), "Local", m_currentIndex == 0 ? true : false));
+	m_buttons.push_back(createButton(Vector2f(960, 445 + 135), Scene::resources().getTexture("Multiplayer Button"), "Multiplayer", m_currentIndex == 1 ? true : false));
+	m_buttons.push_back(createButton(Vector2f(960, 445 + 135 * 2), Scene::resources().getTexture("Achievements Button"), "Achievements", m_currentIndex == 2 ? true : false));
+	m_buttons.push_back(createButton(Vector2f(960, 445 + 135 * 3), Scene::resources().getTexture("Options Button"), "Options", m_currentIndex == 3 ? true : false));
+	m_buttons.push_back(createButton(Vector2f(960, 445 + 135 * 4), Scene::resources().getTexture("Exit Button"), "Exit", m_currentIndex == 4 ? true : false));
 }
 
 void MainMenuScene::stop()
@@ -27,6 +28,9 @@ void MainMenuScene::stop()
 	for (auto& btn : m_buttons)
 	{
 		Scene::systems()["Render"]->deleteComponent(&btn->getComponent("Sprite"));
+		Scene::systems()["Render"]->deleteComponent(&btn->getComponent("Text Sprite"));
+		Scene::systems()["Animation"]->deleteComponent(&btn->getComponent("Animation"));
+		Scene::systems()["Animation"]->deleteComponent(&btn->getComponent("Text Animation"));
 	}
 
 	//Clear the buttons vector
@@ -37,13 +41,40 @@ Entity* MainMenuScene::createButton(Vector2f position, SDL_Texture* selectedText
 {
 	auto btn = new Entity("Button");
 	auto pos = new PositionComponent(position.x, position.y);
-	auto btnComp = new ButtonComponent(selectedTexture, Scene::resources().getTexture("Button Off"),btnTag, selected);
+	auto btnComp = new ButtonComponent(selectedTexture, Scene::resources().getTexture("Button BG"), btnTag, false);
 	btn->addComponent("Btn", btnComp);
 	btn->addComponent("Pos", pos);
-	btn->addComponent("Sprite", new SpriteComponent(pos, Vector2f(365, 205), Vector2f(365, 205), btnComp->getTexture(), 1));
+	btn->addComponent("Sprite", new SpriteComponent(pos, Vector2f(350, 125), Vector2f(350, 125), btnComp->getTexture(), 1));
+	btn->addComponent("Text Sprite", new SpriteComponent(pos, Vector2f(350, 125), Vector2f(350, 125), selectedTexture, 1));
+	auto anim = new AnimationComponent(&btn->getComponent("Sprite"));
+	std::vector<SDL_Rect> m_animFrames;
+	for (int i = 0; i < 10; i++)
+		m_animFrames.push_back({ i * 350, 0, 350, 125 });
+	anim->addAnimation("Selected", Scene::resources().getTexture("Button BG"), m_animFrames, .25f);
+	//Reverse animation
+	std::reverse(m_animFrames.begin(), m_animFrames.end());
+	anim->addAnimation("De-Selected", Scene::resources().getTexture("Button BG"), m_animFrames, .25f);
+	btn->addComponent("Animation", anim);
+
+	std::reverse(m_animFrames.begin(), m_animFrames.end());
+	auto textAnim = new AnimationComponent(&btn->getComponent("Text Sprite"));
+	textAnim->addAnimation("Selected", selectedTexture, m_animFrames, .25f);
+	std::reverse(m_animFrames.begin(), m_animFrames.end());
+	textAnim->addAnimation("De-Selected", selectedTexture, m_animFrames, .25f);
+	btn->addComponent("Text Animation", textAnim);
+
+	if (selected)
+	{
+		anim->playAnimation("Selected", false);
+		textAnim->playAnimation("Selected", false);
+	}
+
 
 	//Add sprite component to the render system
 	Scene::systems()["Render"]->addComponent(&btn->getComponent("Sprite"));
+	Scene::systems()["Render"]->addComponent(&btn->getComponent("Text Sprite"));
+	Scene::systems()["Animation"]->addComponent(anim);
+	Scene::systems()["Animation"]->addComponent(textAnim);
 
 	//Return the created btn
 	return btn;
@@ -51,7 +82,7 @@ Entity* MainMenuScene::createButton(Vector2f position, SDL_Texture* selectedText
 
 void MainMenuScene::update(double dt)
 {
-
+	Scene::systems()["Animation"]->update(dt);
 }
 
 void MainMenuScene::draw(SDL_Renderer & renderer)
@@ -97,19 +128,18 @@ void MainMenuScene::handleInput(InputSystem& input)
 		if (newIndex != m_currentIndex)
 		{
 			//Deslect current button
-			auto btnComp = static_cast<ButtonComponent*>(&m_buttons.at(m_currentIndex)->getComponent("Btn"));
-			auto sprite = static_cast<SpriteComponent*>(&m_buttons.at(m_currentIndex)->getComponent("Sprite"));
-			btnComp->deselect();
-			sprite->setTexture(btnComp->getTexture());
+			auto anim = static_cast<AnimationComponent*>(&m_buttons.at(m_currentIndex)->getComponent("Animation"));
+			auto textAnim = static_cast<AnimationComponent*>(&m_buttons.at(m_currentIndex)->getComponent("Text Animation"));
+			anim->playAnimation("De-Selected", false);
+			textAnim->playAnimation("De-Selected", false);
 
 			//Set new button index
 			m_currentIndex = newIndex;
 
-			//Select new button
-			btnComp = static_cast<ButtonComponent*>(&m_buttons.at(m_currentIndex)->getComponent("Btn"));
-			sprite = static_cast<SpriteComponent*>(&m_buttons.at(m_currentIndex)->getComponent("Sprite"));
-			btnComp->select();
-			sprite->setTexture(btnComp->getTexture());
+			anim = static_cast<AnimationComponent*>(&m_buttons.at(m_currentIndex)->getComponent("Animation"));
+			textAnim = static_cast<AnimationComponent*>(&m_buttons.at(m_currentIndex)->getComponent("Text Animation"));
+			anim->playAnimation("Selected", false);
+			textAnim->playAnimation("Selected", false);
 		}
 	}
 }
