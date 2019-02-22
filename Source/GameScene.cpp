@@ -3,11 +3,12 @@
 #include "PlayerRespawnSystem.h"
 #include "AnimationComponent.h"
 #include "DustSystem.h"
+#include "PickUpSystem.h"
 
 GameScene::GameScene() :
 	m_bgEntity("Game BG"),
 	m_platformsCreated(false),
-	m_camera(true)
+	m_camera(false)
 {
 	m_numOfAIPlayers = 2;
 }
@@ -23,10 +24,7 @@ void GameScene::start()
 	//Recreate the dust system
 	Scene::systems()["Dust"] = new DustSystem(&Scene::systems(), &m_localPlayers, &Scene::resources());
 	Scene::systems()["Respawn"] = new PlayerRespawnSystem();
-
-	auto pickupSys = new PickUpSystem();
-	pickupSys->setWorld(m_physicsWorld);
-	Scene::systems()["PickUp"] = pickupSys;
+	static_cast<PickUpSystem*>(Scene::systems()["Pickup"])->setWorld(m_physicsWorld);
 	Scene::systems()["Booth"] = new DJBoothSystem();
 
 	//Create background entity
@@ -82,6 +80,24 @@ void GameScene::start()
 	auto pos = new PositionComponent(0,0);
 	m_pickUp->addComponent("Pos", pos);
 	m_pickUp->addComponent("PickUp",new PickUpComponent(m_pickUp));
+	m_pickUp->addComponent("Sprite", new SpriteComponent(&m_pickUp->getComponent("Pos"), Vector2f(1500, 50), Vector2f(50, 50), Scene::resources().getTexture("Record"), 1));
+	auto anim = new AnimationComponent(&m_pickUp->getComponent("Sprite"));		
+	std::vector<SDL_Rect> m_spinAnimation;
+	for (int i = 0; i < 30; i++)
+		m_spinAnimation.push_back({i*50, 0, 50, 50});
+	anim->addAnimation("Spin", Scene::resources().getTexture("Record"), m_spinAnimation, 1.75f);
+	anim->playAnimation("Spin", true);
+	Scene::systems()["Animation"]->addComponent(anim);
+	m_pickUp->addComponent("Animation", anim);
+	Scene::systems()["Pickup"]->addComponent(&m_pickUp->getComponent("PickUp"));
+
+	//DJBooths created here 
+	auto& booths = Scene::resources().getLevelData()["Booth"];
+
+	for (int i = 0; i < booths.size(); i++)
+	{
+		m_djBooths.push_back(createDJB(i, booths.at(i)["X"], booths.at(i)["Y"]));
+	}
 
 	auto phys = new PhysicsComponent(pos);
 	//auto phys = new PhysicsComponent(m_pickUp->getComponent("Pos"));
@@ -131,21 +147,24 @@ void GameScene::stop()
 
 void GameScene::update(double dt)
 {
+	float scalar = static_cast<DJBoothSystem*>(Scene::systems()["Booth"])->getScalar();
 	//Update the physics world, do this before ANYTHING else
-	m_physicsWorld.update(dt);
+	m_physicsWorld.update(dt * scalar);
 	//Update the player physics system
-	Scene::systems()["Player Physics"]->update(dt);
-	Scene::systems()["Physics"]->update(dt);
-	Scene::systems()["Attack"]->update(dt);
-	Scene::systems()["PickUp"]->update(dt);
+
+	Scene::systems()["Player Physics"]->update(dt * scalar);
+	Scene::systems()["Physics"]->update(dt * scalar);
+	Scene::systems()["Attack"]->update(dt * scalar);
+	Scene::systems()["Pickup"]->update(dt * scalar);
 	Scene::systems()["Booth"]->update(dt);
-	Scene::systems()["Animation"]->update(dt); //Update the animation components
-	Scene::systems()["AI"]->update(dt);
-	Scene::systems()["Dust"]->update(dt);
-	Scene::systems()["Respawn"]->update(dt);
+	Scene::systems()["Animation"]->update(dt * scalar); //Update the animation components
+	Scene::systems()["AI"]->update(dt * scalar);
+	Scene::systems()["Dust"]->update(dt * scalar);
+	Scene::systems()["Respawn"]->update(dt * scalar);
+
 
 	//Update camera
-	updateCamera(dt);
+	updateCamera(dt * scalar);
 }
 
 void GameScene::updateCamera(double dt)
@@ -317,7 +336,10 @@ Entity* GameScene::createDJB(int index, int posX, int posY)
 	if (index == 0)
 	{
 		//this will call the gravity Component when the player punches it
-		booth->addComponent("DJ Booth", new GravityBoothComponent());
+
+
+
+		booth->addComponent("DJ Booth", new GravityBoothComponent(m_localPlayers, &m_physicsWorld, &m_physicsSystem, &m_collisionListener));
 	}
 	else if (index == 1)
 	{
@@ -327,7 +349,7 @@ Entity* GameScene::createDJB(int index, int posX, int posY)
 	else if (index == 2)
 	{
 		////this will call the platforming moving Component when the player punches it
-		booth->addComponent("DJ Booth", new PlatformBoothComponent());
+		booth->addComponent("DJ Booth", new PlatformBoothComponent(&m_platforms));
 	}
 
 	Scene::systems()["Booth"]->addComponent(&booth->getComponent("DJ Booth"));
@@ -415,7 +437,7 @@ void GameScene::createPlatforms(SDL_Renderer& renderer)
 		std::string tag = platform["Tag"];
 
 		//Creta ethe platform entity
-		auto newPlat = new Entity("Platform");
+		auto newPlat = new Entity(tag);
 		auto platPos = new PositionComponent(x, y);
 		newPlat->addComponent("Pos", platPos);
 		auto phys = new PhysicsComponent(platPos);
@@ -475,6 +497,8 @@ void GameScene::createPlatforms(SDL_Renderer& renderer)
 		newPlat->addComponent("Sprite", new SpriteComponent(platPos, Vector2f(w, h), Vector2f(w, h), texture, 1));
 
 		Scene::systems()["Render"]->addComponent(&newPlat->getComponent("Sprite"));
+
+		m_platforms.push_back(newPlat);
 	}
 
 	//Set platforms created as true
@@ -575,21 +599,6 @@ void GameScene::draw(SDL_Renderer & renderer)
 			m_onlinePlayers.at(i).draw(renderer);
 		}*/
 		//m_pickUp.draw(renderer);
-	}
-
-
-	auto pC = static_cast<PickUpComponent*>(&m_pickUp->getComponent("PickUp"));
-	if (pC->spawned())
-	{
-		auto phys = pC->getBody();
-		rect.w = phys->m_body->getSize().x;
-		rect.h = phys->m_body->getSize().y;
-		rect.x = phys->m_body->getPosition().x - (rect.w / 2) - m_camera.x();
-		rect.y = phys->m_body->getPosition().y - (rect.h / 2) - m_camera.y();
-	//	SDL_RenderFillRect(&renderer, &rect);
-		Scene::systems()["Render"]->addComponent(&m_pickUp->getComponent("Sprite"));
-		SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
-		SDL_RenderDrawRect(&renderer, &rect);
 	}
 }
 

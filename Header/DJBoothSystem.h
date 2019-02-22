@@ -11,7 +11,7 @@ public:
 	void setWorld(Box2DBridge& world);
 	void addComponent(Component* comp);
 	void update(double dt);
-
+	float getScalar();
 private:
 	Box2DBridge * m_worldPtr;
 
