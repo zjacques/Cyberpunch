@@ -1,5 +1,6 @@
 #pragma once
 #include "Scene.h"
+#include "OnlineSystem.h"
 
 
 class PreGameScene : public Scene {
@@ -11,6 +12,11 @@ public:
 	void draw(SDL_Renderer& renderer);
 	void handleInput(InputSystem& input);
 private:
-	InputComponent m_input;
+	vector<InputComponent> m_input;
+	int m_numOfPossibleLocalPlayers;
+	bool isGameOnline = false;
+	OnlineSystem* m_network;
+
+	int m_maxPlayers = 4;
 
 };

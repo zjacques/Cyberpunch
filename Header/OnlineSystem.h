@@ -33,12 +33,12 @@ public:
 	bool joinLobby(int lob);
 
 	bool isConnected = false;
+	bool m_isHost = false;
 
 
 
 private:
 	ClientSocket* m_Socket;
-	bool m_isHost = false;
 	int m_lobbyNumber = 0;
 	vector<OnlineSendComponent*> m_sendingPlayers;
 	vector<OnlineInputComponent*> m_receivingPlayers;
