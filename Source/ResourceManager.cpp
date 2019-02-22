@@ -28,6 +28,8 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 	m_map["Player Idle"] = loadFromPath("Player/Player_Idle.png", renderer);
 	m_map["Player Ground Kick"] = loadFromPath("Player/Player_Kick.png", renderer);
 	m_map["Player Dust"] = loadFromPath("Player/Dust.png", renderer);
+	m_map["Player Left Punch"] = loadFromPath("Player/Left_Hand_Punch.png", renderer);
+	m_map["Player Right Punch"] = loadFromPath("Player/Right_Hand_Punch.png", renderer);
 	m_map["Record"] = loadFromPath("Record/Record.png", renderer);
 	//Load all 3 platform pieces for each colour
 	for (int i = 0; i < 3; i++)

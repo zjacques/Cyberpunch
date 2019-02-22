@@ -118,6 +118,10 @@ public:
 
 		if (hit->attackActive() == false && phys->stunned() == false)
 		{
+			auto a = static_cast<AnimationComponent*>(&e.getComponent("Animation"));
+			a->playAnimation("Punch " + std::to_string(rand() % 2), true);
+			auto s = static_cast<SpriteComponent*>(&e.getComponent("Sprite"));
+			s->setTexture(a->getCurrentAnimation()->getTexture());
 
 			auto tag = "Attack";
 			auto offset = Vector2f(phys->isMovingLeft() ? -40 : 40, phys->isGravityFlipped() ? 12.5f : -12.5f);
