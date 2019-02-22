@@ -82,6 +82,4 @@ private:
 	Command* m_currentCMD, *m_previousCMD;
 };
 
-
-
 #endif
