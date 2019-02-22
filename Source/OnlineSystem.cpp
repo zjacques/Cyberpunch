@@ -59,17 +59,9 @@ void OnlineSystem::ReceiveCommands()
 	// Check if we've received a message
 	string receivedMessage = m_Socket->checkForIncomingMessages();
 
-	//m_input->m_previous = m_input->m_current; //Set our previous
-
-	/*for (auto const& x : m_input->m_current)
-	{
-		m_input->m_current[x.first] = false;
-	}*/
-
 	 //If so then...
 	if (receivedMessage != "")
 	{
-		//deserialize(receivedMessage);
 		json currentPacket = json::parse(receivedMessage);
 		if (currentPacket["type"] == "COMMANDS")
 		{
@@ -81,8 +73,6 @@ void OnlineSystem::ReceiveCommands()
 					for (auto iter = commands.begin(); iter != commands.end(); iter++)
 					{
 						plyr->addCommand(*iter);
-						//m_commandsToSend.push(*iter);
-						//m_input->m_current[*iter] = true;
 					}
 				}
 			}
@@ -134,11 +124,60 @@ vector<OnlineSystem::LobbyInfo> OnlineSystem::getLobbies()
 		for (auto info : lobbyList)
 		{
 			LobbyInfo l;
-			l.name = info[0];
-			l.players = info[1];
+			l.name = std::to_string(info[0]);
+			l.players = std::to_string(info[1]);
 			retval.push_back(l);
 		}
 	}
 
 	return retval;
+}
+
+void OnlineSystem::makeHost()
+{
+	if (!m_isHost)
+	{
+		string jsonString = "{ \"type\" : \"HOST\"}";
+
+		m_Socket->sendString(jsonString);
+		string receivedMessage;
+		do {
+			receivedMessage = m_Socket->checkForIncomingMessages();
+		} while (receivedMessage == "");
+
+		json lobby = json::parse(receivedMessage);
+		if (lobby["type"] == "HOSTED")
+		{
+			m_lobbyNumber = lobby["lobby"];
+			m_isHost = true;
+		}
+	}
+}
+
+bool OnlineSystem::joinLobby(int lob)
+{
+	if (!m_isHost)
+	{
+		string jsonString = "{ \"type\" : \"JOIN\", \"lobby\":" + toString(lob) + "}";
+
+		m_Socket->sendString(jsonString);
+		string receivedMessage;
+		do {
+			receivedMessage = m_Socket->checkForIncomingMessages();
+		} while (receivedMessage == "");
+
+		json lobby = json::parse(receivedMessage);
+		if (lobby["type"] == "JOINED")
+		{
+			m_lobbyNumber = lob;
+			//go to pregame screen
+			return true;
+		}
+		else
+		{
+			cout << "join failed" << endl;
+			return false;
+		}
+	}
+
 }

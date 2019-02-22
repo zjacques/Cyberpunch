@@ -1,9 +1,12 @@
 #include "LobbyScene.h"
+#include "RenderSystem.h"
 
 LobbyScene::LobbyScene() :
 	m_currentIndex(0),
 	m_addedInput(false),
-	m_camera(false) //Dont use camera
+	m_camera(false), //Dont use camera,
+	m_bg("Lobby BG"),
+	m_selectedBar("Select Bar")
 {
 }
 
@@ -20,15 +23,33 @@ void LobbyScene::start()
 		std::cerr << "Failed to intialise SDL_net: " << SDLNet_GetError() << std::endl;
 		exit(-1);
 	}
-	if (m_network->ConnectToServer())
+	if (!m_network->isConnected)
 	{
-		//if it can connect to the server, make the UI and fetch lobbies
+		if (m_network->ConnectToServer())
+		{
+			//if it can connect to the server, make the UI and fetch lobbies
+			m_lobbies = m_network->getLobbies();
+			createLobbyButtons();
+		}
+		else {
+			//else just tell the player to return to main menu
+			Scene::goToScene("Main Menu");
+		}
+	}
+	else if (m_network->isConnected)
+	{
+		//if it is already connected, get the lobbies and display them
 		m_lobbies = m_network->getLobbies();
-
+		createLobbyButtons();
 	}
 	else {
-		//else just tell the player to return to main menu
+		m_lobbies = m_network->getLobbies();
 	}
+
+
+	auto bgPos = new PositionComponent(960, 540);
+	m_bg.addComponent("Sprite", new SpriteComponent(bgPos, Vector2f(1920, 1080), Vector2f(1920, 1080), Scene::resources().getTexture("Lobby BG"), 0));
+	Scene::systems()["Render"]->addComponent(&m_bg.getComponent("Sprite"));
 }
 
 void LobbyScene::stop()
@@ -37,7 +58,12 @@ void LobbyScene::stop()
 	for (auto& btn : m_buttons)
 	{
 		Scene::systems()["Render"]->deleteComponent(&btn->getComponent("Sprite"));
+		Scene::systems()["Render"]->deleteComponent(&btn->getComponent("Player Num"));
+		Scene::systems()["Render"]->deleteComponent(&btn->getComponent("Lobby Num"));
+		Scene::systems()["Render"]->deleteComponent(&btn->getComponent("Password Sprite"));
 	}
+	Scene::systems()["Render"]->deleteComponent(&m_bg.getComponent("Sprite"));
+	Scene::systems()["Render"]->deleteComponent(&m_selectedBar.getComponent("Sprite"));
 
 	//Clear the buttons vector
 	m_buttons.clear();
@@ -49,6 +75,7 @@ void LobbyScene::update(double dt)
 
 void LobbyScene::draw(SDL_Renderer & renderer)
 {
+	static_cast<RenderSystem*>(Scene::systems()["Render"])->render(renderer, m_camera);
 }
 
 void LobbyScene::handleInput(InputSystem & input)
@@ -84,6 +111,7 @@ void LobbyScene::handleInput(InputSystem & input)
 		if (m_input.isButtonPressed("YBTN"))
 		{
 			m_lobbies = m_network->getLobbies();//Refresh the page from the server
+			createLobbyButtons();
 		}
 		if (m_input.isButtonPressed("ABTN"))
 		{
@@ -99,27 +127,34 @@ void LobbyScene::handleInput(InputSystem & input)
 		//If the button we are highlighting has changed, deslect the current button and select the new one
 		if (newIndex != m_currentIndex)
 		{
-			//Deslect current button
-			auto btnComp = static_cast<ButtonComponent*>(&m_buttons.at(m_currentIndex)->getComponent("Btn"));
-			auto sprite = static_cast<SpriteComponent*>(&m_buttons.at(m_currentIndex)->getComponent("Sprite"));
-			btnComp->deselect();
-			sprite->setTexture(btnComp->getTexture());
+			Scene::systems()["Render"]->addComponent(&m_buttons.at(m_currentIndex)->getComponent("Sprite"));
 
 			//Set new button index
 			m_currentIndex = newIndex;
 
-			//Select new button
-			btnComp = static_cast<ButtonComponent*>(&m_buttons.at(m_currentIndex)->getComponent("Btn"));
-			sprite = static_cast<SpriteComponent*>(&m_buttons.at(m_currentIndex)->getComponent("Sprite"));
-			btnComp->select();
-			sprite->setTexture(btnComp->getTexture());
+			//Move the selected bar to the correct location
+			static_cast<PositionComponent*>(&m_selectedBar.getComponent("Pos"))->position = Vector2f(960, 280 + (120 * m_currentIndex));
+
+			Scene::systems()["Render"]->deleteComponent(&m_buttons.at(m_currentIndex)->getComponent("Sprite"));
 		}
 	}
 }
 
 void LobbyScene::handleButtonPressed()
 {
-	auto tag = static_cast<ButtonComponent*>(&m_buttons.at(m_currentIndex)->getComponent("Btn"))->getTag();
+	//placeholder
+
+	//if (m_network->joinLobby(1))//plz to always be nonzero
+	//{
+	//	Scene::goToScene("Game");
+	//}
+	//else {
+	//	//Give failure message, refresh
+	//	m_lobbies = m_network->getLobbies();
+	//	//createLobbyButtons();
+	//}
+
+	/*auto tag = static_cast<ButtonComponent*>(&m_buttons.at(m_currentIndex)->getComponent("Btn"))->getTag();
 
 	if (tag == "Local")
 	{
@@ -136,29 +171,60 @@ void LobbyScene::handleButtonPressed()
 	else if (tag == "Exit")
 	{
 		// Need a way to exit the game
-	}
+	}*/
 }
 
 void LobbyScene::createLobbyButtons()
 {
-	for (auto lob : m_lobbies) {
-		m_buttons.push_back(createButton(Vector2f(960, 455), Scene::resources().getTexture(lob.name), lob.name, true)); 
-		//make it say how many players there are somehow
+	for (auto but : m_buttons)
+	{
+		Scene::systems()["Render"]->deleteComponent(&but->getComponent("Sprite"));
+		Scene::systems()["Render"]->deleteComponent(&but->getComponent("Player Num"));
+		Scene::systems()["Render"]->deleteComponent(&but->getComponent("Lobby Num"));
+		Scene::systems()["Render"]->deleteComponent(&but->getComponent("Password Sprite"));
+		Scene::systems()["Render"]->deleteComponent(&m_selectedBar.getComponent("Sprite"));
+		delete(but);
+	}
+	m_buttons.clear();
+	m_currentIndex = 0; //Set index to be the first index of the buttons
+	//Only display 6 lobbies
+	for (int i = 1; i < m_lobbies.size() && i < 6; i++) {
+		m_buttons.push_back(createButton(Vector2f(960, 280 + ((i -1) * 120)), i, m_lobbies.at(i).name, std::stoi(m_lobbies.at(i).players), false, false));
+
+		if (i == 1)
+		{
+			auto pos = new PositionComponent(960, 280);
+			m_selectedBar.addComponent("Pos", pos);
+			m_selectedBar.addComponent("Sprite", new SpriteComponent(pos, Vector2f(760, 135), Vector2f(760, 135), Scene::resources().getTexture("Lobby Bar Selected"), 2));
+			Scene::systems()["Render"]->addComponent(&m_selectedBar.getComponent("Sprite"));
+		}
 	}
 }
 
 
-Entity* LobbyScene::createButton(Vector2f position, SDL_Texture* selectedTexture, std::string btnTag, bool selected)
+Entity* LobbyScene::createButton(Vector2f position, int index, std::string btnTag, int noOfPlayers, bool passProtected, bool selected)
 {
 	auto btn = new Entity("Button");
 	auto pos = new PositionComponent(position.x, position.y);
-	auto btnComp = new ButtonComponent(selectedTexture, Scene::resources().getTexture("Button Off"), btnTag, selected);
+	auto btnComp = new ButtonComponent(Scene::resources().getTexture("Lobby Bar Selected"), Scene::resources().getTexture("Lobby Bar"), btnTag, selected);
 	btn->addComponent("Btn", btnComp);
 	btn->addComponent("Pos", pos);
-	btn->addComponent("Sprite", new SpriteComponent(pos, Vector2f(365, 205), Vector2f(365, 205), btnComp->getTexture(), 1));
+	btn->addComponent("Sprite", new SpriteComponent(pos, Vector2f(760, 135), Vector2f(760, 135), btnComp->getTexture(), 1));
+	auto playerNum = new SpriteComponent(new PositionComponent(position.x - 10, position.y + 3), Vector2f(320, 32), Vector2f(32, 32), Scene::resources().getTexture("Numbers"), 1);
+	playerNum->setSourceRect({(noOfPlayers * 32), 0, 32, 32 });
+	btn->addComponent("Player Num", playerNum);
+	auto lobbyNum = new SpriteComponent(new PositionComponent(position.x - 257, position.y + 3), Vector2f(320, 32), Vector2f(32, 32), Scene::resources().getTexture("Numbers"), 1);
+	lobbyNum->setSourceRect({ index * 32, 0, 32, 32 });
+	btn->addComponent("Lobby Num", lobbyNum);
+	btn->addComponent("Password Sprite", new SpriteComponent(new PositionComponent(position.x + 259, position.y + 3),
+		Vector2f(75, 50), Vector2f(75, 50), Scene::resources().getTexture(passProtected ? "Password Yes" : "Password No"), 1));
 
 	//Add sprite component to the render system
-	Scene::systems()["Render"]->addComponent(&btn->getComponent("Sprite"));
+	if(index != 1)
+		Scene::systems()["Render"]->addComponent(&btn->getComponent("Sprite"));
+	Scene::systems()["Render"]->addComponent(&btn->getComponent("Player Num"));
+	Scene::systems()["Render"]->addComponent(&btn->getComponent("Lobby Num"));
+	Scene::systems()["Render"]->addComponent(&btn->getComponent("Password Sprite"));
 
 	//Return the created btn
 	return btn;
@@ -166,4 +232,7 @@ Entity* LobbyScene::createButton(Vector2f position, SDL_Texture* selectedTexture
 
 void LobbyScene::requestHost()
 {
+	m_network->makeHost();
+	cout << "hosting" << endl;
+	//go to pregame lobby to wait for more players to join
 }

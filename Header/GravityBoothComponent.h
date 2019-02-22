@@ -30,9 +30,8 @@ public:
 	}
 	void update(double dt)
 	{
-
 	}
-
+  
 	void flipGrav()
 	{
 
@@ -61,8 +60,6 @@ public:
 			m_systemPtr->flipGravity();
 		}
 	}
-
-
 
 	float& getTimeLeft() { return m_timer; }
 private:

@@ -27,7 +27,10 @@ public:
 
 	bool ConnectToServer();
 
-	vector<LobbyInfo> getLobbies(); /////////////////
+	vector<LobbyInfo> getLobbies(); 
+
+	void makeHost();
+	bool joinLobby(int lob);
 
 	bool isConnected = false;
 
@@ -35,6 +38,8 @@ public:
 
 private:
 	ClientSocket* m_Socket;
+	bool m_isHost = false;
+	int m_lobbyNumber = 0;
 	vector<OnlineSendComponent*> m_sendingPlayers;
 	vector<OnlineInputComponent*> m_receivingPlayers;
 };

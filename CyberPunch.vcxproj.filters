@@ -148,9 +148,15 @@
       <Filter>Source Files\Components</Filter>
     </ClCompile>
     <ClCompile Include="Header\LobbyScene.cpp">
+      <Filter>Source Files\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PreGameScene.cpp">
+      <Filter>Source Files\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\LobbyScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Header\Camera.cpp">
+    <ClCompile Include="Source\Camera.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
     <ClCompile Include="Source\DustSystem.cpp">
@@ -314,6 +320,9 @@
     <ClInclude Include="Header\DustTriggerComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
+    <ClInclude Include="Header\AiInputComponent.h">
+    <Filter>Header Files\Components</Filter>
+    </ClInclude>
     <ClInclude Include="Header\GravityBoothComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
@@ -322,6 +331,9 @@
     </ClInclude>
     <ClInclude Include="Header\SlowBoothComponent.h">
       <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\PreGameScene.h">
+      <Filter>Header Files\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="Header\PlayerComponent.h">
       <Filter>Header Files\Components</Filter>

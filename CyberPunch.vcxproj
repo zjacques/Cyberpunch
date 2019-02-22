@@ -154,6 +154,7 @@
     <ClCompile Include="Source\InputSystem.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Player.cpp" />
+    <ClCompile Include="Source\PreGameScene.cpp" />
     <ClCompile Include="Source\PlayerRespawnSystem.cpp" />
     <ClCompile Include="Source\RenderSystem.cpp" />
     <ClCompile Include="Source\ResourceManager.cpp" />
@@ -162,6 +163,7 @@
   <ItemGroup>
     <ClInclude Include="Header\Action.h" />
     <ClInclude Include="Header\AIComponent.h" />
+    <ClInclude Include="Header\AiInputComponent.h" />
     <ClInclude Include="Header\AISystem.h" />
     <ClInclude Include="Header\AnimationComponent.h" />
     <ClInclude Include="Header\AnimationSystem.h" />
@@ -202,6 +204,7 @@
     <ClInclude Include="Header\PickUp.h" />
     <ClInclude Include="Header\Player.h" />
     <ClInclude Include="Header\PlayerPhysicsSystem.h" />
+    <ClInclude Include="Header\PreGameScene.h" />
     <ClInclude Include="Header\PlayerRespawnSystem.h" />
     <ClInclude Include="Header\RenderSystem.h" />
     <ClInclude Include="Header\InputComponent.h" />

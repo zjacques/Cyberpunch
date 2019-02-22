@@ -124,7 +124,8 @@ void MainMenuScene::handleButtonPressed()
 	}
 	else if (tag == "Multiplayer")
 	{
-		Scene::goToScene("Main Menu"); // Temp, dont have a pre game lobby screen
+		//Scene::goToScene("Main Menu"); // Temp, dont have a pre game lobby screen
+		Scene::goToScene("Multiplayer");
 	}
 	else if (tag == "Options")
 	{

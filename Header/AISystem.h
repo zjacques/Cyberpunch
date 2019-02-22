@@ -7,7 +7,6 @@
 class AISystem : public System 
 {
 public:
-	void initialiseActions();
 	void createTree();
 	void runTree();
 	void update(double dt);
