@@ -9,6 +9,7 @@
 #include "AIComponent.h"
 #include "DustTriggerComponent.h"
 #include "DustComponent.h"
+#include "PlayerComponent.h"
 
 #include "PickUpComponent.h"
 #include "PickUpSystem.h"
@@ -33,7 +34,6 @@ public:
 	void start();
 	void stop();
 	void update(double dt);
-	void checkDust(double dt);
 
 	Entity* createAI(int index, int posX, int posY);
 
@@ -41,9 +41,9 @@ public:
 	Entity* createDJB(int index, int posX, int posY);
 
 	void createPlatforms(SDL_Renderer& renderer);
-	SDL_Rect createRect(int x, int y, int w, int h);
 
-	Entity* createPlayer(int index, int posX, int posY, bool local);
+	Entity* createPlayer(int index, int posX, int posY, bool local, std::vector<Vector2f> spawnPositions);
+	Entity* createKillBox(int posX, int posY, int width, int height);
 	
 	void draw(SDL_Renderer& renderer);
 	void handleInput(InputSystem& input);
@@ -51,9 +51,9 @@ private:
 	bool m_platformsCreated;
 	bool m_boothCreated;
 	Entity m_bgEntity;
+	std::vector<Entity*> m_killboxes;
 	std::vector<Entity*> m_localPlayers;
 	std::vector<Entity*> m_AIPlayers;
-	std::vector<Entity*> m_dustParticles, m_dustToDelete;
 	std::vector<InputSystem*> m_localInputs;
 	int m_numOfLocalPlayers;
 	Entity* m_pickUp;
@@ -69,9 +69,6 @@ private:
 	CollisionListener m_collisionListener;
 	//Platforms of the game
 	std::vector<Entity*> m_platforms;
-
-	//Dust particles rectangles
-	std::vector<SDL_Rect> m_dustFrames;
 
 	Camera m_camera;
 };
