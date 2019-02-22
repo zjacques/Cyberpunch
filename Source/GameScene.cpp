@@ -101,16 +101,17 @@ void GameScene::stop()
 
 void GameScene::update(double dt)
 {
+	
 	//Update the physics world, do this before ANYTHING else
-	m_physicsWorld.update(dt);
+	m_physicsWorld.update(dt * m_scalar);
 	//Update the player physics system
-	Scene::systems()["Player Physics"]->update(dt);
-	Scene::systems()["Physics"]->update(dt);
-	Scene::systems()["Attack"]->update(dt);
-	Scene::systems()["PickUp"]->update(dt);
-	Scene::systems()["Booth"]->update(dt);
-	Scene::systems()["Animation"]->update(dt); //Update the animation components
-	Scene::systems()["AI"]->update(dt);
+	Scene::systems()["Player Physics"]->update(dt * m_scalar);
+	Scene::systems()["Physics"]->update(dt * m_scalar);
+	Scene::systems()["Attack"]->update(dt * m_scalar);
+	Scene::systems()["PickUp"]->update(dt * m_scalar);
+	Scene::systems()["Booth"]->update(dt * m_scalar);
+	Scene::systems()["Animation"]->update(dt * m_scalar); //Update the animation components
+	Scene::systems()["AI"]->update(dt * m_scalar);
 
 	//Update camera
 	updateCamera(dt);
@@ -332,17 +333,20 @@ Entity* GameScene::createDJB(int index, int posX, int posY)
 	if (index == 0)
 	{
 		//this will call the gravity Component when the player punches it
-		booth->addComponent("DJ Booth", new GravityBoothComponent());
+
+
+
+		booth->addComponent("DJ Booth", new GravityBoothComponent(m_localPlayers, &m_physicsWorld, &m_physicsSystem, &m_collisionListener));
 	}
 	else if (index == 1)
 	{
 		//this will call the slow down Component when the player punches it
-		booth->addComponent("DJ Booth", new SlowBoothComponent());
+		//booth->addComponent("DJ Booth", new SlowBoothComponent());
 	}
 	else if (index == 2)
 	{
 		////this will call the platforming moving Component when the player punches it
-		booth->addComponent("DJ Booth", new PlatformBoothComponent());
+		//booth->addComponent("DJ Booth", new PlatformBoothComponent());
 	}
 
 	Scene::systems()["Booth"]->addComponent(&booth->getComponent("DJ Booth"));

@@ -13,4 +13,5 @@ public:
 	void addForce(Box2DBody& body, float forceX, float forceY);
 private:
 	bool m_gravFlipped;
+	float m_scaler = 0.0;
 };
