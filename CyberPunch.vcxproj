@@ -128,6 +128,7 @@
     <ClCompile Include="Source\ClientSocket.cpp" />
     <ClCompile Include="Source\AttackComponent.cpp" />
     <ClCompile Include="Source\AttackSystem.cpp" />
+    <ClCompile Include="Source\DustSystem.cpp" />
     <ClCompile Include="Source\PlayerPhysicsComponent.cpp" />
     <ClCompile Include="Source\PlayerPhysicsSystem.cpp" />
     <ClCompile Include="Source\AIComponent.cpp" />
@@ -153,6 +154,7 @@
     <ClCompile Include="Source\InputSystem.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Player.cpp" />
+    <ClCompile Include="Source\PlayerRespawnSystem.cpp" />
     <ClCompile Include="Source\RenderSystem.cpp" />
     <ClCompile Include="Source\ResourceManager.cpp" />
     <ClCompile Include="Source\Vector2f.cpp" />
@@ -178,6 +180,7 @@
     <ClInclude Include="Header\DJboothComponent.h" />
     <ClInclude Include="Header\DJBoothSystem.h" />
     <ClInclude Include="Header\DustComponent.h" />
+    <ClInclude Include="Header\DustSystem.h" />
     <ClInclude Include="Header\DustTriggerComponent.h" />
     <ClInclude Include="Header\Game.h" />
     <ClInclude Include="Header\Entity.h" />
@@ -187,6 +190,7 @@
     <ClInclude Include="Header\PickUpSystem.h" />
     <ClInclude Include="Header\OnlineSystem.h" />
     <ClInclude Include="Header\PlatformBoothComponent.h" />
+    <ClInclude Include="Header\PlayerComponent.h" />
     <ClInclude Include="Header\PlayerInputComponent.h" />
     <ClInclude Include="Header\PlayerInputSystem.h" />
     <ClInclude Include="Header\PlayerPhysicsComponent.h" />
@@ -199,6 +203,7 @@
     <ClInclude Include="Header\PickUp.h" />
     <ClInclude Include="Header\Player.h" />
     <ClInclude Include="Header\PlayerPhysicsSystem.h" />
+    <ClInclude Include="Header\PlayerRespawnSystem.h" />
     <ClInclude Include="Header\RenderSystem.h" />
     <ClInclude Include="Header\InputComponent.h" />
     <ClInclude Include="Header\InputSystem.h" />

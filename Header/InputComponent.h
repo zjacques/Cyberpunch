@@ -31,7 +31,6 @@ public:
 		m_current["YBTN"] = false;
 		m_current["LBBTN"] = false;
 		m_current["RBBTN"] = false;
-		m_current["RBBTN"] = false;
 		m_current["MINUS"] = false;
 		m_current["PLUS"] = false;
 

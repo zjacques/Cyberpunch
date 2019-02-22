@@ -5,6 +5,7 @@
 #include "PickUpComponent.h"
 #include "DustTriggerComponent.h"
 #include "DJboothComponent.h"
+#include "PlayerComponent.h"
 
 
 void CollisionListener::BeginContact(b2Contact * contact)
@@ -69,6 +70,13 @@ void CollisionListener::BeginContact(b2Contact * contact)
 		static_cast<DJBoothComponent*>(&booth->getComponent("DJ Booth"))->run();
 	}
 
+	if ((dataA->Tag() == "Kill Box" && dataB->Tag() == "Player Body")
+		|| (dataB->Tag() == "Kill Box" && dataA->Tag() == "Player Body"))
+	{
+		auto player = static_cast<Entity*>(dataA->Tag() == "Player Body" ? dataA->Data() : dataB->Data());
+
+		static_cast<PlayerComponent*>(&player->getComponent("Player"))->respawn();
+	}
 	
 	//Check if a player has attacked another player
 	checkPlayerAttack(contact);
@@ -126,6 +134,7 @@ void CollisionListener::checkPlayerAttack(b2Contact * contact)
 	Entity* attackingP = nullptr;
 	Entity* otherP = nullptr;
 	PlayerPhysicsComponent* otherPPhys = nullptr;
+	PlayerPhysicsComponent* attackingPPhys = nullptr;
 	AttackComponent* attackHit = nullptr;
 	float xImpulse;
 	float yImpulse;
@@ -145,11 +154,11 @@ void CollisionListener::checkPlayerAttack(b2Contact * contact)
 		if (attackingP == otherP)
 			return;
 
-		auto attackPhys = static_cast<PlayerPhysicsComponent*>(&attackingP->getComponent("Player Physics"));
+		attackingPPhys = static_cast<PlayerPhysicsComponent*>(&attackingP->getComponent("Player Physics"));
 		attackHit = static_cast<AttackComponent*>(&attackingP->getComponent("Attack"));
 
 		//If the attacking player punched
-		if (attackHit->attacked() && !attackPhys->stunned())
+		if (attackHit->attacked() && !attackingPPhys->stunned())
 		{
 			applyDmg = true;
 			dmgP = attackHit->damage(); //Get the damage
@@ -163,6 +172,13 @@ void CollisionListener::checkPlayerAttack(b2Contact * contact)
 		return;
 	else if(applyDmg)
 	{
+		attackingPPhys->addSuper(dmgP); //Add damage to our super percentage
+		if (attackingPPhys->isSupered() && otherPPhys->superStunned() == false)
+		{
+			otherPPhys->superStun(); //Super stun the other player
+			attackingPPhys->endSuper(); //End super for the player that hit with it
+		}
+
 		otherPPhys->damage(dmgP); //Add damage of the punch to the other players damage percentage
 		otherPPhys->applyDamageImpulse(xImpulse, yImpulse); //Knock back the other player back
 		otherPPhys->stun();
