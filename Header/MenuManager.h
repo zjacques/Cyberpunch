@@ -3,6 +3,7 @@
 #include "MainMenuScene.h"
 #include "OptionsScene.h"
 #include "GameScene.h"
+#include "LobbyScene.h"
 
 class MenuManager
 {

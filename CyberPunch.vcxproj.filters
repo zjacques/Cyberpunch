@@ -147,6 +147,12 @@
     <ClCompile Include="Source\OnlineInputComponent.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
+    <ClCompile Include="Header\LobbyScene.cpp">
+      <Filter>Source Files\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PreGameScene.cpp">
+      <Filter>Source Files\Scenes</Filter>
+    </ClCompile>
     <ClCompile Include="Source\LobbyScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -325,6 +331,9 @@
     </ClInclude>
     <ClInclude Include="Header\SlowBoothComponent.h">
       <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\PreGameScene.h">
+      <Filter>Header Files\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="Header\PlayerComponent.h">
       <Filter>Header Files\Components</Filter>
