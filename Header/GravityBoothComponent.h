@@ -28,9 +28,14 @@ public:
 		flipGrav();
 
 	}
+	void update(double dt)
+	{
+
+	}
 
 	void flipGrav()
 	{
+
 		m_timer = 10; //10 seconds flipped
 		for (auto& comp : m_entities)
 		{

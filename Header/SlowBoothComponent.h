@@ -9,35 +9,57 @@
 class SlowBoothComponent : public DJBoothComponent
 {
 public:
-	SlowBoothComponent(std::vector<Entity*> allPlayers, Box2DBridge* world,
-		PhysicsSystem* physSys, CollisionListener* cL) :
-		m_systemPtr(physSys),
-		m_entities(allPlayers),
-		m_collistenerPtr(cL),
-		m_worldPtr(world),
-		m_timer(0)
+	SlowBoothComponent() :
+		m_timer(0),
+		m_active(false), m_scalar(1),
+		m_halfPoint(false)
 	{
 
 	}
 	void run()
 	{
-		m_timer = 10;
-		for (auto& comp : m_entities)
-		{
-			std::cout << "Slowing down booth\n";
-			//static_cast<PlayerPhysicsComponent*>(&comp->getComponent("Player Physics"))->flipGravity();
-			//auto s = static_cast<SpriteComponent*>(&comp->getComponent("Sprite"));
-			//s->setScale(s->getScale().x, -1);
-			
-		
-		}
+		std::cout << "Slowing down booth\n";
+		m_active = true;
+		m_timer = 15;
+		m_halfPoint = false;
 	}
-	
 
+	void update(double dt)
+	{
+		//If run was called
+		if (m_active)
+		{
+			m_timer -= dt;
+
+			if (m_halfPoint == false)
+			{
+				m_scalar -= .175f * dt;
+
+				if (m_scalar <= 0.65f)
+				{
+					m_scalar = 0.65f;
+					m_halfPoint = true;
+				}
+			}
+			else if(m_timer <= 2)
+			{
+				m_scalar += .175f * dt;
+			}
+
+			if (m_timer <= 0)
+			{
+				m_active = false;
+				m_scalar = 1;
+			}
+		}		
+	}
+
+
+	float& getTimeLeft() { return m_timer; }
+	float& getScaler() { return m_scalar;  }
 private: 
+	bool m_active = true;
 	float m_timer;
-	std::vector<Entity*> m_entities;
-	Box2DBridge* m_worldPtr;
-	PhysicsSystem* m_systemPtr;
-	CollisionListener* m_collistenerPtr;
+	float m_scalar;
+	bool m_halfPoint;
 };

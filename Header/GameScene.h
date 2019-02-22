@@ -62,7 +62,7 @@ private:
 	std::vector<Entity*> m_onlinePlayers;
 	//std::vector<OnlineInputSystem*> m_onlineInputs;
 	int m_numOfOnlinePlayers;
-	float m_scalar = 1.0;
+	
 	//Physics variables
 	PhysicsSystem m_physicsSystem; //Add all physics components to the system
 	Box2DBridge m_physicsWorld;

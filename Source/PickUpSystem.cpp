@@ -1,5 +1,6 @@
 #include "PickUpSystem.h"
 #include "PlayerPhysicsComponent.h"
+#include "RenderSystem.h"
 
 void PickUpSystem::setWorld(Box2DBridge & world)
 {
@@ -24,8 +25,12 @@ void PickUpSystem::update(double dt)
 		{
 			pickup->getTimeTillSpawn() -= dt;
 
-			if(pickup->getTimeTillSpawn() <= 0)
+			if (pickup->getTimeTillSpawn() <= 0)
+			{
 				pickup->spawn(*m_worldPtr);
+				m_renderSysPtr->addComponent(&pickup->getPickupEntity()->getComponent("Sprite"));
+			}
+
 		}
 
 		//countdown for time in booths
@@ -45,6 +50,7 @@ void PickUpSystem::update(double dt)
 				auto p = static_cast<PlayerPhysicsComponent*>(&pickup->getPlayer()->getComponent("Player Physics"));
 				p->m_body->setPosition(pickup->getTeleportLocation().x, pickup->getTeleportLocation().y);
 				pickup->despawn(*m_worldPtr);
+				m_renderSysPtr->deleteComponent(&pickup->getPickupEntity()->getComponent("Sprite"));
 				pickup->toTeleportB() = true;
 
 
@@ -67,6 +73,7 @@ void PickUpSystem::update(double dt)
 				if (pickup->getTimeLive() <= 0)
 				{
 					pickup->despawn(*m_worldPtr);
+					m_renderSysPtr->deleteComponent(&pickup->getPickupEntity()->getComponent("Sprite"));
 				}
 			}
 
@@ -77,4 +84,5 @@ void PickUpSystem::update(double dt)
 	}
 
 }
+
 
