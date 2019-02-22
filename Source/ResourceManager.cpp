@@ -36,7 +36,7 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 	}
 
 	//Loading in GUI
-	m_map["Button Off"] = loadFromPath("GUI/ButtonOff.png", renderer);
+	m_map["Button BG"] = loadFromPath("GUI/Button_BG.png", renderer);
 	m_map["Exit Button"] = loadFromPath("GUI/ExitButton.png", renderer);
 	m_map["Local Play Button"] = loadFromPath("GUI/LocalButton.png", renderer);
 	m_map["Multiplayer Button"] = loadFromPath("GUI/MultiButton.png", renderer);
@@ -47,6 +47,7 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 	m_map["Numbers"] = loadFromPath("GUI/Numbers.png", renderer);
 	m_map["Password Yes"] = loadFromPath("GUI/Yes_Password.png", renderer);
 	m_map["Password No"] = loadFromPath("GUI/No_Password.png", renderer);
+	m_map["Achievements Button"] = loadFromPath("GUI/AchievementsButton.png", renderer);
 
 	//The colours of the platforms
 	auto platforms = std::vector<std::string>({"Green", "Blue", "Orange", "Pink"});
