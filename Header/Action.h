@@ -7,6 +7,7 @@
 #include "PositionComponent.h"
 #include "AIComponent.h"
 #include "AiInputComponent.h"
+#include "PlayerPhysicsComponent.h"
 
 class Action : public BehaviourTree::Node
 {
@@ -99,8 +100,7 @@ public:
 	bool run() override
 	{
 		std::cout << "Punch" << std::endl;
-		//m_input->handleInput("XBTN", m_entity);
-		m_input->handleInput("STICKLEFT", m_entity);
+		m_input->handleInput("XBTN", m_entity);
 		return true;
 	}
 };
@@ -118,33 +118,43 @@ public:
 	{
 	}
 
+	/// <summary>
+	/// Behaviour tree run function overidden from Action base class.
+	/// Loops through vector of all players in the current game and 
+	/// finds the one nearest to the current AI entity.
+	/// </summary>
+	/// <returns></returns>
 	bool run() override
 	{
 		std::cout << "Getting nearest player" << std::endl;
-
-		Entity* nearest;
-		float nearest_dist;
-		//nearest = i;
-		for (auto i : m_entities)
+		//Container to store nearest entity
+		Entity * nearest;
+		//Get position component of current AI entity
+		auto self_pos = dynamic_cast<PositionComponent *>(&m_entity->getComponent("Pos"));
+		//Get position component from entity
+		auto otherPos = dynamic_cast<PositionComponent *>(&nearest->getComponent("Pos"));
+		//If entities vector is not empty, set nearest to first element
+		if (!m_entities.empty())
 		{
-			/*auto p = dynamic_cast<PositionComponent *>(&nearest->getComponent("Pos"));
-			auto self_pos = dynamic_cast<PositionComponent *>(&m_entity->getComponent("Pos"));
-			nearest_dist = dist(p->position, self_pos->position);
-			if (dist(p->position, self_pos->position) < nearest_dist)
+			nearest = m_entities.at(0);
+		}
+
+		//Loop through all entities
+		for (auto entity : m_entities)
+		{
+			//Get position component of the current entity in the loop
+			auto newPos = dynamic_cast<PositionComponent *>(&entity->getComponent("Pos"));
+			//Check distance between self and previous position, and self and new position
+			if (dist(newPos->position, self_pos->position) < dist(otherPos->position, self_pos->position))
 			{
-				nearest_dist = dist(p->position, self_pos->position);
-				nearest = i;
-			}*/
+				//If new position is closer, the entity it belongs to is assigned to nearest
+				nearest = entity;
+			}
 		}
 		return true;
 	}
 
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <param name="p1"></param>
-	/// <param name="p2"></param>
-	/// <returns></returns>
+	//Euclidean distance function
 	float dist(Vector2f p1, Vector2f p2)
 	{
 		return sqrt((p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y));
@@ -169,6 +179,13 @@ public:
 		std::cout << "Close enough" << std::endl;
 		return true;
 	}
+
+	//Euclidean distance function
+	float dist(Vector2f p1, Vector2f p2)
+	{
+		return sqrt((p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y));
+	}
+	std::vector<Entity *> m_entities;
 };
 
 #endif
@@ -184,6 +201,12 @@ public:
 	{
 	}
 
+	/// <summary>
+	/// Run function overidden from the Action base class
+	/// casts a vector from the AI entity to the nearest
+	/// player as one of 4 directions
+	/// </summary>
+	/// <returns></returns>
 	bool run() override
 	{
 		std::cout << "Check direction" << std::endl;
@@ -204,10 +227,17 @@ public:
 	{
 	}
 
+	/// <summary>
+	/// Run function overidden from the Action base class function.
+	/// Down casts the self entity component to a play physics component.
+	/// Returns true if the current damage percentage is greater than 50
+	/// </summary>
+	/// <returns></returns>
 	bool run() override
 	{
 		std::cout << "Check health" << std::endl;
-		return true;
+		auto p = dynamic_cast<PlayerPhysicsComponent *>(&m_entity->getComponent("Physics"));
+		return p->damagePercentage > 50 ? true : false;
 	}
 };
 
@@ -222,7 +252,6 @@ public:
 	FleeAction(Entity * e, AiInputComponent * a)
 		: Action(e, a)
 	{
-
 	}
 
 	bool run() override
@@ -285,9 +314,9 @@ public:
 	bool run() override
 	{
 		std::cout << "Drop down" << std::endl;
+		m_input->handleInput("STICKDOWN", m_entity);
 		return true;
 	}
 };
 
 #endif
-

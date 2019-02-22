@@ -39,6 +39,7 @@ public:
 	bool canSuperUp() { return m_superPercentage >= 100; }
 	float& stunLeft() { return m_stunLeft; }
 	float& superLeft() { return m_superTime; }
+	int& damagePercentage() { return m_dmgPercentage; }
 
 	//Setters
 	void setCanFall(bool b) { m_canFall = b; }
