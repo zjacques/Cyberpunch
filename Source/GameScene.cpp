@@ -8,7 +8,7 @@
 GameScene::GameScene() :
 	m_bgEntity("Game BG"),
 	m_platformsCreated(false),
-	m_camera(false)
+	m_camera(true)
 {
 	m_numOfAIPlayers = 2;
 }
@@ -99,37 +99,6 @@ void GameScene::start()
 		m_djBooths.push_back(createDJB(i, booths.at(i)["X"], booths.at(i)["Y"]));
 	}
 
-	auto phys = new PhysicsComponent(pos);
-	//auto phys = new PhysicsComponent(m_pickUp->getComponent("Pos"));
-	
-	//auto pC = static_cast<PickUpComponent*>(&m_pickUp->getComponent("PickUp"));
-	//if (pC->spawned())
-	//{
-		phys->m_body = m_physicsWorld.createBox(1920 / 2, 1080 / 2, 50, 50, false, false, b2BodyType::b2_staticBody);
-		m_physicsWorld.addProperties(*phys->m_body, 0, 0, 0, true, new PhysicsComponent::ColData("PickUp", m_pickUp));
-		m_pickUp->addComponent("Sprite", new SpriteComponent(&m_pickUp->getComponent("Pos"), Vector2f(1500, 50), Vector2f(50, 50), Scene::resources().getTexture("Record"), 1));
-		Scene::systems()["Render"]->addComponent(&m_pickUp->getComponent("Sprite"));
-		m_pickUp->addComponent("Physics", phys);
-		Scene::systems()["Physics"]->addComponent(phys);
-		auto anim = new AnimationComponent(&m_pickUp->getComponent("Sprite"));		
-		std::vector<SDL_Rect> m_spinAnimation;
-		for (int i = 0; i < 30; i++)
-			m_spinAnimation.push_back({i*50, 0, 50, 50});
-		anim->addAnimation("Spin", Scene::resources().getTexture("Record"), m_spinAnimation, 1.75f);
-		anim->playAnimation("Spin", true);
-		Scene::systems()["Animation"]->addComponent(anim);
-		m_pickUp->addComponent("Animation", anim);
-		Scene::systems()["PickUp"]->addComponent(&m_pickUp->getComponent("PickUp"));
-		//static_cast<OnlineSystem*>(Scene::systems()["Network"])->getLobbies();
-//	}
-
-
-		auto& booths = Scene::resources().getLevelData()["Booth"];
-
-		for (int i = 0; i < booths.size(); i++)
-		{
-			m_djBooths.push_back(createDJB(i, booths.at(i)["X"], booths.at(i)["Y"]));
-		}
 	auto& kb = Scene::resources().getLevelData()["Kill Boxes"];
 	for (int i = 0; i < kb.size(); i++)
 	{
@@ -227,7 +196,7 @@ Entity * GameScene::createPlayer(int index,int posX, int posY, bool local, std::
 	p->addComponent("Dust Trigger", new DustTriggerComponent());
 	p->addComponent("Attack", new AttackComponent());
 	p->addComponent("Player", new PlayerComponent(spawnPositions, p));
-	p->addComponent("Sprite", new SpriteComponent(&p->getComponent("Pos"), Vector2f(1220,85), Vector2f(61, 85), Scene::resources().getTexture("Player Idle"), 2));
+	p->addComponent("Sprite", new SpriteComponent(&p->getComponent("Pos"), Vector2f(1700,85), Vector2f(85, 85), Scene::resources().getTexture("Player Idle"), 2));
 	auto animation = new AnimationComponent(&p->getComponent("Sprite"));
 	p->addComponent("Animation", animation);
 
@@ -235,16 +204,13 @@ Entity * GameScene::createPlayer(int index,int posX, int posY, bool local, std::
 
 	for (int i = 0; i < 20; i++)
 	{
-		m_animRects.push_back({61 * i, 0, 61, 85});
+		m_animRects.push_back({85 * i, 0, 85, 85});
 	}
 
 	animation->addAnimation("Run", Scene::resources().getTexture("Player Run"), m_animRects, .75f);
 	animation->addAnimation("Idle", Scene::resources().getTexture("Player Idle"), m_animRects, .5f);
-	m_animRects.clear();
-	for (int i = 0; i < 20; i++)
-	{
-		m_animRects.push_back({71 * i, 0, 71, 83 });
-	}
+	animation->addAnimation("Punch 0", Scene::resources().getTexture("Player Left Punch"), m_animRects, .175f);
+	animation->addAnimation("Punch 1", Scene::resources().getTexture("Player Right Punch"), m_animRects, .175f);
 	animation->addAnimation("Ground Kick", Scene::resources().getTexture("Player Ground Kick"), m_animRects, .4f);
 	animation->playAnimation("Idle", true); //Play the idle animation from the start
 
@@ -336,9 +302,6 @@ Entity* GameScene::createDJB(int index, int posX, int posY)
 	if (index == 0)
 	{
 		//this will call the gravity Component when the player punches it
-
-
-
 		booth->addComponent("DJ Booth", new GravityBoothComponent(m_localPlayers, &m_physicsWorld, &m_physicsSystem, &m_collisionListener));
 	}
 	else if (index == 1)
@@ -375,16 +338,21 @@ Entity * GameScene::createAI(int index, int posX, int posY, std::vector<Vector2f
 	ai->addComponent("AI", behaviour);
 	ai->addComponent("Dust Trigger", new DustTriggerComponent());
 	ai->addComponent("Attack", new AttackComponent());
-	ai->addComponent("Sprite", new SpriteComponent(&ai->getComponent("Pos"), Vector2f(50, 50), Vector2f(50, 50), Scene::resources().getTexture("Player Run"), 2));
+	ai->addComponent("Sprite", new SpriteComponent(&ai->getComponent("Pos"), Vector2f(1700, 85), Vector2f(85, 85), Scene::resources().getTexture("Player Run"), 2));
 	auto animation = new AnimationComponent(&ai->getComponent("Sprite"));
 
 	std::vector<SDL_Rect> m_animRects; //The rectangles for the animations
 
 	for (int i = 0; i < 20; i++)
 	{
-		m_animRects.push_back({ 61 * i, 0, 61, 85 });
+		m_animRects.push_back({ 85 * i, 0, 85, 85 });
 	}
 	animation->addAnimation("Run", Scene::resources().getTexture("Player Run"), m_animRects, .75f);
+	animation->addAnimation("Idle", Scene::resources().getTexture("Player Idle"), m_animRects, .5f);
+	animation->addAnimation("Punch 0", Scene::resources().getTexture("Player Left Punch"), m_animRects, .175f);
+	animation->addAnimation("Punch 1", Scene::resources().getTexture("Player Right Punch"), m_animRects, .175f);
+	animation->addAnimation("Ground Kick", Scene::resources().getTexture("Player Ground Kick"), m_animRects, .4f);
+	animation->playAnimation("Idle", true);
 	ai->addComponent("Animation", animation);
 	
 	//Add the AI component to the AI system
