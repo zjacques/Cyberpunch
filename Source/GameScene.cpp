@@ -9,7 +9,7 @@ GameScene::GameScene() :
 	m_platformsCreated(false),
 	m_camera(true)
 {
-
+	m_numOfAIPlayers = 2;
 }
 
 void GameScene::start()
@@ -72,6 +72,10 @@ void GameScene::start()
 	{
 		m_onlinePlayers.push_back(createPlayer(i+ m_numOfLocalPlayers, 600 + 150 * i+ m_numOfLocalPlayers, 360, false, spawnPos));
 	}
+	for (int i = 0; i < m_numOfAIPlayers; i++)
+	{
+		m_AIPlayers.push_back(createAI(1, 1500 + 150 * 1, 360, spawnPos));
+	}
 	
 	//pickup Entity
 	m_pickUp = new Entity("PickUp");
@@ -102,7 +106,7 @@ void GameScene::start()
 		Scene::systems()["PickUp"]->addComponent(&m_pickUp->getComponent("PickUp"));
 		//static_cast<OnlineSystem*>(Scene::systems()["Network"])->getLobbies();
 //	}
-		m_AIPlayers.push_back(createAI(1, 1500 + 150 * 1, 360));
+
 
 		auto& booths = Scene::resources().getLevelData()["Booth"];
 
@@ -337,13 +341,14 @@ Entity* GameScene::createDJB(int index, int posX, int posY)
 /// <param name="posX"></param>
 /// <param name="posY"></param>
 /// <returns></returns>
-Entity * GameScene::createAI(int index, int posX, int posY)
+Entity * GameScene::createAI(int index, int posX, int posY, std::vector<Vector2f> spawnPositions)
 {
 	auto ai = new Entity("AI");
 	auto pos = new PositionComponent(0, 0);
 	auto input = new AiInputComponent();
+	auto player = new PlayerComponent(spawnPositions, ai);
 
-	auto behaviour = new AIComponent(m_localPlayers, input, ai);
+	auto behaviour = new AIComponent(m_localPlayers, input, ai, player);
 	ai->addComponent("Pos", pos);
 	ai->addComponent("AI", behaviour);
 	ai->addComponent("Dust Trigger", new DustTriggerComponent());

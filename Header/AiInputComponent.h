@@ -44,7 +44,6 @@ public:
 
 		if (!s.empty())
 		{
-			//auto entity = static_cast<Entity*>(e);
 			m_currentCMD->execute(*e);
 		}
 

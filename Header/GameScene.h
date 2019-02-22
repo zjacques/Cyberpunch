@@ -19,7 +19,6 @@
 #include "PlatformBoothComponent.h"
 #include "SlowBoothComponent.h"
 
-
 #include "OnlineSystem.h"
 #include "PlayerPhysicsComponent.h"
 #include "OnlineSendComponent.h"
@@ -35,7 +34,7 @@ public:
 	void stop();
 	void update(double dt);
 
-	Entity* createAI(int index, int posX, int posY);
+	Entity* createAI(int index, int posX, int posY, std::vector<Vector2f> spawnPositions);
 
 	void updateCamera(double dt);
 	Entity* createDJB(int index, int posX, int posY);
@@ -62,6 +61,7 @@ private:
 	std::vector<Entity*> m_onlinePlayers;
 	//std::vector<OnlineInputSystem*> m_onlineInputs;
 	int m_numOfOnlinePlayers;
+	int m_numOfAIPlayers;
 
 	//Physics variables
 	PhysicsSystem m_physicsSystem; //Add all physics components to the system
