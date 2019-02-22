@@ -17,7 +17,7 @@ public:
 private:
 	void handleButtonPressed();
 	void createLobbyButtons();
-	Entity* createButton(Vector2f pos, SDL_Texture* selectedTexture, std::string btnTag, bool selected);
+	Entity* createButton(Vector2f pos, int index, std::string btnTag, int noOfPlayers, bool passProtected, bool selected);
 	void requestHost();
 
 	TTF_Font * m_font;
@@ -35,4 +35,7 @@ private:
 	vector<OnlineSystem::LobbyInfo> m_lobbies;
 
 	std::vector<Entity*> m_buttons;
+	Entity m_selectedBar;
+
+	Entity m_bg;
 };
