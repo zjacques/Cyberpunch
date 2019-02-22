@@ -82,7 +82,7 @@ void LobbyScene::handleInput(InputSystem & input)
 		}
 		if (m_input.isButtonPressed("XBTN"))
 		{
-			//handleButtonPressed();//Join the selected server. If it fails, show a message and refresh
+			handleButtonPressed();//Join the selected server. If it fails, show a message and refresh
 		}
 		if (m_input.isButtonPressed("BBTN"))
 		{
@@ -127,7 +127,19 @@ void LobbyScene::handleInput(InputSystem & input)
 
 void LobbyScene::handleButtonPressed()
 {
-	auto tag = static_cast<ButtonComponent*>(&m_buttons.at(m_currentIndex)->getComponent("Btn"))->getTag();
+	//placeholder
+
+	if (m_network->joinLobby(1))//plz to always be nonzero
+	{
+		Scene::goToScene("Game");
+	}
+	else {
+		//Give failure message, refresh
+		m_lobbies = m_network->getLobbies();
+		//createLobbyButtons();
+	}
+
+	/*auto tag = static_cast<ButtonComponent*>(&m_buttons.at(m_currentIndex)->getComponent("Btn"))->getTag();
 
 	if (tag == "Local")
 	{
@@ -144,7 +156,7 @@ void LobbyScene::handleButtonPressed()
 	else if (tag == "Exit")
 	{
 		// Need a way to exit the game
-	}
+	}*/
 }
 
 void LobbyScene::createLobbyButtons()

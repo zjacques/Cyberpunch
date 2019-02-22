@@ -30,6 +30,7 @@ public:
 	vector<LobbyInfo> getLobbies(); 
 
 	void makeHost();
+	bool joinLobby(int lob);
 
 	bool isConnected = false;
 

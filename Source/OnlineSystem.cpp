@@ -153,3 +153,31 @@ void OnlineSystem::makeHost()
 		}
 	}
 }
+
+bool OnlineSystem::joinLobby(int lob)
+{
+	if (!m_isHost)
+	{
+		string jsonString = "{ \"type\" : \"JOIN\", \"lobby\":" + toString(lob) + "}";
+
+		m_Socket->sendString(jsonString);
+		string receivedMessage;
+		do {
+			receivedMessage = m_Socket->checkForIncomingMessages();
+		} while (receivedMessage == "");
+
+		json lobby = json::parse(receivedMessage);
+		if (lobby["type"] == "JOINED")
+		{
+			m_lobbyNumber = lob;
+			//go to pregame screen
+			return true;
+		}
+		else
+		{
+			cout << "join failed" << endl;
+			return false;
+		}
+	}
+
+}
