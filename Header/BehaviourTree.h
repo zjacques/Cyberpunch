@@ -51,9 +51,9 @@ public:
 				{
 					return true;
 				}
-				//False if all children fail
-				return false;
 			}
+			//False if all children fail
+			return false;
 		}
 	};
 
@@ -73,8 +73,8 @@ public:
 				{
 					return true;
 				}
-				return false;
 			}
+			return false;
 		}
 	};
 
@@ -93,9 +93,10 @@ public:
 				{
 					return false;
 				}
-				//Return true if all children succeed
-				return true;
+
 			}
+			//Return true if all children succeed
+			return true;
 		}
 	};
 

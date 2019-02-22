@@ -2,17 +2,23 @@
 #define ACTION_H
 
 #include "BehaviourTree.h"
+#include "Entity.h"
+#include "Component.h"
+#include "PositionComponent.h"
+#include "AIComponent.h"
+#include "AiInputComponent.h"
 
 class Action : public BehaviourTree::Node
 {
-private:
-
 public:
-	std::string m_name;
-	int successRate;
-	Action(const std::string newName, int p) : m_name(newName), successRate(p) {}
+	Action(Entity * e, AiInputComponent * a) :
+	m_entity(e),
+	m_input(a)
+	{}
 
 	virtual bool run() = 0;
+	Entity * m_entity;
+	AiInputComponent * m_input;
 };
 
 #endif
@@ -23,19 +29,16 @@ public:
 class WalkLeftAction : public Action
 {
 public:
-	WalkLeftAction(std::string newName, int p)
-		: Action(newName, p)
+	WalkLeftAction(Entity * e, AiInputComponent * a) :
+		Action(e, a)
 	{
 	}
 
 	bool run() override
 	{
-		if (std::rand() % 100 < successRate)
-		{
-			std::cout << "Walking left" << std::endl;
-			return true;
-		}
-		return false;
+		std::cout << "Walking left" << std::endl;
+		m_input->handleInput("STICKLEFT", m_entity);
+		return true;
 	}
 };
 
@@ -47,18 +50,16 @@ public:
 class WalkRightAction : public Action
 {
 public:
-	WalkRightAction(std::string newName, int p)
-		: Action(newName, p)
+	WalkRightAction(Entity * e, AiInputComponent * a)
+		: Action(e, a)
 	{
 	}
+
 	bool run() override
 	{
-		if (std::rand() % 100 < successRate)
-		{
-			std::cout << "Walking right" << std::endl;
-			return true;
-		}
-		return false;
+		std::cout << "Walking right" << std::endl;
+		m_input->handleInput("STICKRIGHT", m_entity);
+		return true;
 	}
 };
 
@@ -70,18 +71,15 @@ public:
 class JumpAction : public Action
 {
 public:
-	JumpAction(std::string newName, int p)
-		: Action(newName, p)
+	JumpAction(Entity * e, AiInputComponent * a)
+		: Action(e, a)
 	{
 	}
 	bool run() override
 	{
-		if (std::rand() % 100 < successRate)
-		{
-			std::cout << "Jump" << std::endl;
-			return true;
-		}
-		return false;
+		std::cout << "Jump" << std::endl;
+		m_input->handleInput("YBTN", m_entity);
+		return true;
 	}
 };
 
@@ -93,18 +91,17 @@ public:
 class PunchAction : public Action
 {
 public:
-	PunchAction(std::string newName, int p)
-		: Action(newName, p)
+	PunchAction(Entity * e, AiInputComponent * a)
+		: Action(e, a)
 	{
 	}
+
 	bool run() override
 	{
-		if (std::rand() % 100 < successRate)
-		{
-			std::cout << "Punch" << std::endl;
-			return true;
-		}
-		return false;
+		std::cout << "Punch" << std::endl;
+		//m_input->handleInput("XBTN", m_entity);
+		m_input->handleInput("STICKLEFT", m_entity);
+		return true;
 	}
 };
 
@@ -116,22 +113,44 @@ public:
 class CheckNearest : public Action
 {
 public:
-	CheckNearest(std::string newName, int p) :
-		Action(newName, p)
+	CheckNearest(std::vector<Entity *> e, Entity * s, AiInputComponent * a) :
+		m_entities(e), Action(s, a)
 	{
 	}
 
 	bool run() override
 	{
-		if (std::rand() % 100 < successRate)
-		{
-			//std::cout << "Getting nearest player" << std::endl;
-			return true;
-		}
-		return false;
-	}
-};
+		std::cout << "Getting nearest player" << std::endl;
 
+		Entity* nearest;
+		float nearest_dist;
+		//nearest = i;
+		for (auto i : m_entities)
+		{
+			/*auto p = dynamic_cast<PositionComponent *>(&nearest->getComponent("Pos"));
+			auto self_pos = dynamic_cast<PositionComponent *>(&m_entity->getComponent("Pos"));
+			nearest_dist = dist(p->position, self_pos->position);
+			if (dist(p->position, self_pos->position) < nearest_dist)
+			{
+				nearest_dist = dist(p->position, self_pos->position);
+				nearest = i;
+			}*/
+		}
+		return true;
+	}
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="p1"></param>
+	/// <param name="p2"></param>
+	/// <returns></returns>
+	float dist(Vector2f p1, Vector2f p2)
+	{
+		return sqrt((p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y));
+	}
+	std::vector<Entity *> m_entities;
+};
 #endif
 
 #ifndef CLOSEENOUGH_H
@@ -140,19 +159,15 @@ public:
 class CloseEnough : public Action
 {
 public:
-	CloseEnough(std::string newName, int p) :
-		Action(newName, p)
+	CloseEnough(Entity * e, AiInputComponent * a)
+		: Action(e, a)
 	{
 	}
 
 	bool run() override
 	{
-		if (std::rand() % 100 < successRate)
-		{
-			std::cout << "Close enough" << std::endl;
-			return true;
-		}
-		return false;
+		std::cout << "Close enough" << std::endl;
+		return true;
 	}
 };
 
@@ -164,19 +179,113 @@ public:
 class CheckPlayerDirection : public Action
 {
 public:
-	CheckPlayerDirection(std::string newName, int p) :
-		Action(newName, p)
+	CheckPlayerDirection(Entity * e, AiInputComponent * a)
+		: Action(e, a)
 	{
 	}
 
 	bool run() override
 	{
-		if (std::rand() % 100 < successRate)
-		{
-			std::cout << "Check direction" << std::endl;
-			return true;
-		}
-		return false;
+		std::cout << "Check direction" << std::endl;
+		return true;
+	}
+};
+
+#endif
+
+#ifndef CHECKHEALTH_H
+#define CHECKHEALTH_H
+
+class CheckHealth : public Action
+{
+public:
+	CheckHealth(Entity * e, AiInputComponent * a)
+		: Action(e, a)
+	{
+	}
+
+	bool run() override
+	{
+		std::cout << "Check health" << std::endl;
+		return true;
+	}
+};
+
+#endif
+
+#ifndef FLEEACTION_H
+#define FLEEACTION_H
+
+class FleeAction : public Action
+{
+public:
+	FleeAction(Entity * e, AiInputComponent * a)
+		: Action(e, a)
+	{
+
+	}
+
+	bool run() override
+	{
+		std::cout << "Fleeing" << std::endl;
+		return true;
+	}
+};
+
+#endif
+
+#ifndef CHECKABOVE_H
+#define CHECKABOVE_H
+
+class CheckAbove : public Action
+{
+public:
+	CheckAbove(Entity * e, AiInputComponent * a)
+		: Action(e, a)
+	{}
+
+	bool run() override
+	{
+		std::cout << "Check if player above" << std::endl;
+		return true;
+	}
+};
+
+#endif
+
+#ifndef CHECKPLAYERHEALTH_H
+#define CHECKPLAYERHEALTH_H
+
+class CheckPlayerHealth : public Action
+{
+public:
+	CheckPlayerHealth(Entity * e, AiInputComponent * a)
+		: Action(e, a)
+	{}
+
+	bool run() override
+	{
+		std::cout << "Check player health" << std::endl;
+		return true;
+	}
+};
+
+#endif
+
+#ifndef DROPACTION_H
+#define DROPACTION_H
+
+class DropAction : public Action
+{
+public:
+	DropAction(Entity * e, AiInputComponent * a)
+		: Action(e, a)
+	{}
+
+	bool run() override
+	{
+		std::cout << "Drop down" << std::endl;
+		return true;
 	}
 };
 
