@@ -10,7 +10,7 @@ GameScene::GameScene() :
 	m_platformsCreated(false),
 	m_camera(true)
 {
-	m_numOfAIPlayers = 2;
+	m_numOfAIPlayers = 1;
 }
 
 void GameScene::start()
@@ -334,8 +334,10 @@ Entity * GameScene::createAI(int index, int posX, int posY, std::vector<Vector2f
 	auto player = new PlayerComponent(spawnPositions, ai);
 
 	auto behaviour = new AIComponent(m_localPlayers, input, ai, player);
+	ai->addComponent("Input", input);
 	ai->addComponent("Pos", pos);
 	ai->addComponent("AI", behaviour);
+	ai->addComponent("Player", player);
 	ai->addComponent("Dust Trigger", new DustTriggerComponent());
 	ai->addComponent("Attack", new AttackComponent());
 	ai->addComponent("Sprite", new SpriteComponent(&ai->getComponent("Pos"), Vector2f(1700, 85), Vector2f(85, 85), Scene::resources().getTexture("Player Run"), 2));
@@ -585,6 +587,10 @@ void GameScene::handleInput(InputSystem & input)
 		auto input = static_cast<OnlineInputComponent*>(&m_onlinePlayers.at(i)->getComponent("Input"));
 		input->handleInput(m_onlinePlayers.at(i));
 		//m_onlinePlayers.at(i).handleInput(*m_onlineInputs.at(i));
+	}
+	for (auto& ai : m_AIPlayers)
+	{
+		static_cast<AiInputComponent*>(&ai->getComponent("Input"))->handleInput("", ai);
 	}
 
 }

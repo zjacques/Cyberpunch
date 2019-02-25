@@ -12,7 +12,7 @@ public:
 	void update(double dt);
 	void addComponent(Component *);
 private:
-
+	float timer = 0;
 };
 
 #endif

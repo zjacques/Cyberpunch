@@ -51,6 +51,7 @@ public:
 	/// <returns></returns>
 	bool run() override
 	{
+		std::cout << "MOVE LEFT" << std::endl;
 		//Passes STICKLEFT command to the AI input handler
 		m_input->handleInput("STICKLEFT", m_entity);
 		//Return true to maintain behaviour tree flow of execution
@@ -107,7 +108,9 @@ public:
 	bool run() override
 	{
 		//Passes YBTN command to AI input handler
-		m_input->handleInput("YBTN", m_entity);
+		//m_input->handleInput("YBTN", m_entity);
+		m_input->m_current["YBTN"] = true;
+		//std::cout << "JUMP" << std::endl;
 		return true;
 	}
 };
@@ -220,7 +223,7 @@ public:
 		//Cast nearest player entity from Ai component to Position component
 		auto nearest = dynamic_cast<PositionComponent *>(&comp->nearestPlayer->getComponent("Pos"));
 		//Return true if dist between two entities is less than 100
-		return dist(pos->position, nearest->position) < 300 ? true : false;
+		return dist(pos->position, nearest->position) < 50 ? true : false;
 	}
 
 	//Euclidean distance function
@@ -465,6 +468,7 @@ public:
 			//If AI is right of player
 			if (nearest->position.x < pos->position.x)
 			{
+				//m_input->m_current["STICKLEFT"] = true;
 				//Move left
 				m_input->handleInput("STICKLEFT", m_entity);
 			}

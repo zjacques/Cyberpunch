@@ -57,6 +57,7 @@ void AISystem::runTree()
 {
 	for (auto c : m_components)
 	{
+
 		auto cast_comp = dynamic_cast<AIComponent *>(c);
 		if (cast_comp->BT.run())
 		{
@@ -64,7 +65,7 @@ void AISystem::runTree()
 		}
 		else
 		{
-			std::cout << "Behaviour tree exited with FAILURE" << std::endl;
+			//std::cout << "Behaviour tree exited with FAILURE" << std::endl;
 		}
 	}
 }
@@ -76,5 +77,11 @@ void AISystem::runTree()
 /// <param name="dt"></param>
 void AISystem::update(double dt)
 {
-	runTree();
+	//if (timer > 0.000016)
+	//{
+		runTree();
+	//	timer = 0;
+	//}
+
+	//timer += dt;
 }
