@@ -8,7 +8,7 @@
 GameScene::GameScene() :
 	m_bgEntity("Game BG"),
 	m_platformsCreated(false),
-	m_camera(true)
+	m_camera(false)
 {
 	m_numOfAIPlayers = 2;
 }
@@ -25,12 +25,12 @@ void GameScene::start()
 	Scene::systems()["Dust"] = new DustSystem(&Scene::systems(), &m_localPlayers, &Scene::resources());
 	Scene::systems()["Respawn"] = new PlayerRespawnSystem();
 	static_cast<PickUpSystem*>(Scene::systems()["Pickup"])->setWorld(m_physicsWorld);
-	Scene::systems()["Booth"] = new DJBoothSystem();
+	Scene::systems()["Booth"] = new DJBoothSystem(&Scene::resources(), &m_platforms, &m_bgEntity);
 
 	//Create background entity
 	auto bgPos = new PositionComponent(1920 /2 , 1080 / 2);
 	m_bgEntity.addComponent("Pos", bgPos);
-	m_bgEntity.addComponent("Sprite", new SpriteComponent(bgPos, Vector2f(1920, 1080 ), Vector2f(1920, 1080), Scene::resources().getTexture("Game BG"), 0));
+	m_bgEntity.addComponent("Sprite", new SpriteComponent(bgPos, Vector2f(1920, 1080 ), Vector2f(1920, 1080), Scene::resources().getTexture("Game BG0"), 0));
 	//Add bg sprite component to the render system
 	Scene::systems()["Render"]->addComponent(&m_bgEntity.getComponent("Sprite"));
 
@@ -301,17 +301,18 @@ Entity* GameScene::createDJB(int index, int posX, int posY)
 
 	if (index == 0)
 	{
-		//this will call the gravity Component when the player punches it
+		
 		booth->addComponent("DJ Booth", new GravityBoothComponent(m_localPlayers, &m_physicsWorld, &m_physicsSystem, &m_collisionListener));
+		
 	}
 	else if (index == 1)
 	{
-		//this will call the slow down Component when the player punches it
+		
 		booth->addComponent("DJ Booth", new SlowBoothComponent());
 	}
 	else if (index == 2)
 	{
-		////this will call the platforming moving Component when the player punches it
+		
 		booth->addComponent("DJ Booth", new PlatformBoothComponent(&m_platforms));
 	}
 

@@ -3,18 +3,27 @@
 
 #include "System.h"
 #include "PickUpComponent.h"
+#include "ResourceManager.h"
+#include "Entity.h"
 
 class DJBoothSystem : public System
 {
 public:
-	DJBoothSystem() {}
-	void setWorld(Box2DBridge& world);
+	DJBoothSystem(ResourceHandler* Res, std::vector<Entity*>* platforms, Entity* bg) :
+		m_resourcePtr(Res),
+		m_bgPtr(bg),
+		m_platformsPtr(platforms),
+		m_currentBg(0)
+	{}
+		
 	void addComponent(Component* comp);
 	void update(double dt);
 	float getScalar();
 private:
-	Box2DBridge * m_worldPtr;
-
+	ResourceHandler* m_resourcePtr;
+	Entity* m_bgPtr;
+	std::vector<Entity*>* m_platformsPtr;
+	int m_currentBg;
 };
 
 #endif // !  DJBOOTHSYSTEM_H

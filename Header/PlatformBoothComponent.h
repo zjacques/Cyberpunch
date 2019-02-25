@@ -21,6 +21,7 @@ public:
 		m_active = true;
 		m_timer = 15;
 		m_halfPoint = false;
+		bgSwitch = true;
 	}
 
 	void update(double dt)
@@ -28,7 +29,7 @@ public:
 		if (m_active)
 		{
 			m_timer -= dt;
-
+			
 			if (m_halfPoint == false)
 			{
 				m_speed -= .175f * dt;
