@@ -345,6 +345,7 @@ Entity * GameScene::createAI(int index, int posX, int posY, std::vector<Vector2f
 	{
 		m_animRects.push_back({ 85 * i, 0, 85, 85 });
 	}
+
 	animation->addAnimation("Run", Scene::resources().getTexture("Player Run"), m_animRects, .75f);
 	animation->addAnimation("Idle", Scene::resources().getTexture("Player Idle"), m_animRects, .5f);
 	animation->addAnimation("Punch 0", Scene::resources().getTexture("Player Left Punch"), m_animRects, .175f);
@@ -588,5 +589,4 @@ void GameScene::handleInput(InputSystem & input)
 	{
 		static_cast<AiInputComponent*>(&ai->getComponent("Input"))->handleInput("", ai);
 	}
-
 }

@@ -53,7 +53,8 @@ public:
 	{
 		std::cout << "MOVE LEFT" << std::endl;
 		//Passes STICKLEFT command to the AI input handler
-		m_input->handleInput("STICKLEFT", m_entity);
+		//m_input->handleInput("STICKLEFT", m_entity);
+		m_input->m_current["STICKLEFT"] = true;
 		//Return true to maintain behaviour tree flow of execution
 		return true;
 	}
@@ -81,7 +82,8 @@ public:
 	bool run() override
 	{
 		//Passes STICKRIGHT command to the AI input handler
-		m_input->handleInput("STICKRIGHT", m_entity);
+		//m_input->handleInput("STICKRIGHT", m_entity);
+		m_input->m_current["STICKRIGHT"] = true;
 		//return function as true to keep tree runnning
 		return true;
 	}
@@ -135,7 +137,8 @@ public:
 	/// <returns></returns>
 	bool run() override
 	{
-		m_input->handleInput("XBTN", m_entity);
+		//m_input->handleInput("XBTN", m_entity);
+		m_input->m_current["XBTN"] = true;
 		return true;
 	}
 };
@@ -267,17 +270,20 @@ public:
 		if (nearest->position.x < pos->position.x)
 		{
 			//move left
-			m_input->handleInput("STICKLEFT", m_entity);
+			//m_input->handleInput("STICKLEFT", m_entity);
+			m_input->m_current["STICKLEFT"] = true;
 		} //Check if the nearest player is to the right of AI
 		else if (nearest->position.x > pos->position.x)
 		{
 			//move right
-			m_input->handleInput("STICKRIGHT", m_entity);
+			//m_input->handleInput("STICKRIGHT", m_entity);
+			m_input->m_current["STICKRIGHT"] = true;
 		}
 		else //If player and AI are on the same X coord, jump
 		{
 			//jump
-			m_input->handleInput("YBTN", m_entity);
+			//m_input->handleInput("YBTN", m_entity);
+			m_input->m_current["YBTN"] = true;
 		}
 		//Return function as true to continue tree iteration
 		return true;
@@ -346,11 +352,13 @@ public:
 			//If they're left of AI, move right
 			if (nearest->position.x < pos->position.x)
 			{
-				m_input->handleInput("STICKRIGHT", m_entity);
+				//m_input->handleInput("STICKRIGHT", m_entity);
+				m_input->m_current["STICKRIGHT"] = true;
 			}
 			else //otherwise move left
 			{
-				m_input->handleInput("STICKLEFT", m_entity);
+				//m_input->handleInput("STICKLEFT", m_entity);
+				m_input->m_current["STICKLEFT"] = true;
 			}
 		}
 		return true;
@@ -436,7 +444,8 @@ public:
 
 	bool run() override
 	{
-		m_input->handleInput("STICKDOWN", m_entity);
+		//m_input->handleInput("STICKDOWN", m_entity);
+		m_input->m_current["STICKDOWN"] = true;
 		return true;
 	}
 };
@@ -468,14 +477,15 @@ public:
 			//If AI is right of player
 			if (nearest->position.x < pos->position.x)
 			{
-				//m_input->m_current["STICKLEFT"] = true;
+				//m_input->handleInput("STICKLEFT", m_entity);
 				//Move left
-				m_input->handleInput("STICKLEFT", m_entity);
+				m_input->m_current["STICKLEFT"] = true;
 			}
 			else //AI is left of player
 			{
 				//Move right
-				m_input->handleInput("STICKRIGHT", m_entity);
+				//m_input->handleInput("STICKRIGHT", m_entity);
+				m_input->m_current["STICKRIGHT"] = true;
 			}
 		}
 		return true;
