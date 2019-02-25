@@ -94,7 +94,7 @@ void GameScene::start()
 	//DJBooths created here 
 	auto& booths = Scene::resources().getLevelData()["Booth"];
 
-	for (int i = 0; i < booths.size(); i++)
+	for (int i = 0; i < booths.size() - 1; i++)
 	{
 		m_djBooths.push_back(createDJB(i, booths.at(i)["X"], booths.at(i)["Y"]));
 	}
@@ -469,6 +469,11 @@ void GameScene::createPlatforms(SDL_Renderer& renderer)
 
 		m_platforms.push_back(newPlat);
 	}
+
+	//DJBooths created here 
+	auto& booths = Scene::resources().getLevelData()["Booth"];
+
+	m_djBooths.push_back(createDJB(2, booths.at(2)["X"], booths.at(2)["Y"]));
 
 	//Set platforms created as true
 	m_platformsCreated = true;

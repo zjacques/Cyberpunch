@@ -15,10 +15,10 @@ void PickUpComponent::spawn(Box2DBridge & world)
 	m_body = new PhysicsComponent(new PositionComponent(0,0));
 
 	//creates a box2d body for the pickup and defines it proporties
-	m_body->m_body = world.createBox(1920 / 2, 1080 / 2, 50, 50, false, false, b2BodyType::b2_staticBody);
+	m_body->m_body = world.createBox(1920 / 2, 800, 50, 50, false, false, b2BodyType::b2_staticBody);
 	world.addProperties(*m_body->m_body, 0, 0, 0, true, new PhysicsComponent::ColData("Pickup", m_pickupEntity));
 	
-	static_cast<PositionComponent*>(&m_pickupEntity->getComponent("Pos"))->position = Vector2f(1920/ 2, 1080/ 2);
+	static_cast<PositionComponent*>(&m_pickupEntity->getComponent("Pos"))->position = Vector2f(1920/ 2, 800);
 }
 
 void PickUpComponent::despawn(Box2DBridge & world)
