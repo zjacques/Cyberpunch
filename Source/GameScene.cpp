@@ -167,6 +167,31 @@ void GameScene::update(double dt)
 
 	//Update camera
 	updateCamera(dt * scalar);
+
+
+	//Removing players from the game if they are dead
+	for (auto& player : m_allPlayers)
+	{
+		if(static_cast<PlayerComponent&>(player->getComponent("Player")).isDead())
+			m_playersToDel.emplace_back(player); //Add to the players to delete vector
+	}
+
+	//If there ar eplayers to delete, remove them from the systems and not draw them
+	if (m_playersToDel.empty() == false)
+	{
+		for (auto& player : m_playersToDel)
+		{
+			Scene::systems()["Render"]->deleteComponent(&player->getComponent("Sprite"));
+			Scene::systems()["Attack"]->deleteComponent(&player->getComponent("Attack"));
+			Scene::systems()["Animation"]->deleteComponent(&player->getComponent("Animation"));
+			Scene::systems()["Player Physics"]->deleteComponent(&player->getComponent("Player Physics"));
+			Scene::systems()["Respawn"]->deleteComponent(&player->getComponent("Player"));
+			std::remove(m_allPlayers.begin(), m_allPlayers.end(), player); //Remove the player from the all players vector
+			delete player;
+			player = nullptr;
+		}
+		m_playersToDel.clear();
+	}
 }
 
 void GameScene::updateStartTimer(double dt)
@@ -192,17 +217,11 @@ void GameScene::updateStartTimer(double dt)
 		}
 		else if (m_gameStartTimer <= 1)
 		{
-			if (anim->getCurrentAnimation()->getName() != "1")
-			{
-				anim->playAnimation("1", false);
-			}
+			anim->playAnimation("1", false);
 		}
 		else if (m_gameStartTimer <= 2)
 		{
-			if (anim->getCurrentAnimation()->getName() != "2")
-			{
-				anim->playAnimation("2", false);
-			}
+			anim->playAnimation("2", false);
 		}
 	}
 }
@@ -246,7 +265,7 @@ void GameScene::updateCamera(double dt)
 	{
 		maxDist += 50;
 
-		auto minZoom = Vector2f(1920 / 2, 1080 / 2);
+		auto minZoom = Vector2f(960, 540);
 		auto maxZoom = Vector2f(1920 * m_camera.MAX_ZOOM / 2, 1080 * m_camera.MAX_ZOOM / 2);
 
 		auto diff = minZoom.distance(maxZoom);
@@ -565,10 +584,10 @@ void GameScene::draw(SDL_Renderer & renderer)
 	renderSystem->render(renderer, m_camera);
 
 	//Drawing the jump sensors and attack boxes for the player (For debug only, this will be deleted)
-	for (int i = 0; i < m_numOfLocalPlayers; i++)
+	for (auto& player : m_allPlayers)
 	{
-		auto phys = static_cast<PlayerPhysicsComponent*>(&m_localPlayers.at(i)->getComponent("Player Physics"));
-		auto hit = static_cast<AttackComponent*>(&m_localPlayers.at(i)->getComponent("Attack"));
+		auto phys = static_cast<PlayerPhysicsComponent*>(&player->getComponent("Player Physics"));
+		auto hit = static_cast<AttackComponent*>(&player->getComponent("Attack"));
 
 		//Draw the players outline for the hitbox
 		//rect.w = phys->m_body->getSize().x;
@@ -654,11 +673,20 @@ void GameScene::handleInput(InputSystem & input)
 	//Only check for input if the game has started
 	if (m_gameStarted)
 	{
-		for (int i = 0; i < m_numOfLocalPlayers; i++)
+		for (auto& player : m_allPlayers)
+		{
+			auto input = dynamic_cast<InputComponent*>(&player->getComponent("Input"));
+			if (nullptr != input)
+			{
+				input->handleInput(player);
+			}
+		}
+
+		/*for (int i = 0; i < m_numOfLocalPlayers; i++)
 		{
 			auto input = static_cast<InputComponent*>(&m_localPlayers.at(i)->getComponent("Input"));
 			input->handleInput(m_localPlayers.at(i));
-		}
+		}*/
 		for (int i = 0; i < m_numOfOnlinePlayers; i++)
 		{
 			auto input = static_cast<OnlineInputComponent*>(&m_onlinePlayers.at(i)->getComponent("Input"));

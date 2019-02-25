@@ -42,8 +42,10 @@ public:
 		m_respawn = false;
 		m_respawning = false;
 		m_spawnTimer = 0;
+		auto phys = static_cast<PlayerPhysicsComponent*>(&m_playerPtr->getComponent("Player Physics"));
 		//Set the players position to the new position
-		static_cast<PlayerPhysicsComponent*>(&m_playerPtr->getComponent("Player Physics"))->m_body->setPosition(m_newSpawn->x, m_newSpawn->y);
+		phys->m_body->setPosition(m_newSpawn->x, m_newSpawn->y);
+		phys->damagePercentage() = 0; //Reset the damage percentage
 	}
 
 	Vector2f getSpawnLocation() { return *m_newSpawn; }

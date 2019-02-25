@@ -59,6 +59,7 @@ private:
 	std::vector<Entity*> m_localPlayers;
 	std::vector<Entity*> m_AIPlayers;
 	std::vector<Entity*> m_allPlayers; //All local, online and Ai players
+	std::vector<Entity*> m_playersToDel;
 	std::vector<InputSystem*> m_localInputs;
 	int m_numOfLocalPlayers;
 	Entity* m_pickUp;
