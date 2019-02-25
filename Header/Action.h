@@ -9,6 +9,12 @@
 #include "AiInputComponent.h"
 #include "PlayerPhysicsComponent.h"
 
+/// <summary>
+/// Action base class. All other concrete action
+/// classes are derived from this, and their function
+/// overridden from this.
+/// Pattern resembles command pattern.
+/// </summary>
 class Action : public BehaviourTree::Node
 {
 public:
@@ -16,10 +22,12 @@ public:
 	m_entity(e),
 	m_input(a)
 	{}
-
-	virtual bool run() = 0;
-	Entity * m_entity;
-	AiInputComponent * m_input;
+	//Run function called by the behaviour tree, overridden by the concrete actions
+	virtual bool run() = 0; 
+	//Stores a reference to the entity that owns the AI component
+	Entity * m_entity; 
+	//Stores a reference to the AIinput component for moving the AI player
+	AiInputComponent * m_input; 
 };
 
 #endif
@@ -35,10 +43,17 @@ public:
 	{
 	}
 
+	/// <summary>
+	/// Run function overridden from Action base class
+	/// function. When called moves the player left
+	/// by calling the stickleft command in the inputhandler
+	/// </summary>
+	/// <returns></returns>
 	bool run() override
 	{
-		//std::cout << "Walking left" << std::endl;
+		//Passes STICKLEFT command to the AI input handler
 		m_input->handleInput("STICKLEFT", m_entity);
+		//Return true to maintain behaviour tree flow of execution
 		return true;
 	}
 };
@@ -56,10 +71,17 @@ public:
 	{
 	}
 
+	/// <summary>
+	/// Run function overridden from Action base class
+	/// function. When called moves the player right
+	/// by calling the stickright command in the inputhandler
+	/// </summary>
+	/// <returns></returns>
 	bool run() override
 	{
-		//std::cout << "Walking right" << std::endl;
+		//Passes STICKRIGHT command to the AI input handler
 		m_input->handleInput("STICKRIGHT", m_entity);
+		//return function as true to keep tree runnning
 		return true;
 	}
 };
@@ -76,9 +98,15 @@ public:
 		: Action(e, a)
 	{
 	}
+	/// <summary>
+	/// Run function overridden from Action base class
+	/// function. When called makes the AI player jump
+	/// by calling the YBTN command in the inputhandler
+	/// </summary>
+	/// <returns></returns>
 	bool run() override
 	{
-		//std::cout << "Jump" << std::endl;
+		//Passes YBTN command to AI input handler
 		m_input->handleInput("YBTN", m_entity);
 		return true;
 	}
@@ -97,9 +125,13 @@ public:
 	{
 	}
 
+	/// <summary>
+	/// Makes the AI player jump by passing the XBTN command
+	/// to the AI input handler object.
+	/// </summary>
+	/// <returns></returns>
 	bool run() override
 	{
-		std::cout << "Punch" << std::endl;
 		m_input->handleInput("XBTN", m_entity);
 		return true;
 	}
@@ -126,7 +158,6 @@ public:
 	/// <returns></returns>
 	bool run() override
 	{
-		//std::cout << "Getting nearest player" << std::endl;
 		//Container to store nearest entity
 		auto nearest = new Entity("temp");
 
@@ -182,7 +213,6 @@ public:
 
 	bool run() override
 	{
-		//std::cout << "Close enough" << std::endl;
 		//Get AI component
 		auto comp = dynamic_cast<AIComponent *>(&m_entity->getComponent("AI"));
 		//Cast self component to PositionComponent
@@ -190,7 +220,7 @@ public:
 		//Cast nearest player entity from Ai component to Position component
 		auto nearest = dynamic_cast<PositionComponent *>(&comp->nearestPlayer->getComponent("Pos"));
 		//Return true if dist between two entities is less than 100
-		return dist(pos->position, nearest->position) < 1000 ? true : false;
+		return dist(pos->position, nearest->position) < 300 ? true : false;
 	}
 
 	//Euclidean distance function
@@ -224,7 +254,6 @@ public:
 		//Get AI component
 		auto comp = dynamic_cast<AIComponent *>(&m_entity->getComponent("AI"));
 
-		//std::cout << "Check direction" << std::endl;
 		//Cast self component to PositionComponent
 		auto pos = dynamic_cast<PositionComponent *>(&m_entity->getComponent("Pos"));
 
@@ -279,7 +308,6 @@ public:
 	/// <returns></returns>
 	bool run() override
 	{
-		//std::cout << "Check health" << std::endl;
 		auto p = dynamic_cast<PlayerPhysicsComponent *>(&m_entity->getComponent("Player Physics"));
 		return p->damagePercentage() > 50 ? true : false;
 	}
@@ -300,25 +328,24 @@ public:
 
 	bool run() override
 	{
-		//std::cout << "Fleeing" << std::endl;
-
 		//Get AI component
 		auto comp = dynamic_cast<AIComponent *>(&m_entity->getComponent("AI"));
 
-		std::cout << "Check direction" << std::endl;
 		//Cast self component to PositionComponent
 		auto pos = dynamic_cast<PositionComponent *>(&m_entity->getComponent("Position"));
 
 		//Cast nearest player entity from Ai component to Position component
 		auto nearest = dynamic_cast<PositionComponent *>(&comp->nearestPlayer->getComponent("Pos"));
 
+		//While the distance to the nearest enemy is less than 200
 		while (dist(pos->position, nearest->position) < 200)
 		{
+			//If they're left of AI, move right
 			if (nearest->position.x < pos->position.x)
 			{
 				m_input->handleInput("STICKRIGHT", m_entity);
 			}
-			else
+			else //otherwise move left
 			{
 				m_input->handleInput("STICKLEFT", m_entity);
 			}
@@ -347,12 +374,9 @@ public:
 
 	bool run() override
 	{
-		//std::cout << "Check if player above" << std::endl;
-
 		//Get AI component
 		auto comp = dynamic_cast<AIComponent *>(&m_entity->getComponent("AI"));
 
-		std::cout << "Check direction" << std::endl;
 		//Cast self component to PositionComponent
 		auto pos = dynamic_cast<PositionComponent *>(&m_entity->getComponent("Pos"));
 
@@ -360,7 +384,7 @@ public:
 		auto nearest = dynamic_cast<PositionComponent *>(&comp->nearestPlayer->getComponent("Pos"));
 
 		//Return function true if player position is below(screen axis) the AI 
-		return nearest->position.y > pos->position.y ? true : false;
+		return nearest->position.y > pos->position.y - 50 ? true : false;
 	}
 };
 
@@ -384,8 +408,6 @@ public:
 	/// <returns></returns>
 	bool run() override
 	{
-		//std::cout << "Check player health" << std::endl;
-
 		//Get AI component
 		auto comp = dynamic_cast<AIComponent *>(&m_entity->getComponent("AI"));
 
@@ -411,9 +433,54 @@ public:
 
 	bool run() override
 	{
-		//std::cout << "Drop down" << std::endl;
 		m_input->handleInput("STICKDOWN", m_entity);
 		return true;
+	}
+};
+
+#endif
+
+#ifndef MOVETOPLAYER_H
+#define MOVETOPLAYER_H
+
+class MoveToPlayer : public Action
+{
+public:
+	MoveToPlayer(Entity * e, AiInputComponent * a)
+		: Action(e, a)
+	{}
+
+	bool run() override
+	{
+		//Get AI component
+		auto comp = dynamic_cast<AIComponent *>(&m_entity->getComponent("AI"));
+		//Cast self component to PositionComponent
+		auto pos = dynamic_cast<PositionComponent *>(&m_entity->getComponent("Pos"));
+		//Cast nearest player entity from Ai component to Position component
+		auto nearest = dynamic_cast<PositionComponent *>(&comp->nearestPlayer->getComponent("Pos"));
+
+		//While the AI is more than 200 pixels from the player
+		if (dist(nearest->position, pos->position) > 50)
+		{
+			//If AI is right of player
+			if (nearest->position.x < pos->position.x)
+			{
+				//Move left
+				m_input->handleInput("STICKLEFT", m_entity);
+			}
+			else //AI is left of player
+			{
+				//Move right
+				m_input->handleInput("STICKRIGHT", m_entity);
+			}
+		}
+		return true;
+	}
+
+	//Euclidean distance function
+	float dist(Vector2f p1, Vector2f p2)
+	{
+		return sqrt((p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y));
 	}
 };
 
