@@ -12,6 +12,7 @@ public:
 	void centerCamera(Vector2f pos);
 	void zoom(float scalar);
 	void setZoom(SDL_Renderer* renderer);
+	void setActive(bool b) { m_useCamera = b; }
 
 	float x() { return m_useCamera ? m_view.x : 0; }
 	float y() { return m_useCamera ? m_view.y : 0; }

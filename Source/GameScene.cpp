@@ -7,14 +7,19 @@
 
 GameScene::GameScene() :
 	m_bgEntity("Game BG"),
+	m_gameStart("Start Timer"),
 	m_platformsCreated(false),
-	m_camera(true)
+	m_camera(false),
+	m_gameStartTimer(3)
 {
 	m_numOfAIPlayers = 2;
 }
 
 void GameScene::start()
 {
+	m_startTimerEnded = false;
+	m_gameStarted = false;
+	m_gameStartTimer = 3; //3 Seconds
 	m_physicsSystem = PhysicsSystem(); // Recreate the physics system
 	m_physicsWorld.initWorld(); //Create the physics world
 	m_physicsWorld.addContactListener(m_collisionListener); //Add collision listener to the world
@@ -65,14 +70,17 @@ void GameScene::start()
 	for (int i = 0; i < m_numOfLocalPlayers; i++)
 	{
 		m_localPlayers.push_back(createPlayer(i,600 + 150 * i, 360, true, spawnPos));
+		m_allPlayers.emplace_back(m_localPlayers.at(i)); //Add to all players vector
 	}
 	for (int i = 0; i < m_numOfOnlinePlayers; i++)
 	{
 		m_onlinePlayers.push_back(createPlayer(i+ m_numOfLocalPlayers, 600 + 150 * i+ m_numOfLocalPlayers, 360, false, spawnPos));
+		m_allPlayers.emplace_back(m_onlinePlayers.at(i)); //Add to all players vector
 	}
 	for (int i = 0; i < m_numOfAIPlayers; i++)
 	{
 		m_AIPlayers.push_back(createAI(1, 1500 + 150 * 1, 360, spawnPos));
+		m_allPlayers.emplace_back(m_AIPlayers.at(i)); //Add ai to all players vector
 	}
 	
 	//pickup Entity
@@ -104,6 +112,29 @@ void GameScene::start()
 	{
 		m_killboxes.push_back(createKillBox(kb.at(i)["X"], kb.at(i)["Y"], kb.at(i)["W"], kb.at(i)["H"]));
 	}
+
+	//Setup timer
+	setupTimer();
+}
+
+void GameScene::setupTimer()
+{
+	auto pos = new PositionComponent(960, 540); //Center of the screen
+	m_gameStart.addComponent("Pos", pos);
+	m_gameStart.addComponent("Sprite", new SpriteComponent(pos, Vector2f(1700, 200), Vector2f(350, 200), NULL, 5)); //Layer 5 to be drawn infront of everything
+	std::vector<SDL_Rect> m_animRects;
+	for (int i = 0; i < 20; i++)
+		m_animRects.push_back({i * 350, 0, 350, 200});
+	auto anim = new AnimationComponent(&m_gameStart.getComponent("Sprite"));
+	anim->addAnimation("1", Scene::resources().getTexture("Timer 1"), m_animRects, .2f);
+	anim->addAnimation("2", Scene::resources().getTexture("Timer 2"), m_animRects, .2f);
+	anim->addAnimation("3", Scene::resources().getTexture("Timer 3"), m_animRects, .2f);
+	anim->addAnimation("Fight", Scene::resources().getTexture("Timer Fight"), m_animRects, .2f);
+	anim->playAnimation("3", false); //Play the first part of the animation
+	m_gameStart.addComponent("Animation", anim);
+
+	Scene::systems()["Animation"]->addComponent(anim);
+	Scene::systems()["Render"]->addComponent(&m_gameStart.getComponent("Sprite"));
 }
 
 void GameScene::stop()
@@ -131,24 +162,66 @@ void GameScene::update(double dt)
 	Scene::systems()["Dust"]->update(dt * scalar);
 	Scene::systems()["Respawn"]->update(dt * scalar);
 
+	//Update the game start timer
+	updateStartTimer(dt);
 
 	//Update camera
 	updateCamera(dt * scalar);
 }
 
+void GameScene::updateStartTimer(double dt)
+{
+	//If the game hasnt started yet, decrement the timer
+	if (m_startTimerEnded == false)
+	{
+		auto anim = static_cast<AnimationComponent*>(&m_gameStart.getComponent("Animation"));
+
+		m_gameStartTimer -= dt; //Take dt away from our start timer
+
+		if (m_gameStartTimer <= -1)
+		{
+			Scene::systems()["Animation"]->deleteComponent(anim);
+			Scene::systems()["Render"]->deleteComponent(static_cast<SpriteComponent*>(&m_gameStart.getComponent("Sprite")));
+			m_startTimerEnded = true;
+		}
+		else if(m_gameStartTimer <= 0)
+		{
+			anim->playAnimation("Fight", false);
+			m_gameStarted = true;
+			m_camera.setActive(true);
+		}
+		else if (m_gameStartTimer <= 1)
+		{
+			if (anim->getCurrentAnimation()->getName() != "1")
+			{
+				anim->playAnimation("1", false);
+			}
+		}
+		else if (m_gameStartTimer <= 2)
+		{
+			if (anim->getCurrentAnimation()->getName() != "2")
+			{
+				anim->playAnimation("2", false);
+			}
+		}
+	}
+}
+
 void GameScene::updateCamera(double dt)
 {
 	//The average position of the players
-	auto avgPos = Vector2f(1920 / 2 , 1080 / 2);
+	auto avgPos = Vector2f(960 , 540);
 	float maxDist = 0.0f;
 	auto center = Vector2f();
 
 	Vector2f lastP;
 	int divisors = 0;
 
-	for (auto& player : m_localPlayers)
+	for (auto& player : m_allPlayers)
 	{
-		if (static_cast<PlayerComponent*>(&player->getComponent("Player"))->isDead() == false)
+		//Only include the playe rif they are not dead and not respawning
+		if (static_cast<PlayerComponent&>(player->getComponent("Player")).isDead() == false && 
+			static_cast<PlayerComponent&>(player->getComponent("Player")).isRespawning() == false)
 		{
 			auto pos = static_cast<PositionComponent*>(&player->getComponent("Pos"))->position;
 			divisors++;
@@ -337,6 +410,7 @@ Entity * GameScene::createAI(int index, int posX, int posY, std::vector<Vector2f
 	ai->addComponent("Pos", pos);
 	ai->addComponent("AI", behaviour);
 	ai->addComponent("Dust Trigger", new DustTriggerComponent());
+	ai->addComponent("Player", player);
 	ai->addComponent("Attack", new AttackComponent());
 	ai->addComponent("Sprite", new SpriteComponent(&ai->getComponent("Pos"), Vector2f(1700, 85), Vector2f(85, 85), Scene::resources().getTexture("Player Run"), 2));
 	auto animation = new AnimationComponent(&ai->getComponent("Sprite"));
@@ -367,6 +441,8 @@ Entity * GameScene::createAI(int index, int posX, int posY, std::vector<Vector2f
 	Scene::systems()["Render"]->addComponent(&ai->getComponent("Sprite"));
 
 	Scene::systems()["Animation"]->addComponent(&ai->getComponent("Animation"));
+
+	Scene::systems()["Respawn"]->addComponent(&ai->getComponent("Player"));
 
 	//Create the physics component and set up the bodies
 	auto phys = new PlayerPhysicsComponent(&ai->getComponent("Pos"));
@@ -495,46 +571,46 @@ void GameScene::draw(SDL_Renderer & renderer)
 		auto hit = static_cast<AttackComponent*>(&m_localPlayers.at(i)->getComponent("Attack"));
 
 		//Draw the players outline for the hitbox
-		rect.w = phys->m_body->getSize().x;
-		rect.h = phys->m_body->getSize().y;
-		rect.x = phys->m_body->getPosition().x - (rect.w / 2) - m_camera.x();
-		rect.y = phys->m_body->getPosition().y - (rect.h / 2) - m_camera.y();
+		//rect.w = phys->m_body->getSize().x;
+		//rect.h = phys->m_body->getSize().y;
+		//rect.x = phys->m_body->getPosition().x - (rect.w / 2) - m_camera.x();
+		//rect.y = phys->m_body->getPosition().y - (rect.h / 2) - m_camera.y();
 
-		if (phys->isSupered())
-		{
-			SDL_SetRenderDrawColor(&renderer, 255, 0, 0, 255);
-			SDL_RenderFillRect(&renderer, &rect);
-		}
-		//Draw orange if stunned by a super punch
-		else if (phys->superStunned())
-		{
-			SDL_SetRenderDrawColor(&renderer, 255, 110, 0, 55);
-			SDL_RenderFillRect(&renderer, &rect);
-		}
-		//If the player is stunned, draw a yellow rectangle
-		else if (phys->stunned())
-		{
-			SDL_SetRenderDrawColor(&renderer, 255, 255, 0, 20);
-			SDL_RenderFillRect(&renderer, &rect);
-		}
+		//if (phys->isSupered())
+		//{
+		//	SDL_SetRenderDrawColor(&renderer, 255, 0, 0, 255);
+		//	SDL_RenderFillRect(&renderer, &rect);
+		//}
+		////Draw orange if stunned by a super punch
+		//else if (phys->superStunned())
+		//{
+		//	SDL_SetRenderDrawColor(&renderer, 255, 110, 0, 55);
+		//	SDL_RenderFillRect(&renderer, &rect);
+		//}
+		////If the player is stunned, draw a yellow rectangle
+		//else if (phys->stunned())
+		//{
+		//	SDL_SetRenderDrawColor(&renderer, 255, 255, 0, 20);
+		//	SDL_RenderFillRect(&renderer, &rect);
+		//}
 
 
-		rect.w = phys->m_jumpSensor->getSize().x;
-		rect.h = phys->m_jumpSensor->getSize().y;
-		rect.x = phys->m_jumpSensor->getPosition().x - (rect.w / 2) - m_camera.x();
-		rect.y = phys->m_jumpSensor->getPosition().y - (rect.h / 2) - m_camera.y();
-		SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
-		SDL_RenderDrawRect(&renderer, &rect);
+		//rect.w = phys->m_jumpSensor->getSize().x;
+		//rect.h = phys->m_jumpSensor->getSize().y;
+		//rect.x = phys->m_jumpSensor->getPosition().x - (rect.w / 2) - m_camera.x();
+		//rect.y = phys->m_jumpSensor->getPosition().y - (rect.h / 2) - m_camera.y();
+		//SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
+		//SDL_RenderDrawRect(&renderer, &rect);
 
-		if (nullptr != hit->m_currentAttack)
-		{
-			rect.w = hit->m_currentAttack->m_body->getSize().x;
-			rect.h = hit->m_currentAttack->m_body->getSize().y;
-			rect.x = hit->m_currentAttack->m_body->getPosition().x - (rect.w / 2) - m_camera.x();
-			rect.y = hit->m_currentAttack->m_body->getPosition().y - (rect.h / 2) - m_camera.y();
-			SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
-			SDL_RenderDrawRect(&renderer, &rect);
-		}
+		//if (nullptr != hit->m_currentAttack)
+		//{
+		//	rect.w = hit->m_currentAttack->m_body->getSize().x;
+		//	rect.h = hit->m_currentAttack->m_body->getSize().y;
+		//	rect.x = hit->m_currentAttack->m_body->getPosition().x - (rect.w / 2) - m_camera.x();
+		//	rect.y = hit->m_currentAttack->m_body->getPosition().y - (rect.h / 2) - m_camera.y();
+		//	SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
+		//	SDL_RenderDrawRect(&renderer, &rect);
+		//}
 	}
 
 	for (auto i : m_AIPlayers)
@@ -575,16 +651,19 @@ void GameScene::handleInput(InputSystem & input)
 	//Update the input system
 	Scene::systems()["Input"]->update(0);
 
-	for (int i = 0; i < m_numOfLocalPlayers; i++)
+	//Only check for input if the game has started
+	if (m_gameStarted)
 	{
-		auto input = static_cast<InputComponent*>(&m_localPlayers.at(i)->getComponent("Input"));
-		input->handleInput(m_localPlayers.at(i));
+		for (int i = 0; i < m_numOfLocalPlayers; i++)
+		{
+			auto input = static_cast<InputComponent*>(&m_localPlayers.at(i)->getComponent("Input"));
+			input->handleInput(m_localPlayers.at(i));
+		}
+		for (int i = 0; i < m_numOfOnlinePlayers; i++)
+		{
+			auto input = static_cast<OnlineInputComponent*>(&m_onlinePlayers.at(i)->getComponent("Input"));
+			input->handleInput(m_onlinePlayers.at(i));
+			//m_onlinePlayers.at(i).handleInput(*m_onlineInputs.at(i));
+		}
 	}
-	for (int i = 0; i < m_numOfOnlinePlayers; i++)
-	{
-		auto input = static_cast<OnlineInputComponent*>(&m_onlinePlayers.at(i)->getComponent("Input"));
-		input->handleInput(m_onlinePlayers.at(i));
-		//m_onlinePlayers.at(i).handleInput(*m_onlineInputs.at(i));
-	}
-
 }

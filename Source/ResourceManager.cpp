@@ -50,6 +50,11 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 	m_map["Password Yes"] = loadFromPath("GUI/Yes_Password.png", renderer);
 	m_map["Password No"] = loadFromPath("GUI/No_Password.png", renderer);
 	m_map["Achievements Button"] = loadFromPath("GUI/AchievementsButton.png", renderer);
+	//Game start animations
+	m_map["Timer 1"] = loadFromPath("GUI/1 Timer.png", renderer);
+	m_map["Timer 2"] = loadFromPath("GUI/2 Timer.png", renderer);
+	m_map["Timer 3"] = loadFromPath("GUI/3 Timer.png", renderer);
+	m_map["Timer Fight"] = loadFromPath("GUI/Fight Timer.png", renderer);
 
 	//The colours of the platforms
 	auto platforms = std::vector<std::string>({"Green", "Blue", "Orange", "Pink"});

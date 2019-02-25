@@ -31,8 +31,10 @@ class GameScene : public Scene
 public:
 	GameScene();
 	void start();
+	void setupTimer();
 	void stop();
 	void update(double dt);
+	void updateStartTimer(double dt);
 
 	Entity* createAI(int index, int posX, int posY, std::vector<Vector2f> spawnPositions);
 
@@ -49,10 +51,14 @@ public:
 private:
 	bool m_platformsCreated;
 	bool m_boothCreated;
+	bool m_gameStarted, m_startTimerEnded;
 	Entity m_bgEntity;
+	Entity m_gameStart;
+	float m_gameStartTimer;
 	std::vector<Entity*> m_killboxes;
 	std::vector<Entity*> m_localPlayers;
 	std::vector<Entity*> m_AIPlayers;
+	std::vector<Entity*> m_allPlayers; //All local, online and Ai players
 	std::vector<InputSystem*> m_localInputs;
 	int m_numOfLocalPlayers;
 	Entity* m_pickUp;

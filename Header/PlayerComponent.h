@@ -11,7 +11,8 @@ public:
 		m_newSpawn(nullptr),
 		m_playerPtr(player),
 		m_spawnLocations(locations),
-		m_respawn(false)
+		m_respawn(false),
+		m_respawning(false)
 	{
 	}
 
@@ -28,6 +29,7 @@ public:
 		//If the player is not dead, pick a spawn location
 		if (m_dead == false)
 		{
+			m_respawning = true;
 			m_respawn = true;
 			m_spawnTimer = 2.5f; //Respawn after 2.5 seconds
 			m_newSpawn = &m_spawnLocations.at(rand() % m_spawnLocations.size()); //Number between 0 and the size of the amount of spawn points
@@ -38,6 +40,7 @@ public:
 	void spawnPlayer()
 	{
 		m_respawn = false;
+		m_respawning = false;
 		m_spawnTimer = 0;
 		//Set the players position to the new position
 		static_cast<PlayerPhysicsComponent*>(&m_playerPtr->getComponent("Player Physics"))->m_body->setPosition(m_newSpawn->x, m_newSpawn->y);
@@ -46,13 +49,15 @@ public:
 	Vector2f getSpawnLocation() { return *m_newSpawn; }
 	Entity* getPlayer() { return m_playerPtr; }
 	float& getTimer() { return m_spawnTimer; }
+	int& getLives() { return m_lives; }
 	bool& isDead() { return m_dead; }
 	bool& toRespawn() { return m_respawn; }
+	bool& isRespawning() { return m_respawning; }
 private:
 	float m_spawnTimer;
 	Entity * m_playerPtr;
 	Vector2f* m_newSpawn;
 	std::vector<Vector2f> m_spawnLocations;
-	bool m_dead, m_respawn;
+	bool m_dead, m_respawn, m_respawning;
 	int m_lives;
 };
