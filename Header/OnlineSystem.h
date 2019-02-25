@@ -32,13 +32,19 @@ public:
 	void makeHost();
 	bool joinLobby(int lob);
 
+	vector<int> getPlayers();
+
+	void startGame();
+
+	bool gameStarted = false;
+
 	bool isConnected = false;
+	bool m_isHost = false;
 
-
+	int m_playerNumber = 1;
 
 private:
 	ClientSocket* m_Socket;
-	bool m_isHost = false;
 	int m_lobbyNumber = 0;
 	vector<OnlineSendComponent*> m_sendingPlayers;
 	vector<OnlineInputComponent*> m_receivingPlayers;

@@ -4,6 +4,7 @@
 #include "OptionsScene.h"
 #include "GameScene.h"
 #include "LobbyScene.h"
+#include "PreGameScene.h"
 
 class MenuManager
 {
