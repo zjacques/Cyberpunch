@@ -63,6 +63,10 @@ void OnlineSystem::ReceiveCommands()
 	if (receivedMessage != "")
 	{
 		json currentPacket = json::parse(receivedMessage);
+		if (currentPacket["type"] == "START")
+		{
+			gameStarted = true;
+		}else
 		if (currentPacket["type"] == "COMMANDS")
 		{
 			for (auto& plyr : m_receivingPlayers)
@@ -150,6 +154,7 @@ void OnlineSystem::makeHost()
 		{
 			m_lobbyNumber = lobby["lobby"];
 			m_isHost = true;
+			m_playerNumber = 0;
 		}
 	}
 }
@@ -170,6 +175,7 @@ bool OnlineSystem::joinLobby(int lob)
 		if (lobby["type"] == "JOINED")
 		{
 			m_lobbyNumber = lob;
+			m_playerNumber = lobby["player"];
 			//go to pregame screen
 			return true;
 		}
@@ -180,4 +186,33 @@ bool OnlineSystem::joinLobby(int lob)
 		}
 	}
 
+}
+
+vector<int> OnlineSystem::getPlayers()
+{
+	vector<int> retval;
+	string jsonString = "{\"type\" : \"PLYRS\"}";
+	m_Socket->sendString(jsonString);
+	string receivedMessage;
+	do {
+		receivedMessage = m_Socket->checkForIncomingMessages();
+	} while (receivedMessage == "");
+
+	json players = json::parse(receivedMessage);
+
+	if (players["type"] == "NMBRS")
+	{
+		vector<int> retvaL = players["list"];
+		retval = retvaL;
+	}
+
+
+	return retval;
+}
+
+void OnlineSystem::startGame()
+{
+	string jsonString = "{\"type\" : \"START\"}";
+	m_Socket->sendString(jsonString);
+	gameStarted = true;
 }

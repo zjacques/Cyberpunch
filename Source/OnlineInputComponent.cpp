@@ -8,6 +8,7 @@ OnlineInputComponent::OnlineInputComponent()
 
 void OnlineInputComponent::handleInput(void* e)
 {
+	auto entity = static_cast<Entity*>(e);
 	if (m_commandsToSend.size() > 0)
 	{
 		string topCMD = m_commandsToSend.front();
@@ -40,10 +41,12 @@ void OnlineInputComponent::handleInput(void* e)
 		//If the current command was set, execute the command
 		if (nullptr != m_currentCMD)
 		{
-			auto entity = static_cast<Entity*>(e);
 			m_currentCMD->execute(*entity);
 		}
 	}
+	else if (static_cast<AttackComponent*>(&entity->getComponent("Attack"))->attackActive() == false)
+		static_cast<AnimationComponent*>(&entity->getComponent("Animation"))->playAnimation("Idle", true);
+	
 	
 
 }

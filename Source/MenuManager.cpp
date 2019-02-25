@@ -11,6 +11,7 @@ MenuManager::MenuManager() :
 	m_scenes["Options"] = new OptionsScene();
 	m_scenes["Game"] = new GameScene();
 	m_scenes["Multiplayer"] = new LobbyScene();
+	m_scenes["PreGame"] = new PreGameScene();
 }
 
 void MenuManager::update(double dt)
