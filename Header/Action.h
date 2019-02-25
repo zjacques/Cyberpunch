@@ -220,7 +220,7 @@ public:
 		//Cast nearest player entity from Ai component to Position component
 		auto nearest = dynamic_cast<PositionComponent *>(&comp->nearestPlayer->getComponent("Pos"));
 		//Return true if dist between two entities is less than 100
-		return dist(pos->position, nearest->position) < 1000 ? true : false;
+		return dist(pos->position, nearest->position) < 300 ? true : false;
 	}
 
 	//Euclidean distance function
@@ -384,7 +384,7 @@ public:
 		auto nearest = dynamic_cast<PositionComponent *>(&comp->nearestPlayer->getComponent("Pos"));
 
 		//Return function true if player position is below(screen axis) the AI 
-		return nearest->position.y > pos->position.y ? true : false;
+		return nearest->position.y > pos->position.y - 50 ? true : false;
 	}
 };
 
@@ -435,6 +435,52 @@ public:
 	{
 		m_input->handleInput("STICKDOWN", m_entity);
 		return true;
+	}
+};
+
+#endif
+
+#ifndef MOVETOPLAYER_H
+#define MOVETOPLAYER_H
+
+class MoveToPlayer : public Action
+{
+public:
+	MoveToPlayer(Entity * e, AiInputComponent * a)
+		: Action(e, a)
+	{}
+
+	bool run() override
+	{
+		//Get AI component
+		auto comp = dynamic_cast<AIComponent *>(&m_entity->getComponent("AI"));
+		//Cast self component to PositionComponent
+		auto pos = dynamic_cast<PositionComponent *>(&m_entity->getComponent("Pos"));
+		//Cast nearest player entity from Ai component to Position component
+		auto nearest = dynamic_cast<PositionComponent *>(&comp->nearestPlayer->getComponent("Pos"));
+
+		//While the AI is more than 200 pixels from the player
+		if (dist(nearest->position, pos->position) > 50)
+		{
+			//If AI is right of player
+			if (nearest->position.x < pos->position.x)
+			{
+				//Move left
+				m_input->handleInput("STICKLEFT", m_entity);
+			}
+			else //AI is left of player
+			{
+				//Move right
+				m_input->handleInput("STICKRIGHT", m_entity);
+			}
+		}
+		return true;
+	}
+
+	//Euclidean distance function
+	float dist(Vector2f p1, Vector2f p2)
+	{
+		return sqrt((p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y));
 	}
 };
 
