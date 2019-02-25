@@ -131,7 +131,7 @@ void LobbyScene::handleButtonPressed()
 
 	if (m_network->joinLobby(1))//plz to always be nonzero
 	{
-		Scene::goToScene("Game");
+		Scene::goToScene("PreGame");
 	}
 	else {
 		//Give failure message, refresh
@@ -193,5 +193,6 @@ void LobbyScene::requestHost()
 {
 	m_network->makeHost();
 	cout << "hosting" << endl;
+	Scene::goToScene("PreGame");
 	//go to pregame lobby to wait for more players to join
 }

@@ -170,6 +170,7 @@ bool OnlineSystem::joinLobby(int lob)
 		if (lobby["type"] == "JOINED")
 		{
 			m_lobbyNumber = lob;
+			m_playerNumber = lobby["player"];
 			//go to pregame screen
 			return true;
 		}
@@ -180,4 +181,26 @@ bool OnlineSystem::joinLobby(int lob)
 		}
 	}
 
+}
+
+vector<int> OnlineSystem::getPlayers()
+{
+	vector<int> retval;
+	string jsonString = "{\"type\" : \"PLYRS\"}";
+	m_Socket->sendString(jsonString);
+	string receivedMessage;
+	do {
+		receivedMessage = m_Socket->checkForIncomingMessages();
+	} while (receivedMessage == "");
+
+	json players = json::parse(receivedMessage);
+
+	if (players["type"] == "NMBRS")
+	{
+		vector<int> retvaL = players["list"];
+		retval = retvaL;
+	}
+
+
+	return retval;
 }

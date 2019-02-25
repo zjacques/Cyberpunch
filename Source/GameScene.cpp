@@ -36,8 +36,11 @@ void GameScene::start()
 	//Add bg sprite component to the render system
 	Scene::systems()["Render"]->addComponent(&m_bgEntity.getComponent("Sprite"));
 
-	m_numOfLocalPlayers = SDL_NumJoysticks();
-	m_numOfOnlinePlayers = 0;//get the number of players from the network system
+	//m_numOfLocalPlayers = SDL_NumJoysticks();
+	//m_numOfOnlinePlayers = 0;//get the number of players from the network system
+
+	m_numOfLocalPlayers = PreGameScene::playerIndexes.localPlyrs.size();
+	m_numOfOnlinePlayers = PreGameScene::playerIndexes.onlinePlyrs.size();
 
 	// Initialise SDL_net (Note: We don't initialise or use normal SDL at all - only the SDL_net library!)
 	/*if (SDLNet_Init() == -1)
@@ -66,11 +69,13 @@ void GameScene::start()
 	}
 	for (int i = 0; i < m_numOfLocalPlayers; i++)
 	{
-		m_localPlayers.push_back(createPlayer(i,600 + 150 * i, 360, true, spawnPos));
+		int dex = PreGameScene::playerIndexes.localPlyrs[i];
+		m_localPlayers.push_back(createPlayer(dex, i, 600 + 150 * dex, 360, true, spawnPos));
 	}
 	for (int i = 0; i < m_numOfOnlinePlayers; i++)
 	{
-		m_onlinePlayers.push_back(createPlayer(i+ m_numOfLocalPlayers, 600 + 150 * i+ m_numOfLocalPlayers, 360, false, spawnPos));
+		int dex = PreGameScene::playerIndexes.onlinePlyrs[i];
+		m_onlinePlayers.push_back(createPlayer(dex, 0, 600 + 150 * dex, 360, false, spawnPos));
 	}
 	
 	//pickup Entity
@@ -102,7 +107,7 @@ void GameScene::start()
 		Scene::systems()["PickUp"]->addComponent(&m_pickUp->getComponent("PickUp"));
 		//static_cast<OnlineSystem*>(Scene::systems()["Network"])->getLobbies();
 //	}
-		m_AIPlayers.push_back(createAI(1, 1500 + 150 * 1, 360));
+		//m_AIPlayers.push_back(createAI(1, 1500 + 150 * 1, 360));
 
 		auto& booths = Scene::resources().getLevelData()["Booth"];
 
@@ -197,7 +202,7 @@ void GameScene::updateCamera(double dt)
 	m_camera.update(dt);
 }
 
-Entity * GameScene::createPlayer(int index,int posX, int posY, bool local, std::vector<Vector2f> spawnPositions)
+Entity * GameScene::createPlayer(int playerNumber,int controllerNumber, int posX, int posY, bool local, std::vector<Vector2f> spawnPositions)
 {
 	auto p = new Entity("Player");
 	p->addComponent("Pos", new PositionComponent(0,0));
@@ -237,14 +242,14 @@ Entity * GameScene::createPlayer(int index,int posX, int posY, bool local, std::
 	if (local) {
 		auto input = new PlayerInputComponent();
 		Scene::systems()["Input"]->addComponent(input);
-		input->initialiseJoycon(index);
-		input->m_playerNumber = index;
+		input->initialiseJoycon(controllerNumber);
+		input->m_playerNumber = playerNumber;
 		p->addComponent("Input", input);
 	}
 	else {
 		auto input = new OnlineInputComponent();
 		static_cast<OnlineSystem*>(Scene::systems()["Network"])->addReceivingPlayer(input);
-		input->m_playerNumber = index;
+		input->m_playerNumber = playerNumber;
 		p->addComponent("Input", input);
 	}
 
@@ -268,7 +273,7 @@ Entity * GameScene::createPlayer(int index,int posX, int posY, bool local, std::
 	if (netSys->isConnected && local)
 	{
 		auto net = new OnlineSendComponent();
-		net->m_playerNumber = index;
+		net->m_playerNumber = playerNumber;
 		p->addComponent("Send", net);
 		netSys->addSendingPlayer(net);
 	} //if it can't connect to the server, it didn't need to be online anyway

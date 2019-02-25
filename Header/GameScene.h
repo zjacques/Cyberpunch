@@ -3,6 +3,7 @@
 #include "Scene.h"
 #include "Entity.h"
 #include "AttackSystem.h"
+#include "PreGameScene.h"
 
 #include "PhysicsComponent.h"
 #include "PlayerInputComponent.h"
@@ -42,7 +43,7 @@ public:
 
 	void createPlatforms(SDL_Renderer& renderer);
 
-	Entity* createPlayer(int index, int posX, int posY, bool local, std::vector<Vector2f> spawnPositions);
+	Entity* createPlayer(int playerNumber, int controllerNumber, int posX, int posY, bool local, std::vector<Vector2f> spawnPositions);
 	Entity* createKillBox(int posX, int posY, int width, int height);
 	
 	void draw(SDL_Renderer& renderer);

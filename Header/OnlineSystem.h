@@ -32,10 +32,12 @@ public:
 	void makeHost();
 	bool joinLobby(int lob);
 
+	vector<int> getPlayers();
+
 	bool isConnected = false;
 	bool m_isHost = false;
 
-
+	int m_playerNumber = 1;
 
 private:
 	ClientSocket* m_Socket;
