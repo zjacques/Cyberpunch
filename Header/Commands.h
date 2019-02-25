@@ -30,6 +30,12 @@ public:
 			if (phys->canJump())
 			{
 				phys->jump();
+				auto a = static_cast<AnimationComponent*>(&e.getComponent("Animation"));
+				a->playAnimation("Jump", false);
+				a->getCurrentAnimation()->resetAnimation();
+				auto s = static_cast<SpriteComponent*>(&e.getComponent("Sprite"));
+				s->setTexture(a->getCurrentAnimation()->getTexture());
+
 			}
 			auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
 			if (net != NULL) 
@@ -57,7 +63,12 @@ public:
 				phys->moveLeft();
 				//Play run animation
 				auto a = static_cast<AnimationComponent*>(&e.getComponent("Animation"));
-				a->playAnimation("Run", true);
+
+				//Play run if we are not playing th ejump animation and it isnt completed yet
+				if (!(a->getCurrentID() == "Jump" && a->getCurrentAnimation()->getCompleted() == false))
+				{
+					a->playAnimation("Run", true);
+				}
 				auto s = static_cast<SpriteComponent*>(&e.getComponent("Sprite"));
 				s->setScale(1, s->getScale().y);
 				s->setTexture(a->getCurrentAnimation()->getTexture());
@@ -90,7 +101,11 @@ public:
 			{
 				phys->moveRight();
 				auto a = static_cast<AnimationComponent*>(&e.getComponent("Animation"));
-				a->playAnimation("Run", true);
+				//Play run if we are not playing th ejump animation and it isnt completed yet
+				if (!(a->getCurrentID() == "Jump" && a->getCurrentAnimation()->getCompleted() == false))
+				{
+					a->playAnimation("Run", true);
+				}
 				auto s = static_cast<SpriteComponent*>(&e.getComponent("Sprite"));
 				s->setScale(-1, s->getScale().y);
 				s->setTexture(a->getCurrentAnimation()->getTexture());

@@ -35,6 +35,7 @@ public:
 	void stop();
 	void update(double dt);
 	void updateStartTimer(double dt);
+	void updateEndGameTimer(double dt);
 
 	Entity* createAI(int index, int posX, int posY, std::vector<Vector2f> spawnPositions);
 
@@ -51,10 +52,10 @@ public:
 private:
 	bool m_platformsCreated;
 	bool m_boothCreated;
-	bool m_gameStarted, m_startTimerEnded;
+	bool m_gameStarted, m_startTimerEnded, m_gameOver;
 	Entity m_bgEntity;
-	Entity m_gameStart;
-	float m_gameStartTimer;
+	Entity m_gameStart, m_gameEndE;
+	float m_gameStartTimer, m_endGameTimer;
 	std::vector<Entity*> m_killboxes;
 	std::vector<Entity*> m_localPlayers;
 	std::vector<Entity*> m_AIPlayers;
@@ -78,4 +79,5 @@ private:
 	std::vector<Entity*> m_platforms;
 
 	Camera m_camera;
+	SDL_Renderer* m_rendererPtr; //Used for resetting the render scale when exiting a game
 };

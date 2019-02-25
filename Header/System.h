@@ -19,6 +19,11 @@ public:
 		m_components.erase(std::remove(m_components.begin(), m_components.end(), comp), m_components.end());
 	}
 
+	void removeAllComponents()
+	{
+		m_components.clear();
+	}
+
 	std::vector<Component *> m_components;
 };
 

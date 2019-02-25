@@ -6,6 +6,7 @@
 #include "DustTriggerComponent.h"
 #include "DJboothComponent.h"
 #include "PlayerComponent.h"
+#include "AnimationComponent.h"
 
 
 void CollisionListener::BeginContact(b2Contact * contact)
@@ -177,11 +178,18 @@ void CollisionListener::checkPlayerAttack(b2Contact * contact)
 		{
 			otherPPhys->superStun(); //Super stun the other player
 			attackingPPhys->endSuper(); //End super for the player that hit with it
+			static_cast<AnimationComponent&>(otherP->getComponent("Animation")).playAnimation("Super Stun", false);
 		}
 
 		otherPPhys->damage(dmgP); //Add damage of the punch to the other players damage percentage
 		otherPPhys->applyDamageImpulse(xImpulse, yImpulse); //Knock back the other player back
 		otherPPhys->stun();
+
+		if(xImpulse < 75 && yImpulse < 75)
+			static_cast<AnimationComponent&>(otherP->getComponent("Animation")).playAnimation("Small Stun", false);
+		else
+			static_cast<AnimationComponent&>(otherP->getComponent("Animation")).playAnimation("Big Stun", false);
+
 		attackHit->destroyAttack() = true;
 	}
 

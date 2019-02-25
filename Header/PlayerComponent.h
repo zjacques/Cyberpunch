@@ -7,12 +7,13 @@ class PlayerComponent : public Component
 public:
 	PlayerComponent(std::vector<Vector2f> locations, Entity* player) :
 		m_dead(false),
-		m_lives(3),
+		m_lives(1),
 		m_newSpawn(nullptr),
 		m_playerPtr(player),
 		m_spawnLocations(locations),
 		m_respawn(false),
-		m_respawning(false)
+		m_respawning(false),
+		m_winner(false)
 	{
 	}
 
@@ -21,7 +22,8 @@ public:
 		//Set the player to respawn
 		m_lives--;
 
-		if (m_lives < 1)
+		//If the player is not the winner
+		if (m_lives < 1 && m_winner == false)
 		{
 			m_dead = true;
 		}
@@ -55,11 +57,12 @@ public:
 	bool& isDead() { return m_dead; }
 	bool& toRespawn() { return m_respawn; }
 	bool& isRespawning() { return m_respawning; }
+	bool& isWinner() { return m_winner; }
 private:
 	float m_spawnTimer;
 	Entity * m_playerPtr;
 	Vector2f* m_newSpawn;
 	std::vector<Vector2f> m_spawnLocations;
-	bool m_dead, m_respawn, m_respawning;
+	bool m_dead, m_respawn, m_respawning, m_winner;
 	int m_lives;
 };

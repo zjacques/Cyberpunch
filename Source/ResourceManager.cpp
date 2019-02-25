@@ -30,6 +30,10 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 	m_map["Player Dust"] = loadFromPath("Player/Dust.png", renderer);
 	m_map["Player Left Punch"] = loadFromPath("Player/Left_Hand_Punch.png", renderer);
 	m_map["Player Right Punch"] = loadFromPath("Player/Right_Hand_Punch.png", renderer);
+	m_map["Player Jump"] = loadFromPath("Player/Player_Jump.png", renderer);
+	m_map["Player Super Stun"] = loadFromPath("Player/Player_Super_Stun.png", renderer);
+	m_map["Player Small Stun"] = loadFromPath("Player/Player_Small_Stun.png", renderer);
+	m_map["Player Big Stun"] = loadFromPath("Player/Player_Big_Stun.png", renderer);
 	m_map["Record"] = loadFromPath("Record/Record.png", renderer);
 	//Load all 3 platform pieces for each colour
 	for (int i = 0; i < 3; i++)
@@ -55,6 +59,7 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 	m_map["Timer 2"] = loadFromPath("GUI/2 Timer.png", renderer);
 	m_map["Timer 3"] = loadFromPath("GUI/3 Timer.png", renderer);
 	m_map["Timer Fight"] = loadFromPath("GUI/Fight Timer.png", renderer);
+	m_map["Winner"] = loadFromPath("GUI/Winner.png", renderer);
 
 	//The colours of the platforms
 	auto platforms = std::vector<std::string>({"Green", "Blue", "Orange", "Pink"});
