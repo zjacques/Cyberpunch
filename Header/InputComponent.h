@@ -72,6 +72,4 @@ public:
 	Input m_default;
 };
 
-
-
 #endif
