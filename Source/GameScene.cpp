@@ -3,13 +3,14 @@
 #include "PlayerRespawnSystem.h"
 #include "AnimationComponent.h"
 #include "DustSystem.h"
+#include "PickUpSystem.h"
 
 GameScene::GameScene() :
 	m_bgEntity("Game BG"),
 	m_platformsCreated(false),
 	m_camera(true)
 {
-
+	m_numOfAIPlayers = 2;
 }
 
 void GameScene::start()
@@ -23,10 +24,7 @@ void GameScene::start()
 	//Recreate the dust system
 	Scene::systems()["Dust"] = new DustSystem(&Scene::systems(), &m_localPlayers, &Scene::resources());
 	Scene::systems()["Respawn"] = new PlayerRespawnSystem();
-
-	auto pickupSys = new PickUpSystem();
-	pickupSys->setWorld(m_physicsWorld);
-	Scene::systems()["PickUp"] = pickupSys;
+	static_cast<PickUpSystem*>(Scene::systems()["Pickup"])->setWorld(m_physicsWorld);
 	Scene::systems()["Booth"] = new DJBoothSystem();
 
 	//Create background entity
@@ -77,44 +75,35 @@ void GameScene::start()
 		int dex = PreGameScene::playerIndexes.onlinePlyrs[i];
 		m_onlinePlayers.push_back(createPlayer(dex, 0, 600 + 150 * dex, 360, false, spawnPos));
 	}
+	for (int i = 0; i < m_numOfAIPlayers; i++)
+	{
+		m_AIPlayers.push_back(createAI(1, 1500 + 150 * 1, 360, spawnPos));
+	}
 	
 	//pickup Entity
 	m_pickUp = new Entity("PickUp");
 	auto pos = new PositionComponent(0,0);
 	m_pickUp->addComponent("Pos", pos);
 	m_pickUp->addComponent("PickUp",new PickUpComponent(m_pickUp));
+	m_pickUp->addComponent("Sprite", new SpriteComponent(&m_pickUp->getComponent("Pos"), Vector2f(1500, 50), Vector2f(50, 50), Scene::resources().getTexture("Record"), 1));
+	auto anim = new AnimationComponent(&m_pickUp->getComponent("Sprite"));		
+	std::vector<SDL_Rect> m_spinAnimation;
+	for (int i = 0; i < 30; i++)
+		m_spinAnimation.push_back({i*50, 0, 50, 50});
+	anim->addAnimation("Spin", Scene::resources().getTexture("Record"), m_spinAnimation, 1.75f);
+	anim->playAnimation("Spin", true);
+	Scene::systems()["Animation"]->addComponent(anim);
+	m_pickUp->addComponent("Animation", anim);
+	Scene::systems()["Pickup"]->addComponent(&m_pickUp->getComponent("PickUp"));
 
-	auto phys = new PhysicsComponent(pos);
-	//auto phys = new PhysicsComponent(m_pickUp->getComponent("Pos"));
-	
-	//auto pC = static_cast<PickUpComponent*>(&m_pickUp->getComponent("PickUp"));
-	//if (pC->spawned())
-	//{
-		phys->m_body = m_physicsWorld.createBox(1920 / 2, 1080 / 2, 50, 50, false, false, b2BodyType::b2_staticBody);
-		m_physicsWorld.addProperties(*phys->m_body, 0, 0, 0, true, new PhysicsComponent::ColData("PickUp", m_pickUp));
-		m_pickUp->addComponent("Sprite", new SpriteComponent(&m_pickUp->getComponent("Pos"), Vector2f(1500, 50), Vector2f(50, 50), Scene::resources().getTexture("Record"), 1));
-		Scene::systems()["Render"]->addComponent(&m_pickUp->getComponent("Sprite"));
-		m_pickUp->addComponent("Physics", phys);
-		Scene::systems()["Physics"]->addComponent(phys);
-		auto anim = new AnimationComponent(&m_pickUp->getComponent("Sprite"));		
-		std::vector<SDL_Rect> m_spinAnimation;
-		for (int i = 0; i < 30; i++)
-			m_spinAnimation.push_back({i*50, 0, 50, 50});
-		anim->addAnimation("Spin", Scene::resources().getTexture("Record"), m_spinAnimation, 1.75f);
-		anim->playAnimation("Spin", true);
-		Scene::systems()["Animation"]->addComponent(anim);
-		m_pickUp->addComponent("Animation", anim);
-		Scene::systems()["PickUp"]->addComponent(&m_pickUp->getComponent("PickUp"));
-		//static_cast<OnlineSystem*>(Scene::systems()["Network"])->getLobbies();
-//	}
-		//m_AIPlayers.push_back(createAI(1, 1500 + 150 * 1, 360));
+	//DJBooths created here 
+	auto& booths = Scene::resources().getLevelData()["Booth"];
 
-		auto& booths = Scene::resources().getLevelData()["Booth"];
+	for (int i = 0; i < booths.size(); i++)
+	{
+		m_djBooths.push_back(createDJB(i, booths.at(i)["X"], booths.at(i)["Y"]));
+	}
 
-		for (int i = 0; i < booths.size(); i++)
-		{
-			m_djBooths.push_back(createDJB(i, booths.at(i)["X"], booths.at(i)["Y"]));
-		}
 	auto& kb = Scene::resources().getLevelData()["Kill Boxes"];
 	for (int i = 0; i < kb.size(); i++)
 	{
@@ -132,21 +121,24 @@ void GameScene::stop()
 
 void GameScene::update(double dt)
 {
+	float scalar = static_cast<DJBoothSystem*>(Scene::systems()["Booth"])->getScalar();
 	//Update the physics world, do this before ANYTHING else
-	m_physicsWorld.update(dt);
+	m_physicsWorld.update(dt * scalar);
 	//Update the player physics system
-	Scene::systems()["Player Physics"]->update(dt);
-	Scene::systems()["Physics"]->update(dt);
-	Scene::systems()["Attack"]->update(dt);
-	Scene::systems()["PickUp"]->update(dt);
+
+	Scene::systems()["Player Physics"]->update(dt * scalar);
+	Scene::systems()["Physics"]->update(dt * scalar);
+	Scene::systems()["Attack"]->update(dt * scalar);
+	Scene::systems()["Pickup"]->update(dt * scalar);
 	Scene::systems()["Booth"]->update(dt);
-	Scene::systems()["Animation"]->update(dt); //Update the animation components
-	Scene::systems()["AI"]->update(dt);
-	Scene::systems()["Dust"]->update(dt);
-	Scene::systems()["Respawn"]->update(dt);
+	Scene::systems()["Animation"]->update(dt * scalar); //Update the animation components
+	Scene::systems()["AI"]->update(dt * scalar);
+	Scene::systems()["Dust"]->update(dt * scalar);
+	Scene::systems()["Respawn"]->update(dt * scalar);
+
 
 	//Update camera
-	updateCamera(dt);
+	updateCamera(dt * scalar);
 }
 
 void GameScene::updateCamera(double dt)
@@ -209,7 +201,7 @@ Entity * GameScene::createPlayer(int playerNumber,int controllerNumber, int posX
 	p->addComponent("Dust Trigger", new DustTriggerComponent());
 	p->addComponent("Attack", new AttackComponent());
 	p->addComponent("Player", new PlayerComponent(spawnPositions, p));
-	p->addComponent("Sprite", new SpriteComponent(&p->getComponent("Pos"), Vector2f(1220,85), Vector2f(61, 85), Scene::resources().getTexture("Player Idle"), 2));
+	p->addComponent("Sprite", new SpriteComponent(&p->getComponent("Pos"), Vector2f(1700,85), Vector2f(85, 85), Scene::resources().getTexture("Player Idle"), 2));
 	auto animation = new AnimationComponent(&p->getComponent("Sprite"));
 	p->addComponent("Animation", animation);
 
@@ -217,16 +209,13 @@ Entity * GameScene::createPlayer(int playerNumber,int controllerNumber, int posX
 
 	for (int i = 0; i < 20; i++)
 	{
-		m_animRects.push_back({61 * i, 0, 61, 85});
+		m_animRects.push_back({85 * i, 0, 85, 85});
 	}
 
 	animation->addAnimation("Run", Scene::resources().getTexture("Player Run"), m_animRects, .75f);
 	animation->addAnimation("Idle", Scene::resources().getTexture("Player Idle"), m_animRects, .5f);
-	m_animRects.clear();
-	for (int i = 0; i < 20; i++)
-	{
-		m_animRects.push_back({71 * i, 0, 71, 83 });
-	}
+	animation->addAnimation("Punch 0", Scene::resources().getTexture("Player Left Punch"), m_animRects, .175f);
+	animation->addAnimation("Punch 1", Scene::resources().getTexture("Player Right Punch"), m_animRects, .175f);
 	animation->addAnimation("Ground Kick", Scene::resources().getTexture("Player Ground Kick"), m_animRects, .4f);
 	animation->playAnimation("Idle", true); //Play the idle animation from the start
 
@@ -318,7 +307,7 @@ Entity* GameScene::createDJB(int index, int posX, int posY)
 	if (index == 0)
 	{
 		//this will call the gravity Component when the player punches it
-		booth->addComponent("DJ Booth", new GravityBoothComponent());
+		booth->addComponent("DJ Booth", new GravityBoothComponent(m_localPlayers, &m_physicsWorld, &m_physicsSystem, &m_collisionListener));
 	}
 	else if (index == 1)
 	{
@@ -328,7 +317,7 @@ Entity* GameScene::createDJB(int index, int posX, int posY)
 	else if (index == 2)
 	{
 		////this will call the platforming moving Component when the player punches it
-		booth->addComponent("DJ Booth", new PlatformBoothComponent());
+		booth->addComponent("DJ Booth", new PlatformBoothComponent(&m_platforms));
 	}
 
 	Scene::systems()["Booth"]->addComponent(&booth->getComponent("DJ Booth"));
@@ -342,27 +331,33 @@ Entity* GameScene::createDJB(int index, int posX, int posY)
 /// <param name="posX"></param>
 /// <param name="posY"></param>
 /// <returns></returns>
-Entity * GameScene::createAI(int index, int posX, int posY)
+Entity * GameScene::createAI(int index, int posX, int posY, std::vector<Vector2f> spawnPositions)
 {
 	auto ai = new Entity("AI");
 	auto pos = new PositionComponent(0, 0);
 	auto input = new AiInputComponent();
+	auto player = new PlayerComponent(spawnPositions, ai);
 
-	auto behaviour = new AIComponent(m_localPlayers, input, ai);
+	auto behaviour = new AIComponent(m_localPlayers, input, ai, player);
 	ai->addComponent("Pos", pos);
 	ai->addComponent("AI", behaviour);
 	ai->addComponent("Dust Trigger", new DustTriggerComponent());
 	ai->addComponent("Attack", new AttackComponent());
-	ai->addComponent("Sprite", new SpriteComponent(&ai->getComponent("Pos"), Vector2f(50, 50), Vector2f(50, 50), Scene::resources().getTexture("Player Run"), 2));
+	ai->addComponent("Sprite", new SpriteComponent(&ai->getComponent("Pos"), Vector2f(1700, 85), Vector2f(85, 85), Scene::resources().getTexture("Player Run"), 2));
 	auto animation = new AnimationComponent(&ai->getComponent("Sprite"));
 
 	std::vector<SDL_Rect> m_animRects; //The rectangles for the animations
 
 	for (int i = 0; i < 20; i++)
 	{
-		m_animRects.push_back({ 61 * i, 0, 61, 85 });
+		m_animRects.push_back({ 85 * i, 0, 85, 85 });
 	}
 	animation->addAnimation("Run", Scene::resources().getTexture("Player Run"), m_animRects, .75f);
+	animation->addAnimation("Idle", Scene::resources().getTexture("Player Idle"), m_animRects, .5f);
+	animation->addAnimation("Punch 0", Scene::resources().getTexture("Player Left Punch"), m_animRects, .175f);
+	animation->addAnimation("Punch 1", Scene::resources().getTexture("Player Right Punch"), m_animRects, .175f);
+	animation->addAnimation("Ground Kick", Scene::resources().getTexture("Player Ground Kick"), m_animRects, .4f);
+	animation->playAnimation("Idle", true);
 	ai->addComponent("Animation", animation);
 	
 	//Add the AI component to the AI system
@@ -415,7 +410,7 @@ void GameScene::createPlatforms(SDL_Renderer& renderer)
 		std::string tag = platform["Tag"];
 
 		//Creta ethe platform entity
-		auto newPlat = new Entity("Platform");
+		auto newPlat = new Entity(tag);
 		auto platPos = new PositionComponent(x, y);
 		newPlat->addComponent("Pos", platPos);
 		auto phys = new PhysicsComponent(platPos);
@@ -475,6 +470,8 @@ void GameScene::createPlatforms(SDL_Renderer& renderer)
 		newPlat->addComponent("Sprite", new SpriteComponent(platPos, Vector2f(w, h), Vector2f(w, h), texture, 1));
 
 		Scene::systems()["Render"]->addComponent(&newPlat->getComponent("Sprite"));
+
+		m_platforms.push_back(newPlat);
 	}
 
 	//Set platforms created as true
@@ -575,21 +572,6 @@ void GameScene::draw(SDL_Renderer & renderer)
 			m_onlinePlayers.at(i).draw(renderer);
 		}*/
 		//m_pickUp.draw(renderer);
-	}
-
-
-	auto pC = static_cast<PickUpComponent*>(&m_pickUp->getComponent("PickUp"));
-	if (pC->spawned())
-	{
-		auto phys = pC->getBody();
-		rect.w = phys->m_body->getSize().x;
-		rect.h = phys->m_body->getSize().y;
-		rect.x = phys->m_body->getPosition().x - (rect.w / 2) - m_camera.x();
-		rect.y = phys->m_body->getPosition().y - (rect.h / 2) - m_camera.y();
-	//	SDL_RenderFillRect(&renderer, &rect);
-		Scene::systems()["Render"]->addComponent(&m_pickUp->getComponent("Sprite"));
-		SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
-		SDL_RenderDrawRect(&renderer, &rect);
 	}
 }
 

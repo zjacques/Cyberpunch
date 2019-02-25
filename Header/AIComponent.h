@@ -6,14 +6,16 @@
 #include "Entity.h"
 #include <vector>
 #include "AiInputComponent.h"
+#include "PlayerComponent.h"
 
 class AIComponent : public Component
 {
 public:
-	AIComponent(std::vector<Entity *> e, AiInputComponent * i, Entity * self) :
+	AIComponent(std::vector<Entity *> e, AiInputComponent * i, Entity * self, PlayerComponent * p) :
 		m_entities(e),
 		m_input(i),
-		m_self(self)
+		m_self(self),
+		m_player(p)
 	{
 
 	}
@@ -29,6 +31,7 @@ public:
 	Entity * m_self;
 	Entity * nearestPlayer;
 	AiInputComponent * m_input;
+	PlayerComponent * m_player;
 	//Declare actions for AI
 };
 

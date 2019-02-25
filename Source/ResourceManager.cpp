@@ -28,6 +28,8 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 	m_map["Player Idle"] = loadFromPath("Player/Player_Idle.png", renderer);
 	m_map["Player Ground Kick"] = loadFromPath("Player/Player_Kick.png", renderer);
 	m_map["Player Dust"] = loadFromPath("Player/Dust.png", renderer);
+	m_map["Player Left Punch"] = loadFromPath("Player/Left_Hand_Punch.png", renderer);
+	m_map["Player Right Punch"] = loadFromPath("Player/Right_Hand_Punch.png", renderer);
 	m_map["Record"] = loadFromPath("Record/Record.png", renderer);
 	//Load all 3 platform pieces for each colour
 	for (int i = 0; i < 3; i++)
@@ -36,11 +38,18 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 	}
 
 	//Loading in GUI
-	m_map["Button Off"] = loadFromPath("GUI/ButtonOff.png", renderer);
+	m_map["Button BG"] = loadFromPath("GUI/Button_BG.png", renderer);
 	m_map["Exit Button"] = loadFromPath("GUI/ExitButton.png", renderer);
 	m_map["Local Play Button"] = loadFromPath("GUI/LocalButton.png", renderer);
 	m_map["Multiplayer Button"] = loadFromPath("GUI/MultiButton.png", renderer);
 	m_map["Options Button"] = loadFromPath("GUI/OptionsButton.png", renderer);
+	m_map["Lobby BG"] = loadFromPath("GUI/Lobby_Browser.png", renderer);
+	m_map["Lobby Bar"] = loadFromPath("GUI/Lobby_Info_Bar.png", renderer);
+	m_map["Lobby Bar Selected"] = loadFromPath("GUI/Lobby_Info_Bar_Selected.png", renderer);
+	m_map["Numbers"] = loadFromPath("GUI/Numbers.png", renderer);
+	m_map["Password Yes"] = loadFromPath("GUI/Yes_Password.png", renderer);
+	m_map["Password No"] = loadFromPath("GUI/No_Password.png", renderer);
+	m_map["Achievements Button"] = loadFromPath("GUI/AchievementsButton.png", renderer);
 
 	//The colours of the platforms
 	auto platforms = std::vector<std::string>({"Green", "Blue", "Orange", "Pink"});
