@@ -60,7 +60,7 @@ void PickUpSystem::update(double dt)
 				{
 					pickup->toTeleport() = false;
 					pickup->toTeleportB() = false;
-					p->m_body->setPosition(400, 400);
+					p->m_body->setPosition(400, 800);
 					pickup->getTimeInBooth() = 10;
 				}
 			}
