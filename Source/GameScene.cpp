@@ -10,7 +10,7 @@ GameScene::GameScene() :
 	m_platformsCreated(false),
 	m_camera(true)
 {
-	m_numOfAIPlayers = 2;
+	m_numOfAIPlayers = 0;
 }
 
 void GameScene::start()
@@ -34,28 +34,19 @@ void GameScene::start()
 	//Add bg sprite component to the render system
 	Scene::systems()["Render"]->addComponent(&m_bgEntity.getComponent("Sprite"));
 
-	//m_numOfLocalPlayers = SDL_NumJoysticks();
-	//m_numOfOnlinePlayers = 0;//get the number of players from the network system
-
-	m_numOfLocalPlayers = PreGameScene::playerIndexes.localPlyrs.size();
-	m_numOfOnlinePlayers = PreGameScene::playerIndexes.onlinePlyrs.size();
-
-	// Initialise SDL_net (Note: We don't initialise or use normal SDL at all - only the SDL_net library!)
-	/*if (SDLNet_Init() == -1)
+	if (static_cast<OnlineSystem*>(Scene::systems()["Network"])->isConnected)
 	{
-		std::cerr << "Failed to intialise SDL_net: " << SDLNet_GetError() << std::endl;
-		exit(-1);
-	}*/
-	
-	//try to create the online system and connect
-	//refactor to another spot once we get the full lobby system going I guess.
-	//static_cast<OnlineSystem*>(Scene::systems()["Network"])->ConnectToServer();
-	/*auto net = new OnlineSystem();
-	if (net->ConnectToServer())
-		Scene::systems()["Network"] = net;
-	else
-		delete net;*/
-	
+		m_numOfLocalPlayers = PreGameScene::playerIndexes.localPlyrs.size();
+		m_numOfOnlinePlayers = PreGameScene::playerIndexes.onlinePlyrs.size();
+	}
+	else {
+		m_numOfLocalPlayers = SDL_NumJoysticks();
+		PreGameScene::playerIndexes.localPlyrs.push_back(1);
+		PreGameScene::playerIndexes.localPlyrs.push_back(2);
+		PreGameScene::playerIndexes.localPlyrs.push_back(3);
+		PreGameScene::playerIndexes.localPlyrs.push_back(4);
+		m_numOfOnlinePlayers = 0;
+	}
 
 	//Create players, pass in the spawn locations to respawn players
 	std::vector<Vector2f> spawnPos;
@@ -227,7 +218,7 @@ Entity * GameScene::createPlayer(int playerNumber,int controllerNumber, int posX
 	Scene::systems()["Attack"]->addComponent(&p->getComponent("Attack"));
 	Scene::systems()["Respawn"]->addComponent(&p->getComponent("Player"));
 
-	//Create and initiliase the input component
+	//Create and initialise the input component
 	if (local) {
 		auto input = new PlayerInputComponent();
 		Scene::systems()["Input"]->addComponent(input);

@@ -34,6 +34,10 @@ public:
 
 	vector<int> getPlayers();
 
+	void startGame();
+
+	bool gameStarted = false;
+
 	bool isConnected = false;
 	bool m_isHost = false;
 

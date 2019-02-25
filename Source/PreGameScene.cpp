@@ -55,6 +55,10 @@ void PreGameScene::update(double dt)
 		checkForUpdates();
 		lastUpdate = 0;
 	}
+	if (m_network->gameStarted)
+	{
+		Scene::goToScene("Game");
+	}
 }
 
 void PreGameScene::draw(SDL_Renderer & renderer)
@@ -76,7 +80,11 @@ void PreGameScene::handleInput(InputSystem & input)
 	{
 		if (m_input[0].isButtonPressed("XBTN"))
 		{
-			Scene::goToScene("Game");
+			if (m_network->m_isHost)
+			{
+				m_network->startGame();
+				Scene::goToScene("Game");
+			}
 		}
 		else if (m_input[0].isButtonPressed("ABTN"))
 		{

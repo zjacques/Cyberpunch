@@ -63,6 +63,10 @@ void OnlineSystem::ReceiveCommands()
 	if (receivedMessage != "")
 	{
 		json currentPacket = json::parse(receivedMessage);
+		if (currentPacket["type"] == "START")
+		{
+			gameStarted = true;
+		}else
 		if (currentPacket["type"] == "COMMANDS")
 		{
 			for (auto& plyr : m_receivingPlayers)
@@ -204,4 +208,11 @@ vector<int> OnlineSystem::getPlayers()
 
 
 	return retval;
+}
+
+void OnlineSystem::startGame()
+{
+	string jsonString = "{\"type\" : \"START\"}";
+	m_Socket->sendString(jsonString);
+	gameStarted = true;
 }
