@@ -12,8 +12,6 @@ LobbyScene::LobbyScene() :
 
 void LobbyScene::start()
 {
-	//Setup the input using the first joycon connected
-	m_input.initialiseJoycon(0);
 	m_currentIndex = 0; //Start main menu at hovering over local play button
 
 	m_network = static_cast<OnlineSystem*>(Scene::systems()["Network"]);
@@ -86,41 +84,40 @@ void LobbyScene::handleInput(InputSystem & input)
 	//If the main menu input component is not added to the system, add it
 	if (!m_addedInput)
 	{
-		input.addComponent(&m_input);
+		m_input = static_cast<InputComponent*>(Scene::systems()["Input"]->m_components.at(0));
 		m_addedInput = true;
 	}
 	else
 	{
 		int newIndex = m_currentIndex;
-		if (m_input.isButtonPressed("STICKUP"))
+		if (m_input->isButtonPressed("STICKUP"))
 		{
 			newIndex--;
 		}
-		if (m_input.isButtonPressed("STICKDOWN"))
+		if (m_input->isButtonPressed("STICKDOWN"))
 		{
 			newIndex++;
 		}
-		if (m_input.isButtonPressed("XBTN"))
+		if (m_input->isButtonPressed("XBTN"))
 		{
 			handleButtonPressed();//Join the selected server. If it fails, show a message and refresh
 		}
-		if (m_input.isButtonPressed("BBTN"))
+		if (m_input->isButtonPressed("BBTN"))
 		{
 			requestHost();//try to start a game with no players and wait for them to join
 		}
-		if (m_input.isButtonPressed("YBTN"))
+		if (m_input->isButtonPressed("YBTN"))
 		{
 			m_lobbies = m_network->getLobbies();//Refresh the page from the server
 			createLobbyButtons();
 		}
-		if (m_input.isButtonPressed("ABTN"))
+		if (m_input->isButtonPressed("ABTN"))
 		{
 			Scene::goToScene("Main Menu");//Just go back to the main menu
 		}
 
-
 		if (newIndex < 0)
-			newIndex = m_buttons.size() - 1;
+			newIndex =  ((m_buttons.size() - 1) < 0) ? (m_buttons.size() - 1) : 0;
 		else if (newIndex >= m_buttons.size())
 			newIndex = 0;
 

@@ -20,7 +20,7 @@ void PreGameScene::start()
 		if (m_network->m_isHost)
 		{
 			//m_input[0] gets to be player 1
-			playerIndexes.localPlyrs.push_back(1);
+			playerIndexes.localPlyrs.push_back(0);
 		}
 		else {
 			//m_input[0] becomes the first available player
@@ -30,7 +30,8 @@ void PreGameScene::start()
 
 		for (auto num : players)
 		{
-			playerIndexes.onlinePlyrs.push_back(num);
+			if(num != playerIndexes.localPlyrs.back())
+				playerIndexes.onlinePlyrs.push_back(num);
 		}
 
 	}
@@ -94,6 +95,7 @@ void PreGameScene::checkForUpdates()
 	playerIndexes.onlinePlyrs.clear();
 	for (auto num : players)
 	{
-		playerIndexes.onlinePlyrs.push_back(num);
+		if (num != playerIndexes.localPlyrs.back())
+			playerIndexes.onlinePlyrs.push_back(num);
 	}
 }

@@ -150,6 +150,7 @@ void OnlineSystem::makeHost()
 		{
 			m_lobbyNumber = lobby["lobby"];
 			m_isHost = true;
+			m_playerNumber = 0;
 		}
 	}
 }
