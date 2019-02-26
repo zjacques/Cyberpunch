@@ -75,6 +75,24 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 			m_map["Platform " + colour + " " + std::to_string(i)] = loadFromPath("Platforms/" + colour + "/" + std::to_string(i) + ".png", renderer);
 		}
 	}
+
+	//All the Audio Files
+	m_music["Along Song"] = MusicLoadFromPath("Audio/ATG.ogg");
+	m_sfx["Calculations"] = SFXLoadFromPath("Audio/Calculations.wav");
+	m_sfx["Punch"] = SFXLoadFromPath("Audio/Fight_Hits.wav");
+	m_sfx["FootStep"] = SFXLoadFromPath("Audio/Footsteps.wav");
+	m_music["Good Song"] = MusicLoadFromPath("Audio/GoodOneToHave.ogg");
+	m_sfx["Loading"] = SFXLoadFromPath("Audio/Loading.wav");
+	m_sfx["Items 1"] = SFXLoadFromPath("Audio/Objects_Items.wav");
+	m_sfx["PickUp 1"] = SFXLoadFromPath("Audio/PickUp1.wav");
+	m_sfx["NightPulse"] = SFXLoadFromPath("Audio/nightPulse.wav");
+	m_sfx["Splash Screen"] = SFXLoadFromPath("Audio/PossibleSplashScreen.wav");
+	m_music["Sergey"] = MusicLoadFromPath("Audio/Sergey.ogg");
+	m_sfx["Slow Heavy"] = SFXLoadFromPath("Audio/SlowHeavy.wav");
+	m_music["Song 2"] = MusicLoadFromPath("Audio/song2.ogg");
+	m_sfx["Spawn"] = SFXLoadFromPath("Audio/Spawn.wav");
+	m_sfx["Spawn2"] = SFXLoadFromPath("Audio/Spawn2.wav");
+	m_sfx["Weapon"] = SFXLoadFromPath("Audio/Weapon.wav");
 }
 
 void ResourceHandler::loadLevelData()
@@ -113,6 +131,32 @@ SDL_Texture* ResourceHandler::loadFromPath(std::string fileName, SDL_Renderer& r
 	return newTexture;
 }
 
+Mix_Chunk * ResourceHandler::SFXLoadFromPath(std::string fileName)
+{
+	std::string path = m_filePath + fileName;
+
+	auto m = Mix_LoadWAV(path.c_str());
+	if (NULL == m)
+	{
+		printf("Failed to load sounds! SDL_mixer Error: %s\n", Mix_GetError());
+	}
+
+	return m;
+}
+
+Mix_Music * ResourceHandler::MusicLoadFromPath(std::string fileName)
+{
+	std::string path = m_filePath + fileName;
+
+	auto m = Mix_LoadMUS(path.c_str());
+	if (NULL == m)
+	{
+		printf("Failed to load beat music! SDL_mixer Error: %s\n", Mix_GetError());
+	}
+
+	return m;
+}
+
 void ResourceHandler::destroyTextures()
 {
 	//Loop through our map
@@ -138,4 +182,14 @@ TTF_Font * ResourceHandler::getFont(std::string name)
 SDL_Texture * ResourceHandler::getTexture(std::string name)
 {
 	return m_map.at(name);
+}
+
+Mix_Chunk * ResourceHandler::getSFX(std::string name)
+{
+	return m_sfx[name];
+}
+
+Mix_Music * ResourceHandler::getMusic(std::string name)
+{
+	return m_music[name];
 }

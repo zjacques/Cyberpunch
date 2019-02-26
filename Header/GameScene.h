@@ -20,6 +20,7 @@
 #include "PlatformBoothComponent.h"
 #include "SlowBoothComponent.h"
 
+#include "AudioComponent.h"
 #include "OnlineSystem.h"
 #include "PlayerPhysicsComponent.h"
 #include "OnlineSendComponent.h"
@@ -51,6 +52,7 @@ public:
 	void draw(SDL_Renderer& renderer);
 	void handleInput(InputSystem& input);
 private:
+	bool m_audioCreated;
 	bool m_platformsCreated;
 	bool m_boothCreated;
 	bool m_gameStarted, m_startTimerEnded, m_gameOver;
@@ -80,4 +82,5 @@ private:
 
 	Camera m_camera;
 	SDL_Renderer* m_rendererPtr; //Used for resetting the render scale when exiting a game
+	AudioComponent m_audio;
 };

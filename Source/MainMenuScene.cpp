@@ -5,12 +5,19 @@
 MainMenuScene::MainMenuScene() :
 	m_currentIndex(0),
 	m_addedInput(false),
-	m_camera(false) //Dont use camera
+	m_camera(false), //Dont use camera
+	m_audioCreated(false)
 {
 }
 
 void MainMenuScene::start()
 {
+	if (m_audioCreated == false)
+	{
+		m_audio.addSound("MenuMusic", Scene::resources().getMusic("Good Song"));
+	}
+
+	m_audio.playSound("MenuMusic", true);
 	//Setup the input using the first joycon connected
 	m_input.initialiseJoycon(0);
 
@@ -20,6 +27,8 @@ void MainMenuScene::start()
 	m_buttons.push_back(createButton(Vector2f(960, 445 + 135 * 2), Scene::resources().getTexture("Achievements Button"), "Achievements", m_currentIndex == 2 ? true : false));
 	m_buttons.push_back(createButton(Vector2f(960, 445 + 135 * 3), Scene::resources().getTexture("Options Button"), "Options", m_currentIndex == 3 ? true : false));
 	m_buttons.push_back(createButton(Vector2f(960, 445 + 135 * 4), Scene::resources().getTexture("Exit Button"), "Exit", m_currentIndex == 4 ? true : false));
+
+	m_audioCreated = true;
 }
 
 void MainMenuScene::stop()
@@ -32,7 +41,7 @@ void MainMenuScene::stop()
 		Scene::systems()["Animation"]->deleteComponent(&btn->getComponent("Animation"));
 		Scene::systems()["Animation"]->deleteComponent(&btn->getComponent("Text Animation"));
 	}
-
+	m_audio.stop();
 	//Clear the buttons vector
 	m_buttons.clear();
 }

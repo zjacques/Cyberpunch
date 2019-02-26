@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "SDL_mixer.h"
 
 Game::Game(int fps) :
 	m_msPerFrame(fps / 60.0f), //Get the target fps
@@ -130,6 +131,12 @@ bool Game::init()
 			if (TTF_Init() < 0)
 			{
 				printf("TTF_Init: %s\n", TTF_GetError());
+			}
+
+			if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+			{
+				printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
+				success = false;
 			}
 
 			//Initialize PNG loading 

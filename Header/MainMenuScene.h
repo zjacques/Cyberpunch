@@ -3,6 +3,7 @@
 #include "Scene.h"
 #include "Entity.h"
 #include "ButtonComponent.h"
+#include "AudioComponent.h"
 
 //The main menu scene, from here we navigate to the other scenes of the game
 class MainMenuScene : public Scene
@@ -21,6 +22,7 @@ private:
 	Camera m_camera;
 	InputComponent m_input;
 	bool m_addedInput;
-
+	bool m_audioCreated;
+	AudioComponent m_audio;
 	std::vector<Entity*> m_buttons;
 };

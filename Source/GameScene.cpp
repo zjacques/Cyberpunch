@@ -14,13 +14,20 @@ GameScene::GameScene() :
 	m_gameEndE("End winner"),
 	m_platformsCreated(false),
 	m_camera(false),
-	m_gameStartTimer(3)
+	m_gameStartTimer(3),
+	m_audioCreated(false)
 {
-	m_numOfAIPlayers = 1;
+	m_numOfAIPlayers = 2;
 }
 
 void GameScene::start()
-{
+{	
+	if (m_audioCreated == false)
+	{
+		m_audio.addSound("GameMusic", Scene::resources().getMusic("Song 2"));
+	}
+
+	m_audio.playSound("GameMusic", true);
 	m_rendererPtr = NULL;
 	m_gameOver = false;
 	m_endGameTimer = 10; //10 seconds to show the winner
@@ -116,6 +123,7 @@ void GameScene::start()
 		m_killboxes.push_back(createKillBox(kb.at(i)["X"], kb.at(i)["Y"], kb.at(i)["W"], kb.at(i)["H"]));
 	}
 
+	m_audioCreated = true;
 	//Setup timer
 	setupTimer();
 }
@@ -178,7 +186,9 @@ void GameScene::stop()
 	for (auto player : m_localPlayers)
 		delete player;
 	for (auto onlineP : m_onlinePlayers)
-		delete onlineP;
+    
+		delete onlineP;*/
+	m_audio.stop();
 
 	m_allPlayers.clear();
 	m_AIPlayers.clear();
