@@ -470,18 +470,18 @@ Entity* GameScene::createDJB(int index, int posX, int posY)
 	if (index == 0)
 	{
 		
-		booth->addComponent("DJ Booth", new GravityBoothComponent(m_localPlayers, &m_physicsWorld, &m_physicsSystem, &m_collisionListener));
+		booth->addComponent("DJ Booth", new GravityBoothComponent(m_localPlayers, &m_physicsWorld, &m_physicsSystem, &m_collisionListener, m_pickUp));
 		
 	}
 	else if (index == 1)
 	{
 		
-		booth->addComponent("DJ Booth", new SlowBoothComponent());
+		booth->addComponent("DJ Booth", new SlowBoothComponent(m_pickUp));
 	}
 	else if (index == 2)
 	{
 		
-		booth->addComponent("DJ Booth", new PlatformBoothComponent(&m_platforms));
+		booth->addComponent("DJ Booth", new PlatformBoothComponent(&m_platforms, m_pickUp));
 	}
 
 	Scene::systems()["Booth"]->addComponent(&booth->getComponent("DJ Booth"));

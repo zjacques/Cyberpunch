@@ -9,12 +9,13 @@ class GravityBoothComponent : public DJBoothComponent
 {
 public: 
 	GravityBoothComponent(std::vector<Entity*> allPlayers, Box2DBridge* world,
-		PhysicsSystem* physSys, CollisionListener* cL) :
+		PhysicsSystem* physSys, CollisionListener* cL, Entity* pickUp) :
 		m_systemPtr(physSys),
 		m_entities(allPlayers),
 		m_collistenerPtr(cL),
 		m_worldPtr(world), 
-		m_timer(0)
+		m_timer(0),
+		DJBoothComponent(pickUp)
 	{
 		
 
