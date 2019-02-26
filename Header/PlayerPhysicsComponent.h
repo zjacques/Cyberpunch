@@ -23,7 +23,7 @@ public:
 	void damage(int dmg) {m_dmgPercentage += m_stunnedBySuper == false ? dmg : 0; }
 	void addSuper(int amount) { m_superPercentage += m_supered == false ? amount : 0; }
 	void applyDamageImpulse(float x, float y);
-	void flipGravity();
+	void flipGravity(Box2DBridge& world);
 	void createJoint(Box2DBridge& world);
 
 	//Getter methods

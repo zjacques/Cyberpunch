@@ -90,9 +90,6 @@
     <ClCompile Include="Source\AnimationComponent.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Player.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\PhysicsSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
@@ -226,9 +223,6 @@
     </ClInclude>
     <ClInclude Include="Header\AnimationComponent.h">
       <Filter>Header Files\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\Player.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Header\CollisionListener.h">
       <Filter>Header Files\Utilities</Filter>

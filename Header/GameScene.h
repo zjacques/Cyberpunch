@@ -1,9 +1,9 @@
 #pragma once
-#include "Player.h"
 #include "Scene.h"
 #include "Entity.h"
 #include "AttackSystem.h"
 #include "PreGameScene.h"
+#include "PhysicsSystem.h"
 
 #include "PhysicsComponent.h"
 #include "PlayerInputComponent.h"
@@ -73,7 +73,6 @@ private:
 	int m_numOfAIPlayers;
 
 	//Physics variables
-	PhysicsSystem m_physicsSystem; //Add all physics components to the system
 	Box2DBridge m_physicsWorld;
 	CollisionListener m_collisionListener;
 	//Platforms of the game

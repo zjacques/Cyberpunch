@@ -64,7 +64,8 @@ public:
 			m_currentCMD->execute(*entity);
 		}
 		else if (static_cast<AttackComponent*>(&entity->getComponent("Attack"))->attackActive() == false
-		&& static_cast<AnimationComponent*>(&entity->getComponent("Animation"))->getCurrentID() != "Jump"
+		&& !(static_cast<AnimationComponent*>(&entity->getComponent("Animation"))->getCurrentID() == "Jump"
+		&& static_cast<AnimationComponent*>(&entity->getComponent("Animation"))->getCurrentAnimation()->getCompleted() == false)
 		&& static_cast<PlayerPhysicsComponent*>(&entity->getComponent("Player Physics"))->stunned() == false)
 		{
       	m_idleCMD.execute(*entity);

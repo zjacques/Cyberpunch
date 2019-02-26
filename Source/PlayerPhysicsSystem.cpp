@@ -17,6 +17,9 @@ void PlayerPhysicsSystem::update(double dt)
 		//Convert the component down to a player physics component
 		auto p = static_cast<PlayerPhysicsComponent*>(comp);
 
+		if (m_gravityChange)
+			p->flipGravity(*m_worldPtr);
+
 		//Get the velocity of the player
 		p->m_currentVel = p->m_body->getBody()->GetLinearVelocity();
 
@@ -64,9 +67,15 @@ void PlayerPhysicsSystem::update(double dt)
 		//set the position component of the player
 		p->posPtr->position = p->m_body->getPosition();
 	}
+
+	if (m_gravityChange)
+	{
+		m_gravityChange = false;
+	}
 }
 
 void PlayerPhysicsSystem::flipGravity()
 {
+	m_gravityChange = true;
 	m_gravFlipped = !m_gravFlipped;
 }

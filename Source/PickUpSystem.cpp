@@ -17,9 +17,6 @@ void PickUpSystem::update(double dt)
 	for (auto& comp : m_components)
 	{
 		auto pickup = static_cast<PickUpComponent*>(comp);
-		
-
-		//pickup->getTimeTillSpawn();
 
 		if (pickup->getTimeTillSpawn() > 0)
 		{
@@ -56,7 +53,7 @@ void PickUpSystem::update(double dt)
 		if (pickup->spawned())
 		{
 			
-			//If ye have to teleport  aplayer
+			//If ye have to teleport a player
 			if (pickup->toTeleport())
 			{
 				// sends player to booth, despawns the pickup and sets the timer to countdown
@@ -68,6 +65,7 @@ void PickUpSystem::update(double dt)
 				pickup->despawn(*m_worldPtr);
 				m_renderSysPtr->deleteComponent(&pickup->getPickupEntity()->getComponent("Sprite"));
 				pickup->toTeleportB() = true;
+				pickup->getTimeInBooth() = 10;
 			}
 
 			//despawns the pickup after ten seconds if not collected
