@@ -63,8 +63,11 @@ public:
 
 			m_currentCMD->execute(*entity);
 		}
-		else if(static_cast<AttackComponent*>(&entity->getComponent("Attack"))->attackActive() == false)
-			static_cast<AnimationComponent*>(&entity->getComponent("Animation"))->playAnimation("Idle", true);
+		else if (static_cast<AttackComponent*>(&entity->getComponent("Attack"))->attackActive() == false)
+		{
+			//static_cast<AnimationComponent*>(&entity->getComponent("Animation"))->playAnimation("Idle", true);
+			m_idleCMD.execute(*entity);
+		}
 
 		m_previousCMD = m_currentCMD;
 	}
@@ -79,6 +82,7 @@ private:
 	UppercutCommand m_uppercutCMD;
 	PhaseDownCommand m_phaseDownCMD;
 	SuperCommand m_superCMD;
+	IdleCommand m_idleCMD;
 	Command* m_currentCMD, *m_previousCMD;
 };
 

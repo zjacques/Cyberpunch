@@ -210,6 +210,11 @@ public:
 			if (phys->canJump())
 			{
 				phys->jumpDown();
+				auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
+				if (net != NULL)
+				{
+					net->addCommand("FALL");
+				}
 			}
 		}
 	}
@@ -230,6 +235,27 @@ public:
 		{
 			phys->beginSuper();
 			std::cout << "Player has used super up, they can now stun someone for 5 seconds if they hit within 5 seconds\n";
+			auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
+			if (net != NULL)
+			{
+				net->addCommand("SUPER");
+			}
+		}
+	}
+};
+
+class IdleCommand : public Command
+{
+public:
+	IdleCommand() {}
+	void execute(Entity& e)
+	{
+		static_cast<AnimationComponent*>(&e.getComponent("Animation"))->playAnimation("Idle", true);
+
+		auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
+		if (net != NULL)
+		{
+			//net->addCommand("IDLE");
 		}
 	}
 };
