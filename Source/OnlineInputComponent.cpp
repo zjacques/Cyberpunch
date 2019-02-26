@@ -9,6 +9,14 @@ OnlineInputComponent::OnlineInputComponent()
 void OnlineInputComponent::handleInput(void* e)
 {
 	auto entity = static_cast<Entity*>(e);
+
+	if (m_positionsToSyncTo.size() > 0)
+	{
+		OnlineSendComponent::syncStruct loc = m_positionsToSyncTo.front();
+		syncPosition(entity, loc.pos.x, loc.pos.y, loc.vel.x, loc.vel.y, loc.dvel.x, loc.dvel.y);
+		m_positionsToSyncTo.pop();
+	}
+
 	if ((m_previousCMD == (Command*)&m_moveLeftCMD || m_previousCMD == (Command*)&m_moveRightCMD) && m_commandsToSend.size() == 0)
 	{
 		m_previousCMD->execute(*entity);
@@ -63,12 +71,6 @@ void OnlineInputComponent::handleInput(void* e)
 	{
 		//static_cast<AnimationComponent*>(&entity->getComponent("Animation"))->playAnimation("Idle", true);
 		m_idleCMD.execute(*entity);
-	}
-	if (m_positionsToSyncTo.size() > 0)
-	{
-		OnlineSendComponent::syncStruct loc = m_positionsToSyncTo.front();
-		syncPosition(entity, loc.pos.x, loc.pos.y, loc.vel.x, loc.vel.y, loc.dvel.x, loc.dvel.y);
-		m_positionsToSyncTo.pop();
 	}
 
 	m_previousCMD = m_currentCMD;
