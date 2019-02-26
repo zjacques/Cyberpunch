@@ -16,7 +16,7 @@ GameScene::GameScene() :
 	m_camera(false),
 	m_gameStartTimer(3)
 {
-	m_numOfAIPlayers = 0;
+	m_numOfAIPlayers = 1;
 }
 
 void GameScene::start()
@@ -672,7 +672,7 @@ void GameScene::createPlatforms(SDL_Renderer& renderer)
 
 		//Set the texture of the platform to the green platform texture
 		newPlat->addComponent("Sprite", new SpriteComponent(platPos, Vector2f(w, h), Vector2f(w, h), platComp->getTexture("Game BG0"), 1));
-
+		static_cast<SpriteComponent*>(&newPlat->getComponent("Sprite"))->setAngle(platform["Angle"]);
 		Scene::systems()["Render"]->addComponent(&newPlat->getComponent("Sprite"));
 
 		m_platforms.push_back(newPlat);
