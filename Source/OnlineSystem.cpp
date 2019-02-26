@@ -19,12 +19,19 @@ void OnlineSystem::update(double dt)
 {
 	if (isConnected)
 	{
-		SendCommands();
+		//bool s = true;
+		/*if (tts > syncRate)
+		{
+			s = true;
+			tts = 0;
+		}*/
+		SendCommands(true);
 		ReceiveCommands();
+		//tts+=dt;
 	}
 }
 
-void OnlineSystem::SendCommands()
+void OnlineSystem::SendCommands(bool sync)
 {
 	for (auto& plyr : m_sendingPlayers)
 	{
@@ -44,7 +51,17 @@ void OnlineSystem::SendCommands()
 
 				cmds->pop();
 			}
-			jsonString += " ]}";
+			jsonString += " ], \"sync\": ";
+			if (sync){
+				jsonString += "true, ";
+				OnlineSendComponent::syncStruct info =  plyr->getSync();
+				jsonString += "\"pos\":[" + toString(info.pos.x) + "," + toString(info.pos.y) + "],";
+				jsonString += "\"vel\":[" + toString(info.vel.x) + "," + toString(info.pos.y) + "]";
+			}
+			else {
+				jsonString += "false";
+			}
+			jsonString += "}";
 			m_Socket->sendString(jsonString);
 		}
 		else if(cmds->size() > 1){

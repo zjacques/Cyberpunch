@@ -56,16 +56,16 @@ void OnlineInputComponent::handleInput(void* e)
 			m_currentCMD->execute(*entity);
 		}
 	}
-	else if (static_cast<AttackComponent*>(&entity->getComponent("Attack"))->attackActive() == false)
+	else if (static_cast<AttackComponent*>(&entity->getComponent("Attack"))->attackActive() == false
+		&& !(static_cast<AnimationComponent*>(&entity->getComponent("Animation"))->getCurrentID() == "Jump"
+			&& static_cast<AnimationComponent*>(&entity->getComponent("Animation"))->getCurrentAnimation()->getCompleted() == false)
+		&& static_cast<PlayerPhysicsComponent*>(&entity->getComponent("Player Physics"))->stunned() == false)
 	{
 		//static_cast<AnimationComponent*>(&entity->getComponent("Animation"))->playAnimation("Idle", true);
 		m_idleCMD.execute(*entity);
 	}
 
 	m_previousCMD = m_currentCMD;
-	
-	
-
 }
 
 int OnlineInputComponent::addCommand(string cmd)
@@ -73,6 +73,14 @@ int OnlineInputComponent::addCommand(string cmd)
 	m_commandsToSend.push(cmd);
 
 	return m_commandsToSend.size();
+}
+
+void OnlineInputComponent::syncPosition(void* e, float px, float py, float vx, float vy)
+{
+	auto entity = static_cast<Entity*>(e);
+
+	static_cast<PlayerPhysicsComponent*>(&entity->getComponent("Player Physics"))->posPtr->position = Vector2f(px, py);
+	static_cast<PlayerPhysicsComponent*>(&entity->getComponent("Player Physics"))->m_currentVel = b2Vec2(vx, vy);
 }
 
 

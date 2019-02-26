@@ -2,12 +2,17 @@
 #include "Component.h"
 #include "InputSystem.h"
 #include <queue>
+#include "Vector2f.h"
 
 using std::queue;
 using std::string;
 
 class OnlineSendComponent : public Component{
 public:
+	struct syncStruct {
+		Vector2f pos;
+		Vector2f vel;
+	} syncVars;
 	OnlineSendComponent();
 
 	queue<string>* Send();
@@ -16,6 +21,16 @@ public:
 			m_commandsToSend.push(cmd);
 			m_prevCommand = cmd;
 		}
+	}
+
+	void setSync(Vector2f pos, Vector2f vel) {
+		syncVars.pos = pos;
+		syncVars.vel = vel;
+	}
+
+	syncStruct getSync()
+	{
+		return syncVars;
 	}
 
 	int m_playerNumber;

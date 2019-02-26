@@ -16,6 +16,8 @@ public:
 	void handleInput(void* e);
 	int addCommand(string);
 
+	void syncPosition(void* e, float px, float py, float vx, float vy);
+
 	int m_playerNumber;
 private:
 

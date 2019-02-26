@@ -41,6 +41,7 @@ public:
 			if (net != NULL) 
 			{
 				net->addCommand("JUMP");
+				net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y));
 			}
 		}
 	}
@@ -80,6 +81,7 @@ public:
 		if (net != NULL)
 		{
 			net->addCommand("MOVE LEFT");
+			net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y));
 		}
 	}
 };
@@ -117,6 +119,7 @@ public:
 		if (net != NULL)
 		{
 			net->addCommand("MOVE RIGHT");
+			net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y));
 		}
 	}
 };
@@ -148,6 +151,7 @@ public:
 		if (net != NULL)
 		{
 			net->addCommand("PUNCH");
+			net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y));
 		}
 	}
 };
@@ -179,6 +183,7 @@ public:
 		if (net != NULL)
 		{
 			net->addCommand("KICK");
+			net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y));
 		}
 	}
 };
@@ -206,6 +211,7 @@ public:
 		if (net != NULL)
 		{
 			net->addCommand("UPPERCUT");
+			net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y));
 		}
 	}
 };
@@ -229,6 +235,7 @@ public:
 				if (net != NULL)
 				{
 					net->addCommand("FALL");
+					net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y));
 				}
 			}
 		}
@@ -254,6 +261,7 @@ public:
 			if (net != NULL)
 			{
 				net->addCommand("SUPER");
+				net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y));
 			}
 		}
 	}
@@ -266,11 +274,13 @@ public:
 	void execute(Entity& e)
 	{
 		static_cast<AnimationComponent*>(&e.getComponent("Animation"))->playAnimation("Idle", true);
+		auto phys = static_cast<PlayerPhysicsComponent*>(&e.getComponent("Player Physics"));
 
 		auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
 		if (net != NULL)
 		{
 			net->addCommand("IDLE");
+			net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y));
 		}
 	}
 };
