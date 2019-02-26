@@ -255,7 +255,7 @@ public:
 		auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
 		if (net != NULL)
 		{
-			//net->addCommand("IDLE");
+			net->addCommand("IDLE");
 		}
 	}
 };
