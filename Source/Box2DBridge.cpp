@@ -23,8 +23,13 @@ void Box2DBridge::update(double dt)
 		}
 		m_bodiesToDelete.clear();
 	}
-	//Simulate the physics bodies
-	m_world->Step(dt, VELOCITY_ITERS, POSITION_ITERS);
+	m_timeSinceLastFrame += dt;
+	if (m_timeSinceLastFrame > m_secondsPerFrame)
+	{
+		//Simulate the physics bodies
+		m_world->Step(m_timeSinceLastFrame, VELOCITY_ITERS, POSITION_ITERS); 
+		m_timeSinceLastFrame = 0;
+	}
 }
 
 void Box2DBridge::flipGravity()

@@ -77,7 +77,6 @@ void Game::run()
 	{
 		now = std::chrono::system_clock::now();
 		dt = std::chrono::duration<double>(now - before).count();
-
 		//Process any events that have occured
 		processEvents(e);
 
@@ -96,6 +95,7 @@ void Game::run()
 
 		//Draw the Game
 		draw();
+		
 
 		//Make before time equal to the current time
 		before = now;
