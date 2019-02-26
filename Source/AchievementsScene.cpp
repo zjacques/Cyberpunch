@@ -43,6 +43,9 @@ void AchievementsScene::start()
 
 void AchievementsScene::stop()
 {
+	for (auto& icon : m_icons)
+		Scene::systems()["Render"]->deleteComponent(&icon.getComponent("Sprite"));
+
 	//Remove components from the systems
 	Scene::systems()["Render"]->deleteComponent(&m_bgE.getComponent("Sprite"));
 }
