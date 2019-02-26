@@ -338,5 +338,8 @@
     <ClInclude Include="Header\PlayerRespawnSystem.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
+    <ClInclude Include="Header\PlatformComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
