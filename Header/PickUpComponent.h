@@ -21,9 +21,11 @@ public:
 	float& getTimeInBooth() { return m_timeInBooth; }
 	Vector2f& getTeleportLocation() { return m_teleportLocation; }
 	Vector2f& getTeleportLocationB() { return m_teleportLocationB; }
+	Vector2f& getPosition() { return m_position; }
 	Entity* getPlayer() { return m_playerToTele; }
 	Entity* getPickupEntity() { return m_pickupEntity; }
 	PhysicsComponent* getBody() { return m_body; };
+	bool m_end;
 private:
 	float m_timeLive;
 	float m_timeInBooth = 10;

@@ -6,13 +6,14 @@
 class PlatformBoothComponent : public DJBoothComponent
 {
 public:
-	PlatformBoothComponent(std::vector<Entity*>* allPlatforms):
+	PlatformBoothComponent(std::vector<Entity*>* allPlatforms, Entity* pickUp):
 		m_entities(allPlatforms),
 		m_timer(0),
 		m_active(false),
 		m_speed(4000),
 		m_halfPoint(false),
-		m_currentIndex(1)
+		m_currentIndex(1),
+		DJBoothComponent(pickUp)
 	{
 		auto firstPoint = Vector2f(960, 540);
 		auto secondPoint = Vector2f(2880, 540);

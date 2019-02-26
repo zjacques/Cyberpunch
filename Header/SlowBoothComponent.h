@@ -9,10 +9,11 @@
 class SlowBoothComponent : public DJBoothComponent
 {
 public:
-	SlowBoothComponent() :
+	SlowBoothComponent(Entity* pickUp) :
 		m_timer(0),
 		m_active(false), m_scalar(1),
-		m_halfPoint(false)
+		m_halfPoint(false),
+		DJBoothComponent(pickUp)
 	{
 
 	}

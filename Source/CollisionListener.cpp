@@ -68,7 +68,9 @@ void CollisionListener::BeginContact(b2Contact * contact)
 		|| (dataB->Tag() == "Attack" && dataA->Tag() == "Booth"))
 	{
 		auto booth = static_cast<Entity*>(dataA->Tag() == "Booth" ? dataA->Data() : dataB->Data());
-		static_cast<DJBoothComponent*>(&booth->getComponent("DJ Booth"))->run();
+		auto djB = static_cast<DJBoothComponent*>(&booth->getComponent("DJ Booth"));
+		djB->run();
+		static_cast<PickUpComponent&>(djB->m_pickUp->getComponent("PickUp")).m_end = true;
 	}
 
 	if ((dataA->Tag() == "Kill Box" && dataB->Tag() == "Player Body")

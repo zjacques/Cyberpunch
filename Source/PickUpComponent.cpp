@@ -11,6 +11,7 @@ PickUpComponent::PickUpComponent(Entity* pickupEntity) :
 
 void PickUpComponent::spawn(Box2DBridge & world)
 {
+	m_end = false;
 	m_spawned = true;
 	m_timeLive = 10; //10 seconds
 	m_body = new PhysicsComponent(new PositionComponent(0,0));
@@ -18,22 +19,22 @@ void PickUpComponent::spawn(Box2DBridge & world)
 	if (m_currentPos == 1)
 	{
 		m_position = m_pos2;
-		m_teleportLocationB = m_pos2;
+		//m_teleportLocationB = m_position;
 	}
 	else if (m_currentPos == 2)
 	{
 		m_position = m_pos3;
-		m_teleportLocationB = m_pos3;
+		//m_teleportLocationB = m_position;
 	}
 	else if (m_currentPos == 3)
 	{
 		m_position = m_pos4;
-		m_teleportLocationB = m_pos4;
+		//m_teleportLocationB = m_position;
 	}
 	else if (m_currentPos == 4)
 	{
 		m_position = m_pos5;
-		m_teleportLocationB = m_pos5;
+		//m_teleportLocationB = m_position;
 	}
 	m_currentPos = rand() % 5 + 1;
 	//creates a box2d body for the pickup and defines it proporties
@@ -51,6 +52,5 @@ void PickUpComponent::despawn(Box2DBridge & world)
 	m_currentPos = rand() % 5 + 1;
 
 	world.deleteBody(m_body->m_body);
-
 	m_body = nullptr;
 }
