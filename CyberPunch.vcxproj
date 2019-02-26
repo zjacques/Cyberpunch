@@ -193,7 +193,6 @@
     <ClInclude Include="Header\PlatformBoothComponent.h" />
     <ClInclude Include="Header\PlayerComponent.h" />
     <ClInclude Include="Header\PlayerInputComponent.h" />
-    <ClInclude Include="Header\PlayerInputSystem.h" />
     <ClInclude Include="Header\PlayerPhysicsComponent.h" />
     <ClInclude Include="Header\GameScene.h" />
     <ClInclude Include="Header\MainMenuScene.h" />

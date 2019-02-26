@@ -13,6 +13,7 @@ public:
 	//the texture itself and the layer of the sprite
 	SpriteComponent(Component* pos, Vector2f overallSize, Vector2f singleFramebounds, SDL_Texture * texture, int layer = 0):
 		m_bounds(overallSize),
+		m_angle(0),
 		m_singleFrameBounds(singleFramebounds),
 		m_texture(texture),
 		m_layer(layer),
@@ -25,6 +26,7 @@ public:
 	}
 
 	//Setters
+	void setAngle(float a) { m_angle = a; }
 	void setTexture(SDL_Texture* texture) { m_texture = texture; }
 	void setTextureRect(SDL_Rect frame) { m_src = frame; }
 	void setScale(float x, float y)
@@ -55,6 +57,7 @@ public:
 	SDL_Rect getDestRect() { return m_dst; }
 	SDL_RendererFlip& getFlip() { return m_flip; }
 	int getLayer() { return m_layer; }
+	float& getAngle() { return m_angle; }
 private:
 	Vector2f m_scale;
 	SDL_RendererFlip m_flip;
@@ -64,6 +67,7 @@ private:
 	SDL_Rect m_dst;
 	SDL_Texture * m_texture;
 	int m_layer;
+	float m_angle;
 };
 
 #endif
