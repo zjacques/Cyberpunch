@@ -14,14 +14,13 @@ GameScene::GameScene() :
 	m_gameEndE("End winner"),
 	m_platformsCreated(false),
 	m_camera(false),
-	m_gameStartTimer(3),
-	m_audioCreated(false)
+	m_gameStartTimer(3)
 {
-	m_numOfAIPlayers = 2;
+	m_numOfAIPlayers = 1;
 }
 
 void GameScene::start()
-{	
+{
 	if (m_audioCreated == false)
 	{
 		m_audio.addSound("GameMusic", Scene::resources().getMusic("Song 2"));
@@ -123,7 +122,6 @@ void GameScene::start()
 		m_killboxes.push_back(createKillBox(kb.at(i)["X"], kb.at(i)["Y"], kb.at(i)["W"], kb.at(i)["H"]));
 	}
 
-	m_audioCreated = true;
 	//Setup timer
 	setupTimer();
 }
@@ -187,6 +185,7 @@ void GameScene::stop()
 		delete player;
 	for (auto onlineP : m_onlinePlayers)
 		delete onlineP;
+  
 	m_audio.stop();
 
 	m_allPlayers.clear();
@@ -604,7 +603,7 @@ void GameScene::createPlatforms(SDL_Renderer& renderer)
 	{
 		auto platComp = new PlatformComponent(); //Create the platform component
 		//Get the X,Y,Width and Height of the platform
-		int x = platform["X"], y = platform["Y"], w = platform["W"], h = platform["H"];
+		int x = platform["X"], y = platform["Y"], w = platform["W"], h = platform["H"], angle = platform["Angle"];
 		std::string tag = platform["Tag"];
 
 		//Creta ethe platform entity
@@ -613,7 +612,7 @@ void GameScene::createPlatforms(SDL_Renderer& renderer)
 		newPlat->addComponent("Pos", platPos);
 		newPlat->addComponent("Platform", platComp);
 		auto phys = new PhysicsComponent(platPos);
-		phys->m_body = m_physicsWorld.createBox(x, y, w, h, false, true, b2BodyType::b2_staticBody);
+		phys->m_body = m_physicsWorld.createBox(x, y, angle != 90 ? w : h, angle != 90 ? h : w, false, true, b2BodyType::b2_staticBody);
 		m_physicsWorld.addProperties(*phys->m_body, 0, .1f, 0, false, new PhysicsComponent::ColData(tag, newPlat));
 		newPlat->addComponent("Physics", phys);
 		Scene::systems()["Physics"]->addComponent(phys);
@@ -647,7 +646,7 @@ void GameScene::createPlatforms(SDL_Renderer& renderer)
 			{
 				rect.w = size.x;
 				rect.h = size.y;
-				rect.x = i * smallW;
+				rect.x = i * smallW ;
 				rect.y = 0;
 
 				if (i == 0)
@@ -681,9 +680,8 @@ void GameScene::createPlatforms(SDL_Renderer& renderer)
 
 		//Set the texture of the platform to the green platform texture
 		newPlat->addComponent("Sprite", new SpriteComponent(platPos, Vector2f(w, h), Vector2f(w, h), platComp->getTexture("Game BG0"), 1));
-		static_cast<SpriteComponent*>(&newPlat->getComponent("Sprite"))->setAngle(platform["Angle"]);
+		static_cast<SpriteComponent*>(&newPlat->getComponent("Sprite"))->setAngle(angle);
 		Scene::systems()["Render"]->addComponent(&newPlat->getComponent("Sprite"));
-
 		m_platforms.push_back(newPlat);
 	}
 
@@ -703,7 +701,7 @@ void GameScene::createPlatforms(SDL_Renderer& renderer)
 void GameScene::draw(SDL_Renderer & renderer)
 {
 	if (NULL == m_rendererPtr)
-		m_rendererPtr = &renderer;
+		m_rendererPtr = &renderer; 
 
 	if (m_platformsCreated == false)
 		createPlatforms(renderer);
