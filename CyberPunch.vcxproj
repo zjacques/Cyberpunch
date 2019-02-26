@@ -81,8 +81,8 @@
       <AdditionalIncludeDirectories>$(projectDir)/Libraries/SDL2/include/;$(projectDir)/Libraries/;$(projectDir)/Header/;$(projectDir)/Libraries/nlohmann;$(projectDir)/Libraries/SDL2_net/include/;$(projectDir)/Libraries/SDL2_mixer/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(projectDir)/Libraries/SDL2/lib/;$(projectDir)/Libraries/Box2D/lib/;$(projectDir)/Libraries/SDL_TTF/lib/;$(projectDir)/Libraries/SDL_image/lib/;$(projectDir)/Libraries/SDL2_net/lib/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_net.lib;SDL2_image.lib;SDL2_ttf.lib;Box2D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(projectDir)/Libraries/SDL2/lib/;$(projectDir)/Libraries/Box2D/lib/;$(projectDir)/Libraries/SDL_TTF/lib/;$(projectDir)/Libraries/SDL_image/lib/;$(projectDir)/Libraries/SDL2_net/lib/;$(projectDir)/Libraries/SDL2_mixer/lib/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_net.lib;SDL2_image.lib;SDL2_ttf.lib;Box2D.lib;SDL2_mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
@@ -169,6 +169,7 @@
     <ClInclude Include="Header\AnimationSystem.h" />
     <ClInclude Include="Header\AttackComponent.h" />
     <ClInclude Include="Header\AttackSystem.h" />
+    <ClInclude Include="Header\AudioComponent.h" />
     <ClInclude Include="Header\BehaviourTree.h" />
     <ClInclude Include="Header\Box2DBridge.h" />
     <ClInclude Include="Header\ButtonComponent.h" />
