@@ -52,7 +52,6 @@ void CollisionListener::BeginContact(b2Contact * contact)
 			static_cast<DustTriggerComponent*>(&player->getComponent("Dust Trigger"))->setCreate();
 		}
 	}
-
 		
 	if ((dataA->Tag() == "Player Body" && dataB->Tag() == "Pickup")
 		|| (dataB->Tag() == "Player Body" && dataA->Tag() == "Pickup"))
@@ -102,6 +101,14 @@ void CollisionListener::EndContact(b2Contact * contact)
 		auto phys = static_cast<PlayerPhysicsComponent*>(&player->getComponent("Player Physics"));
 		phys->setCanJump(false);
 		phys->setCanFall(false);
+	}
+
+	if ((dataA->Tag() == "Edge Sensor" && dataB->Tag() == "Platform")
+		|| (dataB->Tag() == "Edge Sensor" && dataA->Tag() == "Platform")
+		|| (dataA->Tag() == "Edge Sensor" && dataB->Tag() == "Floor")
+		|| (dataB->Tag() == "Edge Sensor" && dataA->Tag() == "Floor"))
+	{
+
 	}
 
 	//if a players body has hit a platform

@@ -20,7 +20,7 @@ public:
 		m_currentCMD = nullptr;
 		m_previousCMD = m_currentCMD;
 
-		if (aiIsButtonPressed("YBTN") && m_currentCMD != m_previousCMD) //Y
+		if (aiIsButtonPressed("YBTN")) //Y
 		{
 			m_currentCMD = &m_jumpCMD;
 		}

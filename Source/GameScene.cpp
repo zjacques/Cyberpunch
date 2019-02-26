@@ -80,7 +80,7 @@ void GameScene::start()
 	}
 	for (int i = 0; i < m_numOfAIPlayers; i++)
 	{
-		m_AIPlayers.push_back(createAI(1, 1500 + 150 * 1, 360, spawnPos));
+		m_AIPlayers.push_back(createAI(1, 1000 + 150 * 1, 360, spawnPos));
 		m_allPlayers.emplace_back(m_AIPlayers.at(i)); //Add ai to all players vector
 	}
 	
@@ -511,16 +511,17 @@ Entity * GameScene::createAI(int index, int posX, int posY, std::vector<Vector2f
 	auto input = new AiInputComponent();
 	auto player = new PlayerComponent(spawnPositions, ai);
 
-	auto behaviour = new AIComponent(m_localPlayers, input, ai, player);
 	ai->addComponent("Input", input);
 	ai->addComponent("Pos", pos);
-	ai->addComponent("AI", behaviour);
+
 	ai->addComponent("Player", player);
 	ai->addComponent("Dust Trigger", new DustTriggerComponent());
 	ai->addComponent("Player", player);
 	ai->addComponent("Attack", new AttackComponent());
 	ai->addComponent("Sprite", new SpriteComponent(&ai->getComponent("Pos"), Vector2f(1700, 85), Vector2f(85, 85), Scene::resources().getTexture("Player Run"), 2));
 	auto animation = new AnimationComponent(&ai->getComponent("Sprite"));
+	auto behaviour = new AIComponent(m_localPlayers, input, ai, player, m_physicsWorld);
+	ai->addComponent("AI", behaviour);
 
 	std::vector<SDL_Rect> m_animRects, m_stunRects; //The rectangles for the animations
 
@@ -801,25 +802,14 @@ void GameScene::handleInput(InputSystem & input)
 			{
 				aiInput->handleInput("", player);
 			}
-			else if (nullptr != input)
-			{
-				input->handleInput(player);
-			}
 			else if (nullptr != onlineInput)
 			{
 				onlineInput->handleInput(player);
 			}
+			else if (nullptr != input)
+			{
+				input->handleInput(player);
+			}
 		}
-
-		for (int i = 0; i < m_numOfOnlinePlayers; i++)
-		{
-			//auto input = static_cast<OnlineInputComponent*>(&m_onlinePlayers.at(i)->getComponent("Input"));
-			//input->handleInput(m_onlinePlayers.at(i));
-			//m_onlinePlayers.at(i).handleInput(*m_onlineInputs.at(i));
-		}
-	}
-	for (auto& ai : m_AIPlayers)
-	{
-		//static_cast<AiInputComponent*>(&ai->getComponent("Input"))->handleInput("", ai);
 	}
 }
