@@ -73,7 +73,6 @@ private:
 	//Current attacking sensor
 	PhysicsComponent* m_currentAttackSensor;
 
-
 	Box2DBridge* m_worldPtr;
 
 	b2RevoluteJoint * m_sensorJoint;

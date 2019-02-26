@@ -18,6 +18,7 @@ public:
 	void handleInput(std::string s, Entity * e)
 	{
 		m_currentCMD = nullptr;
+		m_previousCMD = m_currentCMD;
 
 		if (aiIsButtonPressed("YBTN")) //Y
 		{
@@ -35,7 +36,7 @@ public:
 		{
 			m_currentCMD = &m_phaseDownCMD;
 		}
-		if (aiIsButtonHeld("STICKLEFT")) //Left
+		else if (aiIsButtonHeld("STICKLEFT")) //Left
 		{
 			m_currentCMD = &m_moveLeftCMD;
 		}
@@ -48,8 +49,9 @@ public:
 		{
 			m_currentCMD->execute(*e);
 		}
-	}
 
+		m_previousCMD = m_currentCMD;
+	}
 private:
 	bool aiIsButtonHeld(std::string btn)
 	{
@@ -58,6 +60,10 @@ private:
 	bool aiIsButtonPressed(std::string btn)
 	{
 		return m_previous[btn] && !m_current[btn];
+	}
+	bool aiIsButtonPreviouslyPressed(std::string btn)
+	{
+		return m_previous[btn];
 	}
 
 	JumpCommand m_jumpCMD;
@@ -68,6 +74,7 @@ private:
 	UppercutCommand m_uppercutCMD;
 	PhaseDownCommand m_phaseDownCMD;
 	Command * m_currentCMD;
+	Command * m_previousCMD;
 	bool m_left, m_right;
 };
 

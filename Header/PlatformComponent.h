@@ -25,11 +25,11 @@ public:
 		if (bg == "Game BG0")
 			return m_green;
 		else if (bg == "Game BG1")
-			return m_pink;
+			return m_orange;
 		else if (bg == "Game BG2")
 			return m_blue;
 		else
-			return m_orange;
+			return m_pink;
 	}
 private:
 	//All the different colours for the platforms

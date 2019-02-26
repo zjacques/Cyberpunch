@@ -4,8 +4,10 @@ PickUpComponent::PickUpComponent(Entity* pickupEntity) :
 	m_pickupEntity(pickupEntity),
 	m_timeLive(10),
 	m_timeTillSpawn(10),
+	m_timeInBooth(10),
 	m_spawned(false),
-	m_currentPos(0)
+	m_currentPos(0),
+	m_body(nullptr)
 {
 }
 
@@ -14,6 +16,7 @@ void PickUpComponent::spawn(Box2DBridge & world)
 	m_end = false;
 	m_spawned = true;
 	m_timeLive = 10; //10 seconds
+	delete m_body;
 	m_body = new PhysicsComponent(new PositionComponent(0,0));
 
 	if (m_currentPos == 1)
@@ -52,5 +55,4 @@ void PickUpComponent::despawn(Box2DBridge & world)
 	m_currentPos = rand() % 5 + 1;
 
 	world.deleteBody(m_body->m_body);
-	m_body = nullptr;
 }

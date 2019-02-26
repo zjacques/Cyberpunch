@@ -93,7 +93,6 @@ public:
 				{
 					return false;
 				}
-
 			}
 			//Return true if all children succeed
 			return true;

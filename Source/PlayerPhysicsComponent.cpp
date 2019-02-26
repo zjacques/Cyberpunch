@@ -100,9 +100,12 @@ void PlayerPhysicsComponent::applyDamageImpulse(float x, float y)
 	}
 }
 
-void PlayerPhysicsComponent::flipGravity()
+void PlayerPhysicsComponent::flipGravity(Box2DBridge& world)
 {
 	m_gravFlipped = !m_gravFlipped;
+	m_sensorJointDef.localAnchorA.Set(m_sensorJoint->GetLocalAnchorA().x, -m_sensorJoint->GetLocalAnchorA().y);
+	world.getWorld().DestroyJoint(m_sensorJoint);
+	world.getWorld().CreateJoint(&m_sensorJointDef);
 }
 
 void PlayerPhysicsComponent::createJoint(Box2DBridge & world)
