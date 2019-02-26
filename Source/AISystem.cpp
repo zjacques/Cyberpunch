@@ -38,8 +38,8 @@ void AISystem::createTree()
 		cast_comp->m_succeeders[0].setChild(new CheckPlayerDirection(e, input));
 		cast_comp->m_selectors[1].addChildren({ new CheckHealth(e, input), &cast_comp->m_selectors[2] });
 		cast_comp->m_selectors[2].addChildren({ new PunchAction(e, input), new FleeAction(e, input) });
-		cast_comp->punchSequence.addChildren({ new CheckAbove(e, input), &cast_comp->m_selectors[4] });
-		cast_comp->m_selectors[4].addChildren({ new PunchAction(e, input), new PunchAction(e, input) });
+		cast_comp->punchSequence.addChildren({ new CheckAbove(e, input), &cast_comp->m_random });
+		cast_comp->m_random.addChildren({ new PunchAction(e, input), new KickAction(e, input) });
 
 		//Right sub tree
 		cast_comp->m_selectors[5].addChildren({ &cast_comp->m_sequences[1], &cast_comp->m_sequences[2] });

@@ -139,6 +139,27 @@ public:
 
 #endif
 
+#ifndef KICKACTION_H
+#define KICKACTION_H
+
+class KickAction : public Action
+{
+public:
+	KickAction(Entity * e, AiInputComponent * a)
+		: Action(e, a)
+	{
+	}
+
+	bool run() override
+	{
+		m_input->m_current["ABTN"] = true;
+		return true;
+	}
+};
+
+#endif
+
+
 #ifndef CHECKNEAREST_H
 #define CHECKNEAREST_H
 
@@ -489,8 +510,8 @@ public:
 				m_input->m_current["STICKLEFT"] = false;
 				m_input->m_current["STICKRIGHT"] = true;
 			}
+			return true;
 		}
-		return true;
 	}
 
 	//Euclidean distance function

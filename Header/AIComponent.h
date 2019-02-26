@@ -31,6 +31,7 @@ public:
 	//Declare Tree, selector nodes and sequence nodes
 	BehaviourTree BT;
 	BehaviourTree::Selector m_selectors[7];
+	BehaviourTree::RandomSelector m_random;
 	BehaviourTree::Sequence m_sequences[3];
 	BehaviourTree::Sequence punchSequence;
 	BehaviourTree::Succeeder m_succeeders[3];
