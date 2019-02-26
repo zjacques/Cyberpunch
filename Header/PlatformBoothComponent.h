@@ -21,7 +21,7 @@ public:
 		auto secondPair = OffsetPair();
 		auto thirdPair = OffsetPair();
 
-		for (int i = 3; i < m_entities->size(); i++)
+		for (int i = 5; i < m_entities->size(); i++)
 		{
 			if (i < 9)
 			{

@@ -10,7 +10,7 @@ GameScene::GameScene() :
 	m_platformsCreated(false),
 	m_camera(false)
 {
-	m_numOfAIPlayers = 0;
+	m_numOfAIPlayers = 1;
 }
 
 void GameScene::start()
