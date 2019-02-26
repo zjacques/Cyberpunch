@@ -15,6 +15,9 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 	//Load level data first
 	loadLevelData();
 
+	//Load achievement data
+	loadAchievements();
+
 	//Load textures here
 	//You do not need to include the entire path, the resource manager
 	//Will look for everything in the Resources folder, so you then need to only provide th erest of the path to the file
@@ -109,6 +112,19 @@ void ResourceHandler::loadLevelData()
 
 	//Parse the loaded in file to a json object
 	m_gameData = json::parse(content);
+}
+
+void ResourceHandler::loadAchievements()
+{
+	//Open an ifstream on the file
+	std::ifstream ifs(m_filePath + "Achievements.txt");
+
+	//Load the data into the string content
+	std::string content((std::istreambuf_iterator<char>(ifs)),
+		(std::istreambuf_iterator<char>()));
+
+	//Parse the loaded in file to a json object
+	m_achievementData = json::parse(content);
 }
 
 SDL_Texture* ResourceHandler::loadFromPath(std::string fileName, SDL_Renderer& renderer)
