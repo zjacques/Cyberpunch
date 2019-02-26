@@ -82,7 +82,7 @@ void GameScene::start()
 	}
 	for (int i = 0; i < m_numOfAIPlayers; i++)
 	{
-		m_AIPlayers.push_back(createAI(1, 1500 + 150 * 1, 360, spawnPos));
+		m_AIPlayers.push_back(createAI(1, 1000 + 150 * 1, 360, spawnPos));
 		m_allPlayers.emplace_back(m_AIPlayers.at(i)); //Add ai to all players vector
 	}
 	
@@ -514,16 +514,16 @@ Entity * GameScene::createAI(int index, int posX, int posY, std::vector<Vector2f
 	auto input = new AiInputComponent();
 	auto player = new PlayerComponent(spawnPositions, ai);
 
-	auto behaviour = new AIComponent(m_localPlayers, input, ai, player);
 	ai->addComponent("Input", input);
 	ai->addComponent("Pos", pos);
-	ai->addComponent("AI", behaviour);
 	ai->addComponent("Player", player);
 	ai->addComponent("Dust Trigger", new DustTriggerComponent());
 	ai->addComponent("Player", player);
 	ai->addComponent("Attack", new AttackComponent());
 	ai->addComponent("Sprite", new SpriteComponent(&ai->getComponent("Pos"), Vector2f(1700, 85), Vector2f(85, 85), Scene::resources().getTexture("Player Run"), 2));
 	auto animation = new AnimationComponent(&ai->getComponent("Sprite"));
+	auto behaviour = new AIComponent(&m_allPlayers, input, ai, player, m_physicsWorld);
+	ai->addComponent("AI", behaviour);
 
 	std::vector<SDL_Rect> m_animRects, m_stunRects; //The rectangles for the animations
 
@@ -802,7 +802,7 @@ void GameScene::handleInput(InputSystem & input)
 			auto aiInput = dynamic_cast<AiInputComponent*>(&player->getComponent("Input"));
 			if (nullptr != aiInput)
 			{
-				//aiInput->handleInput("", player);
+				aiInput->handleInput("", player);
 			}
 			else if (nullptr != onlineInput)
 			{
