@@ -4,6 +4,7 @@
 #include "OnlineSendComponent.h"
 #include "OnlineInputComponent.h"
 #include <Windows.h>
+#include <math.h>
 
 using std::vector;
 using std::string;
