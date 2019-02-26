@@ -3,7 +3,9 @@
 #include "PlayerRespawnSystem.h"
 #include "AnimationComponent.h"
 #include "DustSystem.h"
+#include "PhysicsSystem.h"
 #include "PickUpSystem.h"
+#include "PlayerPhysicsSystem.h"
 #include "PlatformComponent.h"
 
 GameScene::GameScene() :
@@ -14,7 +16,7 @@ GameScene::GameScene() :
 	m_camera(false),
 	m_gameStartTimer(3)
 {
-	m_numOfAIPlayers = 1;
+	m_numOfAIPlayers = 0;
 }
 
 void GameScene::start()
@@ -25,14 +27,14 @@ void GameScene::start()
 	m_startTimerEnded = false;
 	m_gameStarted = false;
 	m_gameStartTimer = 3; //3 Seconds
-	m_physicsSystem = PhysicsSystem(); // Recreate the physics system
 	m_physicsWorld.initWorld(); //Create the physics world
 	m_physicsWorld.addContactListener(m_collisionListener); //Add collision listener to the world
 
 	//Recreate the attack system
+	static_cast<PlayerPhysicsSystem*>(Scene::systems()["Player Physics"])->setWorld(m_physicsWorld);
 	Scene::systems()["Attack"] = new AttackSystem(m_physicsWorld);
 	//Recreate the dust system
-	Scene::systems()["Dust"] = new DustSystem(&Scene::systems(), &m_localPlayers, &Scene::resources());
+	Scene::systems()["Dust"] = new DustSystem(&Scene::systems(), &m_allPlayers, &Scene::resources());
 	Scene::systems()["Respawn"] = new PlayerRespawnSystem();
 	static_cast<PickUpSystem*>(Scene::systems()["Pickup"])->setWorld(m_physicsWorld);
 	Scene::systems()["Booth"] = new DJBoothSystem(&Scene::resources(), &m_platforms, &m_bgEntity);
@@ -163,6 +165,7 @@ void GameScene::stop()
 	Scene::systems()["Render"]->removeAllComponents();
 	Scene::systems()["Player Physics"]->removeAllComponents();
 	Scene::systems()["Physics"]->removeAllComponents();
+	Scene::systems()["Pickup"]->removeAllComponents();
 	Scene::systems()["Attack"]->removeAllComponents();
 	Scene::systems()["AI"]->removeAllComponents();
 	Scene::systems()["Dust"]->removeAllComponents();
@@ -170,17 +173,19 @@ void GameScene::stop()
 	Scene::systems()["Animation"]->removeAllComponents();
 	Scene::systems()["Booth"]->removeAllComponents();
 
-	/*for (auto ai : m_AIPlayers)
+	for (auto ai : m_AIPlayers)
 		delete ai;
 	for (auto player : m_localPlayers)
 		delete player;
 	for (auto onlineP : m_onlinePlayers)
-		delete onlineP;*/
+		delete onlineP;
 
 	m_allPlayers.clear();
 	m_AIPlayers.clear();
 	m_localPlayers.clear();
 	m_onlinePlayers.clear();
+	m_playersToDel.clear();
+	delete m_pickUp;
 }
 
 void GameScene::update(double dt)
@@ -235,8 +240,8 @@ void GameScene::update(double dt)
 
 			//Remove the player from the all players vector
 			m_allPlayers.erase(std::remove(m_allPlayers.begin(), m_allPlayers.end(), player), m_allPlayers.end());
-			delete player;
-			player = nullptr;
+			//delete player;
+			//player = nullptr;
 		}
 
 		m_playersToDel.clear();
@@ -477,10 +482,8 @@ Entity* GameScene::createDJB(int index, int posX, int posY)
 	Scene::systems()["Render"]->addComponent(&booth->getComponent("Sprite"));
 
 	if (index == 0)
-	{
-		
-		booth->addComponent("DJ Booth", new GravityBoothComponent(m_localPlayers, &m_physicsWorld, &m_physicsSystem, &m_collisionListener, m_pickUp));
-		
+	{	
+		booth->addComponent("DJ Booth", new GravityBoothComponent(m_allPlayers, &m_physicsWorld, static_cast<PlayerPhysicsSystem*>(Scene::systems()["Player Physics"]), &m_collisionListener, m_pickUp));		
 	}
 	else if (index == 1)
 	{
@@ -799,27 +802,16 @@ void GameScene::handleInput(InputSystem & input)
 			auto aiInput = dynamic_cast<AiInputComponent*>(&player->getComponent("Input"));
 			if (nullptr != aiInput)
 			{
-				aiInput->handleInput("", player);
-			}
-			else if (nullptr != input)
-			{
-				input->handleInput(player);
+				//aiInput->handleInput("", player);
 			}
 			else if (nullptr != onlineInput)
 			{
 				onlineInput->handleInput(player);
 			}
+			else if (nullptr != input)
+			{
+				input->handleInput(player);
+			}
 		}
-
-		for (int i = 0; i < m_numOfOnlinePlayers; i++)
-		{
-			//auto input = static_cast<OnlineInputComponent*>(&m_onlinePlayers.at(i)->getComponent("Input"));
-			//input->handleInput(m_onlinePlayers.at(i));
-			//m_onlinePlayers.at(i).handleInput(*m_onlineInputs.at(i));
-		}
-	}
-	for (auto& ai : m_AIPlayers)
-	{
-		//static_cast<AiInputComponent*>(&ai->getComponent("Input"))->handleInput("", ai);
 	}
 }

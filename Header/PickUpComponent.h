@@ -7,6 +7,10 @@ class PickUpComponent : public Component
 {
 public: 
 	PickUpComponent(Entity* pickupEntity);
+	~PickUpComponent()
+	{
+
+	}
 
 	void spawn(Box2DBridge& world);
 	void despawn(Box2DBridge& world);
