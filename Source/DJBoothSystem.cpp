@@ -2,6 +2,7 @@
 #include "DJboothComponent.h"
 #include "SlowBoothComponent.h"
 #include "SpriteComponent.h"
+#include "PlatformComponent.h"
 
 
 void DJBoothSystem::addComponent(Component * comp)
@@ -20,12 +21,28 @@ void DJBoothSystem::update(double dt)
 		if (booth->bgSwitch)
 		{
 			m_currentBg++;
+			m_currentPc++;
+
 			if (m_currentBg > 3)
 				m_currentBg = 0;
+			
+			if (m_currentPc > 3)
+				m_currentPc = 0;
+
 
 			auto bgSprite = static_cast<SpriteComponent*>(&m_bgPtr->getComponent("Sprite"));
 			bgSprite->setTexture(m_resourcePtr->getTexture("Game BG" + std::to_string(m_currentBg)));
+
+			//Loop through all platforms and floors and switch the colours
+			for (auto& plat : *m_platformsPtr)
+			{
+				auto s = static_cast<SpriteComponent*>(&plat->getComponent("Sprite"));
+				s->setTexture(static_cast<PlatformComponent*>(&plat->getComponent("Platform"))->getTexture("Game BG" + std::to_string(m_currentBg)));
+			}
+
 			booth->bgSwitch = false;
+
+			
 		}
 	}
 	

@@ -7,6 +7,7 @@
 #include "DJboothComponent.h"
 #include "PlayerComponent.h"
 #include "AnimationComponent.h"
+#include "AIComponent.h"
 
 
 void CollisionListener::BeginContact(b2Contact * contact)
@@ -52,7 +53,6 @@ void CollisionListener::BeginContact(b2Contact * contact)
 			static_cast<DustTriggerComponent*>(&player->getComponent("Dust Trigger"))->setCreate();
 		}
 	}
-
 		
 	if ((dataA->Tag() == "Player Body" && dataB->Tag() == "Pickup")
 		|| (dataB->Tag() == "Player Body" && dataA->Tag() == "Pickup"))
@@ -68,7 +68,9 @@ void CollisionListener::BeginContact(b2Contact * contact)
 		|| (dataB->Tag() == "Attack" && dataA->Tag() == "Booth"))
 	{
 		auto booth = static_cast<Entity*>(dataA->Tag() == "Booth" ? dataA->Data() : dataB->Data());
-		static_cast<DJBoothComponent*>(&booth->getComponent("DJ Booth"))->run();
+		auto djB = static_cast<DJBoothComponent*>(&booth->getComponent("DJ Booth"));
+		djB->run();
+		static_cast<PickUpComponent&>(djB->m_pickUp->getComponent("PickUp")).m_end = true;
 	}
 
 	if ((dataA->Tag() == "Kill Box" && dataB->Tag() == "Player Body")
@@ -100,6 +102,16 @@ void CollisionListener::EndContact(b2Contact * contact)
 		auto phys = static_cast<PlayerPhysicsComponent*>(&player->getComponent("Player Physics"));
 		phys->setCanJump(false);
 		phys->setCanFall(false);
+	}
+
+	if ((dataA->Tag() == "Edge Sensor" && dataB->Tag() == "Platform")
+		|| (dataB->Tag() == "Edge Sensor" && dataA->Tag() == "Platform")
+		|| (dataA->Tag() == "Edge Sensor" && dataB->Tag() == "Floor")
+		|| (dataB->Tag() == "Edge Sensor" && dataA->Tag() == "Floor"))
+	{
+		auto ai = static_cast<Entity*>(dataA->Tag() == "Edge Sensor" ? dataA->Data() : dataB->Data());
+		auto comp = static_cast<AIComponent *>(&ai->getComponent("AI"));
+		comp->onEdge = true;
 	}
 
 	//if a players body has hit a platform

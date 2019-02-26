@@ -4,17 +4,19 @@
 #include "DJboothComponent.h"
 #include "Entity.h"
 #include "PlayerPhysicsComponent.h"
+#include "PlayerPhysicsSystem.h"
 
 class GravityBoothComponent : public DJBoothComponent
 {
 public: 
 	GravityBoothComponent(std::vector<Entity*> allPlayers, Box2DBridge* world,
-		PhysicsSystem* physSys, CollisionListener* cL) :
+		PlayerPhysicsSystem* physSys, CollisionListener* cL, Entity* pickUp) :
 		m_systemPtr(physSys),
 		m_entities(allPlayers),
 		m_collistenerPtr(cL),
 		m_worldPtr(world), 
-		m_timer(0)
+		m_timer(0),
+		DJBoothComponent(pickUp)
 	{
 		
 
@@ -30,6 +32,15 @@ public:
 	}
 	void update(double dt)
 	{
+		if (m_timer > 0)
+		{
+			m_timer -= dt;
+
+			if (m_timer <= 0)
+			{
+				unflipGrav();
+			}
+		}
 	}
   
 	void flipGrav()
@@ -38,14 +49,13 @@ public:
 		m_timer = 10; //10 seconds flipped
 		for (auto& comp : m_entities)
 		{
-			static_cast<PlayerPhysicsComponent*>(&comp->getComponent("Player Physics"))->flipGravity();
 			auto s = static_cast<SpriteComponent*>(&comp->getComponent("Sprite"));
 			s->setScale(s->getScale().x, -1);
-			m_worldPtr->flipGravity();
-			m_collistenerPtr->flipGravity();
-			m_systemPtr->flipGravity();
-			
 		}
+
+		m_worldPtr->flipGravity();
+		m_collistenerPtr->flipGravity();
+		m_systemPtr->flipGravity();
 	}
 
 	void unflipGrav()
@@ -53,13 +63,12 @@ public:
 		m_timer = 0;
 		for (auto& comp : m_entities)
 		{
-			static_cast<PlayerPhysicsComponent*>(&comp->getComponent("Player Physics"))->flipGravity();
 			auto s = static_cast<SpriteComponent*>(&comp->getComponent("Sprite"));
 			s->setScale(s->getScale().x, 1);
-			m_worldPtr->flipGravity();
-			m_collistenerPtr->flipGravity();
-			m_systemPtr->flipGravity();
 		}
+		m_worldPtr->flipGravity();
+		m_collistenerPtr->flipGravity();
+		m_systemPtr->flipGravity();
 	}
 
 	float& getTimeLeft() { return m_timer; }
@@ -67,6 +76,6 @@ private:
 	float m_timer;
 	std::vector<Entity*> m_entities;
 	Box2DBridge* m_worldPtr;
-	PhysicsSystem* m_systemPtr;
+	PlayerPhysicsSystem* m_systemPtr;
 	CollisionListener* m_collistenerPtr;
 };

@@ -78,11 +78,11 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(projectDir)/Libraries/SDL2/include/;$(projectDir)/Libraries/;$(projectDir)/Header/;$(projectDir)/Libraries/nlohmann;$(projectDir)/Libraries/SDL2_net/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(projectDir)/Libraries/SDL2/include/;$(projectDir)/Libraries/;$(projectDir)/Header/;$(projectDir)/Libraries/nlohmann;$(projectDir)/Libraries/SDL2_net/include/;$(projectDir)/Libraries/SDL2_mixer/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(projectDir)/Libraries/SDL2/lib/;$(projectDir)/Libraries/Box2D/lib/;$(projectDir)/Libraries/SDL_TTF/lib/;$(projectDir)/Libraries/SDL_image/lib/;$(projectDir)/Libraries/SDL2_net/lib/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_net.lib;SDL2_image.lib;SDL2_ttf.lib;Box2D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(projectDir)/Libraries/SDL2/lib/;$(projectDir)/Libraries/Box2D/lib/;$(projectDir)/Libraries/SDL_TTF/lib/;$(projectDir)/Libraries/SDL_image/lib/;$(projectDir)/Libraries/SDL2_net/lib/;$(projectDir)/Libraries/SDL2_mixer/lib/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_net.lib;SDL2_image.lib;SDL2_ttf.lib;Box2D.lib;SDL2_mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
@@ -153,7 +153,6 @@
     <ClCompile Include="Source\Game.cpp" />
     <ClCompile Include="Source\InputSystem.cpp" />
     <ClCompile Include="Source\Main.cpp" />
-    <ClCompile Include="Source\Player.cpp" />
     <ClCompile Include="Source\PreGameScene.cpp" />
     <ClCompile Include="Source\PlayerRespawnSystem.cpp" />
     <ClCompile Include="Source\RenderSystem.cpp" />
@@ -169,6 +168,7 @@
     <ClInclude Include="Header\AnimationSystem.h" />
     <ClInclude Include="Header\AttackComponent.h" />
     <ClInclude Include="Header\AttackSystem.h" />
+    <ClInclude Include="Header\AudioComponent.h" />
     <ClInclude Include="Header\BehaviourTree.h" />
     <ClInclude Include="Header\Box2DBridge.h" />
     <ClInclude Include="Header\ButtonComponent.h" />
@@ -191,6 +191,7 @@
     <ClInclude Include="Header\PickUpSystem.h" />
     <ClInclude Include="Header\OnlineSystem.h" />
     <ClInclude Include="Header\PlatformBoothComponent.h" />
+    <ClInclude Include="Header\PlatformComponent.h" />
     <ClInclude Include="Header\PlayerComponent.h" />
     <ClInclude Include="Header\PlayerInputComponent.h" />
     <ClInclude Include="Header\PlayerPhysicsComponent.h" />
@@ -201,7 +202,6 @@
     <ClInclude Include="Header\OnlineSendComponent.h" />
     <ClInclude Include="Header\OptionsScene.h" />
     <ClInclude Include="Header\PickUp.h" />
-    <ClInclude Include="Header\Player.h" />
     <ClInclude Include="Header\PlayerPhysicsSystem.h" />
     <ClInclude Include="Header\PreGameScene.h" />
     <ClInclude Include="Header\PlayerRespawnSystem.h" />

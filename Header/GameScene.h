@@ -1,9 +1,9 @@
 #pragma once
-#include "Player.h"
 #include "Scene.h"
 #include "Entity.h"
 #include "AttackSystem.h"
 #include "PreGameScene.h"
+#include "PhysicsSystem.h"
 
 #include "PhysicsComponent.h"
 #include "PlayerInputComponent.h"
@@ -20,6 +20,7 @@
 #include "PlatformBoothComponent.h"
 #include "SlowBoothComponent.h"
 
+#include "AudioComponent.h"
 #include "OnlineSystem.h"
 #include "PlayerPhysicsComponent.h"
 #include "OnlineSendComponent.h"
@@ -51,6 +52,7 @@ public:
 	void draw(SDL_Renderer& renderer);
 	void handleInput(InputSystem& input);
 private:
+	bool m_audioCreated;
 	bool m_platformsCreated;
 	bool m_boothCreated;
 	bool m_gameStarted, m_startTimerEnded, m_gameOver;
@@ -73,7 +75,6 @@ private:
 	int m_numOfAIPlayers;
 
 	//Physics variables
-	PhysicsSystem m_physicsSystem; //Add all physics components to the system
 	Box2DBridge m_physicsWorld;
 	CollisionListener m_collisionListener;
 	//Platforms of the game
@@ -81,4 +82,5 @@ private:
 
 	Camera m_camera;
 	SDL_Renderer* m_rendererPtr; //Used for resetting the render scale when exiting a game
+	AudioComponent m_audio;
 };

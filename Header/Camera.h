@@ -20,11 +20,11 @@ public:
 
 	const float MAX_ZOOM = 1.55f;
 	const float MIN_ZOOM = 1.0f;
+	SDL_Rect m_view;
 private:
 	void center();
 
 	Vector2f m_centerPoint;
-	SDL_Rect m_view;
 
 	//Dimensions of the camera
 	const int SCREEN_WIDTH = 1920;

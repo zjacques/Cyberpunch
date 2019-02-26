@@ -3,7 +3,10 @@
 #include "PlayerRespawnSystem.h"
 #include "AnimationComponent.h"
 #include "DustSystem.h"
+#include "PhysicsSystem.h"
 #include "PickUpSystem.h"
+#include "PlayerPhysicsSystem.h"
+#include "PlatformComponent.h"
 
 GameScene::GameScene() :
 	m_bgEntity("Game BG"),
@@ -13,33 +16,39 @@ GameScene::GameScene() :
 	m_camera(false),
 	m_gameStartTimer(3)
 {
-	m_numOfAIPlayers = 0;
+	m_numOfAIPlayers = 1;
 }
 
 void GameScene::start()
 {
+	if (m_audioCreated == false)
+	{
+		m_audio.addSound("GameMusic", Scene::resources().getMusic("Song 2"));
+	}
+
+	m_audio.playSound("GameMusic", true);
 	m_rendererPtr = NULL;
 	m_gameOver = false;
 	m_endGameTimer = 10; //10 seconds to show the winner
 	m_startTimerEnded = false;
 	m_gameStarted = false;
 	m_gameStartTimer = 3; //3 Seconds
-	m_physicsSystem = PhysicsSystem(); // Recreate the physics system
 	m_physicsWorld.initWorld(); //Create the physics world
 	m_physicsWorld.addContactListener(m_collisionListener); //Add collision listener to the world
 
 	//Recreate the attack system
+	static_cast<PlayerPhysicsSystem*>(Scene::systems()["Player Physics"])->setWorld(m_physicsWorld);
 	Scene::systems()["Attack"] = new AttackSystem(m_physicsWorld);
 	//Recreate the dust system
-	Scene::systems()["Dust"] = new DustSystem(&Scene::systems(), &m_localPlayers, &Scene::resources());
+	Scene::systems()["Dust"] = new DustSystem(&Scene::systems(), &m_allPlayers, &Scene::resources());
 	Scene::systems()["Respawn"] = new PlayerRespawnSystem();
 	static_cast<PickUpSystem*>(Scene::systems()["Pickup"])->setWorld(m_physicsWorld);
 	Scene::systems()["Booth"] = new DJBoothSystem(&Scene::resources(), &m_platforms, &m_bgEntity);
 
 	//Create background entity
-	auto bgPos = new PositionComponent(1920 /2 , 1080 / 2);
+	auto bgPos = new PositionComponent(960 , 540);
 	m_bgEntity.addComponent("Pos", bgPos);
-	m_bgEntity.addComponent("Sprite", new SpriteComponent(bgPos, Vector2f(1920, 1080 ), Vector2f(1920, 1080), Scene::resources().getTexture("Game BG0"), 0));
+	m_bgEntity.addComponent("Sprite", new SpriteComponent(bgPos, Vector2f(1920, 1080), Vector2f(1920, 1080), Scene::resources().getTexture("Game BG0"), 0));
 	//Add bg sprite component to the render system
 	Scene::systems()["Render"]->addComponent(&m_bgEntity.getComponent("Sprite"));
 
@@ -69,17 +78,17 @@ void GameScene::start()
 	{
 		int dex = PreGameScene::playerIndexes.localPlyrs[i];
 		m_localPlayers.push_back(createPlayer(dex, i, 600 + 150 * dex, 360, true, spawnPos));
-		m_allPlayers.emplace_back(m_localPlayers.at(i));
+		m_allPlayers.emplace_back(m_localPlayers.at(i)); //Add local to all players vector
 	}
 	for (int i = 0; i < m_numOfOnlinePlayers; i++)
 	{
 		int dex = PreGameScene::playerIndexes.onlinePlyrs[i];
 		m_onlinePlayers.push_back(createPlayer(dex, 0, 600 + 150 * dex, 360, false, spawnPos));
-		m_allPlayers.emplace_back(m_onlinePlayers.at(i));
+		m_allPlayers.emplace_back(m_onlinePlayers.at(i)); //Add online players to all players vector
 	}
 	for (int i = 0; i < m_numOfAIPlayers; i++)
 	{
-		m_AIPlayers.push_back(createAI(1, 1500 + 150 * 1, 360, spawnPos));
+		m_AIPlayers.push_back(createAI(1, 1000 + 150 * 1, 360, spawnPos));
 		m_allPlayers.emplace_back(m_AIPlayers.at(i)); //Add ai to all players vector
 	}
 	
@@ -162,16 +171,29 @@ void GameScene::stop()
 	Scene::systems()["Render"]->removeAllComponents();
 	Scene::systems()["Player Physics"]->removeAllComponents();
 	Scene::systems()["Physics"]->removeAllComponents();
+	Scene::systems()["Pickup"]->removeAllComponents();
 	Scene::systems()["Attack"]->removeAllComponents();
 	Scene::systems()["AI"]->removeAllComponents();
 	Scene::systems()["Dust"]->removeAllComponents();
 	Scene::systems()["Respawn"]->removeAllComponents();
 	Scene::systems()["Animation"]->removeAllComponents();
 	Scene::systems()["Booth"]->removeAllComponents();
+
+	for (auto ai : m_AIPlayers)
+		delete ai;
+	for (auto player : m_localPlayers)
+		delete player;
+	for (auto onlineP : m_onlinePlayers)
+		delete onlineP;
+  
+	m_audio.stop();
+
 	m_allPlayers.clear();
 	m_AIPlayers.clear();
 	m_localPlayers.clear();
 	m_onlinePlayers.clear();
+	m_playersToDel.clear();
+	delete m_pickUp;
 }
 
 void GameScene::update(double dt)
@@ -226,8 +248,8 @@ void GameScene::update(double dt)
 
 			//Remove the player from the all players vector
 			m_allPlayers.erase(std::remove(m_allPlayers.begin(), m_allPlayers.end(), player), m_allPlayers.end());
-			delete player;
-			player = nullptr;
+			//delete player;
+			//player = nullptr;
 		}
 
 		m_playersToDel.clear();
@@ -468,20 +490,18 @@ Entity* GameScene::createDJB(int index, int posX, int posY)
 	Scene::systems()["Render"]->addComponent(&booth->getComponent("Sprite"));
 
 	if (index == 0)
-	{
-		
-		booth->addComponent("DJ Booth", new GravityBoothComponent(m_localPlayers, &m_physicsWorld, &m_physicsSystem, &m_collisionListener));
-		
+	{	
+		booth->addComponent("DJ Booth", new GravityBoothComponent(m_allPlayers, &m_physicsWorld, static_cast<PlayerPhysicsSystem*>(Scene::systems()["Player Physics"]), &m_collisionListener, m_pickUp));		
 	}
 	else if (index == 1)
 	{
 		
-		booth->addComponent("DJ Booth", new SlowBoothComponent());
+		booth->addComponent("DJ Booth", new SlowBoothComponent(m_pickUp));
 	}
 	else if (index == 2)
 	{
 		
-		booth->addComponent("DJ Booth", new PlatformBoothComponent(&m_platforms));
+		booth->addComponent("DJ Booth", new PlatformBoothComponent(&m_platforms, m_pickUp));
 	}
 
 	Scene::systems()["Booth"]->addComponent(&booth->getComponent("DJ Booth"));
@@ -502,16 +522,16 @@ Entity * GameScene::createAI(int index, int posX, int posY, std::vector<Vector2f
 	auto input = new AiInputComponent();
 	auto player = new PlayerComponent(spawnPositions, ai);
 
-	auto behaviour = new AIComponent(m_localPlayers, input, ai, player);
 	ai->addComponent("Input", input);
 	ai->addComponent("Pos", pos);
-	ai->addComponent("AI", behaviour);
 	ai->addComponent("Player", player);
 	ai->addComponent("Dust Trigger", new DustTriggerComponent());
 	ai->addComponent("Player", player);
 	ai->addComponent("Attack", new AttackComponent());
 	ai->addComponent("Sprite", new SpriteComponent(&ai->getComponent("Pos"), Vector2f(1700, 85), Vector2f(85, 85), Scene::resources().getTexture("Player Run"), 2));
 	auto animation = new AnimationComponent(&ai->getComponent("Sprite"));
+	auto behaviour = new AIComponent(&m_allPlayers, input, ai, player, m_physicsWorld);
+	ai->addComponent("AI", behaviour);
 
 	std::vector<SDL_Rect> m_animRects, m_stunRects; //The rectangles for the animations
 
@@ -581,26 +601,21 @@ void GameScene::createPlatforms(SDL_Renderer& renderer)
 	//Create all of the platforms for the game
 	for (auto& platform : Scene::resources().getLevelData()["Platforms"])
 	{
+		auto platComp = new PlatformComponent(); //Create the platform component
 		//Get the X,Y,Width and Height of the platform
-		int x = platform["X"], y = platform["Y"], w = platform["W"], h = platform["H"];
+		int x = platform["X"], y = platform["Y"], w = platform["W"], h = platform["H"], angle = platform["Angle"];
 		std::string tag = platform["Tag"];
 
 		//Creta ethe platform entity
 		auto newPlat = new Entity(tag);
 		auto platPos = new PositionComponent(x, y);
 		newPlat->addComponent("Pos", platPos);
+		newPlat->addComponent("Platform", platComp);
 		auto phys = new PhysicsComponent(platPos);
-		phys->m_body = m_physicsWorld.createBox(x, y, w, h, false, true, b2BodyType::b2_staticBody);
+		phys->m_body = m_physicsWorld.createBox(x, y, angle != 90 ? w : h, angle != 90 ? h : w, false, true, b2BodyType::b2_staticBody);
 		m_physicsWorld.addProperties(*phys->m_body, 0, .1f, 0, false, new PhysicsComponent::ColData(tag, newPlat));
 		newPlat->addComponent("Physics", phys);
 		Scene::systems()["Physics"]->addComponent(phys);
-
-		//Create the texture for the platform
-		auto texture = SDL_CreateTexture(&renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_TARGET, w, h);
-		SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
-		//Set it to draw to the texture we just created
-		SDL_SetRenderTarget(&renderer, texture);
-
 
 		SDL_Rect rect, srcRect;
 
@@ -615,38 +630,58 @@ void GameScene::createPlatforms(SDL_Renderer& renderer)
 		srcRect.w = 50;
 		srcRect.h = 50;
 
-		//Loop through the tiles and draw to the texture we just created the shape of the platform
-		for (int i = 0; i < numOfTiles; i++)
+		std::vector<std::string> colours = { "Green", "Pink", "Orange", "Blue" };
+		//Loop 4 times, create textures for each colour
+
+		for (auto& col : colours)
 		{
-			rect.w = size.x;
-			rect.h = size.y;
-			rect.x = 0 + i * smallW;
-			rect.y = 0;
+			//Create the texture for the platform
+			auto texture = SDL_CreateTexture(&renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_TARGET, w, h);
+			SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
+			//Set it to draw to the texture we just created
+			SDL_SetRenderTarget(&renderer, texture);
 
-			if (i == 0)
+			//Loop through the tiles and draw to the texture we just created the shape of the platform
+			for (int i = 0; i < numOfTiles; i++)
 			{
-				SDL_RenderCopy(&renderer, Scene::resources().getTexture("Platform Green 0"), &srcRect, &rect);
-				SDL_RenderCopy(&renderer, Scene::resources().getTexture("Platform Green 0"), &srcRect, &rect);
+				rect.w = size.x;
+				rect.h = size.y;
+				rect.x = i * smallW ;
+				rect.y = 0;
+
+				if (i == 0)
+				{
+					SDL_RenderCopy(&renderer, Scene::resources().getTexture("Platform " + col + " 0"), &srcRect, &rect);
+					SDL_RenderCopy(&renderer, Scene::resources().getTexture("Platform " + col + " 0"), &srcRect, &rect);
+				}
+				else if (i == (numOfTiles - 1))
+				{
+					SDL_RenderCopy(&renderer, Scene::resources().getTexture("Platform " + col + " 2"), &srcRect, &rect);
+					SDL_RenderCopy(&renderer, Scene::resources().getTexture("Platform " + col + " 2"), &srcRect, &rect);
+				}
+				else
+				{
+					SDL_RenderCopy(&renderer, Scene::resources().getTexture("Platform " + col + " 1"), &srcRect, &rect);
+					SDL_RenderCopy(&renderer, Scene::resources().getTexture("Platform " + col + " 1"), &srcRect, &rect);
+				}
 			}
-			else if (i == (numOfTiles - 1))
-			{
-				SDL_RenderCopy(&renderer, Scene::resources().getTexture("Platform Green 2"), &srcRect, &rect);
-				SDL_RenderCopy(&renderer, Scene::resources().getTexture("Platform Green 2"), &srcRect, &rect);
-			}
+			SDL_SetRenderTarget(&renderer, NULL);
+			SDL_RenderCopy(&renderer, texture, NULL, &rect);
+
+			if (col == "Green")
+				platComp->setGreen(texture);
+			else if (col == "Blue")
+				platComp->setBlue(texture);
+			else if (col == "Pink")
+				platComp->setPink(texture);
 			else
-			{
-				SDL_RenderCopy(&renderer, Scene::resources().getTexture("Platform Green 1"), &srcRect, &rect);
-				SDL_RenderCopy(&renderer, Scene::resources().getTexture("Platform Green 1"), &srcRect, &rect);
-			}
+				platComp->setOrange(texture);
 		}
-		SDL_SetRenderTarget(&renderer, NULL);
-		SDL_RenderCopy(&renderer, texture, NULL, &rect);
-		
 
-		newPlat->addComponent("Sprite", new SpriteComponent(platPos, Vector2f(w, h), Vector2f(w, h), texture, 1));
-
+		//Set the texture of the platform to the green platform texture
+		newPlat->addComponent("Sprite", new SpriteComponent(platPos, Vector2f(w, h), Vector2f(w, h), platComp->getTexture("Game BG0"), 1));
+		static_cast<SpriteComponent*>(&newPlat->getComponent("Sprite"))->setAngle(angle);
 		Scene::systems()["Render"]->addComponent(&newPlat->getComponent("Sprite"));
-
 		m_platforms.push_back(newPlat);
 	}
 
@@ -666,7 +701,7 @@ void GameScene::createPlatforms(SDL_Renderer& renderer)
 void GameScene::draw(SDL_Renderer & renderer)
 {
 	if (NULL == m_rendererPtr)
-		m_rendererPtr = &renderer;
+		m_rendererPtr = &renderer; 
 
 	if (m_platformsCreated == false)
 		createPlatforms(renderer);
@@ -787,33 +822,3 @@ void GameScene::handleInput(InputSystem & input)
 		}
 	}
 }
-
-/*void GameScene::handleInput(InputSystem & input)
-{
-	//Update the input system
-	Scene::systems()["Input"]->update(0);
-
-	//Only check for input if the game has started
-	if (m_gameStarted)
-	{
-		for (auto& player : m_allPlayers)
-		{
-			auto input = dynamic_cast<InputComponent*>(&player->getComponent("Input"));
-			if (nullptr != input)
-			{
-				input->handleInput(player);
-			}
-		}
-
-		for (int i = 0; i < m_numOfOnlinePlayers; i++)
-		{
-			auto input = static_cast<OnlineInputComponent*>(&m_onlinePlayers.at(i)->getComponent("Input"));
-			input->handleInput(m_onlinePlayers.at(i));
-			//m_onlinePlayers.at(i).handleInput(*m_onlineInputs.at(i));
-		}
-	}
-	for (auto& ai : m_AIPlayers)
-	{
-		static_cast<AiInputComponent*>(&ai->getComponent("Input"))->handleInput("", ai);
-	}
-}*/
