@@ -15,8 +15,9 @@ public:
 
 	void handleInput(void* e);
 	int addCommand(string);
+	void addPositions(float px, float py, float vx, float vy, float dvx, float dvy);
 
-	void syncPosition(void* e, float px, float py, float vx, float vy);
+	void syncPosition(Entity* entity, float px, float py, float vx, float vy, float dvx, float dvy);
 
 	int m_playerNumber;
 private:
@@ -34,5 +35,6 @@ private:
 	SuperCommand m_superCMD;
 
 	queue<string> m_commandsToSend;
+	queue<OnlineSendComponent::syncStruct> m_positionsToSyncTo;
 
 };

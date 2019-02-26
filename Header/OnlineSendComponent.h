@@ -12,6 +12,7 @@ public:
 	struct syncStruct {
 		Vector2f pos;
 		Vector2f vel;
+		Vector2f dvel;
 	} syncVars;
 	OnlineSendComponent();
 
@@ -23,9 +24,10 @@ public:
 		}
 	}
 
-	void setSync(Vector2f pos, Vector2f vel) {
+	void setSync(Vector2f pos, Vector2f vel, Vector2f dvel) {
 		syncVars.pos = pos;
 		syncVars.vel = vel;
+		syncVars.dvel = dvel;
 	}
 
 	syncStruct getSync()

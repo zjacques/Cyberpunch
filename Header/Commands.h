@@ -41,7 +41,7 @@ public:
 			if (net != NULL) 
 			{
 				net->addCommand("JUMP");
-				net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y));
+				net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y), Vector2f(phys->m_desiredVel.x, phys->m_desiredVel.y));
 			}
 		}
 	}
@@ -81,7 +81,7 @@ public:
 		if (net != NULL)
 		{
 			net->addCommand("MOVE LEFT");
-			net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y));
+			net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y), Vector2f(phys->m_desiredVel.x, phys->m_desiredVel.y));
 		}
 	}
 };
@@ -119,7 +119,7 @@ public:
 		if (net != NULL)
 		{
 			net->addCommand("MOVE RIGHT");
-			net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y));
+			net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y), Vector2f(phys->m_desiredVel.x, phys->m_desiredVel.y));
 		}
 	}
 };
@@ -151,7 +151,7 @@ public:
 		if (net != NULL)
 		{
 			net->addCommand("PUNCH");
-			net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y));
+			net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y), Vector2f(phys->m_desiredVel.x, phys->m_desiredVel.y));
 		}
 	}
 };
@@ -183,7 +183,7 @@ public:
 		if (net != NULL)
 		{
 			net->addCommand("KICK");
-			net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y));
+			net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y), Vector2f(phys->m_desiredVel.x, phys->m_desiredVel.y));
 		}
 	}
 };
@@ -211,7 +211,7 @@ public:
 		if (net != NULL)
 		{
 			net->addCommand("UPPERCUT");
-			net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y));
+			net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y), Vector2f(phys->m_desiredVel.x, phys->m_desiredVel.y));
 		}
 	}
 };
@@ -235,7 +235,7 @@ public:
 				if (net != NULL)
 				{
 					net->addCommand("FALL");
-					net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y));
+					net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y), Vector2f(phys->m_desiredVel.x, phys->m_desiredVel.y));
 				}
 			}
 		}
@@ -261,7 +261,7 @@ public:
 			if (net != NULL)
 			{
 				net->addCommand("SUPER");
-				net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y));
+				net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y), Vector2f(phys->m_desiredVel.x, phys->m_desiredVel.y));
 			}
 		}
 	}
@@ -280,7 +280,7 @@ public:
 		if (net != NULL)
 		{
 			net->addCommand("IDLE");
-			net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y));
+			net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y), Vector2f(phys->m_desiredVel.x, phys->m_desiredVel.y));
 		}
 	}
 };

@@ -69,11 +69,13 @@ void GameScene::start()
 	{
 		int dex = PreGameScene::playerIndexes.localPlyrs[i];
 		m_localPlayers.push_back(createPlayer(dex, i, 600 + 150 * dex, 360, true, spawnPos));
+		m_allPlayers.emplace_back(m_localPlayers.at(i));
 	}
 	for (int i = 0; i < m_numOfOnlinePlayers; i++)
 	{
 		int dex = PreGameScene::playerIndexes.onlinePlyrs[i];
 		m_onlinePlayers.push_back(createPlayer(dex, 0, 600 + 150 * dex, 360, false, spawnPos));
+		m_allPlayers.emplace_back(m_onlinePlayers.at(i));
 	}
 	for (int i = 0; i < m_numOfAIPlayers; i++)
 	{
@@ -768,6 +770,35 @@ void GameScene::handleInput(InputSystem & input)
 		for (auto& player : m_allPlayers)
 		{
 			auto input = dynamic_cast<InputComponent*>(&player->getComponent("Input"));
+			auto onlineInput = dynamic_cast<OnlineInputComponent*>(&player->getComponent("Input"));
+			auto aiInput = dynamic_cast<AiInputComponent*>(&player->getComponent("Input"));
+			if (nullptr != aiInput)
+			{
+				aiInput->handleInput("", player);
+			}
+			else if (nullptr != onlineInput)
+			{
+				onlineInput->handleInput(player);
+			}
+			else if (nullptr != input)
+			{
+				input->handleInput(player);
+			}
+		}
+	}
+}
+
+/*void GameScene::handleInput(InputSystem & input)
+{
+	//Update the input system
+	Scene::systems()["Input"]->update(0);
+
+	//Only check for input if the game has started
+	if (m_gameStarted)
+	{
+		for (auto& player : m_allPlayers)
+		{
+			auto input = dynamic_cast<InputComponent*>(&player->getComponent("Input"));
 			if (nullptr != input)
 			{
 				input->handleInput(player);
@@ -785,4 +816,4 @@ void GameScene::handleInput(InputSystem & input)
 	{
 		static_cast<AiInputComponent*>(&ai->getComponent("Input"))->handleInput("", ai);
 	}
-}
+}*/

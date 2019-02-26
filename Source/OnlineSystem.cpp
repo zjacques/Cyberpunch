@@ -56,7 +56,8 @@ void OnlineSystem::SendCommands(bool sync)
 				jsonString += "true, ";
 				OnlineSendComponent::syncStruct info =  plyr->getSync();
 				jsonString += "\"pos\":[" + toString(info.pos.x) + "," + toString(info.pos.y) + "],";
-				jsonString += "\"vel\":[" + toString(info.vel.x) + "," + toString(info.pos.y) + "]";
+				jsonString += "\"vel\":[" + toString(info.vel.x) + "," + toString(info.vel.y) + "],";
+				jsonString += "\"dvel\":[" + toString(info.dvel.x) + "," + toString(info.dvel.y) + "]";
 			}
 			else {
 				jsonString += "false";
@@ -94,6 +95,11 @@ void OnlineSystem::ReceiveCommands()
 					for (auto iter = commands.begin(); iter != commands.end(); iter++)
 					{
 						plyr->addCommand(*iter);
+					}
+					if (currentPacket["sync"])
+					{
+						plyr->addPositions(currentPacket["pos"][0], currentPacket["pos"][1], currentPacket["vel"][0], currentPacket["vel"][1], currentPacket["dvel"][0], currentPacket["dvel"][1]);
+						//plyr->syncPosition();
 					}
 				}
 			}
