@@ -13,7 +13,8 @@ public:
 		m_resourcePtr(Res),
 		m_bgPtr(bg),
 		m_platformsPtr(platforms),
-		m_currentBg(0)
+		m_currentBg(0),
+		m_currentPc(0)
 	{}
 		
 	void addComponent(Component* comp);
@@ -24,6 +25,8 @@ private:
 	Entity* m_bgPtr;
 	std::vector<Entity*>* m_platformsPtr;
 	int m_currentBg;
+	int m_currentPc;
+	Entity* m_pcPtr;
 };
 
 #endif // !  DJBOOTHSYSTEM_H

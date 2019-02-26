@@ -69,11 +69,13 @@ void GameScene::start()
 	{
 		int dex = PreGameScene::playerIndexes.localPlyrs[i];
 		m_localPlayers.push_back(createPlayer(dex, i, 600 + 150 * dex, 360, true, spawnPos));
+		m_allPlayers.emplace_back(m_localPlayers.at(i)); //Add local to all players vector
 	}
 	for (int i = 0; i < m_numOfOnlinePlayers; i++)
 	{
 		int dex = PreGameScene::playerIndexes.onlinePlyrs[i];
 		m_onlinePlayers.push_back(createPlayer(dex, 0, 600 + 150 * dex, 360, false, spawnPos));
+		m_allPlayers.emplace_back(m_onlinePlayers.at(i)); //Add online players to all players vector
 	}
 	for (int i = 0; i < m_numOfAIPlayers; i++)
 	{
@@ -468,18 +470,18 @@ Entity* GameScene::createDJB(int index, int posX, int posY)
 	if (index == 0)
 	{
 		
-		booth->addComponent("DJ Booth", new GravityBoothComponent(m_localPlayers, &m_physicsWorld, &m_physicsSystem, &m_collisionListener));
+		booth->addComponent("DJ Booth", new GravityBoothComponent(m_localPlayers, &m_physicsWorld, &m_physicsSystem, &m_collisionListener, m_pickUp));
 		
 	}
 	else if (index == 1)
 	{
 		
-		booth->addComponent("DJ Booth", new SlowBoothComponent());
+		booth->addComponent("DJ Booth", new SlowBoothComponent(m_pickUp));
 	}
 	else if (index == 2)
 	{
 		
-		booth->addComponent("DJ Booth", new PlatformBoothComponent(&m_platforms));
+		booth->addComponent("DJ Booth", new PlatformBoothComponent(&m_platforms, m_pickUp));
 	}
 
 	Scene::systems()["Booth"]->addComponent(&booth->getComponent("DJ Booth"));

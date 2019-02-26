@@ -5,9 +5,10 @@
 class DJBoothComponent : public Component
 {
 public: 
-	DJBoothComponent() : bgSwitch(false) {}
+	DJBoothComponent(Entity* pickUp) : bgSwitch(false), m_pickUp(pickUp){}
 	virtual void run() = 0;
 	virtual void update(double dt) = 0;
 	bool bgSwitch;
+	Entity* m_pickUp;
 private:
 };

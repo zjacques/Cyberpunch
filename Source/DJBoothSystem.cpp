@@ -20,12 +20,20 @@ void DJBoothSystem::update(double dt)
 		if (booth->bgSwitch)
 		{
 			m_currentBg++;
+			m_currentPc++;
+
 			if (m_currentBg > 3)
 				m_currentBg = 0;
+			
+			if (m_currentPc > 3)
+				m_currentPc = 0;
+
 
 			auto bgSprite = static_cast<SpriteComponent*>(&m_bgPtr->getComponent("Sprite"));
 			bgSprite->setTexture(m_resourcePtr->getTexture("Game BG" + std::to_string(m_currentBg)));
 			booth->bgSwitch = false;
+
+			
 		}
 	}
 	
