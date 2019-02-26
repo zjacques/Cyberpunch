@@ -46,6 +46,7 @@ public:
 
 		//Copy the values of current to previous
 		m_previous = m_current;
+		m_default = m_current;
 	}
 	virtual void handleInput(void* e) {}
 	void initialiseJoycon(int index)
@@ -68,8 +69,7 @@ public:
 	SDL_Joystick* m_joycon;
 	Input m_current;
 	Input m_previous;
+	Input m_default;
 };
-
-
 
 #endif

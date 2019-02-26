@@ -10,7 +10,7 @@ GameScene::GameScene() :
 	m_platformsCreated(false),
 	m_camera(false)
 {
-	m_numOfAIPlayers = 0;
+	m_numOfAIPlayers = 1;
 }
 
 void GameScene::start()
@@ -331,8 +331,10 @@ Entity * GameScene::createAI(int index, int posX, int posY, std::vector<Vector2f
 	auto player = new PlayerComponent(spawnPositions, ai);
 
 	auto behaviour = new AIComponent(m_localPlayers, input, ai, player);
+	ai->addComponent("Input", input);
 	ai->addComponent("Pos", pos);
 	ai->addComponent("AI", behaviour);
+	ai->addComponent("Player", player);
 	ai->addComponent("Dust Trigger", new DustTriggerComponent());
 	ai->addComponent("Attack", new AttackComponent());
 	ai->addComponent("Sprite", new SpriteComponent(&ai->getComponent("Pos"), Vector2f(1700, 85), Vector2f(85, 85), Scene::resources().getTexture("Player Run"), 2));
@@ -344,6 +346,7 @@ Entity * GameScene::createAI(int index, int posX, int posY, std::vector<Vector2f
 	{
 		m_animRects.push_back({ 85 * i, 0, 85, 85 });
 	}
+
 	animation->addAnimation("Run", Scene::resources().getTexture("Player Run"), m_animRects, .75f);
 	animation->addAnimation("Idle", Scene::resources().getTexture("Player Idle"), m_animRects, .5f);
 	animation->addAnimation("Punch 0", Scene::resources().getTexture("Player Left Punch"), m_animRects, .175f);
@@ -588,5 +591,8 @@ void GameScene::handleInput(InputSystem & input)
 		input->handleInput(m_onlinePlayers.at(i));
 		//m_onlinePlayers.at(i).handleInput(*m_onlineInputs.at(i));
 	}
-
+	for (auto& ai : m_AIPlayers)
+	{
+		static_cast<AiInputComponent*>(&ai->getComponent("Input"))->handleInput("", ai);
+	}
 }
