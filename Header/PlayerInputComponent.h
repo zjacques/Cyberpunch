@@ -58,6 +58,7 @@ public:
 			&& m_previousCMD != (Command*)&m_moveRightCMD))
 			{
 				//Send the online update, as we will be setting the body position manually
+				//m_currentCMD->execute(*entity);
 			}
 
 			m_currentCMD->execute(*entity);
@@ -66,8 +67,8 @@ public:
 		&& static_cast<AnimationComponent*>(&entity->getComponent("Animation"))->getCurrentID() != "Jump"
 		&& static_cast<PlayerPhysicsComponent*>(&entity->getComponent("Player Physics"))->stunned() == false)
 		{
-
-			static_cast<AnimationComponent*>(&entity->getComponent("Animation"))->playAnimation("Idle", true);
+      	m_idleCMD.execute(*entity);
+			//static_cast<AnimationComponent*>(&entity->getComponent("Animation"))->playAnimation("Idle", true);
 		}
 
 		m_previousCMD = m_currentCMD;
@@ -83,6 +84,7 @@ private:
 	UppercutCommand m_uppercutCMD;
 	PhaseDownCommand m_phaseDownCMD;
 	SuperCommand m_superCMD;
+	IdleCommand m_idleCMD;
 	Command* m_currentCMD, *m_previousCMD;
 };
 
