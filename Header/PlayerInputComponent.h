@@ -17,6 +17,13 @@ public:
 		m_currentCMD = nullptr;
 		auto entity = static_cast<Entity*>(e);
 
+		auto net = static_cast<OnlineSendComponent*>(&entity->getComponent("Send"));
+		if (net != NULL)
+		{
+			auto phys = static_cast<PlayerPhysicsComponent*>(&entity->getComponent("Player Physics"));
+			net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y), Vector2f(phys->m_desiredVel.x, phys->m_desiredVel.y));
+		}
+
 		if (isButtonPressed("YBTN"))
 		{
 			m_currentCMD = &m_jumpCMD;

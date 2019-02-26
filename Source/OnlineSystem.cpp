@@ -19,15 +19,15 @@ void OnlineSystem::update(double dt)
 {
 	if (isConnected)
 	{
-		//bool s = true;
-		/*if (tts > syncRate)
+		bool s = false;
+		if (tts > syncRate)
 		{
 			s = true;
 			tts = 0;
-		}*/
-		SendCommands(true);
+		}
+		SendCommands(s);
 		ReceiveCommands();
-		//tts+=dt;
+		tts+=dt;
 	}
 }
 
@@ -36,7 +36,7 @@ void OnlineSystem::SendCommands(bool sync)
 	for (auto& plyr : m_sendingPlayers)
 	{
 		auto cmds = plyr->Send();
-		if (cmds->size() == 1)
+		if (cmds->size() == 1 || sync)
 		{
 			bool isFirst = true;
 			string jsonString = "{ \"type\" : \"COMMANDS\", \"player\" : "+ 
