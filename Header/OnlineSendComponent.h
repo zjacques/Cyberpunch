@@ -11,10 +11,15 @@ public:
 	OnlineSendComponent();
 
 	queue<string>* Send();
-	void addCommand(string cmd) { m_commandsToSend.push(cmd); }
+	void addCommand(string cmd) { 
+		if (m_prevCommand != cmd) {
+			m_commandsToSend.push(cmd);
+			m_prevCommand = cmd;
+		}
+	}
 
 	int m_playerNumber;
 private:
-
+	string m_prevCommand = "";
 	queue<string> m_commandsToSend;
 };

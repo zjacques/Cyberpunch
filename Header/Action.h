@@ -478,11 +478,13 @@ public:
 			if (nearest->position.x < pos->position.x)
 			{
 				//Move left
+				m_input->m_current["STICKRIGHT"] = false;
 				m_input->m_current["STICKLEFT"] = true;
 			}
 			else //AI is left of player
 			{
 				//Move right
+				m_input->m_current["STICKLEFT"] = false;
 				m_input->m_current["STICKRIGHT"] = true;
 			}
 		}
