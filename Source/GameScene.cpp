@@ -69,11 +69,13 @@ void GameScene::start()
 	{
 		int dex = PreGameScene::playerIndexes.localPlyrs[i];
 		m_localPlayers.push_back(createPlayer(dex, i, 600 + 150 * dex, 360, true, spawnPos));
+		m_allPlayers.emplace_back(m_localPlayers.at(i)); //Add local to all players vector
 	}
 	for (int i = 0; i < m_numOfOnlinePlayers; i++)
 	{
 		int dex = PreGameScene::playerIndexes.onlinePlyrs[i];
 		m_onlinePlayers.push_back(createPlayer(dex, 0, 600 + 150 * dex, 360, false, spawnPos));
+		m_allPlayers.emplace_back(m_onlinePlayers.at(i)); //Add online players to all players vector
 	}
 	for (int i = 0; i < m_numOfAIPlayers; i++)
 	{
