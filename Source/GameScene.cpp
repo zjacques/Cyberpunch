@@ -7,14 +7,23 @@
 
 GameScene::GameScene() :
 	m_bgEntity("Game BG"),
+	m_gameStart("Start Timer"),
+	m_gameEndE("End winner"),
 	m_platformsCreated(false),
-	m_camera(false)
+	m_camera(false),
+	m_gameStartTimer(3)
 {
 	m_numOfAIPlayers = 1;
 }
 
 void GameScene::start()
 {
+	m_rendererPtr = NULL;
+	m_gameOver = false;
+	m_endGameTimer = 10; //10 seconds to show the winner
+	m_startTimerEnded = false;
+	m_gameStarted = false;
+	m_gameStartTimer = 3; //3 Seconds
 	m_physicsSystem = PhysicsSystem(); // Recreate the physics system
 	m_physicsWorld.initWorld(); //Create the physics world
 	m_physicsWorld.addContactListener(m_collisionListener); //Add collision listener to the world
@@ -60,15 +69,18 @@ void GameScene::start()
 	{
 		int dex = PreGameScene::playerIndexes.localPlyrs[i];
 		m_localPlayers.push_back(createPlayer(dex, i, 600 + 150 * dex, 360, true, spawnPos));
+		m_allPlayers.emplace_back(m_localPlayers.at(i)); //Add local to all players vector
 	}
 	for (int i = 0; i < m_numOfOnlinePlayers; i++)
 	{
 		int dex = PreGameScene::playerIndexes.onlinePlyrs[i];
 		m_onlinePlayers.push_back(createPlayer(dex, 0, 600 + 150 * dex, 360, false, spawnPos));
+		m_allPlayers.emplace_back(m_onlinePlayers.at(i)); //Add online players to all players vector
 	}
 	for (int i = 0; i < m_numOfAIPlayers; i++)
 	{
 		m_AIPlayers.push_back(createAI(1, 1500 + 150 * 1, 360, spawnPos));
+		m_allPlayers.emplace_back(m_AIPlayers.at(i)); //Add ai to all players vector
 	}
 	
 	//pickup Entity
@@ -100,6 +112,40 @@ void GameScene::start()
 	{
 		m_killboxes.push_back(createKillBox(kb.at(i)["X"], kb.at(i)["Y"], kb.at(i)["W"], kb.at(i)["H"]));
 	}
+
+	//Setup timer
+	setupTimer();
+}
+
+void GameScene::setupTimer()
+{
+	auto pos = new PositionComponent(960, 540); //Center of the screen
+	m_gameStart.addComponent("Pos", pos);
+	m_gameStart.addComponent("Sprite", new SpriteComponent(pos, Vector2f(1700, 200), Vector2f(350, 200), NULL, 5)); //Layer 5 to be drawn infront of everything
+	std::vector<SDL_Rect> m_animRects;
+	for (int i = 0; i < 20; i++)
+		m_animRects.push_back({i * 350, 0, 350, 200});
+	auto anim = new AnimationComponent(&m_gameStart.getComponent("Sprite"));
+	anim->addAnimation("1", Scene::resources().getTexture("Timer 1"), m_animRects, .2f);
+	anim->addAnimation("2", Scene::resources().getTexture("Timer 2"), m_animRects, .2f);
+	anim->addAnimation("3", Scene::resources().getTexture("Timer 3"), m_animRects, .2f);
+	anim->addAnimation("Fight", Scene::resources().getTexture("Timer Fight"), m_animRects, .2f);
+	anim->playAnimation("3", false); //Play the first part of the animation
+	m_gameStart.addComponent("Animation", anim);
+
+	pos = new PositionComponent(960, 540);
+	m_gameEndE.addComponent("Pos", pos);
+	m_gameEndE.addComponent("Sprite", new SpriteComponent(pos, Vector2f(9000, 200), Vector2f(450, 200), NULL, 5));
+	auto winAnim = new AnimationComponent(&m_gameEndE.getComponent("Sprite"));
+	m_animRects.clear();
+	for (int i = 0; i < 20; i++)
+		m_animRects.push_back({i* 450, 0, 450, 200});
+	winAnim->addAnimation("Win", Scene::resources().getTexture("Winner"), m_animRects, 0.35f);
+	m_gameEndE.addComponent("Animation", winAnim);
+
+	Scene::systems()["Animation"]->addComponent(anim);
+	Scene::systems()["Animation"]->addComponent(winAnim);
+	Scene::systems()["Render"]->addComponent(&m_gameStart.getComponent("Sprite"));
 }
 
 void GameScene::stop()
@@ -108,6 +154,24 @@ void GameScene::stop()
 	m_platforms.clear(); //Delete the platforms of the game
 	m_numOfLocalPlayers = 0;
 	m_platformsCreated = false;
+	SDL_RenderSetScale(m_rendererPtr, 1.0f, 1.0f);
+
+	auto menuInput = Scene::systems()["Input"]->m_components.at(0);
+	Scene::systems()["Input"]->removeAllComponents();
+	Scene::systems()["Input"]->addComponent(menuInput);
+	Scene::systems()["Render"]->removeAllComponents();
+	Scene::systems()["Player Physics"]->removeAllComponents();
+	Scene::systems()["Physics"]->removeAllComponents();
+	Scene::systems()["Attack"]->removeAllComponents();
+	Scene::systems()["AI"]->removeAllComponents();
+	Scene::systems()["Dust"]->removeAllComponents();
+	Scene::systems()["Respawn"]->removeAllComponents();
+	Scene::systems()["Animation"]->removeAllComponents();
+	Scene::systems()["Booth"]->removeAllComponents();
+	m_allPlayers.clear();
+	m_AIPlayers.clear();
+	m_localPlayers.clear();
+	m_onlinePlayers.clear();
 }
 
 void GameScene::update(double dt)
@@ -127,24 +191,127 @@ void GameScene::update(double dt)
 	Scene::systems()["Dust"]->update(dt * scalar);
 	Scene::systems()["Respawn"]->update(dt * scalar);
 
+	//Update the game start timer
+	updateStartTimer(dt);
 
 	//Update camera
 	updateCamera(dt * scalar);
+
+
+	//Removing players from the game if they are dead
+	for (auto& player : m_allPlayers)
+	{
+		if(static_cast<PlayerComponent&>(player->getComponent("Player")).isDead())
+			m_playersToDel.emplace_back(player); //Add to the players to delete vector
+	}
+
+	//If there ar eplayers to delete, remove them from the systems and not draw them
+	if (m_playersToDel.empty() == false)
+	{
+		for (auto& player : m_playersToDel)
+		{
+			Scene::systems()["Render"]->deleteComponent(&player->getComponent("Sprite"));
+			Scene::systems()["Attack"]->deleteComponent(&player->getComponent("Attack"));
+			Scene::systems()["Animation"]->deleteComponent(&player->getComponent("Animation"));
+			Scene::systems()["Player Physics"]->deleteComponent(&player->getComponent("Player Physics"));
+			Scene::systems()["Respawn"]->deleteComponent(&player->getComponent("Player"));
+
+			m_physicsWorld.deleteBody(static_cast<PlayerPhysicsComponent*>(&player->getComponent("Player Physics"))->m_body);
+			m_physicsWorld.deleteBody(static_cast<PlayerPhysicsComponent*>(&player->getComponent("Player Physics"))->m_jumpSensor);
+
+			if (player->m_ID == "AI")
+			{
+				Scene::systems()["AI"]->deleteComponent(&player->getComponent("AI"));
+			}
+
+			//Remove the player from the all players vector
+			m_allPlayers.erase(std::remove(m_allPlayers.begin(), m_allPlayers.end(), player), m_allPlayers.end());
+			delete player;
+			player = nullptr;
+		}
+
+		m_playersToDel.clear();
+	}
+
+	//If only one player is in the vector, set them as the winner
+	if (m_allPlayers.size() == 1 && m_gameOver == false)
+	{
+		//Set the player as the winner
+		static_cast<PlayerComponent&>(m_allPlayers.at(0)->getComponent("Player")).isWinner() = true;
+		Scene::systems()["Render"]->addComponent(&m_gameEndE.getComponent("Sprite"));
+		static_cast<AnimationComponent&>(m_gameEndE.getComponent("Animation")).playAnimation("Win", false);
+		m_gameOver = true;
+	}
+
+	updateEndGameTimer(dt);
+}
+
+void GameScene::updateStartTimer(double dt)
+{
+	//If the game hasnt started yet, decrement the timer
+	if (m_startTimerEnded == false)
+	{
+		auto anim = static_cast<AnimationComponent*>(&m_gameStart.getComponent("Animation"));
+
+		m_gameStartTimer -= dt; //Take dt away from our start timer
+
+		if (m_gameStartTimer <= -1)
+		{
+			Scene::systems()["Animation"]->deleteComponent(anim);
+			Scene::systems()["Render"]->deleteComponent(static_cast<SpriteComponent*>(&m_gameStart.getComponent("Sprite")));
+			m_startTimerEnded = true;
+		}
+		else if(m_gameStartTimer <= 0)
+		{
+			anim->playAnimation("Fight", false);
+			m_gameStarted = true;
+			m_camera.setActive(true);
+		}
+		else if (m_gameStartTimer <= 1)
+		{
+			anim->playAnimation("1", false);
+		}
+		else if (m_gameStartTimer <= 2)
+		{
+			anim->playAnimation("2", false);
+		}
+	}
+}
+
+void GameScene::updateEndGameTimer(double dt)
+{
+	if (m_gameOver)
+	{
+		m_endGameTimer -= dt;
+
+		auto winPos = static_cast<PositionComponent*>(&m_gameEndE.getComponent("Pos"));
+		auto playerPos = static_cast<PositionComponent*>(&m_allPlayers.at(0)->getComponent("Pos"));
+
+		winPos->position.x = playerPos->position.x;
+		winPos->position.y = playerPos->position.y - 100;
+
+		if (m_endGameTimer <= 0)
+		{
+			Scene::goToScene("Main Menu");
+		}
+	}
 }
 
 void GameScene::updateCamera(double dt)
 {
 	//The average position of the players
-	auto avgPos = Vector2f(1920 / 2 , 1080 / 2);
+	auto avgPos = Vector2f(960 , 540);
 	float maxDist = 0.0f;
 	auto center = Vector2f();
 
 	Vector2f lastP;
 	int divisors = 0;
 
-	for (auto& player : m_localPlayers)
+	for (auto& player : m_allPlayers)
 	{
-		if (static_cast<PlayerComponent*>(&player->getComponent("Player"))->isDead() == false)
+		//Only include the playe rif they are not dead and not respawning
+		if (static_cast<PlayerComponent&>(player->getComponent("Player")).isDead() == false && 
+			static_cast<PlayerComponent&>(player->getComponent("Player")).isRespawning() == false)
 		{
 			auto pos = static_cast<PositionComponent*>(&player->getComponent("Pos"))->position;
 			divisors++;
@@ -169,7 +336,7 @@ void GameScene::updateCamera(double dt)
 	{
 		maxDist += 50;
 
-		auto minZoom = Vector2f(1920 / 2, 1080 / 2);
+		auto minZoom = Vector2f(960, 540);
 		auto maxZoom = Vector2f(1920 * m_camera.MAX_ZOOM / 2, 1080 * m_camera.MAX_ZOOM / 2);
 
 		auto diff = minZoom.distance(maxZoom);
@@ -196,10 +363,12 @@ Entity * GameScene::createPlayer(int playerNumber,int controllerNumber, int posX
 	auto animation = new AnimationComponent(&p->getComponent("Sprite"));
 	p->addComponent("Animation", animation);
 
-	std::vector<SDL_Rect> m_animRects; //The rectangles for the animations
+	std::vector<SDL_Rect> m_animRects, m_stunRects; //The rectangles for the animations
 
 	for (int i = 0; i < 20; i++)
 	{
+		if (i < 10)
+			m_stunRects.push_back({ 85 * i, 0, 85, 85 });
 		m_animRects.push_back({85 * i, 0, 85, 85});
 	}
 
@@ -208,8 +377,11 @@ Entity * GameScene::createPlayer(int playerNumber,int controllerNumber, int posX
 	animation->addAnimation("Punch 0", Scene::resources().getTexture("Player Left Punch"), m_animRects, .175f);
 	animation->addAnimation("Punch 1", Scene::resources().getTexture("Player Right Punch"), m_animRects, .175f);
 	animation->addAnimation("Ground Kick", Scene::resources().getTexture("Player Ground Kick"), m_animRects, .4f);
+	animation->addAnimation("Jump", Scene::resources().getTexture("Player Jump"), m_animRects, .4f);
+	animation->addAnimation("Super Stun", Scene::resources().getTexture("Player Super Stun"), m_stunRects, .25f);
+	animation->addAnimation("Small Stun", Scene::resources().getTexture("Player Small Stun"), m_stunRects, .25f);
+	animation->addAnimation("Big Stun", Scene::resources().getTexture("Player Big Stun"), m_stunRects, .25f);
 	animation->playAnimation("Idle", true); //Play the idle animation from the start
-
 
 	//Add components to the system
 	Scene::systems()["Animation"]->addComponent(&p->getComponent("Animation"));
@@ -331,24 +503,34 @@ Entity * GameScene::createAI(int index, int posX, int posY, std::vector<Vector2f
 	auto player = new PlayerComponent(spawnPositions, ai);
 
 	auto behaviour = new AIComponent(m_localPlayers, input, ai, player);
+	ai->addComponent("Input", input);
 	ai->addComponent("Pos", pos);
 	ai->addComponent("AI", behaviour);
+	ai->addComponent("Player", player);
 	ai->addComponent("Dust Trigger", new DustTriggerComponent());
+	ai->addComponent("Player", player);
 	ai->addComponent("Attack", new AttackComponent());
 	ai->addComponent("Sprite", new SpriteComponent(&ai->getComponent("Pos"), Vector2f(1700, 85), Vector2f(85, 85), Scene::resources().getTexture("Player Run"), 2));
 	auto animation = new AnimationComponent(&ai->getComponent("Sprite"));
 
-	std::vector<SDL_Rect> m_animRects; //The rectangles for the animations
+	std::vector<SDL_Rect> m_animRects, m_stunRects; //The rectangles for the animations
 
 	for (int i = 0; i < 20; i++)
 	{
+		if (i < 10)
+			m_stunRects.push_back({ 85 * i, 0, 85, 85 });
 		m_animRects.push_back({ 85 * i, 0, 85, 85 });
 	}
+
 	animation->addAnimation("Run", Scene::resources().getTexture("Player Run"), m_animRects, .75f);
 	animation->addAnimation("Idle", Scene::resources().getTexture("Player Idle"), m_animRects, .5f);
 	animation->addAnimation("Punch 0", Scene::resources().getTexture("Player Left Punch"), m_animRects, .175f);
 	animation->addAnimation("Punch 1", Scene::resources().getTexture("Player Right Punch"), m_animRects, .175f);
 	animation->addAnimation("Ground Kick", Scene::resources().getTexture("Player Ground Kick"), m_animRects, .4f);
+	animation->addAnimation("Jump", Scene::resources().getTexture("Player Jump"), m_animRects, .4f);
+	animation->addAnimation("Super Stun", Scene::resources().getTexture("Player Super Stun"), m_stunRects, .25f);
+	animation->addAnimation("Small Stun", Scene::resources().getTexture("Player Small Stun"), m_stunRects, .25f);
+	animation->addAnimation("Big Stun", Scene::resources().getTexture("Player Big Stun"), m_stunRects, .25f);
 	animation->playAnimation("Idle", true);
 	ai->addComponent("Animation", animation);
 	
@@ -364,6 +546,8 @@ Entity * GameScene::createAI(int index, int posX, int posY, std::vector<Vector2f
 	Scene::systems()["Render"]->addComponent(&ai->getComponent("Sprite"));
 
 	Scene::systems()["Animation"]->addComponent(&ai->getComponent("Animation"));
+
+	Scene::systems()["Respawn"]->addComponent(&ai->getComponent("Player"));
 
 	//Create the physics component and set up the bodies
 	auto phys = new PlayerPhysicsComponent(&ai->getComponent("Pos"));
@@ -481,6 +665,9 @@ void GameScene::createPlatforms(SDL_Renderer& renderer)
 /// <param name="renderer"></param>
 void GameScene::draw(SDL_Renderer & renderer)
 {
+	if (NULL == m_rendererPtr)
+		m_rendererPtr = &renderer;
+
 	if (m_platformsCreated == false)
 		createPlatforms(renderer);
 	
@@ -491,57 +678,57 @@ void GameScene::draw(SDL_Renderer & renderer)
 	renderSystem->render(renderer, m_camera);
 
 	//Drawing the jump sensors and attack boxes for the player (For debug only, this will be deleted)
-	for (int i = 0; i < m_numOfLocalPlayers; i++)
+	for (auto& player : m_allPlayers)
 	{
-		auto phys = static_cast<PlayerPhysicsComponent*>(&m_localPlayers.at(i)->getComponent("Player Physics"));
-		auto hit = static_cast<AttackComponent*>(&m_localPlayers.at(i)->getComponent("Attack"));
+		//auto phys = static_cast<PlayerPhysicsComponent*>(&player->getComponent("Player Physics"));
+		//auto hit = static_cast<AttackComponent*>(&player->getComponent("Attack"));
 
 		//Draw the players outline for the hitbox
-		rect.w = phys->m_body->getSize().x;
-		rect.h = phys->m_body->getSize().y;
-		rect.x = phys->m_body->getPosition().x - (rect.w / 2) - m_camera.x();
-		rect.y = phys->m_body->getPosition().y - (rect.h / 2) - m_camera.y();
+		//rect.w = phys->m_body->getSize().x;
+		//rect.h = phys->m_body->getSize().y;
+		//rect.x = phys->m_body->getPosition().x - (rect.w / 2) - m_camera.x();
+		//rect.y = phys->m_body->getPosition().y - (rect.h / 2) - m_camera.y();
 
-		if (phys->isSupered())
-		{
-			SDL_SetRenderDrawColor(&renderer, 255, 0, 0, 255);
-			SDL_RenderFillRect(&renderer, &rect);
-		}
-		//Draw orange if stunned by a super punch
-		else if (phys->superStunned())
-		{
-			SDL_SetRenderDrawColor(&renderer, 255, 110, 0, 55);
-			SDL_RenderFillRect(&renderer, &rect);
-		}
-		//If the player is stunned, draw a yellow rectangle
-		else if (phys->stunned())
-		{
-			SDL_SetRenderDrawColor(&renderer, 255, 255, 0, 20);
-			SDL_RenderFillRect(&renderer, &rect);
-		}
+		//if (phys->isSupered())
+		//{
+		//	SDL_SetRenderDrawColor(&renderer, 255, 0, 0, 255);
+		//	SDL_RenderFillRect(&renderer, &rect);
+		//}
+		////Draw orange if stunned by a super punch
+		//else if (phys->superStunned())
+		//{
+		//	SDL_SetRenderDrawColor(&renderer, 255, 110, 0, 55);
+		//	SDL_RenderFillRect(&renderer, &rect);
+		//}
+		////If the player is stunned, draw a yellow rectangle
+		//else if (phys->stunned())
+		//{
+		//	SDL_SetRenderDrawColor(&renderer, 255, 255, 0, 20);
+		//	SDL_RenderFillRect(&renderer, &rect);
+		//}
 
 
-		rect.w = phys->m_jumpSensor->getSize().x;
-		rect.h = phys->m_jumpSensor->getSize().y;
-		rect.x = phys->m_jumpSensor->getPosition().x - (rect.w / 2) - m_camera.x();
-		rect.y = phys->m_jumpSensor->getPosition().y - (rect.h / 2) - m_camera.y();
-		SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
-		SDL_RenderDrawRect(&renderer, &rect);
+		//rect.w = phys->m_jumpSensor->getSize().x;
+		//rect.h = phys->m_jumpSensor->getSize().y;
+		//rect.x = phys->m_jumpSensor->getPosition().x - (rect.w / 2) - m_camera.x();
+		//rect.y = phys->m_jumpSensor->getPosition().y - (rect.h / 2) - m_camera.y();
+		//SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
+		//SDL_RenderDrawRect(&renderer, &rect);
 
-		if (nullptr != hit->m_currentAttack)
-		{
-			rect.w = hit->m_currentAttack->m_body->getSize().x;
-			rect.h = hit->m_currentAttack->m_body->getSize().y;
-			rect.x = hit->m_currentAttack->m_body->getPosition().x - (rect.w / 2) - m_camera.x();
-			rect.y = hit->m_currentAttack->m_body->getPosition().y - (rect.h / 2) - m_camera.y();
-			SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
-			SDL_RenderDrawRect(&renderer, &rect);
-		}
+		//if (nullptr != hit->m_currentAttack)
+		//{
+		//	rect.w = hit->m_currentAttack->m_body->getSize().x;
+		//	rect.h = hit->m_currentAttack->m_body->getSize().y;
+		//	rect.x = hit->m_currentAttack->m_body->getPosition().x - (rect.w / 2) - m_camera.x();
+		//	rect.y = hit->m_currentAttack->m_body->getPosition().y - (rect.h / 2) - m_camera.y();
+		//	SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
+		//	SDL_RenderDrawRect(&renderer, &rect);
+		//}
 	}
 
 	for (auto i : m_AIPlayers)
 	{
-		SDL_SetRenderDrawColor(&renderer, 255, 0, 0, 255);
+		/*SDL_SetRenderDrawColor(&renderer, 255, 0, 0, 255);
 		auto phys = static_cast<PlayerPhysicsComponent*>(&i->getComponent("Player Physics"));
 
 		for (int i = 0; i < m_numOfOnlinePlayers; i++)
@@ -562,7 +749,7 @@ void GameScene::draw(SDL_Renderer & renderer)
 			rect.y = phys->m_jumpSensor->getPosition().y - (rect.h / 2) - m_camera.y();
 			SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
 			SDL_RenderDrawRect(&renderer, &rect);
-		}
+		}*/
 
 		/*for (int i = 0; i < m_numOfOnlinePlayers; i++)
 		{
@@ -577,16 +764,27 @@ void GameScene::handleInput(InputSystem & input)
 	//Update the input system
 	Scene::systems()["Input"]->update(0);
 
-	for (int i = 0; i < m_numOfLocalPlayers; i++)
+	//Only check for input if the game has started
+	if (m_gameStarted)
 	{
-		auto input = static_cast<InputComponent*>(&m_localPlayers.at(i)->getComponent("Input"));
-		input->handleInput(m_localPlayers.at(i));
-	}
-	for (int i = 0; i < m_numOfOnlinePlayers; i++)
-	{
-		auto input = static_cast<OnlineInputComponent*>(&m_onlinePlayers.at(i)->getComponent("Input"));
-		input->handleInput(m_onlinePlayers.at(i));
-		//m_onlinePlayers.at(i).handleInput(*m_onlineInputs.at(i));
-	}
+		for (auto& player : m_allPlayers)
+		{
+			auto input = dynamic_cast<InputComponent*>(&player->getComponent("Input"));
+			if (nullptr != input)
+			{
+				input->handleInput(player);
+			}
+		}
 
+		for (int i = 0; i < m_numOfOnlinePlayers; i++)
+		{
+			auto input = static_cast<OnlineInputComponent*>(&m_onlinePlayers.at(i)->getComponent("Input"));
+			input->handleInput(m_onlinePlayers.at(i));
+			//m_onlinePlayers.at(i).handleInput(*m_onlineInputs.at(i));
+		}
+	}
+	for (auto& ai : m_AIPlayers)
+	{
+		static_cast<AiInputComponent*>(&ai->getComponent("Input"))->handleInput("", ai);
+	}
 }

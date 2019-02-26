@@ -19,15 +19,15 @@ void Camera::update(double dt)
 	{
 		if (m_desiredScalar > m_scalar)
 		{
-			m_scalar += .2 * dt;
+			m_scalar += .0002 * dt;
 		}
 		else
 		{
-			m_scalar -= .2 * dt;
+			m_scalar -= .0002 * dt;
 		}
 
-		if ((m_scalar - m_desiredScalar) > 0.001
-			|| (m_scalar - m_desiredScalar) < 0.001)
+		if ((m_scalar - m_desiredScalar) > -0.005
+			|| (m_scalar - m_desiredScalar) < 0.005)
 		{
 			m_scalar = m_desiredScalar;
 		}

@@ -30,6 +30,12 @@ public:
 			if (phys->canJump())
 			{
 				phys->jump();
+				auto a = static_cast<AnimationComponent*>(&e.getComponent("Animation"));
+				a->playAnimation("Jump", false);
+				a->getCurrentAnimation()->resetAnimation();
+				auto s = static_cast<SpriteComponent*>(&e.getComponent("Sprite"));
+				s->setTexture(a->getCurrentAnimation()->getTexture());
+
 			}
 			auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
 			if (net != NULL) 
@@ -57,7 +63,12 @@ public:
 				phys->moveLeft();
 				//Play run animation
 				auto a = static_cast<AnimationComponent*>(&e.getComponent("Animation"));
-				a->playAnimation("Run", true);
+
+				//Play run if we are not playing th ejump animation and it isnt completed yet
+				if (!(a->getCurrentID() == "Jump" && a->getCurrentAnimation()->getCompleted() == false))
+				{
+					a->playAnimation("Run", true);
+				}
 				auto s = static_cast<SpriteComponent*>(&e.getComponent("Sprite"));
 				s->setScale(1, s->getScale().y);
 				s->setTexture(a->getCurrentAnimation()->getTexture());
@@ -90,7 +101,11 @@ public:
 			{
 				phys->moveRight();
 				auto a = static_cast<AnimationComponent*>(&e.getComponent("Animation"));
-				a->playAnimation("Run", true);
+				//Play run if we are not playing th ejump animation and it isnt completed yet
+				if (!(a->getCurrentID() == "Jump" && a->getCurrentAnimation()->getCompleted() == false))
+				{
+					a->playAnimation("Run", true);
+				}
 				auto s = static_cast<SpriteComponent*>(&e.getComponent("Sprite"));
 				s->setScale(-1, s->getScale().y);
 				s->setTexture(a->getCurrentAnimation()->getTexture());
@@ -210,6 +225,11 @@ public:
 			if (phys->canJump())
 			{
 				phys->jumpDown();
+				auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
+				if (net != NULL)
+				{
+					net->addCommand("FALL");
+				}
 			}
 		}
 	}
@@ -230,6 +250,27 @@ public:
 		{
 			phys->beginSuper();
 			std::cout << "Player has used super up, they can now stun someone for 5 seconds if they hit within 5 seconds\n";
+			auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
+			if (net != NULL)
+			{
+				net->addCommand("SUPER");
+			}
+		}
+	}
+};
+
+class IdleCommand : public Command
+{
+public:
+	IdleCommand() {}
+	void execute(Entity& e)
+	{
+		static_cast<AnimationComponent*>(&e.getComponent("Animation"))->playAnimation("Idle", true);
+
+		auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
+		if (net != NULL)
+		{
+			net->addCommand("IDLE");
 		}
 	}
 };
