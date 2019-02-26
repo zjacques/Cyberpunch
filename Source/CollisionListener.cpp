@@ -104,14 +104,24 @@ void CollisionListener::EndContact(b2Contact * contact)
 		phys->setCanFall(false);
 	}
 
-	if ((dataA->Tag() == "Edge Sensor" && dataB->Tag() == "Platform")
-		|| (dataB->Tag() == "Edge Sensor" && dataA->Tag() == "Platform")
-		|| (dataA->Tag() == "Edge Sensor" && dataB->Tag() == "Floor")
-		|| (dataB->Tag() == "Edge Sensor" && dataA->Tag() == "Floor"))
+	if ((dataA->Tag() == "Right Edge Sensor" && dataB->Tag() == "Platform")
+		|| (dataB->Tag() == "Right Edge Sensor" && dataA->Tag() == "Platform")
+		|| (dataA->Tag() == "Right Edge Sensor" && dataB->Tag() == "Floor")
+		|| (dataB->Tag() == "Right Edge Sensor" && dataA->Tag() == "Floor"))
 	{
-		auto ai = static_cast<Entity*>(dataA->Tag() == "Edge Sensor" ? dataA->Data() : dataB->Data());
+		auto ai = static_cast<Entity*>(dataA->Tag() == "Right Edge Sensor" ? dataA->Data() : dataB->Data());
 		auto comp = static_cast<AIComponent *>(&ai->getComponent("AI"));
-		comp->onEdge = true;
+		comp->onEdgeRight = true;
+	}
+
+	if ((dataA->Tag() == "Left Edge Sensor" && dataB->Tag() == "Platform")
+		|| (dataB->Tag() == "Left Edge Sensor" && dataA->Tag() == "Platform")
+		|| (dataA->Tag() == "Left Edge Sensor" && dataB->Tag() == "Floor")
+		|| (dataB->Tag() == "Left Edge Sensor" && dataA->Tag() == "Floor"))
+	{
+		auto ai = static_cast<Entity*>(dataA->Tag() == "Left Edge Sensor" ? dataA->Data() : dataB->Data());
+		auto comp = static_cast<AIComponent *>(&ai->getComponent("AI"));
+		comp->onEdgeLeft = true;
 	}
 
 	//if a players body has hit a platform

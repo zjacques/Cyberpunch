@@ -21,8 +21,10 @@ public:
 	{
 		m_phys = new PhysicsComponent(static_cast<PositionComponent *>(&self->getComponent("Pos")));
 		auto pos = static_cast<PositionComponent *>(&self->getComponent("Pos"))->position;
-		m_phys->m_body = m_world.createBox(pos.x, pos.y, 75, 25, false, true, b2_staticBody);
-		m_world.addProperties(*m_phys->m_body, 0, 0, 0, true, new PhysicsComponent::ColData("Edge Sensor", m_self));
+		m_phys->m_body = m_world.createBox(pos.x - 25, pos.y + 1, 25, 75, false, true, b2_staticBody);
+		m_world.addProperties(*m_phys->m_body, 0, 0, 0, true, new PhysicsComponent::ColData("Left Edge Sensor", m_self));
+		m_phys->m_body = m_world.createBox(pos.x + 25, pos.y + 1, 25, 75, false, true, b2_staticBody);
+		m_world.addProperties(*m_phys->m_body, 0, 0, 0, true, new PhysicsComponent::ColData("Right Edge Sensor", m_self));
 	}
 	~AIComponent() {}
 
@@ -40,7 +42,8 @@ public:
 	PhysicsComponent * m_phys;
 	Box2DBridge m_world;
 
-	bool onEdge = false;
+	bool onEdgeLeft = false;
+	bool onEdgeRight = false;
 	
 	//Declare actions for AI
 };
