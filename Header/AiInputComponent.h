@@ -19,27 +19,27 @@ public:
 	{
 		m_currentCMD = nullptr;
 
-		if (/*s == "YBTN"*/ aiIsButtonPressed("YBTN")) //Y
+		if (aiIsButtonPressed("YBTN")) //Y
 		{
 			m_currentCMD = &m_jumpCMD;
 		}
-		else if (/*s == "XBTN"*/ aiIsButtonPressed("XBTN")) //X
+		else if (aiIsButtonPressed("XBTN")) //X
 		{
 			m_currentCMD = &m_punchCMD;
 		}
-		else if (/*s == "ABTN"*/ aiIsButtonPressed("ABTN")) //A
+		else if (aiIsButtonPressed("ABTN")) //A
 		{
 			m_currentCMD = &m_kickCMD;
 		}
-		else if (/*s == "STICKDOWN"*/ aiIsButtonPressed("STICKDOWN")) //Down
+		else if (aiIsButtonPressed("STICKDOWN")) //Down
 		{
 			m_currentCMD = &m_phaseDownCMD;
 		}
-		if (/*s == "STICKLEFT"*/ aiIsButtonHeld("STICKLEFT")) //Left
+		if (aiIsButtonHeld("STICKLEFT")) //Left
 		{
 			m_currentCMD = &m_moveLeftCMD;
 		}
-		else if (/*s == "STICKRIGHT" */ aiIsButtonHeld("STICKRIGHT")) //Right
+		else if (aiIsButtonHeld("STICKRIGHT")) //Right
 		{
 			m_currentCMD = &m_moveRightCMD;
 		}
@@ -48,7 +48,6 @@ public:
 		{
 			m_currentCMD->execute(*e);
 		}
-
 	}
 
 private:

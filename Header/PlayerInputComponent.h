@@ -6,7 +6,6 @@
 
 
 class PlayerInputComponent : public InputComponent {
-
 public:
 	PlayerInputComponent() :
 		InputComponent()
@@ -64,11 +63,12 @@ public:
 
 			m_currentCMD->execute(*entity);
 		}
-		else if (static_cast<AttackComponent*>(&entity->getComponent("Attack"))->attackActive() == false)
+		else if (static_cast<AttackComponent*>(&entity->getComponent("Attack"))->attackActive() == false
+		&& static_cast<AnimationComponent*>(&entity->getComponent("Animation"))->getCurrentID() != "Jump"
+		&& static_cast<PlayerPhysicsComponent*>(&entity->getComponent("Player Physics"))->stunned() == false)
 		{
+      	m_idleCMD.execute(*entity);
 			//static_cast<AnimationComponent*>(&entity->getComponent("Animation"))->playAnimation("Idle", true);
-			//if(m_previousCMD != (Command*)&m_idleCMD)
-				m_idleCMD.execute(*entity);
 		}
 
 		m_previousCMD = m_currentCMD;

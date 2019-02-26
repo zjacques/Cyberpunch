@@ -59,11 +59,13 @@ void AISystem::runTree()
 	{
 		auto cast_comp = dynamic_cast<AIComponent *>(c);
 		//Set input handler states back to default
-		cast_comp->m_input->m_previous = cast_comp->m_input->m_current;
 		cast_comp->m_input->m_current = cast_comp->m_input->m_default;
+		cast_comp->m_input->m_previous = cast_comp->m_input->m_current;
+
 		if (cast_comp->BT.run())
 		{
 			//std::cout << "Behaviour tree exited with SUCCESS" << std::endl;
+			//cast_comp->m_input->m_current = cast_comp->m_input->m_default;
 		}
 		else
 		{
@@ -80,11 +82,11 @@ void AISystem::runTree()
 /// <param name="dt"></param>
 void AISystem::update(double dt)
 {
-	//if (timer > 0.000016)
-	//{
+	if (timer > 0.000016)
+	{
 		runTree();
-	//	timer = 0;
-	//}
+		timer = 0;
+	}
 
-	//timer += dt;
+	timer += dt;
 }
