@@ -185,7 +185,7 @@ void GameScene::stop()
 		delete player;
 	for (auto onlineP : m_onlinePlayers)
 		delete onlineP;
-
+  
 	m_audio.stop();
 
 	m_allPlayers.clear();
