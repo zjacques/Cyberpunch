@@ -112,7 +112,7 @@ public:
 		//Passes YBTN command to AI input handler
 		//m_input->handleInput("YBTN", m_entity);
 		m_input->m_current["YBTN"] = true;
-		//std::cout << "JUMP" << std::endl;
+		std::cout << "JUMP" << std::endl;
 		return true;
 	}
 };

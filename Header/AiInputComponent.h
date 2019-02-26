@@ -35,7 +35,7 @@ public:
 		{
 			m_currentCMD = &m_phaseDownCMD;
 		}
-		if (aiIsButtonHeld("STICKLEFT")) //Left
+		else if (aiIsButtonHeld("STICKLEFT")) //Left
 		{
 			m_currentCMD = &m_moveLeftCMD;
 		}

@@ -82,7 +82,7 @@ void AISystem::runTree()
 /// <param name="dt"></param>
 void AISystem::update(double dt)
 {
-	if (timer > 0.000016)
+	if (timer > 0.00016)
 	{
 		runTree();
 		timer = 0;
