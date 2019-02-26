@@ -24,7 +24,7 @@ public:
 	void run()
 	{
 		std::cout << "Flipping Grvaity booth\n";
-		
+		bgSwitch = true;
 		flipGrav();
 
 	}
@@ -44,6 +44,7 @@ public:
 			m_worldPtr->flipGravity();
 			m_collistenerPtr->flipGravity();
 			m_systemPtr->flipGravity();
+			
 		}
 	}
 
