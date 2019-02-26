@@ -3,6 +3,7 @@
 
 #include "Box2DBridge.h"
 #include "PositionComponent.h"
+#include "AudioComponent.h"
 
 class PhysicsComponent : public Component
 {
@@ -26,6 +27,7 @@ public:
 	private:
 		std::string tag;
 		void* objectData;
+		
 	};
 };
 

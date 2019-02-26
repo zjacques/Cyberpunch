@@ -2,6 +2,8 @@
 #include "Vector2f.h"
 #include "Entity.h"
 #include "PlayerPhysicsComponent.h"
+#include "AudioComponent.h"
+
 class PlayerComponent : public Component
 {
 public:
@@ -15,6 +17,7 @@ public:
 		m_respawning(false),
 		m_winner(false)
 	{
+
 	}
 
 	void respawn()
@@ -44,6 +47,7 @@ public:
 		m_respawn = false;
 		m_respawning = false;
 		m_spawnTimer = 0;
+		m_audio.playSound("Spawn", true);
 		auto phys = static_cast<PlayerPhysicsComponent*>(&m_playerPtr->getComponent("Player Physics"));
 		//Set the players position to the new position
 		phys->m_body->setPosition(m_newSpawn->x, m_newSpawn->y);
@@ -65,4 +69,6 @@ private:
 	std::vector<Vector2f> m_spawnLocations;
 	bool m_dead, m_respawn, m_respawning, m_winner;
 	int m_lives;
+	bool m_audioCreated;
+	AudioComponent m_audio;
 };

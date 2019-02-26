@@ -24,7 +24,7 @@ void GameScene::start()
 {	
 	if (m_audioCreated == false)
 	{
-		m_audio.addSound("GameMusic", Scene::resources().getMusic("Song 2"));
+		//m_audio.addSound("GameMusic", Scene::resources().getMusic("Song 2"));
 	}
 
 	m_audio.playSound("GameMusic", true);
@@ -384,7 +384,11 @@ Entity * GameScene::createPlayer(int playerNumber,int controllerNumber, int posX
 	p->addComponent("Player", new PlayerComponent(spawnPositions, p));
 	p->addComponent("Sprite", new SpriteComponent(&p->getComponent("Pos"), Vector2f(1700,85), Vector2f(85, 85), Scene::resources().getTexture("Player Idle"), 2));
 	auto animation = new AnimationComponent(&p->getComponent("Sprite"));
+	//m_audio.addSound("Spawn", Scene::resources().getMusic("Spawn"));
 	p->addComponent("Animation", animation);
+	auto audio = new AudioComponent();
+	audio->addSound("Spawn", Scene::resources().getMusic("Spawn"));
+	p->addComponent("Audio", audio);
 
 	std::vector<SDL_Rect> m_animRects, m_stunRects; //The rectangles for the animations
 
