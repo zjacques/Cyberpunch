@@ -14,7 +14,7 @@ GameScene::GameScene() :
 	m_camera(false),
 	m_gameStartTimer(3)
 {
-	m_numOfAIPlayers = 0;
+	m_numOfAIPlayers = 1;
 }
 
 void GameScene::start()
@@ -38,9 +38,9 @@ void GameScene::start()
 	Scene::systems()["Booth"] = new DJBoothSystem(&Scene::resources(), &m_platforms, &m_bgEntity);
 
 	//Create background entity
-	auto bgPos = new PositionComponent(1920 /2 , 1080 / 2);
+	auto bgPos = new PositionComponent(960 , 540);
 	m_bgEntity.addComponent("Pos", bgPos);
-	m_bgEntity.addComponent("Sprite", new SpriteComponent(bgPos, Vector2f(1920, 1080 ), Vector2f(1920, 1080), Scene::resources().getTexture("Game BG0"), 0));
+	m_bgEntity.addComponent("Sprite", new SpriteComponent(bgPos, Vector2f(1920, 1080), Vector2f(1920, 1080), Scene::resources().getTexture("Game BG0"), 0));
 	//Add bg sprite component to the render system
 	Scene::systems()["Render"]->addComponent(&m_bgEntity.getComponent("Sprite"));
 
@@ -169,6 +169,14 @@ void GameScene::stop()
 	Scene::systems()["Respawn"]->removeAllComponents();
 	Scene::systems()["Animation"]->removeAllComponents();
 	Scene::systems()["Booth"]->removeAllComponents();
+
+	/*for (auto ai : m_AIPlayers)
+		delete ai;
+	for (auto player : m_localPlayers)
+		delete player;
+	for (auto onlineP : m_onlinePlayers)
+		delete onlineP;*/
+
 	m_allPlayers.clear();
 	m_AIPlayers.clear();
 	m_localPlayers.clear();
@@ -591,6 +599,7 @@ void GameScene::createPlatforms(SDL_Renderer& renderer)
 		auto newPlat = new Entity(tag);
 		auto platPos = new PositionComponent(x, y);
 		newPlat->addComponent("Pos", platPos);
+		newPlat->addComponent("Platform", platComp);
 		auto phys = new PhysicsComponent(platPos);
 		phys->m_body = m_physicsWorld.createBox(x, y, w, h, false, true, b2BodyType::b2_staticBody);
 		m_physicsWorld.addProperties(*phys->m_body, 0, .1f, 0, false, new PhysicsComponent::ColData(tag, newPlat));
@@ -659,7 +668,7 @@ void GameScene::createPlatforms(SDL_Renderer& renderer)
 		}
 
 		//Set the texture of the platform to the green platform texture
-		newPlat->addComponent("Sprite", new SpriteComponent(platPos, Vector2f(w, h), Vector2f(w, h), platComp->getTexture("Game BG2"), 1));
+		newPlat->addComponent("Sprite", new SpriteComponent(platPos, Vector2f(w, h), Vector2f(w, h), platComp->getTexture("Game BG0"), 1));
 
 		Scene::systems()["Render"]->addComponent(&newPlat->getComponent("Sprite"));
 
@@ -786,21 +795,31 @@ void GameScene::handleInput(InputSystem & input)
 		for (auto& player : m_allPlayers)
 		{
 			auto input = dynamic_cast<InputComponent*>(&player->getComponent("Input"));
-			if (nullptr != input)
+			auto onlineInput = dynamic_cast<OnlineInputComponent*>(&player->getComponent("Input"));
+			auto aiInput = dynamic_cast<AiInputComponent*>(&player->getComponent("Input"));
+			if (nullptr != aiInput)
+			{
+				aiInput->handleInput("", player);
+			}
+			else if (nullptr != input)
 			{
 				input->handleInput(player);
+			}
+			else if (nullptr != onlineInput)
+			{
+				onlineInput->handleInput(player);
 			}
 		}
 
 		for (int i = 0; i < m_numOfOnlinePlayers; i++)
 		{
-			auto input = static_cast<OnlineInputComponent*>(&m_onlinePlayers.at(i)->getComponent("Input"));
-			input->handleInput(m_onlinePlayers.at(i));
+			//auto input = static_cast<OnlineInputComponent*>(&m_onlinePlayers.at(i)->getComponent("Input"));
+			//input->handleInput(m_onlinePlayers.at(i));
 			//m_onlinePlayers.at(i).handleInput(*m_onlineInputs.at(i));
 		}
 	}
 	for (auto& ai : m_AIPlayers)
 	{
-		static_cast<AiInputComponent*>(&ai->getComponent("Input"))->handleInput("", ai);
+		//static_cast<AiInputComponent*>(&ai->getComponent("Input"))->handleInput("", ai);
 	}
 }

@@ -23,11 +23,11 @@ public:
 	SDL_Texture* getTexture(std::string bg)
 	{
 		if (bg == "Game BG0")
-			return m_blue;
+			return m_green;
 		else if (bg == "Game BG1")
 			return m_pink;
 		else if (bg == "Game BG2")
-			return m_green;
+			return m_blue;
 		else
 			return m_orange;
 	}

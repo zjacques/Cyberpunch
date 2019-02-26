@@ -78,7 +78,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(projectDir)/Libraries/SDL2/include/;$(projectDir)/Libraries/;$(projectDir)/Header/;$(projectDir)/Libraries/nlohmann;$(projectDir)/Libraries/SDL2_net/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(projectDir)/Libraries/SDL2/include/;$(projectDir)/Libraries/;$(projectDir)/Header/;$(projectDir)/Libraries/nlohmann;$(projectDir)/Libraries/SDL2_net/include/;$(projectDir)/Libraries/SDL2_mixer/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(projectDir)/Libraries/SDL2/lib/;$(projectDir)/Libraries/Box2D/lib/;$(projectDir)/Libraries/SDL_TTF/lib/;$(projectDir)/Libraries/SDL_image/lib/;$(projectDir)/Libraries/SDL2_net/lib/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
