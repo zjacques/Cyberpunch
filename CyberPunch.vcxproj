@@ -191,6 +191,7 @@
     <ClInclude Include="Header\PickUpSystem.h" />
     <ClInclude Include="Header\OnlineSystem.h" />
     <ClInclude Include="Header\PlatformBoothComponent.h" />
+    <ClInclude Include="Header\PlatformComponent.h" />
     <ClInclude Include="Header\PlayerComponent.h" />
     <ClInclude Include="Header\PlayerInputComponent.h" />
     <ClInclude Include="Header\PlayerPhysicsComponent.h" />

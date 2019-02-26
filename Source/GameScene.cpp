@@ -4,6 +4,7 @@
 #include "AnimationComponent.h"
 #include "DustSystem.h"
 #include "PickUpSystem.h"
+#include "PlatformComponent.h"
 
 GameScene::GameScene() :
 	m_bgEntity("Game BG"),
@@ -69,11 +70,13 @@ void GameScene::start()
 	{
 		int dex = PreGameScene::playerIndexes.localPlyrs[i];
 		m_localPlayers.push_back(createPlayer(dex, i, 600 + 150 * dex, 360, true, spawnPos));
+		m_allPlayers.emplace_back(m_localPlayers.at(i)); //Add ai to all players vector
 	}
 	for (int i = 0; i < m_numOfOnlinePlayers; i++)
 	{
 		int dex = PreGameScene::playerIndexes.onlinePlyrs[i];
 		m_onlinePlayers.push_back(createPlayer(dex, 0, 600 + 150 * dex, 360, false, spawnPos));
+		m_allPlayers.emplace_back(m_onlinePlayers.at(i)); //Add ai to all players vector
 	}
 	for (int i = 0; i < m_numOfAIPlayers; i++)
 	{
@@ -579,6 +582,7 @@ void GameScene::createPlatforms(SDL_Renderer& renderer)
 	//Create all of the platforms for the game
 	for (auto& platform : Scene::resources().getLevelData()["Platforms"])
 	{
+		auto platComp = new PlatformComponent(); //Create the platform component
 		//Get the X,Y,Width and Height of the platform
 		int x = platform["X"], y = platform["Y"], w = platform["W"], h = platform["H"];
 		std::string tag = platform["Tag"];
@@ -593,13 +597,6 @@ void GameScene::createPlatforms(SDL_Renderer& renderer)
 		newPlat->addComponent("Physics", phys);
 		Scene::systems()["Physics"]->addComponent(phys);
 
-		//Create the texture for the platform
-		auto texture = SDL_CreateTexture(&renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_TARGET, w, h);
-		SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
-		//Set it to draw to the texture we just created
-		SDL_SetRenderTarget(&renderer, texture);
-
-
 		SDL_Rect rect, srcRect;
 
 		auto size = Vector2f(50 * (tag == "Floor" ? 1 : .5f), 50 * (tag == "Floor" ? 1 : .5f));
@@ -613,35 +610,56 @@ void GameScene::createPlatforms(SDL_Renderer& renderer)
 		srcRect.w = 50;
 		srcRect.h = 50;
 
-		//Loop through the tiles and draw to the texture we just created the shape of the platform
-		for (int i = 0; i < numOfTiles; i++)
+		std::vector<std::string> colours = { "Green", "Pink", "Orange", "Blue" };
+		//Loop 4 times, create textures for each colour
+
+		for (auto& col : colours)
 		{
-			rect.w = size.x;
-			rect.h = size.y;
-			rect.x = 0 + i * smallW;
-			rect.y = 0;
+			//Create the texture for the platform
+			auto texture = SDL_CreateTexture(&renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_TARGET, w, h);
+			SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
+			//Set it to draw to the texture we just created
+			SDL_SetRenderTarget(&renderer, texture);
 
-			if (i == 0)
+			//Loop through the tiles and draw to the texture we just created the shape of the platform
+			for (int i = 0; i < numOfTiles; i++)
 			{
-				SDL_RenderCopy(&renderer, Scene::resources().getTexture("Platform Green 0"), &srcRect, &rect);
-				SDL_RenderCopy(&renderer, Scene::resources().getTexture("Platform Green 0"), &srcRect, &rect);
+				rect.w = size.x;
+				rect.h = size.y;
+				rect.x = i * smallW;
+				rect.y = 0;
+
+				if (i == 0)
+				{
+					SDL_RenderCopy(&renderer, Scene::resources().getTexture("Platform " + col + " 0"), &srcRect, &rect);
+					SDL_RenderCopy(&renderer, Scene::resources().getTexture("Platform " + col + " 0"), &srcRect, &rect);
+				}
+				else if (i == (numOfTiles - 1))
+				{
+					SDL_RenderCopy(&renderer, Scene::resources().getTexture("Platform " + col + " 2"), &srcRect, &rect);
+					SDL_RenderCopy(&renderer, Scene::resources().getTexture("Platform " + col + " 2"), &srcRect, &rect);
+				}
+				else
+				{
+					SDL_RenderCopy(&renderer, Scene::resources().getTexture("Platform " + col + " 1"), &srcRect, &rect);
+					SDL_RenderCopy(&renderer, Scene::resources().getTexture("Platform " + col + " 1"), &srcRect, &rect);
+				}
 			}
-			else if (i == (numOfTiles - 1))
-			{
-				SDL_RenderCopy(&renderer, Scene::resources().getTexture("Platform Green 2"), &srcRect, &rect);
-				SDL_RenderCopy(&renderer, Scene::resources().getTexture("Platform Green 2"), &srcRect, &rect);
-			}
+			SDL_SetRenderTarget(&renderer, NULL);
+			SDL_RenderCopy(&renderer, texture, NULL, &rect);
+
+			if (col == "Green")
+				platComp->setGreen(texture);
+			else if (col == "Blue")
+				platComp->setBlue(texture);
+			else if (col == "Pink")
+				platComp->setPink(texture);
 			else
-			{
-				SDL_RenderCopy(&renderer, Scene::resources().getTexture("Platform Green 1"), &srcRect, &rect);
-				SDL_RenderCopy(&renderer, Scene::resources().getTexture("Platform Green 1"), &srcRect, &rect);
-			}
+				platComp->setOrange(texture);
 		}
-		SDL_SetRenderTarget(&renderer, NULL);
-		SDL_RenderCopy(&renderer, texture, NULL, &rect);
-		
 
-		newPlat->addComponent("Sprite", new SpriteComponent(platPos, Vector2f(w, h), Vector2f(w, h), texture, 1));
+		//Set the texture of the platform to the green platform texture
+		newPlat->addComponent("Sprite", new SpriteComponent(platPos, Vector2f(w, h), Vector2f(w, h), platComp->getTexture("Game BG2"), 1));
 
 		Scene::systems()["Render"]->addComponent(&newPlat->getComponent("Sprite"));
 
