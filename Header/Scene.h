@@ -4,6 +4,7 @@
 #include "InputSystem.h"
 #include "ResourceManager.h"
 #include "AudioComponent.h"
+#include "AchievementComponent.h"
 
 //Base scene class, this will be inherited by every other scene
 class Scene
@@ -30,8 +31,10 @@ public:
 	std::map<std::string, System*>& systems() { return *m_systems; };
 	std::string getStgt() { return m_stgt; }
 	AudioComponent& audio() { return m_audio; }
+	AchievementComponent& achievements() { return m_achievements; }
 private:
 	AudioComponent m_audio;
+	AchievementComponent m_achievements;
 	ResourceHandler * m_resources;
 	std::map<std::string, System*> * m_systems;
 	std::string m_stgt;
