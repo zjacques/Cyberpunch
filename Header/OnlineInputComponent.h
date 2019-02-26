@@ -19,7 +19,7 @@ public:
 	int m_playerNumber;
 private:
 
-	Command * m_currentCMD;
+	Command * m_currentCMD, *m_previousCMD;
 
 	JumpCommand m_jumpCMD;
 	MoveLeftCommand m_moveLeftCMD;
@@ -27,6 +27,9 @@ private:
 	PunchCommand m_punchCMD;
 	KickCommand m_kickCMD;
 	UppercutCommand m_uppercutCMD;
+	IdleCommand m_idleCMD;
+	PhaseDownCommand m_fallCMD;
+	SuperCommand m_superCMD;
 
 	queue<string> m_commandsToSend;
 

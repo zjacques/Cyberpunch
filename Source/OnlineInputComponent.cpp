@@ -9,6 +9,10 @@ OnlineInputComponent::OnlineInputComponent()
 void OnlineInputComponent::handleInput(void* e)
 {
 	auto entity = static_cast<Entity*>(e);
+	if ((m_previousCMD == (Command*)&m_moveLeftCMD || m_previousCMD == (Command*)&m_moveRightCMD) && m_commandsToSend.size() == 0)
+	{
+		m_previousCMD->execute(*entity);
+	}
 	if (m_commandsToSend.size() > 0)
 	{
 		string topCMD = m_commandsToSend.front();
@@ -37,6 +41,14 @@ void OnlineInputComponent::handleInput(void* e)
 		{
 			m_currentCMD = &m_moveRightCMD;
 		}
+		else if (topCMD == "FALL")
+		{
+			m_currentCMD = &m_fallCMD;
+		}
+		else if (topCMD == "SUPER")
+		{
+			m_currentCMD = &m_superCMD;
+		}
 		m_commandsToSend.pop();
 		//If the current command was set, execute the command
 		if (nullptr != m_currentCMD)
@@ -45,7 +57,12 @@ void OnlineInputComponent::handleInput(void* e)
 		}
 	}
 	else if (static_cast<AttackComponent*>(&entity->getComponent("Attack"))->attackActive() == false)
-		static_cast<AnimationComponent*>(&entity->getComponent("Animation"))->playAnimation("Idle", true);
+	{
+		//static_cast<AnimationComponent*>(&entity->getComponent("Animation"))->playAnimation("Idle", true);
+		m_idleCMD.execute(*entity);
+	}
+
+	m_previousCMD = m_currentCMD;
 	
 	
 
