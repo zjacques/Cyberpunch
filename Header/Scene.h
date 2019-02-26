@@ -3,6 +3,7 @@
 #include <iostream>
 #include "InputSystem.h"
 #include "ResourceManager.h"
+#include "AudioComponent.h"
 
 //Base scene class, this will be inherited by every other scene
 class Scene
@@ -27,7 +28,10 @@ public:
 	void setSystemsPtr(std::map<std::string, System*>& map) { m_systems = &map; }
 	ResourceHandler& resources() { return *m_resources; }
 	std::map<std::string, System*>& systems() { return *m_systems; };
+	std::string getStgt() { return m_stgt; }
+	AudioComponent& audio() { return m_audio; }
 private:
+	AudioComponent m_audio;
 	ResourceHandler * m_resources;
 	std::map<std::string, System*> * m_systems;
 	std::string m_stgt;

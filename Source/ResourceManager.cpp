@@ -58,6 +58,9 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 	m_map["Password Yes"] = loadFromPath("GUI/Yes_Password.png", renderer);
 	m_map["Password No"] = loadFromPath("GUI/No_Password.png", renderer);
 	m_map["Achievements Button"] = loadFromPath("GUI/AchievementsButton.png", renderer);
+	m_map["Achievements BG"] = loadFromPath("GUI/Achievements_Screen.png", renderer);
+	m_map["Achievement Locked"] = loadFromPath("Achievements/Achievement_Locked.png", renderer);
+
 	//Game start animations
 	m_map["Timer 1"] = loadFromPath("GUI/1 Timer.png", renderer);
 	m_map["Timer 2"] = loadFromPath("GUI/2 Timer.png", renderer);
