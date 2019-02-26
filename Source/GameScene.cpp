@@ -34,34 +34,28 @@ void GameScene::start()
 	Scene::systems()["Dust"] = new DustSystem(&Scene::systems(), &m_localPlayers, &Scene::resources());
 	Scene::systems()["Respawn"] = new PlayerRespawnSystem();
 	static_cast<PickUpSystem*>(Scene::systems()["Pickup"])->setWorld(m_physicsWorld);
-	Scene::systems()["Booth"] = new DJBoothSystem();
+	Scene::systems()["Booth"] = new DJBoothSystem(&Scene::resources(), &m_platforms, &m_bgEntity);
 
 	//Create background entity
 	auto bgPos = new PositionComponent(1920 /2 , 1080 / 2);
 	m_bgEntity.addComponent("Pos", bgPos);
-	m_bgEntity.addComponent("Sprite", new SpriteComponent(bgPos, Vector2f(1920, 1080 ), Vector2f(1920, 1080), Scene::resources().getTexture("Game BG"), 0));
+	m_bgEntity.addComponent("Sprite", new SpriteComponent(bgPos, Vector2f(1920, 1080 ), Vector2f(1920, 1080), Scene::resources().getTexture("Game BG0"), 0));
 	//Add bg sprite component to the render system
 	Scene::systems()["Render"]->addComponent(&m_bgEntity.getComponent("Sprite"));
 
-	m_numOfLocalPlayers = SDL_NumJoysticks();
-	m_numOfOnlinePlayers = 0;//get the number of players from the network system
-
-	// Initialise SDL_net (Note: We don't initialise or use normal SDL at all - only the SDL_net library!)
-	/*if (SDLNet_Init() == -1)
+	if (static_cast<OnlineSystem*>(Scene::systems()["Network"])->isConnected)
 	{
-		std::cerr << "Failed to intialise SDL_net: " << SDLNet_GetError() << std::endl;
-		exit(-1);
-	}*/
-	
-	//try to create the online system and connect
-	//refactor to another spot once we get the full lobby system going I guess.
-	//static_cast<OnlineSystem*>(Scene::systems()["Network"])->ConnectToServer();
-	/*auto net = new OnlineSystem();
-	if (net->ConnectToServer())
-		Scene::systems()["Network"] = net;
-	else
-		delete net;*/
-	
+		m_numOfLocalPlayers = PreGameScene::playerIndexes.localPlyrs.size();
+		m_numOfOnlinePlayers = PreGameScene::playerIndexes.onlinePlyrs.size();
+	}
+	else {
+		m_numOfLocalPlayers = SDL_NumJoysticks();
+		PreGameScene::playerIndexes.localPlyrs.push_back(1);
+		PreGameScene::playerIndexes.localPlyrs.push_back(2);
+		PreGameScene::playerIndexes.localPlyrs.push_back(3);
+		PreGameScene::playerIndexes.localPlyrs.push_back(4);
+		m_numOfOnlinePlayers = 0;
+	}
 
 	//Create players, pass in the spawn locations to respawn players
 	std::vector<Vector2f> spawnPos;
@@ -73,13 +67,13 @@ void GameScene::start()
 	}
 	for (int i = 0; i < m_numOfLocalPlayers; i++)
 	{
-		m_localPlayers.push_back(createPlayer(i,600 + 150 * i, 360, true, spawnPos));
-		m_allPlayers.emplace_back(m_localPlayers.at(i)); //Add to all players vector
+		int dex = PreGameScene::playerIndexes.localPlyrs[i];
+		m_localPlayers.push_back(createPlayer(dex, i, 600 + 150 * dex, 360, true, spawnPos));
 	}
 	for (int i = 0; i < m_numOfOnlinePlayers; i++)
 	{
-		m_onlinePlayers.push_back(createPlayer(i+ m_numOfLocalPlayers, 600 + 150 * i+ m_numOfLocalPlayers, 360, false, spawnPos));
-		m_allPlayers.emplace_back(m_onlinePlayers.at(i)); //Add to all players vector
+		int dex = PreGameScene::playerIndexes.onlinePlyrs[i];
+		m_onlinePlayers.push_back(createPlayer(dex, 0, 600 + 150 * dex, 360, false, spawnPos));
 	}
 	for (int i = 0; i < m_numOfAIPlayers; i++)
 	{
@@ -106,7 +100,7 @@ void GameScene::start()
 	//DJBooths created here 
 	auto& booths = Scene::resources().getLevelData()["Booth"];
 
-	for (int i = 0; i < booths.size(); i++)
+	for (int i = 0; i < booths.size() - 1; i++)
 	{
 		m_djBooths.push_back(createDJB(i, booths.at(i)["X"], booths.at(i)["Y"]));
 	}
@@ -356,7 +350,7 @@ void GameScene::updateCamera(double dt)
 	m_camera.update(dt);
 }
 
-Entity * GameScene::createPlayer(int index,int posX, int posY, bool local, std::vector<Vector2f> spawnPositions)
+Entity * GameScene::createPlayer(int playerNumber,int controllerNumber, int posX, int posY, bool local, std::vector<Vector2f> spawnPositions)
 {
 	auto p = new Entity("Player");
 	p->addComponent("Pos", new PositionComponent(0,0));
@@ -394,18 +388,18 @@ Entity * GameScene::createPlayer(int index,int posX, int posY, bool local, std::
 	Scene::systems()["Attack"]->addComponent(&p->getComponent("Attack"));
 	Scene::systems()["Respawn"]->addComponent(&p->getComponent("Player"));
 
-	//Create and initiliase the input component
+	//Create and initialise the input component
 	if (local) {
 		auto input = new PlayerInputComponent();
 		Scene::systems()["Input"]->addComponent(input);
-		input->initialiseJoycon(index);
-		input->m_playerNumber = index;
+		input->initialiseJoycon(controllerNumber);
+		input->m_playerNumber = playerNumber;
 		p->addComponent("Input", input);
 	}
 	else {
 		auto input = new OnlineInputComponent();
 		static_cast<OnlineSystem*>(Scene::systems()["Network"])->addReceivingPlayer(input);
-		input->m_playerNumber = index;
+		input->m_playerNumber = playerNumber;
 		p->addComponent("Input", input);
 	}
 
@@ -429,7 +423,7 @@ Entity * GameScene::createPlayer(int index,int posX, int posY, bool local, std::
 	if (netSys->isConnected && local)
 	{
 		auto net = new OnlineSendComponent();
-		net->m_playerNumber = index;
+		net->m_playerNumber = playerNumber;
 		p->addComponent("Send", net);
 		netSys->addSendingPlayer(net);
 	} //if it can't connect to the server, it didn't need to be online anyway
@@ -473,17 +467,18 @@ Entity* GameScene::createDJB(int index, int posX, int posY)
 
 	if (index == 0)
 	{
-		//this will call the gravity Component when the player punches it
+		
 		booth->addComponent("DJ Booth", new GravityBoothComponent(m_localPlayers, &m_physicsWorld, &m_physicsSystem, &m_collisionListener));
+		
 	}
 	else if (index == 1)
 	{
-		//this will call the slow down Component when the player punches it
+		
 		booth->addComponent("DJ Booth", new SlowBoothComponent());
 	}
 	else if (index == 2)
 	{
-		////this will call the platforming moving Component when the player punches it
+		
 		booth->addComponent("DJ Booth", new PlatformBoothComponent(&m_platforms));
 	}
 
@@ -506,8 +501,10 @@ Entity * GameScene::createAI(int index, int posX, int posY, std::vector<Vector2f
 	auto player = new PlayerComponent(spawnPositions, ai);
 
 	auto behaviour = new AIComponent(m_localPlayers, input, ai, player);
+	ai->addComponent("Input", input);
 	ai->addComponent("Pos", pos);
 	ai->addComponent("AI", behaviour);
+	ai->addComponent("Player", player);
 	ai->addComponent("Dust Trigger", new DustTriggerComponent());
 	ai->addComponent("Player", player);
 	ai->addComponent("Attack", new AttackComponent());
@@ -522,6 +519,7 @@ Entity * GameScene::createAI(int index, int posX, int posY, std::vector<Vector2f
 			m_stunRects.push_back({ 85 * i, 0, 85, 85 });
 		m_animRects.push_back({ 85 * i, 0, 85, 85 });
 	}
+
 	animation->addAnimation("Run", Scene::resources().getTexture("Player Run"), m_animRects, .75f);
 	animation->addAnimation("Idle", Scene::resources().getTexture("Player Idle"), m_animRects, .5f);
 	animation->addAnimation("Punch 0", Scene::resources().getTexture("Player Left Punch"), m_animRects, .175f);
@@ -650,6 +648,11 @@ void GameScene::createPlatforms(SDL_Renderer& renderer)
 		m_platforms.push_back(newPlat);
 	}
 
+	//DJBooths created here 
+	auto& booths = Scene::resources().getLevelData()["Booth"];
+
+	m_djBooths.push_back(createDJB(2, booths.at(2)["X"], booths.at(2)["Y"]));
+
 	//Set platforms created as true
 	m_platformsCreated = true;
 }
@@ -777,5 +780,9 @@ void GameScene::handleInput(InputSystem & input)
 			input->handleInput(m_onlinePlayers.at(i));
 			//m_onlinePlayers.at(i).handleInput(*m_onlineInputs.at(i));
 		}
+	}
+	for (auto& ai : m_AIPlayers)
+	{
+		static_cast<AiInputComponent*>(&ai->getComponent("Input"))->handleInput("", ai);
 	}
 }

@@ -5,8 +5,9 @@
 class DJBoothComponent : public Component
 {
 public: 
-	DJBoothComponent() {}
+	DJBoothComponent() : bgSwitch(false) {}
 	virtual void run() = 0;
 	virtual void update(double dt) = 0;
+	bool bgSwitch;
 private:
 };

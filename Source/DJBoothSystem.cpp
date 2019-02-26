@@ -1,11 +1,8 @@
 #include "DJBoothSystem.h"
 #include "DJboothComponent.h"
 #include "SlowBoothComponent.h"
+#include "SpriteComponent.h"
 
-void DJBoothSystem::setWorld(Box2DBridge & world)
-{
-	m_worldPtr = &world;
-}
 
 void DJBoothSystem::addComponent(Component * comp)
 {
@@ -16,7 +13,20 @@ void DJBoothSystem::update(double dt)
 {
 	for (auto& comp : m_components)
 	{
-		static_cast<DJBoothComponent*>(comp)->update(dt);
+		auto booth = static_cast<DJBoothComponent*>(comp);
+
+		booth->update(dt);
+
+		if (booth->bgSwitch)
+		{
+			m_currentBg++;
+			if (m_currentBg > 3)
+				m_currentBg = 0;
+
+			auto bgSprite = static_cast<SpriteComponent*>(&m_bgPtr->getComponent("Sprite"));
+			bgSprite->setTexture(m_resourcePtr->getTexture("Game BG" + std::to_string(m_currentBg)));
+			booth->bgSwitch = false;
+		}
 	}
 	
 }

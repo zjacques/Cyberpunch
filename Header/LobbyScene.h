@@ -29,7 +29,7 @@ private:
 
 	int m_currentIndex;
 	Camera m_camera;
-	InputComponent m_input;
+	InputComponent* m_input;
 	bool m_addedInput;
 
 	vector<OnlineSystem::LobbyInfo> m_lobbies;

@@ -23,7 +23,11 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 	//If you had the player.png in another folder, then youd call it like this
 	//loadFromPath("Characters/Player.png")
 
-	m_map["Game BG"] = loadFromPath("Backgrounds-01.png", renderer);
+	m_map["Game BG0"] = loadFromPath("Backgrounds-01.png", renderer);
+	m_map["Game BG1"] = loadFromPath("Backgrounds-02.png", renderer);
+	m_map["Game BG2"] = loadFromPath("Backgrounds-03.png", renderer);
+	m_map["Game BG3"] = loadFromPath("Backgrounds-04.png", renderer);
+
 	m_map["Player Run"] = loadFromPath("Player/Player_Run.png", renderer);
 	m_map["Player Idle"] = loadFromPath("Player/Player_Idle.png", renderer);
 	m_map["Player Ground Kick"] = loadFromPath("Player/Player_Kick.png", renderer);
