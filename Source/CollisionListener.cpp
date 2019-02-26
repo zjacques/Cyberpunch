@@ -7,6 +7,7 @@
 #include "DJboothComponent.h"
 #include "PlayerComponent.h"
 #include "AnimationComponent.h"
+#include "AIComponent.h"
 
 
 void CollisionListener::BeginContact(b2Contact * contact)
@@ -108,7 +109,9 @@ void CollisionListener::EndContact(b2Contact * contact)
 		|| (dataA->Tag() == "Edge Sensor" && dataB->Tag() == "Floor")
 		|| (dataB->Tag() == "Edge Sensor" && dataA->Tag() == "Floor"))
 	{
-
+		auto ai = static_cast<Entity*>(dataA->Tag() == "Edge Sensor" ? dataA->Data() : dataB->Data());
+		auto comp = static_cast<AIComponent *>(&ai->getComponent("AI"));
+		comp->onEdge = true;
 	}
 
 	//if a players body has hit a platform

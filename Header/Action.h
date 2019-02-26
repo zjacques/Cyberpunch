@@ -151,7 +151,7 @@ public:
 class CheckNearest : public Action
 {
 public:
-	CheckNearest(std::vector<Entity *> e, Entity * s, AiInputComponent * a) :
+	CheckNearest(std::vector<Entity *>* e, Entity * s, AiInputComponent * a) :
 		m_entities(e), Action(s, a)
 	{
 	}
@@ -168,33 +168,37 @@ public:
 		auto nearest = new Entity("temp");
 
 		//If entities vector is not empty, set nearest to first element
-		if (!m_entities.empty())
+		if (!m_entities->empty())
 		{
-			nearest = m_entities.at(0);
-		}
+			nearest = m_entities->at(0);
 
-		//Get position component of current AI entity
-		auto self_pos = dynamic_cast<PositionComponent *>(&m_entity->getComponent("Pos"));
-		//Get position component from entity
-		auto otherPos = dynamic_cast<PositionComponent *>(&nearest->getComponent("Pos"));
+			//Get position component of current AI entity
+			auto self_pos = dynamic_cast<PositionComponent *>(&m_entity->getComponent("Pos"));
+			//Get position component from entity
+			auto otherPos = dynamic_cast<PositionComponent *>(&nearest->getComponent("Pos"));
 
-		//Loop through all entities
-		for (auto entity : m_entities)
-		{
-			//Get position component of the current entity in the loop
-			auto newPos = dynamic_cast<PositionComponent *>(&entity->getComponent("Pos"));
-			//Check distance between self and previous position, and self and new position
-			if (dist(newPos->position, self_pos->position) < dist(otherPos->position, self_pos->position))
+			//Loop through all entities
+			for (auto entity : *m_entities)
 			{
-				//If new position is closer, the entity it belongs to is assigned to nearest
-				nearest = entity;
+				if (entity->m_ID != "AI")
+				{
+					//Get position component of the current entity in the loop
+					auto newPos = dynamic_cast<PositionComponent *>(&entity->getComponent("Pos"));
+					//Check distance between self and previous position, and self and new position
+					if (dist(newPos->position, self_pos->position) < dist(otherPos->position, self_pos->position))
+					{
+						//If new position is closer, the entity it belongs to is assigned to nearest
+						nearest = entity;
+					}
+				}
 			}
+			//Cast AI component
+			auto e = dynamic_cast<AIComponent *>(&m_entity->getComponent("AI"));
+			//Assign nearest player to variable in the AI 
+			e->nearestPlayer = nearest;
+			return true;
 		}
-		//Cast AI component
-		auto e = dynamic_cast<AIComponent *>(&m_entity->getComponent("AI"));
-		//Assign nearest player to variable in the AI 
-		e->nearestPlayer = nearest;
-		return true;
+		return false;
 	}
 
 	//Euclidean distance function
@@ -202,7 +206,7 @@ public:
 	{
 		return sqrt((p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y));
 	}
-	std::vector<Entity *> m_entities;
+	std::vector<Entity *>* m_entities;
 };
 #endif
 
@@ -477,12 +481,22 @@ public:
 			//If AI is right of player
 			if (nearest->position.x < pos->position.x)
 			{
+				if (comp->onEdge)
+				{
+					m_input->m_current["YBTN"];
+					comp->onEdge = false;
+				}
 				//Move left
 				m_input->m_current["STICKRIGHT"] = false;
 				m_input->m_current["STICKLEFT"] = true;
 			}
 			else //AI is left of player
 			{
+				if (comp->onEdge)
+				{
+					m_input->m_current["YBTN"];
+					comp->onEdge = false;
+				}
 				//Move right
 				m_input->m_current["STICKLEFT"] = false;
 				m_input->m_current["STICKRIGHT"] = true;

@@ -87,5 +87,13 @@ void AISystem::update(double dt)
 		timer = 0;
 	}
 
+	for (auto c : m_components)
+	{
+		auto comp = static_cast<AIComponent*>(c);
+		auto phys = static_cast<PlayerPhysicsComponent *>(&comp->m_self->getComponent("Player Physics"));
+		auto pos = static_cast<PositionComponent *>(&comp->m_self->getComponent("Pos"));
+		phys->m_body->setPosition(pos->position.x, pos->position.y);
+	}
+
 	timer += dt;
 }

@@ -516,14 +516,13 @@ Entity * GameScene::createAI(int index, int posX, int posY, std::vector<Vector2f
 
 	ai->addComponent("Input", input);
 	ai->addComponent("Pos", pos);
-
 	ai->addComponent("Player", player);
 	ai->addComponent("Dust Trigger", new DustTriggerComponent());
 	ai->addComponent("Player", player);
 	ai->addComponent("Attack", new AttackComponent());
 	ai->addComponent("Sprite", new SpriteComponent(&ai->getComponent("Pos"), Vector2f(1700, 85), Vector2f(85, 85), Scene::resources().getTexture("Player Run"), 2));
 	auto animation = new AnimationComponent(&ai->getComponent("Sprite"));
-	auto behaviour = new AIComponent(m_localPlayers, input, ai, player, m_physicsWorld);
+	auto behaviour = new AIComponent(&m_allPlayers, input, ai, player, m_physicsWorld);
 	ai->addComponent("AI", behaviour);
 
 	std::vector<SDL_Rect> m_animRects, m_stunRects; //The rectangles for the animations
