@@ -16,28 +16,6 @@ void CollisionListener::BeginContact(b2Contact * contact)
 	auto dataA = static_cast<PhysicsComponent::ColData *>(contact->GetFixtureA()->GetUserData());
 	auto dataB = static_cast<PhysicsComponent::ColData *>(contact->GetFixtureB()->GetUserData());
 
-	////Check begin contact between AI right edge sensor and platform
-	//if ((dataA->Tag() == "Right Edge Sensor" && dataB->Tag() == "Platform")
-	//	|| (dataB->Tag() == "Right Edge Sensor" && dataA->Tag() == "Platform")
-	//	|| (dataA->Tag() == "Right Edge Sensor" && dataB->Tag() == "Floor")
-	//	|| (dataB->Tag() == "Right Edge Sensor" && dataA->Tag() == "Floor"))
-	//{
-	//	auto ai = static_cast<Entity*>(dataA->Tag() == "Right Edge Sensor" ? dataA->Data() : dataB->Data());
-	//	auto comp = static_cast<AIComponent *>(&ai->getComponent("AI"));
-	//	comp->onEdgeRight = false;
-	//}
-
-	////Check begin contact between AI left edge sensor and platform
-	//if ((dataA->Tag() == "Left Edge Sensor" && dataB->Tag() == "Platform")
-	//	|| (dataB->Tag() == "Left Edge Sensor" && dataA->Tag() == "Platform")
-	//	|| (dataA->Tag() == "Left Edge Sensor" && dataB->Tag() == "Floor")
-	//	|| (dataB->Tag() == "Left Edge Sensor" && dataA->Tag() == "Floor"))
-	//{
-	//	auto ai = static_cast<Entity*>(dataA->Tag() == "Left Edge Sensor" ? dataA->Data() : dataB->Data());
-	//	auto comp = static_cast<AIComponent *>(&ai->getComponent("AI"));
-	//	comp->onEdgeLeft = false;
-	//}
-
 	//If the players jump sensor has hit a platform, set the player to be able to jump
 	if ((dataA->Tag() == "Jump Sensor" && dataB->Tag() == "Platform")
 	|| (dataB->Tag() == "Jump Sensor" && dataA->Tag() == "Platform")
@@ -133,7 +111,14 @@ void CollisionListener::EndContact(b2Contact * contact)
 	{
 		auto ai = static_cast<Entity*>(dataA->Tag() == "Right Edge Sensor" ? dataA->Data() : dataB->Data());
 		auto comp = static_cast<AIComponent *>(&ai->getComponent("AI"));
-		comp->onEdgeRight = true;
+		auto phys = static_cast<PlayerPhysicsComponent *>(&ai->getComponent("Player Physics"));
+
+		//If the right edge sensor is not touching the platform, but the AI is on a platform
+		if (phys->canJump())
+		{
+			//Set bool true in AI component
+			comp->onEdgeRight = true;
+		}
 	}
 
 	if ((dataA->Tag() == "Left Edge Sensor" && dataB->Tag() == "Platform")
@@ -143,7 +128,14 @@ void CollisionListener::EndContact(b2Contact * contact)
 	{
 		auto ai = static_cast<Entity*>(dataA->Tag() == "Left Edge Sensor" ? dataA->Data() : dataB->Data());
 		auto comp = static_cast<AIComponent *>(&ai->getComponent("AI"));
-		comp->onEdgeLeft = true;
+		auto phys = static_cast<PlayerPhysicsComponent *>(&ai->getComponent("Player Physics"));
+
+		//If the left edge sensor is not touching the platform, but the AI is on a platform
+		if (phys->canJump())
+		{
+			//Set bool true in AI component
+			comp->onEdgeLeft = true;
+		}
 	}
 
 	//if a players body has hit a platform
@@ -185,7 +177,6 @@ void CollisionListener::checkPlayerAttack(b2Contact * contact)
 	float yImpulse;
 	int dmgP;
 	bool applyDmg = false;
-
 
 	//If a player has attacked and hit a player
 	if ((dataA->Tag() == "Attack" && dataB->Tag() == "Player Body")
@@ -269,8 +260,6 @@ void CollisionListener::PreSolve(b2Contact * contact, const b2Manifold * oldMani
 			contact->SetEnabled(false);
 		}
 	}
-
-
 }
 
 void CollisionListener::PostSolve(b2Contact * contact, const b2ContactImpulse * impulse)

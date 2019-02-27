@@ -28,6 +28,7 @@ public:
 	Entity * m_entity; 
 	//Stores a reference to the AIinput component for moving the AI player
 	AiInputComponent * m_input; 
+
 };
 
 #endif
@@ -84,6 +85,7 @@ public:
 		//return function as true to keep tree runnning
 		return true;
 	}
+
 };
 
 #endif
@@ -510,7 +512,6 @@ public:
 			//If AI is right of player
 			if (nearest->position.x < pos->position.x)
 			{
-
 				//Move left
 				m_input->m_current["STICKRIGHT"] = false;
 				m_input->m_current["STICKLEFT"] = true;
@@ -521,19 +522,24 @@ public:
 				m_input->m_current["STICKLEFT"] = false;
 				m_input->m_current["STICKRIGHT"] = true;
 			}
-			return true;
+
 		}
 
 		if (comp->onEdgeRight)
 		{
-			m_input->m_current["YBTN"];
+			m_input->m_current["STICKLEFT"] = false;
+			m_input->m_current["STICKRIGHT"] = true;
+			m_input->m_current["YBTN"] = true;
 			comp->onEdgeRight = false;
 		}
 		else if (comp->onEdgeLeft)
 		{
-			m_input->m_current["YBTN"];
+			m_input->m_current["STICKRIGHT"] = false;
+			m_input->m_current["STICKLEFT"] = true;
+			m_input->m_current["YBTN"] = true;
 			comp->onEdgeLeft = false;
 		}
+		return true;
 	}
 
 	//Euclidean distance function
