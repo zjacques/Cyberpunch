@@ -28,7 +28,6 @@ namespace achi
 	{
 		static std::vector<Observer*> obs;
 		static Component* m_AchisPtr;
-		static System* m_achiSys;
 	};
 }
 

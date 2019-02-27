@@ -165,9 +165,6 @@
     <ClCompile Include="Source\Observer.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
-    <ClCompile Include="Header\AchievementSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\Game.h">
@@ -355,12 +352,6 @@
     </ClInclude>
     <ClInclude Include="Header\Observer.h">
       <Filter>Header Files\Utilities</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\AchievementPopup.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Header\AchievementSystem.h">
-      <Filter>Header Files\Systems</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
