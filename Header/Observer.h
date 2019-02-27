@@ -28,6 +28,7 @@ namespace achi
 	{
 		static std::vector<Observer*> obs;
 		static Component* m_AchisPtr;
+		static std::vector<std::string> m_newUnlocks;
 	};
 }
 

@@ -38,6 +38,7 @@ public:
 	void update(double dt);
 	void updateStartTimer(double dt);
 	void updateEndGameTimer(double dt);
+	void handleAchievementPopup(double dt);
 
 	Entity* createAI(int index, int posX, int posY, std::vector<Vector2f> spawnPositions);
 
@@ -64,6 +65,9 @@ private:
 	std::vector<Entity*> m_AIPlayers;
 	std::vector<Entity*> m_allPlayers; //All local, online and Ai players
 	std::vector<Entity*> m_playersToDel;
+	Entity m_achiPopup; //Achievement pop up
+	float m_popupTime;
+	bool m_popupHalfPoint, m_popupSet;
 	std::vector<InputSystem*> m_localInputs;
 	int m_numOfLocalPlayers;
 	Entity* m_pickUp;

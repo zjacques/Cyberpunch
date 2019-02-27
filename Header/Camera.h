@@ -20,6 +20,7 @@ public:
 
 	const float MAX_ZOOM = 1.55f;
 	const float MIN_ZOOM = 1.0f;
+	float& scalar() { return m_scalar; }
 	SDL_Rect m_view;
 private:
 	void center();

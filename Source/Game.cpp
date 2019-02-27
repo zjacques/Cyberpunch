@@ -4,6 +4,7 @@
 
 std::vector<Observer*> achi::Listener::obs = {};
 Component* achi::Listener::m_AchisPtr = nullptr;
+std::vector<std::string> achi::Listener::m_newUnlocks = {};
 
 Game::Game(int fps) :
 	m_msPerFrame(fps / 60.0f), //Get the target fps

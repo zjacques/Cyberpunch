@@ -7,7 +7,7 @@ class PlayerComponent : public Component
 public:
 	PlayerComponent(std::vector<Vector2f> locations, Entity* player) :
 		m_dead(false),
-		m_lives(1),
+		m_lives(3),
 		m_newSpawn(nullptr),
 		m_playerPtr(player),
 		m_spawnLocations(locations),

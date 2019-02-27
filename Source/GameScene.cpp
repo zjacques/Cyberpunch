@@ -15,7 +15,9 @@ GameScene::GameScene() :
 	m_platformsCreated(false),
 	m_camera(false),
 	m_gameStartTimer(3),
-	m_achievListener()
+	m_achievListener(),
+	m_achiPopup("Pop Up"),
+	m_popupSet(false)
 {
 	m_numOfAIPlayers = 1;
 }
@@ -125,6 +127,23 @@ void GameScene::start()
 		m_killboxes.push_back(createKillBox(kb.at(i)["X"], kb.at(i)["Y"], kb.at(i)["W"], kb.at(i)["H"]));
 	}
 
+	auto bannerPos = new PositionComponent(960, 1110); //Bottom of the screen
+	auto iconPos = new PositionComponent(960 - 48, 1110); //Bottom of the screen
+	m_achiPopup.addComponent("Pos", bannerPos);
+	m_achiPopup.addComponent("Icon Pos", iconPos);
+	m_achiPopup.addComponent("Sprite", new SpriteComponent(bannerPos, Vector2f(250, 50), Vector2f(250, 50), Scene::resources().getTexture("Achievement Banner"), 5)); //Draw over everything
+	m_achiPopup.addComponent("Icon Sprite", new SpriteComponent(iconPos, Vector2f(500, 50), Vector2f(50, 50), NULL, 6)); //Draw over everything
+	static_cast<SpriteComponent*>(&m_achiPopup.getComponent("Sprite"))->useCamera() = false;
+	static_cast<SpriteComponent*>(&m_achiPopup.getComponent("Icon Sprite"))->useCamera() = false;
+
+	auto popanim = new AnimationComponent(&m_achiPopup.getComponent("Icon Sprite"));
+	std::vector<SDL_Rect> fs;
+	for (int i = 0; i < 10; i++)
+		fs.push_back({50*i, 0, 50, 50});
+	popanim->addAnimation("Unlock", NULL, fs, 1.0f);
+	m_achiPopup.addComponent("Animation", popanim);
+	popanim->playAnimation("Unlock", false);
+
 	//Setup timer
 	setupTimer();
 }
@@ -216,7 +235,6 @@ void GameScene::update(double dt)
 	Scene::systems()["AI"]->update(dt * scalar);
 	Scene::systems()["Dust"]->update(dt * scalar);
 	Scene::systems()["Respawn"]->update(dt * scalar);
-	Scene::systems()["Achievement"]->update(dt);
 
 	//Update the game start timer
 	updateStartTimer(dt);
@@ -271,6 +289,8 @@ void GameScene::update(double dt)
 	}
 
 	updateEndGameTimer(dt);
+
+	handleAchievementPopup(dt);
 }
 
 void GameScene::updateStartTimer(double dt)
@@ -321,6 +341,70 @@ void GameScene::updateEndGameTimer(double dt)
 		{
 			Scene::goToScene("Main Menu");
 		}
+	}
+}
+
+void GameScene::handleAchievementPopup(double dt)
+{
+	if (!m_popupSet)
+	{
+		if (!achi::Listener::m_newUnlocks.empty())
+		{
+			auto achiname = achi::Listener::m_newUnlocks.back(); //Get the name in the last element
+			achi::Listener::m_newUnlocks.pop_back(); //Remove the last element
+
+			auto anim = static_cast<AnimationComponent*>(&m_achiPopup.getComponent("Animation"));
+			anim->getCurrentAnimation()->setTexture(Scene::resources().getTexture(achiname));
+			
+			anim->playAnimation("Unlock", false);
+
+			Scene::systems()["Animation"]->addComponent(anim);
+			Scene::systems()["Render"]->addComponent(&m_achiPopup.getComponent("Sprite"));
+			Scene::systems()["Render"]->addComponent(&m_achiPopup.getComponent("Icon Sprite"));
+
+			m_popupSet = true;
+			m_popupTime = 3.0f;
+			m_popupHalfPoint = false;
+		}
+	}
+	if (m_popupSet)
+	{
+		auto pos = static_cast<PositionComponent*>(&m_achiPopup.getComponent("Pos"));
+		auto iconPos = static_cast<PositionComponent*>(&m_achiPopup.getComponent("Icon Pos"));
+
+		if (m_popupHalfPoint == false)
+		{
+			if (pos->position.y > 1040)
+			{
+				pos->position.y -= 100 * dt;
+				if (pos->position.y < 1040)
+				{
+					m_popupHalfPoint = true;
+					pos->position.y = 1040;
+					static_cast<AnimationComponent*>(&m_achiPopup.getComponent("Animation"))->getCurrentAnimation()->resetAnimation();
+					static_cast<AnimationComponent*>(&m_achiPopup.getComponent("Animation"))->playAnimation("Unlock", false);
+				}
+			}
+		}
+		else
+		{
+			m_popupTime -= dt;
+
+			if (m_popupTime <= 0)
+			{
+				pos->position.y += 100 * dt;
+			}
+		}
+		if (pos->position.y >= 1110)
+		{
+			m_popupSet = false;
+			pos->position.y = 1110;
+			Scene::systems()["Animation"]->deleteComponent(&m_achiPopup.getComponent("Animation"));
+			Scene::systems()["Render"]->deleteComponent(&m_achiPopup.getComponent("Sprite"));
+			Scene::systems()["Render"]->deleteComponent(&m_achiPopup.getComponent("Icon Sprite"));
+		}
+
+		iconPos->position.y = pos->position.y;
 	}
 }
 

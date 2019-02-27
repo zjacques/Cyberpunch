@@ -35,6 +35,7 @@ public:
 				//If the achievement is not unlocked, unlock it
 				if (pair.second == false)
 				{
+					achi::Listener::m_newUnlocks.push_back(name);
 					std::cout << "Unlocked achievement: " << name << "\n";
 					pair.second = true;
 				}

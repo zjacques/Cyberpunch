@@ -39,11 +39,27 @@ void RenderSystem::render(SDL_Renderer& renderer, Camera& camera)
 		m_spritePos.y = sprite->getPosition().y - (sprite->getFrameSize().y / 2);
 
 		//Minus camera when we do a camera
-		m_spritePos.x -= camera.x();
-		m_spritePos.y -= camera.y();
+		if (sprite->useCamera())
+		{
+			m_spritePos.x -= camera.x();
+			m_spritePos.y -= camera.y();
+		}
+
+		auto scalar = camera.getScale();
+		if (sprite->useCamera() == false)
+		{
+			camera.scalar() = 1;
+			camera.setZoom(&renderer);
+		}
 
 		//Draw the sprite
 		SDL_RenderCopyEx(&renderer, sprite->getTexture(), &sprite->getSourceRect(), &m_spritePos, sprite->getAngle(), 0, sprite->getFlip());
+
+		if (sprite->useCamera() == false)
+		{
+			camera.scalar() = scalar;
+			camera.setZoom(&renderer);
+		}
 	}
 }
 
