@@ -96,7 +96,7 @@ void OnlineSystem::ReceiveCommands()
 					{
 						plyr->addCommand(*iter);
 					}
-					if (currentPacket["sync"])
+					if (currentPacket["sync"] && !m_isHost)
 					{
 						plyr->addPositions(currentPacket["pos"][0], currentPacket["pos"][1], currentPacket["vel"][0], currentPacket["vel"][1], currentPacket["dvel"][0], currentPacket["dvel"][1]);
 						//plyr->syncPosition();
