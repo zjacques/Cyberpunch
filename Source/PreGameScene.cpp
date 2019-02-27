@@ -30,8 +30,11 @@ void PreGameScene::start()
 
 		for (auto num : players)
 		{
-			if(num != playerIndexes.localPlyrs.back())
+			if (num != playerIndexes.localPlyrs.back())
+			{
 				playerIndexes.onlinePlyrs.push_back(num);
+				playerIndexes.botPlyrs.push_back(num);
+			}
 		}
 
 	}
@@ -101,9 +104,16 @@ void PreGameScene::checkForUpdates()
 {
 	vector<int> players = m_network->getPlayers();
 	playerIndexes.onlinePlyrs.clear();
+	playerIndexes.botPlyrs.clear();
 	for (auto num : players)
 	{
 		if (num != playerIndexes.localPlyrs.back())
+		{
 			playerIndexes.onlinePlyrs.push_back(num);
+			playerIndexes.botPlyrs.push_back(num);
+		}
+
+	
+			
 	}
 }

@@ -194,6 +194,8 @@ public:
 			auto a = static_cast<AnimationComponent*>(&e.getComponent("Animation"));
 			a->playAnimation("Ground Kick", false);
 			static_cast<SpriteComponent*>(&e.getComponent("Sprite"))->setTexture(a->getCurrentAnimation()->getTexture());
+			auto p = static_cast<AudioComponent*>(&e.getComponent("Audio"));
+			p->playSound("Whoosh", false);
 		}
 
 	}
@@ -248,7 +250,6 @@ public:
 					net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y), Vector2f(phys->m_desiredVel.x, phys->m_desiredVel.y));
 				}
 				phys->jumpDown();
-
 			}
 		}
 	}

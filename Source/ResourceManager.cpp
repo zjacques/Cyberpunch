@@ -65,6 +65,9 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 	m_map["Achievement Locked"] = loadFromPath("Achievements/Achievement_Locked.png", renderer);
 	m_map["Achievement Selected"] = loadFromPath("Achievements/Achievement Selected.png", renderer);
 	m_map["Achievement Des Box"] = loadFromPath("Achievements/Achievement Description Box.png", renderer);
+	m_map["Achievement Banner"] = loadFromPath("Achievements/Achievement_Banner.png", renderer);
+	m_map["Portrait"] = loadFromPath("GUI/Portrait.png", renderer);
+	m_map["Numbers Coloured"] = loadFromPath("GUI/Numbers Coloured.png", renderer);
 
 	std::vector<std::string> names({ "Punch First",
 		"Final Form",
@@ -132,6 +135,8 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 	m_sfx["Whoosh"] = SFXLoadFromPath("Audio/whoosh.ogg");
 	m_sfx["Neon"] = SFXLoadFromPath("Audio/neonBuzz.wav");
 	m_sfx["Neon2"] = SFXLoadFromPath("Audio/neon.wav");
+	m_music["Pulse"] = MusicLoadFromPath("Audio/Song3.ogg");
+	m_music["Laser"] = MusicLoadFromPath("Audio/Laser.ogg");
 
 	
 }

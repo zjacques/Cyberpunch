@@ -86,15 +86,13 @@ void AchievementsScene::start()
 		}
 	}
 
-	auto achievements = Scene::achievements().m_achievements;
+	auto achieves = Scene::achievements().m_achievements;
 
 	for (auto& ent : m_icons)
 	{
 		//If the achievement has been unlocked, set the sprite and animation for the icon
-		if (achievements[ent.m_ID])
+		if (achieves[ent.m_ID])
 		{
-			std::cout << "Setting up animation for " << ent.m_ID << "\n";
-
 			std::vector<SDL_Rect> m_animRects;
 			for (int i = 0; i < 10; i++)
 				m_animRects.push_back({i*50, 0, 50, 50});
@@ -128,6 +126,14 @@ void AchievementsScene::stop()
 {
 	for (auto& icon : m_icons)
 		Scene::systems()["Render"]->deleteComponent(&icon.getComponent("Sprite"));
+
+	Scene::systems()["Render"]->deleteComponent(&m_selectE.getComponent("Sprite"));
+	Scene::systems()["Render"]->deleteComponent(&m_selectE.getComponent("Des Sprite"));
+	Scene::systems()["Render"]->deleteComponent(&m_selectE.getComponent("Description Sprite"));
+
+	Scene::systems()["Animation"]->deleteComponent(&m_selectE.getComponent("A Animation"));
+	Scene::systems()["Animation"]->deleteComponent(&m_selectE.getComponent("B Animation"));
+	Scene::systems()["Animation"]->deleteComponent(&m_selectE.getComponent("C Animation"));
 
 	//Remove components from the systems
 	Scene::systems()["Render"]->deleteComponent(&m_bgE.getComponent("Sprite"));
