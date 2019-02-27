@@ -22,7 +22,7 @@ void OnlineSystem::update(double dt)
 		bool s = false;
 		if (tts > syncRate)
 		{
-			s = true;
+			//s = true;
 			tts = 0;
 		}
 		SendCommands(s);
@@ -52,7 +52,7 @@ void OnlineSystem::SendCommands(bool sync)
 				cmds->pop();
 			}
 			jsonString += " ], \"sync\": ";
-			if (sync){
+			if (true){
 				jsonString += "true, ";
 				OnlineSendComponent::syncStruct info =  plyr->getSync();
 				jsonString += "\"pos\":[" + toString(floor(info.pos.x)) + "," + toString(floor(info.pos.y)) + "],";

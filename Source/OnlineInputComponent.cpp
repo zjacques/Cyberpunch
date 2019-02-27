@@ -13,7 +13,7 @@ void OnlineInputComponent::handleInput(void* e)
 	if (m_positionsToSyncTo.size() > 0)
 	{
 		OnlineSendComponent::syncStruct loc = m_positionsToSyncTo.front();
-		//syncPosition(entity, loc.pos.x, loc.pos.y, loc.vel.x, loc.vel.y, loc.dvel.x, loc.dvel.y);
+		syncPosition(entity, loc.pos.x, loc.pos.y, loc.vel.x, loc.vel.y, loc.dvel.x, loc.dvel.y);
 		m_positionsToSyncTo.pop();
 	}
 
