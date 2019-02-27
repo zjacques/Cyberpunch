@@ -2,19 +2,25 @@
 #include "Vector2f.h"
 #include "Entity.h"
 #include "PlayerPhysicsComponent.h"
+#include "AudioComponent.h"
+
 class PlayerComponent : public Component
 {
 public:
 	PlayerComponent(std::vector<Vector2f> locations, Entity* player) :
 		m_dead(false),
-		m_lives(10),
+	  m_lives(3),
 		m_newSpawn(nullptr),
 		m_playerPtr(player),
 		m_spawnLocations(locations),
 		m_respawn(false),
 		m_respawning(false),
-		m_winner(false)
+		m_winner(false),
+		m_dmgDealt(975),
+		m_dmgTaken(975),
+		m_supersUsed(0)
 	{
+
 	}
 
 	void respawn()
@@ -34,9 +40,9 @@ public:
 			m_respawning = true;
 			m_respawn = true;
 			m_spawnTimer = 2.5f; //Respawn after 2.5 seconds
-			m_newSpawn = &m_spawnLocations.at(rand() % m_spawnLocations.size()); //Number between 0 and the size of the amount of spawn points
-			
+			m_newSpawn = &m_spawnLocations.at(rand() % m_spawnLocations.size()); //Number between 0 and the size of the amount of spawn points	
 		}
+		static_cast<AudioComponent&>(m_playerPtr->getComponent("Audio")).playSound("KnockOut", false);
 	}
 
 	void spawnPlayer()
@@ -44,6 +50,8 @@ public:
 		m_respawn = false;
 		m_respawning = false;
 		m_spawnTimer = 0;
+		//m_audio.playSound("Spawn", true);
+		static_cast<AudioComponent&>(m_playerPtr->getComponent("Audio")).playSound("Spawn", false);
 		auto phys = static_cast<PlayerPhysicsComponent*>(&m_playerPtr->getComponent("Player Physics"));
 		//Set the players position to the new position
 		phys->m_body->setPosition(m_newSpawn->x, m_newSpawn->y);
@@ -58,6 +66,7 @@ public:
 	bool& toRespawn() { return m_respawn; }
 	bool& isRespawning() { return m_respawning; }
 	bool& isWinner() { return m_winner; }
+	int m_dmgTaken, m_dmgDealt, m_timesStunned, m_timesSuperStunned, m_supersUsed;
 private:
 	float m_spawnTimer;
 	Entity * m_playerPtr;
@@ -65,4 +74,6 @@ private:
 	std::vector<Vector2f> m_spawnLocations;
 	bool m_dead, m_respawn, m_respawning, m_winner;
 	int m_lives;
+	bool m_audioCreated;
+	AudioComponent m_audio;
 };

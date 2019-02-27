@@ -19,7 +19,8 @@ public:
 		m_layer(layer),
 		m_posPtr(pos),
 		m_scale(1,1), //Scale is 1, 1, sprite is not flipped
-		m_flip(SDL_FLIP_NONE)
+		m_flip(SDL_FLIP_NONE),
+		m_useCamera(true)
 	{
 		m_src = { 0, 0, (int)singleFramebounds.x, (int)singleFramebounds.y };
 		m_dst = { 0, 0, (int)singleFramebounds.x, (int)singleFramebounds.y };
@@ -58,6 +59,7 @@ public:
 	SDL_RendererFlip& getFlip() { return m_flip; }
 	int getLayer() { return m_layer; }
 	float& getAngle() { return m_angle; }
+	bool& useCamera() { return m_useCamera; }
 private:
 	Vector2f m_scale;
 	SDL_RendererFlip m_flip;
@@ -68,6 +70,7 @@ private:
 	SDL_Texture * m_texture;
 	int m_layer;
 	float m_angle;
+	bool m_useCamera;
 };
 
 #endif

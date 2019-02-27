@@ -44,6 +44,7 @@ void PreGameScene::start()
 				playerIndexes.onlinePlyrs.push_back(num);
 				m_availablePlyrs[num] = false;
 
+				playerIndexes.botPlyrs.push_back(num);
 			}
 		}
 
@@ -111,7 +112,7 @@ void PreGameScene::handleInput(InputSystem & input)
 			m_network->disconnect();
 			playerIndexes.localPlyrs.clear();
 			playerIndexes.onlinePlyrs.clear();
-			playerIndexes.bots.clear();
+			playerIndexes.botPlyrs.clear();
 			Scene::goToScene("Main Menu");
 		}
 		else if (m_input[0].first.isButtonPressed("BBTN"))
@@ -123,7 +124,7 @@ void PreGameScene::handleInput(InputSystem & input)
 				if (m_availablePlyrs[j])
 				{
 					m_availablePlyrs[j] = false;
-					playerIndexes.bots.push_back(j);
+					playerIndexes.botPlyrs.push_back(j);
 					playersChanged = true;
 				}
 			}
@@ -174,6 +175,7 @@ void PreGameScene::checkForUpdates()
 {
 	vector<int> players = m_network->getPlayers();
 	playerIndexes.onlinePlyrs.clear();
+	playerIndexes.botPlyrs.clear();
 	for (auto num : players)
 	{
 		if (num != playerIndexes.localPlyrs.back())

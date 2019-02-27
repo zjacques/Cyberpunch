@@ -12,7 +12,7 @@ public:
 	static struct PlayersInfo {
 		vector<int> localPlyrs;
 		vector<int> onlinePlyrs;
-		vector<int> bots;
+		vector<int> botPlyrs;
 	} playerIndexes;
 
 	PreGameScene();

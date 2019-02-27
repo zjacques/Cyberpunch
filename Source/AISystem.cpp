@@ -90,8 +90,6 @@ void AISystem::update(double dt)
 		auto pos = static_cast<PositionComponent *>(&comp->m_self->getComponent("Pos"));
 		comp->m_left->m_body->setPosition(pos->position.x - 45, pos->position.y + 1);
 		comp->m_right->m_body->setPosition(pos->position.x + 45, pos->position.y + 1);
-
-		std::cout << "X: " << comp->m_left->m_body->getPosition().x << " Y: " << comp->m_left->m_body->getPosition().y << std::endl;
 	}
 
 	timer += dt;

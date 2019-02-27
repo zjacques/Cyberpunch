@@ -65,6 +65,9 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 	m_map["Achievement Locked"] = loadFromPath("Achievements/Achievement_Locked.png", renderer);
 	m_map["Achievement Selected"] = loadFromPath("Achievements/Achievement Selected.png", renderer);
 	m_map["Achievement Des Box"] = loadFromPath("Achievements/Achievement Description Box.png", renderer);
+	m_map["Achievement Banner"] = loadFromPath("Achievements/Achievement_Banner.png", renderer);
+	m_map["Portrait"] = loadFromPath("GUI/Portrait.png", renderer);
+	m_map["Numbers Coloured"] = loadFromPath("GUI/Numbers Coloured.png", renderer);
 
 	std::vector<std::string> names({ "Punch First",
 		"Final Form",
@@ -125,6 +128,17 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 	m_sfx["Spawn"] = SFXLoadFromPath("Audio/Spawn.wav");
 	m_sfx["Spawn2"] = SFXLoadFromPath("Audio/Spawn2.wav");
 	m_sfx["Weapon"] = SFXLoadFromPath("Audio/Weapon.wav");
+	m_sfx["KnockOut"] = SFXLoadFromPath("Audio/KnockedOut.wav");
+	m_sfx["Switch"] = SFXLoadFromPath("Audio/noidea.wav");
+	m_sfx["Switch2"] = SFXLoadFromPath("Audio/Switch2.wav");
+	m_sfx["Jump"] = SFXLoadFromPath("Audio/locked.ogg");
+	m_sfx["Whoosh"] = SFXLoadFromPath("Audio/whoosh.ogg");
+	m_sfx["Neon"] = SFXLoadFromPath("Audio/neonBuzz.wav");
+	m_sfx["Neon2"] = SFXLoadFromPath("Audio/neon.wav");
+	m_music["Pulse"] = MusicLoadFromPath("Audio/Song3.ogg");
+	m_music["Laser"] = MusicLoadFromPath("Audio/Laser.ogg");
+
+	
 }
 
 void ResourceHandler::loadLevelData()

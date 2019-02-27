@@ -16,28 +16,6 @@ void CollisionListener::BeginContact(b2Contact * contact)
 	auto dataA = static_cast<PhysicsComponent::ColData *>(contact->GetFixtureA()->GetUserData());
 	auto dataB = static_cast<PhysicsComponent::ColData *>(contact->GetFixtureB()->GetUserData());
 
-	////Check begin contact between AI right edge sensor and platform
-	//if ((dataA->Tag() == "Right Edge Sensor" && dataB->Tag() == "Platform")
-	//	|| (dataB->Tag() == "Right Edge Sensor" && dataA->Tag() == "Platform")
-	//	|| (dataA->Tag() == "Right Edge Sensor" && dataB->Tag() == "Floor")
-	//	|| (dataB->Tag() == "Right Edge Sensor" && dataA->Tag() == "Floor"))
-	//{
-	//	auto ai = static_cast<Entity*>(dataA->Tag() == "Right Edge Sensor" ? dataA->Data() : dataB->Data());
-	//	auto comp = static_cast<AIComponent *>(&ai->getComponent("AI"));
-	//	comp->onEdgeRight = false;
-	//}
-
-	////Check begin contact between AI left edge sensor and platform
-	//if ((dataA->Tag() == "Left Edge Sensor" && dataB->Tag() == "Platform")
-	//	|| (dataB->Tag() == "Left Edge Sensor" && dataA->Tag() == "Platform")
-	//	|| (dataA->Tag() == "Left Edge Sensor" && dataB->Tag() == "Floor")
-	//	|| (dataB->Tag() == "Left Edge Sensor" && dataA->Tag() == "Floor"))
-	//{
-	//	auto ai = static_cast<Entity*>(dataA->Tag() == "Left Edge Sensor" ? dataA->Data() : dataB->Data());
-	//	auto comp = static_cast<AIComponent *>(&ai->getComponent("AI"));
-	//	comp->onEdgeLeft = false;
-	//}
-
 	//If the players jump sensor has hit a platform, set the player to be able to jump
 	if ((dataA->Tag() == "Jump Sensor" && dataB->Tag() == "Platform")
 	|| (dataB->Tag() == "Jump Sensor" && dataA->Tag() == "Platform")
@@ -85,6 +63,7 @@ void CollisionListener::BeginContact(b2Contact * contact)
 
 		std::cout << "Hit" << std::endl;
 		static_cast<PickUpComponent*>(&pickUp->getComponent("PickUp"))->teleport(player);
+		static_cast<AudioComponent&>(pickUp->getComponent("Audio")).playSound("PickUp 1", false);
 	}
 	if ((dataA->Tag() == "Attack" && dataB->Tag() == "Booth")
 		|| (dataB->Tag() == "Attack" && dataA->Tag() == "Booth"))
@@ -93,6 +72,7 @@ void CollisionListener::BeginContact(b2Contact * contact)
 		auto djB = static_cast<DJBoothComponent*>(&booth->getComponent("DJ Booth"));
 		djB->run();
 		static_cast<PickUpComponent&>(djB->m_pickUp->getComponent("PickUp")).m_end = true;
+		static_cast<AudioComponent&>(booth->getComponent("Audio")).playSound("Switch2", false);
 	}
 
 	if ((dataA->Tag() == "Kill Box" && dataB->Tag() == "Player Body")
@@ -133,7 +113,14 @@ void CollisionListener::EndContact(b2Contact * contact)
 	{
 		auto ai = static_cast<Entity*>(dataA->Tag() == "Right Edge Sensor" ? dataA->Data() : dataB->Data());
 		auto comp = static_cast<AIComponent *>(&ai->getComponent("AI"));
-		comp->onEdgeRight = true;
+		auto phys = static_cast<PlayerPhysicsComponent *>(&ai->getComponent("Player Physics"));
+
+		//If the right edge sensor is not touching the platform, but the AI is on a platform
+		if (phys->canJump())
+		{
+			//Set bool true in AI component
+			comp->onEdgeRight = true;
+		}
 	}
 
 	if ((dataA->Tag() == "Left Edge Sensor" && dataB->Tag() == "Platform")
@@ -143,7 +130,14 @@ void CollisionListener::EndContact(b2Contact * contact)
 	{
 		auto ai = static_cast<Entity*>(dataA->Tag() == "Left Edge Sensor" ? dataA->Data() : dataB->Data());
 		auto comp = static_cast<AIComponent *>(&ai->getComponent("AI"));
-		comp->onEdgeLeft = true;
+		auto phys = static_cast<PlayerPhysicsComponent *>(&ai->getComponent("Player Physics"));
+
+		//If the left edge sensor is not touching the platform, but the AI is on a platform
+		if (phys->canJump())
+		{
+			//Set bool true in AI component
+			comp->onEdgeLeft = true;
+		}
 	}
 
 	//if a players body has hit a platform
@@ -186,7 +180,6 @@ void CollisionListener::checkPlayerAttack(b2Contact * contact)
 	int dmgP;
 	bool applyDmg = false;
 
-
 	//If a player has attacked and hit a player
 	if ((dataA->Tag() == "Attack" && dataB->Tag() == "Player Body")
 	|| (dataB->Tag() == "Attack" && dataA->Tag() == "Player Body"))
@@ -209,6 +202,7 @@ void CollisionListener::checkPlayerAttack(b2Contact * contact)
 			dmgP = attackHit->damage(); //Get the damage
 			xImpulse = attackHit->xImpulse();
 			yImpulse = attackHit->yImpulse();
+
 		}
 	}
 
@@ -217,11 +211,18 @@ void CollisionListener::checkPlayerAttack(b2Contact * contact)
 		return;
 	else if(applyDmg)
 	{
+		auto attackPlayerVariables = static_cast<PlayerComponent*>(&attackingP->getComponent("Player"));
+		auto otherPlayerVariables = static_cast<PlayerComponent*>(&otherP->getComponent("Player"));
+
 		attackingPPhys->addSuper(dmgP); //Add damage to our super percentage
 		if (attackingPPhys->isSupered() && otherPPhys->superStunned() == false)
 		{
+			attackPlayerVariables->m_supersUsed++;
+			otherPlayerVariables->m_timesSuperStunned++;
+
 			otherPPhys->superStun(); //Super stun the other player
 			attackingPPhys->endSuper(); //End super for the player that hit with it
+			notify(otherP, Event::SUPER_STUN); //Send super stun event to the observer
 			static_cast<AnimationComponent&>(otherP->getComponent("Animation")).playAnimation("Super Stun", false);
 		}
 
@@ -229,12 +230,22 @@ void CollisionListener::checkPlayerAttack(b2Contact * contact)
 		otherPPhys->applyDamageImpulse(xImpulse, yImpulse); //Knock back the other player back
 		otherPPhys->stun();
 
+		//Add to the player componenet variables
+		attackPlayerVariables->m_dmgDealt += dmgP;
+		otherPlayerVariables->m_dmgTaken += dmgP;
+
+		//Notify our subject of the events that have happened
+		notify(attackingP, Event::DAMAGE_DEALT);
+		notify(otherP, Event::DAMAGE_TAKEN);
+
 		if(xImpulse < 75 && yImpulse < 75)
 			static_cast<AnimationComponent&>(otherP->getComponent("Animation")).playAnimation("Small Stun", false);
 		else
 			static_cast<AnimationComponent&>(otherP->getComponent("Animation")).playAnimation("Big Stun", false);
 
 		attackHit->destroyAttack() = true;
+		static_cast<AudioComponent&>(otherP->getComponent("Audio")).playSound("Punch", false);
+
 	}
 
 }
@@ -269,8 +280,6 @@ void CollisionListener::PreSolve(b2Contact * contact, const b2Manifold * oldMani
 			contact->SetEnabled(false);
 		}
 	}
-
-
 }
 
 void CollisionListener::PostSolve(b2Contact * contact, const b2ContactImpulse * impulse)

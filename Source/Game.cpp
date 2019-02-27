@@ -2,6 +2,10 @@
 #include "SDL_mixer.h"
 #include "AchievementComponent.h"
 
+std::vector<Observer*> achi::Listener::obs = {};
+Component* achi::Listener::m_AchisPtr = nullptr;
+std::vector<std::string> achi::Listener::m_newUnlocks = {};
+
 Game::Game(int fps) :
 	m_msPerFrame(fps / 60.0f), //Get the target fps
 	m_window(NULL),
@@ -165,7 +169,8 @@ bool Game::loadMedia()
 	m_mManager.setSystemPtr(m_systems);	
 
 	//Setup the achievement component
-	m_mManager.m_scenes["Achievements"]->achievements().setAchievementData(&m_resources.getAchievementData()); //Scene::achievements().setAchievementData(&Scene::resources().getAchievementData());
+	m_mManager.m_scenes["Achievements"]->achievements().setAchievementData(&m_resources.getAchievementData());
+	achi::Listener::m_AchisPtr = &m_mManager.m_scenes["Achievements"]->achievements();
 
 	//Set the scene after the systems ptr has been set and the resource manager has been passed over
 	m_mManager.setScene("Main Menu");
