@@ -197,6 +197,10 @@ void CollisionListener::checkPlayerAttack(b2Contact * contact)
 		otherPPhys->applyDamageImpulse(xImpulse, yImpulse); //Knock back the other player back
 		otherPPhys->stun();
 
+		//Notify our subject of the events that have happened
+		notify(attackingP, Event::DAMAGE_DEALT);
+		notify(otherP, Event::DAMAGE_TAKEN);
+
 		if(xImpulse < 75 && yImpulse < 75)
 			static_cast<AnimationComponent&>(otherP->getComponent("Animation")).playAnimation("Small Stun", false);
 		else

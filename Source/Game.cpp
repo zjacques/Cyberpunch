@@ -2,6 +2,8 @@
 #include "SDL_mixer.h"
 #include "AchievementComponent.h"
 
+std::vector<Observer*> achievements::Listener::obs = {};
+
 Game::Game(int fps) :
 	m_msPerFrame(fps / 60.0f), //Get the target fps
 	m_window(NULL),

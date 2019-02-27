@@ -93,8 +93,6 @@ void AchievementsScene::start()
 		//If the achievement has been unlocked, set the sprite and animation for the icon
 		if (achievements[ent.m_ID])
 		{
-			std::cout << "Setting up animation for " << ent.m_ID << "\n";
-
 			std::vector<SDL_Rect> m_animRects;
 			for (int i = 0; i < 10; i++)
 				m_animRects.push_back({i*50, 0, 50, 50});

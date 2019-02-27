@@ -241,7 +241,6 @@ public:
 					net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y), Vector2f(phys->m_desiredVel.x, phys->m_desiredVel.y));
 				}
 				phys->jumpDown();
-
 			}
 		}
 	}

@@ -16,11 +16,13 @@ GameScene::GameScene() :
 	m_camera(false),
 	m_gameStartTimer(3)
 {
-	m_numOfAIPlayers = 0;
+	m_numOfAIPlayers = 1;
 }
 
 void GameScene::start()
 {
+	addObserver(&m_achievListener); //Add from the observer list
+
 	if (m_audioCreated == false)
 	{
 		m_audio.addSound("GameMusic", Scene::resources().getMusic("Song 2"));
@@ -159,6 +161,7 @@ void GameScene::setupTimer()
 
 void GameScene::stop()
 {
+	removeObserver(&m_achievListener); //Remove from the observer list
 	m_physicsWorld.deleteWorld(); //Delete the physics world
 	m_platforms.clear(); //Delete the platforms of the game
 	m_numOfLocalPlayers = 0;

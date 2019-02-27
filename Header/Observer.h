@@ -20,12 +20,21 @@ public:
 	virtual void onNotify(Entity* entity, Event event) = 0;
 };
 
+namespace achievements
+{
+	struct Listener
+	{
+		static std::vector<Observer*> obs;
+	};
+}
+
 class Subject
 {
 public:
+
 	void notify(Entity* entity, Event event)
 	{
-		for (auto& observer : m_observers)
+		for (auto& observer : achievements::Listener::obs)
 		{
 			observer->onNotify(entity, event);
 		}
@@ -34,17 +43,16 @@ public:
 	void addObserver(Observer* observer)
 	{
 		//Add the observer to the vector
-		m_observers.emplace_back(observer);
+		achievements::Listener::obs.emplace_back(observer);
 	}
 
 	void removeObserver(Observer* observer)
 	{
 		//Remove observer from the vector
-		m_observers.erase(std::remove(m_observers.begin(), m_observers.end(), observer), m_observers.end());
+		achievements::Listener::obs.erase(std::remove(achievements::Listener::obs.begin(), achievements::Listener::obs.end(), observer), achievements::Listener::obs.end());
 	}
 
-private:
-	std::vector<Observer*> m_observers; //vector of observers
+	//std::vector<Observer*> m_observers;
 };
 
 class AchievementsListener : public Observer

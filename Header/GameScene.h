@@ -83,4 +83,6 @@ private:
 	Camera m_camera;
 	SDL_Renderer* m_rendererPtr; //Used for resetting the render scale when exiting a game
 	AudioComponent m_audio;
+
+	AchievementsListener m_achievListener; //For listening for achievement events, observer pattern
 };
