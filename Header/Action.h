@@ -108,8 +108,13 @@ public:
 	/// <returns></returns>
 	bool run() override
 	{
+		auto phys = static_cast<PlayerPhysicsComponent *>(&m_entity->getComponent("Player Physics"));
 		//Passes YBTN command to AI input handler
-		m_input->m_current["YBTN"] = true;
+		if (phys->canJump())
+		{
+			m_input->m_current["YBTN"] = true;
+			std::cout << "JUMP" << std::endl;
+		}
 		return true;
 	}
 };
@@ -160,7 +165,6 @@ public:
 };
 
 #endif
-
 
 #ifndef CHECKNEAREST_H
 #define CHECKNEAREST_H
@@ -414,7 +418,9 @@ public:
 		{
 			if (dist(pos->position, nearest->position) < 150)
 			{
-				m_input->m_current["YBTN"] = true;
+				//m_input->m_current["YBTN"] = true;
+				auto a = new JumpAction(m_entity, m_input);
+				a->run();
 			}
 		}
 		else if (nearest->position.y > pos->position.y + 200)
@@ -522,21 +528,24 @@ public:
 				m_input->m_current["STICKLEFT"] = false;
 				m_input->m_current["STICKRIGHT"] = true;
 			}
-
 		}
 
 		if (comp->onEdgeRight)
 		{
 			m_input->m_current["STICKLEFT"] = false;
 			m_input->m_current["STICKRIGHT"] = true;
-			m_input->m_current["YBTN"] = true;
+			//m_input->m_current["YBTN"] = true;
+			auto a = new JumpAction(m_entity, m_input);
+			a->run();
 			comp->onEdgeRight = false;
 		}
 		else if (comp->onEdgeLeft)
 		{
 			m_input->m_current["STICKRIGHT"] = false;
 			m_input->m_current["STICKLEFT"] = true;
-			m_input->m_current["YBTN"] = true;
+			//m_input->m_current["YBTN"] = true;
+			auto a = new JumpAction(m_entity, m_input);
+			a->run();
 			comp->onEdgeLeft = false;
 		}
 		return true;
