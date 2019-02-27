@@ -115,6 +115,7 @@ public:
 				if (!(a->getCurrentID() == "Jump" && a->getCurrentAnimation()->getCompleted() == false))
 				{
 					a->playAnimation("Run", true);
+					std::cout << "run" << std::endl;
 				}
 				auto s = static_cast<SpriteComponent*>(&e.getComponent("Sprite"));
 				s->setScale(-1, s->getScale().y);

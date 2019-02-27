@@ -16,6 +16,7 @@ void OnlineInputComponent::handleInput(void* e)
 		syncPosition(entity, loc.pos.x, loc.pos.y, loc.vel.x, loc.vel.y, loc.dvel.x, loc.dvel.y);
 		m_positionsToSyncTo.pop();
 	}
+	m_currentCMD = nullptr;
 
 	if ((m_previousCMD == (Command*)&m_moveLeftCMD || m_previousCMD == (Command*)&m_moveRightCMD) && m_commandsToSend.size() == 0)
 	{
@@ -24,7 +25,6 @@ void OnlineInputComponent::handleInput(void* e)
 	if (m_commandsToSend.size() > 0)
 	{
 		string topCMD = m_commandsToSend.front();
-		m_currentCMD = nullptr;
 		if (topCMD == "JUMP")
 		{
 			m_currentCMD = &m_jumpCMD;

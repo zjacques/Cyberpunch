@@ -55,9 +55,9 @@ void OnlineSystem::SendCommands(bool sync)
 			if (sync){
 				jsonString += "true, ";
 				OnlineSendComponent::syncStruct info =  plyr->getSync();
-				jsonString += "\"pos\":[" + toString(info.pos.x) + "," + toString(info.pos.y) + "],";
-				jsonString += "\"vel\":[" + toString(info.vel.x) + "," + toString(info.vel.y) + "],";
-				jsonString += "\"dvel\":[" + toString(info.dvel.x) + "," + toString(info.dvel.y) + "]";
+				jsonString += "\"pos\":[" + toString(floor(info.pos.x)) + "," + toString(floor(info.pos.y)) + "],";
+				jsonString += "\"vel\":[" + toString(floor(info.vel.x)) + "," + toString(floor(info.vel.y)) + "],";
+				jsonString += "\"dvel\":[" + toString(floor(info.dvel.x)) + "," + toString(floor(info.dvel.y)) + "]";
 			}
 			else {
 				jsonString += "false";
