@@ -14,11 +14,11 @@ public:
 		Vector2f vel;
 		Vector2f dvel;
 	} syncVars;
-	OnlineSendComponent();
+	OnlineSendComponent(bool local) { m_local = local; };
 
 	queue<string>* Send();
 	void addCommand(string cmd) { 
-		if (m_prevCommand != cmd) {
+		if (m_prevCommand != cmd && m_local) {
 			m_commandsToSend.push(cmd);
 			m_prevCommand = cmd;
 		}
@@ -37,6 +37,7 @@ public:
 
 	int m_playerNumber;
 private:
+	bool m_local;
 	string m_prevCommand = "";
 	queue<string> m_commandsToSend;
 };

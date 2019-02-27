@@ -427,13 +427,20 @@ Entity * GameScene::createPlayer(int playerNumber,int controllerNumber, int posX
 		p->addComponent("Input", input);
 	}
 
+	auto netSys = static_cast<OnlineSystem*>(Scene::systems()["Network"]);
 
 	//Create the physics component and set up the bodies
 	auto phys = new PlayerPhysicsComponent(&p->getComponent("Pos"));
-	phys->m_body = m_physicsWorld.createBox(posX, posY, 30, 78, false, false, b2BodyType::b2_dynamicBody);
 	phys->m_jumpSensor = m_physicsWorld.createBox(posX, posY, 27, 5, false, false, b2BodyType::b2_dynamicBody);
+	if (netSys->isConnected || netSys->m_isHost) {
+		phys->m_body = m_physicsWorld.createBox(posX, posY, 30, 78, false, false, b2BodyType::b2_dynamicBody);
+		m_physicsWorld.addProperties(*phys->m_body, 1, 0.05f, 0.0f, false, new PhysicsComponent::ColData("Player Body", p));
+	}
+	else {
+		phys->m_body = m_physicsWorld.createBox(posX, posY, 30, 78, false, false, b2BodyType::b2_kinematicBody);
+		m_physicsWorld.addProperties(*phys->m_body, 1, 0.05f, 0.0f, true, new PhysicsComponent::ColData("Player Body", p));
+	}
 
-	m_physicsWorld.addProperties(*phys->m_body, 1, 0.05f, 0.0f, false, new PhysicsComponent::ColData("Player Body", p));
 	m_physicsWorld.addProperties(*phys->m_jumpSensor, 1, 0.05f, 0.0f, true, new PhysicsComponent::ColData("Jump Sensor", p));
 
 	//Set the gravity scale to 2, this makes the player less floaty
@@ -443,10 +450,9 @@ Entity * GameScene::createPlayer(int playerNumber,int controllerNumber, int posX
 	phys->createJoint(m_physicsWorld);
 
 	//Try to add a sender to the server
-	auto netSys = static_cast<OnlineSystem*>(Scene::systems()["Network"]);
 	if (netSys->isConnected && local)
 	{
-		auto net = new OnlineSendComponent();
+		auto net = new OnlineSendComponent(local);
 		net->m_playerNumber = playerNumber;
 		p->addComponent("Send", net);
 		netSys->addSendingPlayer(net);

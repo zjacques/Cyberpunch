@@ -52,7 +52,7 @@ void OnlineSystem::SendCommands(bool sync)
 				cmds->pop();
 			}
 			jsonString += " ], \"sync\": ";
-			if (sync){
+			if (sync && m_isHost){
 				jsonString += "true, ";
 				OnlineSendComponent::syncStruct info =  plyr->getSync();
 				jsonString += "\"pos\":[" + toString(info.pos.x) + "," + toString(info.pos.y) + "],";
