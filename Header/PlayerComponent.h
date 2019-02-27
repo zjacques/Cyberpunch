@@ -9,7 +9,7 @@ class PlayerComponent : public Component
 public:
 	PlayerComponent(std::vector<Vector2f> locations, Entity* player) :
 		m_dead(false),
-		m_lives(1),
+		m_lives(3),
 		m_newSpawn(nullptr),
 		m_playerPtr(player),
 		m_spawnLocations(locations),
@@ -40,6 +40,7 @@ public:
 			m_newSpawn = &m_spawnLocations.at(rand() % m_spawnLocations.size()); //Number between 0 and the size of the amount of spawn points
 			
 		}
+		static_cast<AudioComponent&>(m_playerPtr->getComponent("Audio")).playSound("KnockOut", false);
 	}
 
 	void spawnPlayer()
@@ -47,7 +48,8 @@ public:
 		m_respawn = false;
 		m_respawning = false;
 		m_spawnTimer = 0;
-		m_audio.playSound("Spawn", true);
+		//m_audio.playSound("Spawn", true);
+		static_cast<AudioComponent&>(m_playerPtr->getComponent("Audio")).playSound("Spawn", false);
 		auto phys = static_cast<PlayerPhysicsComponent*>(&m_playerPtr->getComponent("Player Physics"));
 		//Set the players position to the new position
 		phys->m_body->setPosition(m_newSpawn->x, m_newSpawn->y);

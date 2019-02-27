@@ -63,6 +63,7 @@ void CollisionListener::BeginContact(b2Contact * contact)
 
 		std::cout << "Hit" << std::endl;
 		static_cast<PickUpComponent*>(&pickUp->getComponent("PickUp"))->teleport(player);
+		static_cast<AudioComponent&>(pickUp->getComponent("Audio")).playSound("PickUp 1", false);
 	}
 	if ((dataA->Tag() == "Attack" && dataB->Tag() == "Booth")
 		|| (dataB->Tag() == "Attack" && dataA->Tag() == "Booth"))
@@ -71,6 +72,7 @@ void CollisionListener::BeginContact(b2Contact * contact)
 		auto djB = static_cast<DJBoothComponent*>(&booth->getComponent("DJ Booth"));
 		djB->run();
 		static_cast<PickUpComponent&>(djB->m_pickUp->getComponent("PickUp")).m_end = true;
+		static_cast<AudioComponent&>(booth->getComponent("Audio")).playSound("Switch2", false);
 	}
 
 	if ((dataA->Tag() == "Kill Box" && dataB->Tag() == "Player Body")
@@ -177,6 +179,7 @@ void CollisionListener::checkPlayerAttack(b2Contact * contact)
 			dmgP = attackHit->damage(); //Get the damage
 			xImpulse = attackHit->xImpulse();
 			yImpulse = attackHit->yImpulse();
+
 		}
 	}
 
@@ -203,6 +206,8 @@ void CollisionListener::checkPlayerAttack(b2Contact * contact)
 			static_cast<AnimationComponent&>(otherP->getComponent("Animation")).playAnimation("Big Stun", false);
 
 		attackHit->destroyAttack() = true;
+		static_cast<AudioComponent&>(otherP->getComponent("Audio")).playSound("Punch", false);
+
 	}
 
 }
