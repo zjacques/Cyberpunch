@@ -64,6 +64,8 @@ public:
 	bool& toRespawn() { return m_respawn; }
 	bool& isRespawning() { return m_respawning; }
 	bool& isWinner() { return m_winner; }
+	bool& isDJ() { return inDJBooth; }
+	void setDJ(bool c) { inDJBooth = c; }
 private:
 	float m_spawnTimer;
 	Entity * m_playerPtr;
@@ -72,5 +74,6 @@ private:
 	bool m_dead, m_respawn, m_respawning, m_winner;
 	int m_lives;
 	bool m_audioCreated;
+	bool inDJBooth = false;
 	AudioComponent m_audio;
 };
