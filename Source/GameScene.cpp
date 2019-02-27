@@ -14,7 +14,8 @@ GameScene::GameScene() :
 	m_gameEndE("End winner"),
 	m_platformsCreated(false),
 	m_camera(false),
-	m_gameStartTimer(3)
+	m_gameStartTimer(3),
+	m_achievListener()
 {
 	m_numOfAIPlayers = 1;
 }
@@ -215,6 +216,7 @@ void GameScene::update(double dt)
 	Scene::systems()["AI"]->update(dt * scalar);
 	Scene::systems()["Dust"]->update(dt * scalar);
 	Scene::systems()["Respawn"]->update(dt * scalar);
+	Scene::systems()["Achievement"]->update(dt);
 
 	//Update the game start timer
 	updateStartTimer(dt);

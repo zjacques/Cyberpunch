@@ -123,6 +123,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Header\AchievementSystem.cpp" />
     <ClCompile Include="Header\LobbyScene.cpp" />
     <ClCompile Include="Header\Camera.cpp" />
     <ClCompile Include="Source\AchievementsScene.cpp" />
@@ -130,6 +131,7 @@
     <ClCompile Include="Source\AttackComponent.cpp" />
     <ClCompile Include="Source\AttackSystem.cpp" />
     <ClCompile Include="Source\DustSystem.cpp" />
+    <ClCompile Include="Source\Observer.cpp" />
     <ClCompile Include="Source\PlayerPhysicsComponent.cpp" />
     <ClCompile Include="Source\PlayerPhysicsSystem.cpp" />
     <ClCompile Include="Source\AIComponent.cpp" />
@@ -162,7 +164,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\AchievementComponent.h" />
+    <ClInclude Include="Header\AchievementPopup.h" />
     <ClInclude Include="Header\AchievementsScene.h" />
+    <ClInclude Include="Header\AchievementSystem.h" />
     <ClInclude Include="Header\Action.h" />
     <ClInclude Include="Header\AIComponent.h" />
     <ClInclude Include="Header\AiInputComponent.h" />

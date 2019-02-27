@@ -86,12 +86,12 @@ void AchievementsScene::start()
 		}
 	}
 
-	auto achievements = Scene::achievements().m_achievements;
+	auto achieves = Scene::achievements().m_achievements;
 
 	for (auto& ent : m_icons)
 	{
 		//If the achievement has been unlocked, set the sprite and animation for the icon
-		if (achievements[ent.m_ID])
+		if (achieves[ent.m_ID])
 		{
 			std::vector<SDL_Rect> m_animRects;
 			for (int i = 0; i < 10; i++)

@@ -2,7 +2,9 @@
 #include "SDL_mixer.h"
 #include "AchievementComponent.h"
 
-std::vector<Observer*> achievements::Listener::obs = {};
+std::vector<Observer*> achi::Listener::obs = {};
+Component* achi::Listener::m_AchisPtr = nullptr;
+System* achi::Listener::m_achiSys = nullptr;
 
 Game::Game(int fps) :
 	m_msPerFrame(fps / 60.0f), //Get the target fps
@@ -20,6 +22,10 @@ Game::Game(int fps) :
 	m_systems["AI"] = new AISystem();
 	m_systems["Pickup"] = new PickUpSystem(m_systems["Render"]);
 	m_systems["Network"] = new OnlineSystem();
+	m_systems["Achievement"] = new AchievementSystem();
+
+	//Assign the achievement system to the namespace pointer
+	achi::Listener::m_achiSys = m_systems["Achievement"];
 }
 
 void Game::update(double dt)
@@ -167,7 +173,8 @@ bool Game::loadMedia()
 	m_mManager.setSystemPtr(m_systems);	
 
 	//Setup the achievement component
-	m_mManager.m_scenes["Achievements"]->achievements().setAchievementData(&m_resources.getAchievementData()); //Scene::achievements().setAchievementData(&Scene::resources().getAchievementData());
+	m_mManager.m_scenes["Achievements"]->achievements().setAchievementData(&m_resources.getAchievementData());
+	achi::Listener::m_AchisPtr = &m_mManager.m_scenes["Achievements"]->achievements();
 
 	//Set the scene after the systems ptr has been set and the resource manager has been passed over
 	m_mManager.setScene("Main Menu");

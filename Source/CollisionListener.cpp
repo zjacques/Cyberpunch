@@ -185,17 +185,28 @@ void CollisionListener::checkPlayerAttack(b2Contact * contact)
 		return;
 	else if(applyDmg)
 	{
+		auto attackPlayerVariables = static_cast<PlayerComponent*>(&attackingP->getComponent("Player"));
+		auto otherPlayerVariables = static_cast<PlayerComponent*>(&otherP->getComponent("Player"));
+
 		attackingPPhys->addSuper(dmgP); //Add damage to our super percentage
 		if (attackingPPhys->isSupered() && otherPPhys->superStunned() == false)
 		{
+			attackPlayerVariables->m_supersUsed++;
+			otherPlayerVariables->m_timesSuperStunned++;
+
 			otherPPhys->superStun(); //Super stun the other player
 			attackingPPhys->endSuper(); //End super for the player that hit with it
+			notify(otherP, Event::SUPER_STUN); //Send super stun event to the observer
 			static_cast<AnimationComponent&>(otherP->getComponent("Animation")).playAnimation("Super Stun", false);
 		}
 
 		otherPPhys->damage(dmgP); //Add damage of the punch to the other players damage percentage
 		otherPPhys->applyDamageImpulse(xImpulse, yImpulse); //Knock back the other player back
 		otherPPhys->stun();
+
+		//Add to the player componenet variables
+		attackPlayerVariables->m_dmgDealt += dmgP;
+		otherPlayerVariables->m_dmgTaken += dmgP;
 
 		//Notify our subject of the events that have happened
 		notify(attackingP, Event::DAMAGE_DEALT);

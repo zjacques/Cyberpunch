@@ -13,7 +13,10 @@ public:
 		m_spawnLocations(locations),
 		m_respawn(false),
 		m_respawning(false),
-		m_winner(false)
+		m_winner(false),
+		m_dmgDealt(975),
+		m_dmgTaken(975),
+		m_supersUsed(0)
 	{
 	}
 
@@ -58,6 +61,7 @@ public:
 	bool& toRespawn() { return m_respawn; }
 	bool& isRespawning() { return m_respawning; }
 	bool& isWinner() { return m_winner; }
+	int m_dmgTaken, m_dmgDealt, m_timesStunned, m_timesSuperStunned, m_supersUsed;
 private:
 	float m_spawnTimer;
 	Entity * m_playerPtr;

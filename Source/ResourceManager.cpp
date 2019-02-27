@@ -65,6 +65,7 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 	m_map["Achievement Locked"] = loadFromPath("Achievements/Achievement_Locked.png", renderer);
 	m_map["Achievement Selected"] = loadFromPath("Achievements/Achievement Selected.png", renderer);
 	m_map["Achievement Des Box"] = loadFromPath("Achievements/Achievement Description Box.png", renderer);
+	m_map["Achievement Banner"] = loadFromPath("Achievements/Achievement_Banner.png", renderer);
 
 	std::vector<std::string> names({ "Punch First",
 		"Final Form",

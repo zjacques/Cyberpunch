@@ -4,6 +4,8 @@
 #include "json.hpp"
 #include <fstream>
 
+using json = nlohmann::json;
+
 class AchievementComponent : public Component
 {
 public:
@@ -29,8 +31,13 @@ public:
 		{
 			if (pair.first == name)
 			{
-				pair.second = true;
 				hasAchiev = true;
+				//If the achievement is not unlocked, unlock it
+				if (pair.second == false)
+				{
+					std::cout << "Unlocked achievement: " << name << "\n";
+					pair.second = true;
+				}
 				break;
 			}
 		}
