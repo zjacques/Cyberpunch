@@ -17,7 +17,8 @@ public:
 private:
 	float m_animTimer; //Timer to play animations
 	Camera m_camera;
-	Entity m_bgE;
+	Entity m_bgE, m_selectE;
+	Vector2f m_moveChange; //The movement change
 	std::vector<Entity> m_icons;
 	InputComponent* m_input;
 	bool m_initialSetup;

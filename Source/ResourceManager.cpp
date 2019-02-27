@@ -63,6 +63,8 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 	m_map["Achievements Button"] = loadFromPath("GUI/AchievementsButton.png", renderer);
 	m_map["Achievements BG"] = loadFromPath("GUI/Achievements_Screen.png", renderer);
 	m_map["Achievement Locked"] = loadFromPath("Achievements/Achievement_Locked.png", renderer);
+	m_map["Achievement Selected"] = loadFromPath("Achievements/Achievement Selected.png", renderer);
+	m_map["Achievement Des Box"] = loadFromPath("Achievements/Achievement Description Box.png", renderer);
 
 	std::vector<std::string> names({ "Punch First",
 		"Final Form",
@@ -83,7 +85,10 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 
 	//Achievements
 	for (int i = 0; i < names.size(); i++)
+	{
 		m_map[names.at(i)] = loadFromPath("Achievements/" + names.at(i) + ".png", renderer);
+		m_map[names.at(i) + " Des"] = loadFromPath("Achievements/" + names.at(i) + " Des.png", renderer);
+	}
 
 	//Game start animations
 	m_map["Timer 1"] = loadFromPath("GUI/1 Timer.png", renderer);
