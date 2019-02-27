@@ -15,6 +15,9 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 	//Load level data first
 	loadLevelData();
 
+	//Load achievement data
+	loadAchievements();
+
 	//Load textures here
 	//You do not need to include the entire path, the resource manager
 	//Will look for everything in the Resources folder, so you then need to only provide th erest of the path to the file
@@ -58,6 +61,35 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 	m_map["Password Yes"] = loadFromPath("GUI/Yes_Password.png", renderer);
 	m_map["Password No"] = loadFromPath("GUI/No_Password.png", renderer);
 	m_map["Achievements Button"] = loadFromPath("GUI/AchievementsButton.png", renderer);
+	m_map["Achievements BG"] = loadFromPath("GUI/Achievements_Screen.png", renderer);
+	m_map["Achievement Locked"] = loadFromPath("Achievements/Achievement_Locked.png", renderer);
+	m_map["Achievement Selected"] = loadFromPath("Achievements/Achievement Selected.png", renderer);
+	m_map["Achievement Des Box"] = loadFromPath("Achievements/Achievement Description Box.png", renderer);
+
+	std::vector<std::string> names({ "Punch First",
+		"Final Form",
+		"First Blood",
+		"Damage Dealer",
+		"Stunner",
+		"Eh Aye",
+		"Friends!",
+		"Bend it like Beckham",
+		"Last Woman Standing",
+		"Quitter...",
+		"Punching Bag",
+		"Party Time",
+		"The Upside Down",
+		"Going Down",
+		"Back to The Future",
+		"Mover" });
+
+	//Achievements
+	for (int i = 0; i < names.size(); i++)
+	{
+		m_map[names.at(i)] = loadFromPath("Achievements/" + names.at(i) + ".png", renderer);
+		m_map[names.at(i) + " Des"] = loadFromPath("Achievements/" + names.at(i) + " Des.png", renderer);
+	}
+
 	//Game start animations
 	m_map["Timer 1"] = loadFromPath("GUI/1 Timer.png", renderer);
 	m_map["Timer 2"] = loadFromPath("GUI/2 Timer.png", renderer);
@@ -106,6 +138,19 @@ void ResourceHandler::loadLevelData()
 
 	//Parse the loaded in file to a json object
 	m_gameData = json::parse(content);
+}
+
+void ResourceHandler::loadAchievements()
+{
+	//Open an ifstream on the file
+	std::ifstream ifs(m_filePath + "Achievements.txt");
+
+	//Load the data into the string content
+	std::string content((std::istreambuf_iterator<char>(ifs)),
+		(std::istreambuf_iterator<char>()));
+
+	//Parse the loaded in file to a json object
+	m_achievementData = json::parse(content);
 }
 
 SDL_Texture* ResourceHandler::loadFromPath(std::string fileName, SDL_Renderer& renderer)
