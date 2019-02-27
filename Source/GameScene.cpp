@@ -16,7 +16,7 @@ GameScene::GameScene() :
 	m_camera(false),
 	m_gameStartTimer(3)
 {
-	m_numOfAIPlayers = 1;
+	m_numOfAIPlayers = 0;
 }
 
 void GameScene::start()

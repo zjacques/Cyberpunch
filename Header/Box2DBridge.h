@@ -56,4 +56,6 @@ private:
 	const float CONVERSION = 30.0f; //Pixels to world and backwords, we multiply or divide by 30
 	const b2Vec2 GRAVITY = b2Vec2(0, 20); //Const gravity
 	const b2Vec2 FLIPPEDGRAVITY = b2Vec2(0, -20); //Const flipped gravity
+	double m_secondsPerFrame = 1/60;
+	double m_timeSinceLastFrame = 0;
 };

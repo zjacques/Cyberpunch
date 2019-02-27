@@ -26,6 +26,12 @@ public:
 
 		if (hit->attackActive() == false && phys->stunned() == false)
 		{
+			auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
+			if (net != NULL)
+			{
+				net->addCommand("JUMP");
+				net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y), Vector2f(phys->m_desiredVel.x, phys->m_desiredVel.y));
+			}
 			//If the physics component can jump, then jump
 			if (phys->canJump())
 			{
@@ -37,11 +43,7 @@ public:
 				s->setTexture(a->getCurrentAnimation()->getTexture());
 
 			}
-			auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
-			if (net != NULL) 
-			{
-				net->addCommand("JUMP");
-			}
+
 		}
 	}
 };
@@ -60,6 +62,12 @@ public:
 		{
 			if (hit->attackActive() == false || !phys->canJump())
 			{
+				auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
+				if (net != NULL)
+				{
+					net->addCommand("MOVE LEFT");
+					net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y), Vector2f(phys->m_desiredVel.x, phys->m_desiredVel.y));
+				}
 				phys->moveLeft();
 				//Play run animation
 				auto a = static_cast<AnimationComponent*>(&e.getComponent("Animation"));
@@ -76,11 +84,7 @@ public:
 			else if(hit->attackActive() == false)
 				static_cast<AnimationComponent*>(&e.getComponent("Animation"))->playAnimation("Idle", true);
 		}
-		auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
-		if (net != NULL)
-		{
-			net->addCommand("MOVE LEFT");
-		}
+
 	}
 };
 
@@ -97,6 +101,12 @@ public:
 		//Only perform the command if the playe ris not stunned
 		if (phys->stunned() == false)
 		{
+			auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
+			if (net != NULL)
+			{
+				net->addCommand("MOVE RIGHT");
+				net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y), Vector2f(phys->m_desiredVel.x, phys->m_desiredVel.y));
+			}
 			if (hit->attackActive() == false || !phys->canJump())
 			{
 				phys->moveRight();
@@ -113,11 +123,7 @@ public:
 			else if(hit->attackActive() == false)
 				static_cast<AnimationComponent*>(&e.getComponent("Animation"))->playAnimation("Idle", true);
 		}
-		auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
-		if (net != NULL)
-		{
-			net->addCommand("MOVE RIGHT");
-		}
+
 	}
 };
 
@@ -133,6 +139,12 @@ public:
 
 		if (hit->attackActive() == false && phys->stunned() == false)
 		{
+			auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
+			if (net != NULL)
+			{
+				net->addCommand("PUNCH");
+				net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y), Vector2f(phys->m_desiredVel.x, phys->m_desiredVel.y));
+			}
 			auto a = static_cast<AnimationComponent*>(&e.getComponent("Animation"));
 			a->playAnimation("Punch " + std::to_string(rand() % 2), true);
 			auto s = static_cast<SpriteComponent*>(&e.getComponent("Sprite"));
@@ -144,11 +156,7 @@ public:
 			hit->attack(offset, Vector2f(30, 25), e, tag, .175f, 0);
 			hit->setAttackProperties(2, phys->isMovingLeft() ? -100 : 100, phys->isGravityFlipped() ? -30 : 30);
 		}
-		auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
-		if (net != NULL)
-		{
-			net->addCommand("PUNCH");
-		}
+
 	}
 };
 
@@ -164,6 +172,12 @@ public:
 
 		if (hit->attackActive() == false && phys->stunned() == false)
 		{
+			auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
+			if (net != NULL)
+			{
+				net->addCommand("KICK");
+				net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y), Vector2f(phys->m_desiredVel.x, phys->m_desiredVel.y));
+			}
 			auto tag = "Attack";
 			auto offset = Vector2f(phys->isMovingLeft() ? -50 : 50, phys->isGravityFlipped() ? -12.5f : 12.5f);
 
@@ -175,11 +189,6 @@ public:
 			static_cast<SpriteComponent*>(&e.getComponent("Sprite"))->setTexture(a->getCurrentAnimation()->getTexture());
 		}
 
-		auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
-		if (net != NULL)
-		{
-			net->addCommand("KICK");
-		}
 	}
 };
 
@@ -195,18 +204,19 @@ public:
 
 		if (hit->attackActive() == false && phys->stunned() == false)
 		{
-
+			auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
+			if (net != NULL)
+			{
+				net->addCommand("UPPERCUT");
+				net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y), Vector2f(phys->m_desiredVel.x, phys->m_desiredVel.y));
+			}
 			auto tag = "Attack";
 			auto offset = Vector2f(phys->isMovingLeft() ? -37.5f : 37.5f, 0);
 
 			hit->attack(offset, Vector2f(25, 45), e, tag, .4f, 0);
 			hit->setAttackProperties(4, phys->isMovingLeft() ? -10 : 10, phys->isGravityFlipped() ? -85 : 85);
 		}
-		auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
-		if (net != NULL)
-		{
-			net->addCommand("UPPERCUT");
-		}
+
 	}
 };
 
@@ -224,12 +234,14 @@ public:
 		{
 			if (phys->canJump())
 			{
-				phys->jumpDown();
 				auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
 				if (net != NULL)
 				{
 					net->addCommand("FALL");
+					net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y), Vector2f(phys->m_desiredVel.x, phys->m_desiredVel.y));
 				}
+				phys->jumpDown();
+
 			}
 		}
 	}
@@ -248,13 +260,16 @@ public:
 		//Only execute if we arent in the middle of attacking and we are not stunned
 		if (hit->attackActive() == false && phys->stunned() == false && phys->canSuperUp() && phys->isSupered() == false)
 		{
-			phys->beginSuper();
-			std::cout << "Player has used super up, they can now stun someone for 5 seconds if they hit within 5 seconds\n";
 			auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
 			if (net != NULL)
 			{
 				net->addCommand("SUPER");
+				net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y), Vector2f(phys->m_desiredVel.x, phys->m_desiredVel.y));
 			}
+
+			phys->beginSuper();
+			std::cout << "Player has used super up, they can now stun someone for 5 seconds if they hit within 5 seconds\n";
+
 		}
 	}
 };
@@ -266,11 +281,13 @@ public:
 	void execute(Entity& e)
 	{
 		static_cast<AnimationComponent*>(&e.getComponent("Animation"))->playAnimation("Idle", true);
+		auto phys = static_cast<PlayerPhysicsComponent*>(&e.getComponent("Player Physics"));
 
 		auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
 		if (net != NULL)
 		{
 			net->addCommand("IDLE");
+			net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y), Vector2f(phys->m_desiredVel.x, phys->m_desiredVel.y));
 		}
 	}
 };
