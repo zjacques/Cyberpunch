@@ -32,21 +32,18 @@ void AISystem::createTree()
 
 		//Left sub tree
 		cast_comp->m_selectors[0].addChildren({&cast_comp->m_sequences[0], &cast_comp->m_selectors[5]});
-		//cast_comp->m_selectors[0].addChildren({ &cast_comp->m_sequences[0], &cast_comp->m_selectors[0] });
 		cast_comp->m_sequences[0].addChildren({ new CheckNearest(cast_comp->m_entities, e, input), new CloseEnough(e, input),
 			&cast_comp->m_succeeders[0], &cast_comp->m_selectors[1], &cast_comp->punchSequence});
 		cast_comp->m_succeeders[0].setChild(new CheckPlayerDirection(e, input));
 		cast_comp->m_selectors[1].addChildren({ new CheckHealth(e, input), &cast_comp->m_selectors[2] });
 		cast_comp->m_selectors[2].addChildren({ new PunchAction(e, input), new FleeAction(e, input) });
-		cast_comp->punchSequence.addChildren({ new CheckAbove(e, input), &cast_comp->m_selectors[4] });
-		cast_comp->m_selectors[4].addChildren({ new PunchAction(e, input), new PunchAction(e, input) });
+		cast_comp->punchSequence.addChildren({ new CheckAbove(e, input), &cast_comp->m_random });
+		cast_comp->m_random.addChildren({ new PunchAction(e, input), new KickAction(e, input) });
 
 		//Right sub tree
 		cast_comp->m_selectors[5].addChildren({ &cast_comp->m_sequences[1], &cast_comp->m_sequences[2] });
 		cast_comp->m_sequences[1].addChildren({ new CheckNearest(cast_comp->m_entities, cast_comp->m_self, input), new CloseEnough(e, input) });
-		cast_comp->m_sequences[2].addChildren({ &cast_comp->m_succeeders[1], &cast_comp->m_selectors[6] });
-		cast_comp->m_succeeders[1].setChild({ new MoveToPlayer(e, input) });
-		cast_comp->m_selectors[6].addChildren({ new CheckAbove(e, input), new JumpAction(e, input) });
+		cast_comp->m_sequences[2].addChildren({ new CheckAbove(e, input), new MoveToPlayer(e, input) });
 	}
 }
 
@@ -90,9 +87,11 @@ void AISystem::update(double dt)
 	for (auto c : m_components)
 	{
 		auto comp = static_cast<AIComponent*>(c);
-		auto phys = static_cast<PlayerPhysicsComponent *>(&comp->m_self->getComponent("Player Physics"));
 		auto pos = static_cast<PositionComponent *>(&comp->m_self->getComponent("Pos"));
-		phys->m_body->setPosition(pos->position.x, pos->position.y);
+		comp->m_left->m_body->setPosition(pos->position.x - 45, pos->position.y + 1);
+		comp->m_right->m_body->setPosition(pos->position.x + 45, pos->position.y + 1);
+
+		std::cout << "X: " << comp->m_left->m_body->getPosition().x << " Y: " << comp->m_left->m_body->getPosition().y << std::endl;
 	}
 
 	timer += dt;

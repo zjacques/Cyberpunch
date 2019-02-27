@@ -51,9 +51,7 @@ public:
 	/// <returns></returns>
 	bool run() override
 	{
-		std::cout << "MOVE LEFT" << std::endl;
 		//Passes STICKLEFT command to the AI input handler
-		//m_input->handleInput("STICKLEFT", m_entity);
 		m_input->m_current["STICKLEFT"] = true;
 		//Return true to maintain behaviour tree flow of execution
 		return true;
@@ -82,7 +80,6 @@ public:
 	bool run() override
 	{
 		//Passes STICKRIGHT command to the AI input handler
-		//m_input->handleInput("STICKRIGHT", m_entity);
 		m_input->m_current["STICKRIGHT"] = true;
 		//return function as true to keep tree runnning
 		return true;
@@ -110,9 +107,7 @@ public:
 	bool run() override
 	{
 		//Passes YBTN command to AI input handler
-		//m_input->handleInput("YBTN", m_entity);
 		m_input->m_current["YBTN"] = true;
-		std::cout << "JUMP" << std::endl;
 		return true;
 	}
 };
@@ -137,13 +132,33 @@ public:
 	/// <returns></returns>
 	bool run() override
 	{
-		//m_input->handleInput("XBTN", m_entity);
 		m_input->m_current["XBTN"] = true;
 		return true;
 	}
 };
 
 #endif
+
+#ifndef KICKACTION_H
+#define KICKACTION_H
+
+class KickAction : public Action
+{
+public:
+	KickAction(Entity * e, AiInputComponent * a)
+		: Action(e, a)
+	{
+	}
+
+	bool run() override
+	{
+		m_input->m_current["ABTN"] = true;
+		return true;
+	}
+};
+
+#endif
+
 
 #ifndef CHECKNEAREST_H
 #define CHECKNEAREST_H
@@ -274,19 +289,16 @@ public:
 		if (nearest->position.x < pos->position.x)
 		{
 			//move left
-			//m_input->handleInput("STICKLEFT", m_entity);
 			m_input->m_current["STICKLEFT"] = true;
 		} //Check if the nearest player is to the right of AI
 		else if (nearest->position.x > pos->position.x)
 		{
 			//move right
-			//m_input->handleInput("STICKRIGHT", m_entity);
 			m_input->m_current["STICKRIGHT"] = true;
 		}
 		else //If player and AI are on the same X coord, jump
 		{
 			//jump
-			//m_input->handleInput("YBTN", m_entity);
 			m_input->m_current["YBTN"] = true;
 		}
 		//Return function as true to continue tree iteration
@@ -356,12 +368,10 @@ public:
 			//If they're left of AI, move right
 			if (nearest->position.x < pos->position.x)
 			{
-				//m_input->handleInput("STICKRIGHT", m_entity);
 				m_input->m_current["STICKRIGHT"] = true;
 			}
 			else //otherwise move left
 			{
-				//m_input->handleInput("STICKLEFT", m_entity);
 				m_input->m_current["STICKLEFT"] = true;
 			}
 		}
@@ -398,8 +408,28 @@ public:
 		//Cast nearest player entity from Ai component to Position component
 		auto nearest = dynamic_cast<PositionComponent *>(&comp->nearestPlayer->getComponent("Pos"));
 
-		//Return function true if player position is below(screen axis) the AI 
-		return nearest->position.y > pos->position.y - 50 ? true : false;
+		if (nearest->position.y < pos->position.y - 100)
+		{
+			if (dist(pos->position, nearest->position) < 150)
+			{
+				m_input->m_current["YBTN"] = true;
+			}
+		}
+		else if (nearest->position.y > pos->position.y + 200)
+		{
+			m_input->m_current["STICKDOWN"] = true;
+		}
+		else
+		{
+			return true;
+		}
+		return true;
+	}
+
+	//Euclidean distance function
+	float dist(Vector2f p1, Vector2f p2)
+	{
+		return sqrt((p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y));
 	}
 };
 
@@ -448,7 +478,6 @@ public:
 
 	bool run() override
 	{
-		//m_input->handleInput("STICKDOWN", m_entity);
 		m_input->m_current["STICKDOWN"] = true;
 		return true;
 	}
@@ -481,28 +510,30 @@ public:
 			//If AI is right of player
 			if (nearest->position.x < pos->position.x)
 			{
-				if (comp->onEdge)
-				{
-					m_input->m_current["YBTN"];
-					comp->onEdge = false;
-				}
+
 				//Move left
 				m_input->m_current["STICKRIGHT"] = false;
 				m_input->m_current["STICKLEFT"] = true;
 			}
 			else //AI is left of player
 			{
-				if (comp->onEdge)
-				{
-					m_input->m_current["YBTN"];
-					comp->onEdge = false;
-				}
 				//Move right
 				m_input->m_current["STICKLEFT"] = false;
 				m_input->m_current["STICKRIGHT"] = true;
 			}
+			return true;
 		}
-		return true;
+
+		if (comp->onEdgeRight)
+		{
+			m_input->m_current["YBTN"];
+			comp->onEdgeRight = false;
+		}
+		else if (comp->onEdgeLeft)
+		{
+			m_input->m_current["YBTN"];
+			comp->onEdgeLeft = false;
+		}
 	}
 
 	//Euclidean distance function
