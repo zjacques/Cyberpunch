@@ -14,13 +14,18 @@ GameScene::GameScene() :
 	m_gameEndE("End winner"),
 	m_platformsCreated(false),
 	m_camera(false),
-	m_gameStartTimer(3)
+	m_gameStartTimer(3),
+	m_achievListener(),
+	m_achiPopup("Pop Up"),
+	m_popupSet(false)
 {
-	m_numOfAIPlayers = 3;
+	m_numOfAIPlayers = 1;
 }
 
 void GameScene::start()
 {
+	addObserver(&m_achievListener); //Add from the observer list
+
 	if (m_audioCreated == false)
 	{
 		m_audio.addSound("GameMusic0", Scene::resources().getMusic("Along Song"));
@@ -130,6 +135,25 @@ void GameScene::start()
 		m_killboxes.push_back(createKillBox(kb.at(i)["X"], kb.at(i)["Y"], kb.at(i)["W"], kb.at(i)["H"]));
 	}
 
+	auto bannerPos = new PositionComponent(960, 1110); //Bottom of the screen
+	auto iconPos = new PositionComponent(960 - 48, 1110); //Bottom of the screen
+	m_achiPopup.addComponent("Pos", bannerPos);
+	m_achiPopup.addComponent("Icon Pos", iconPos);
+	m_achiPopup.addComponent("Sprite", new SpriteComponent(bannerPos, Vector2f(250, 50), Vector2f(250, 50), Scene::resources().getTexture("Achievement Banner"), 5)); //Draw over everything
+	m_achiPopup.addComponent("Icon Sprite", new SpriteComponent(iconPos, Vector2f(500, 50), Vector2f(50, 50), NULL, 6)); //Draw over everything
+	static_cast<SpriteComponent*>(&m_achiPopup.getComponent("Sprite"))->useCamera() = false;
+	static_cast<SpriteComponent*>(&m_achiPopup.getComponent("Icon Sprite"))->useCamera() = false;
+
+	auto popanim = new AnimationComponent(&m_achiPopup.getComponent("Icon Sprite"));
+	std::vector<SDL_Rect> fs;
+	for (int i = 0; i < 10; i++)
+		fs.push_back({50*i, 0, 50, 50});
+	popanim->addAnimation("Unlock", NULL, fs, 1.0f);
+	m_achiPopup.addComponent("Animation", popanim);
+	popanim->playAnimation("Unlock", false);
+
+	setupUi();
+
 	//Setup timer
 	setupTimer();
 }
@@ -165,8 +189,75 @@ void GameScene::setupTimer()
 	Scene::systems()["Render"]->addComponent(&m_gameStart.getComponent("Sprite"));
 }
 
+void GameScene::setupUi()
+{
+	int index = 0;
+	int maxIndex = m_allPlayers.size();
+	bool done = false;
+
+	for (int i = 0; i < 2; i++)
+	{
+		if (done)
+			break;
+		for (int j = 0; j < 2; j++)
+		{
+			auto ent = new Entity("UI");
+			auto pos = new PositionComponent(100 + 1720 * j, 45 + 990 * i);
+			auto dmg0Pos = new PositionComponent(pos->position.x + 35, pos->position.y - 14);
+			auto dmg1Pos = new PositionComponent(pos->position.x + 52, pos->position.y - 14);
+			auto dmg2Pos = new PositionComponent(pos->position.x + 69, pos->position.y - 14);
+			auto sup0Pos = new PositionComponent(pos->position.x + 35, pos->position.y + 14);
+			auto sup1Pos = new PositionComponent(pos->position.x + 52, pos->position.y + 14);
+			auto sup2Pos = new PositionComponent(pos->position.x + 69, pos->position.y + 14);
+			ent->addComponent("Pos", pos);
+			ent->addComponent("Dmg Pos 0", dmg0Pos);
+			ent->addComponent("Dmg Pos 1", dmg1Pos);
+			ent->addComponent("Dmg Pos 2", dmg2Pos);
+			ent->addComponent("Sup Pos 0", sup0Pos);
+			ent->addComponent("Sup Pos 1", sup1Pos);
+			ent->addComponent("Sup Pos 2", sup2Pos);
+			ent->addComponent("Sprite", new SpriteComponent(pos, Vector2f(200, 90), Vector2f(200, 90), Scene::resources().getTexture("Portrait"), 9));
+
+			static_cast<SpriteComponent*>(&ent->getComponent("Sprite"))->useCamera() = false;
+
+			for (int k = 0; k < 3; k++)
+			{
+				auto sprite = new SpriteComponent(&ent->getComponent("Dmg Pos " + std::to_string(k)), Vector2f(320, 32), Vector2f(32, 32), Scene::resources().getTexture("Numbers Coloured"), 10);
+				sprite->setTextureRect({0,0,32,32});
+				sprite->useCamera() = false;
+				ent->addComponent("Dmg" + std::to_string(k), sprite);
+				Scene::systems()["Render"]->addComponent(&ent->getComponent("Dmg" + std::to_string(k)));
+			}
+			for (int k = 0; k < 3; k++)
+			{
+				auto sprite = new SpriteComponent(&ent->getComponent("Sup Pos " + std::to_string(k)), Vector2f(320, 32), Vector2f(32, 32), Scene::resources().getTexture("Numbers Coloured"), 10);
+				sprite->setTextureRect({ 0,0,32,32 });
+				sprite->useCamera() = false;
+				ent->addComponent("Sup" + std::to_string(k), sprite);
+				Scene::systems()["Render"]->addComponent(&ent->getComponent("Sup" + std::to_string(k)));
+			}
+				
+			Scene::systems()["Render"]->addComponent(&ent->getComponent("Sprite"));
+
+			m_ui[m_allPlayers.at(index)] = ent;
+
+			index++;
+
+			//Leave if we have reached the max amount of players, then exit
+			if (index == maxIndex)
+			{
+				done = true;
+				break;
+			}
+		}
+	}
+
+	Scene::systems()["UI"] = new UISystem(&m_ui);
+}
+
 void GameScene::stop()
 {
+	removeObserver(&m_achievListener); //Remove from the observer list
 	m_physicsWorld.deleteWorld(); //Delete the physics world
 	m_platforms.clear(); //Delete the platforms of the game
 	m_numOfLocalPlayers = 0;
@@ -186,6 +277,8 @@ void GameScene::stop()
 	Scene::systems()["Respawn"]->removeAllComponents();
 	Scene::systems()["Animation"]->removeAllComponents();
 	Scene::systems()["Booth"]->removeAllComponents();
+	Scene::systems()["UI"]->removeAllComponents();
+	delete Scene::systems()["UI"];
 
 	for (auto ai : m_AIPlayers)
 		delete ai;
@@ -201,6 +294,7 @@ void GameScene::stop()
 	m_localPlayers.clear();
 	m_onlinePlayers.clear();
 	m_playersToDel.clear();
+	m_ui.clear();
 	delete m_pickUp;
 }
 
@@ -220,6 +314,7 @@ void GameScene::update(double dt)
 	Scene::systems()["AI"]->update(dt * scalar);
 	Scene::systems()["Dust"]->update(dt * scalar);
 	Scene::systems()["Respawn"]->update(dt * scalar);
+	Scene::systems()["UI"]->update(dt);
 
 	//Update the game start timer
 	updateStartTimer(dt);
@@ -274,6 +369,8 @@ void GameScene::update(double dt)
 	}
 
 	updateEndGameTimer(dt);
+
+	handleAchievementPopup(dt);
 }
 
 void GameScene::updateStartTimer(double dt)
@@ -324,6 +421,70 @@ void GameScene::updateEndGameTimer(double dt)
 		{
 			Scene::goToScene("Main Menu");
 		}
+	}
+}
+
+void GameScene::handleAchievementPopup(double dt)
+{
+	if (!m_popupSet)
+	{
+		if (!achi::Listener::m_newUnlocks.empty())
+		{
+			auto achiname = achi::Listener::m_newUnlocks.back(); //Get the name in the last element
+			achi::Listener::m_newUnlocks.pop_back(); //Remove the last element
+
+			auto anim = static_cast<AnimationComponent*>(&m_achiPopup.getComponent("Animation"));
+			anim->getCurrentAnimation()->setTexture(Scene::resources().getTexture(achiname));
+			
+			anim->playAnimation("Unlock", false);
+
+			Scene::systems()["Animation"]->addComponent(anim);
+			Scene::systems()["Render"]->addComponent(&m_achiPopup.getComponent("Sprite"));
+			Scene::systems()["Render"]->addComponent(&m_achiPopup.getComponent("Icon Sprite"));
+
+			m_popupSet = true;
+			m_popupTime = 3.0f;
+			m_popupHalfPoint = false;
+		}
+	}
+	if (m_popupSet)
+	{
+		auto pos = static_cast<PositionComponent*>(&m_achiPopup.getComponent("Pos"));
+		auto iconPos = static_cast<PositionComponent*>(&m_achiPopup.getComponent("Icon Pos"));
+
+		if (m_popupHalfPoint == false)
+		{
+			if (pos->position.y > 1040)
+			{
+				pos->position.y -= 100 * dt;
+				if (pos->position.y < 1040)
+				{
+					m_popupHalfPoint = true;
+					pos->position.y = 1040;
+					static_cast<AnimationComponent*>(&m_achiPopup.getComponent("Animation"))->getCurrentAnimation()->resetAnimation();
+					static_cast<AnimationComponent*>(&m_achiPopup.getComponent("Animation"))->playAnimation("Unlock", false);
+				}
+			}
+		}
+		else
+		{
+			m_popupTime -= dt;
+
+			if (m_popupTime <= 0)
+			{
+				pos->position.y += 100 * dt;
+			}
+		}
+		if (pos->position.y >= 1110)
+		{
+			m_popupSet = false;
+			pos->position.y = 1110;
+			Scene::systems()["Animation"]->deleteComponent(&m_achiPopup.getComponent("Animation"));
+			Scene::systems()["Render"]->deleteComponent(&m_achiPopup.getComponent("Sprite"));
+			Scene::systems()["Render"]->deleteComponent(&m_achiPopup.getComponent("Icon Sprite"));
+		}
+
+		iconPos->position.y = pos->position.y;
 	}
 }
 

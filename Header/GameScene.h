@@ -4,6 +4,7 @@
 #include "AttackSystem.h"
 #include "PreGameScene.h"
 #include "PhysicsSystem.h"
+#include "UISystem.h"
 
 #include "PhysicsComponent.h"
 #include "PlayerInputComponent.h"
@@ -34,10 +35,12 @@ public:
 	GameScene();
 	void start();
 	void setupTimer();
+	void setupUi();
 	void stop();
 	void update(double dt);
 	void updateStartTimer(double dt);
 	void updateEndGameTimer(double dt);
+	void handleAchievementPopup(double dt);
 
 	Entity* createAI(int index, int posX, int posY, bool local, std::vector<Vector2f> spawnPositions);
 
@@ -64,6 +67,10 @@ private:
 	std::vector<Entity*> m_AIPlayers;
 	std::vector<Entity*> m_allPlayers; //All local, online and Ai players
 	std::vector<Entity*> m_playersToDel;
+	std::map<Entity*, Entity*> m_ui;
+	Entity m_achiPopup; //Achievement pop up
+	float m_popupTime;
+	bool m_popupHalfPoint, m_popupSet;
 	std::vector<InputSystem*> m_localInputs;
 	int m_numOfLocalPlayers;
 	Entity* m_pickUp;
@@ -84,4 +91,6 @@ private:
 	Camera m_camera;
 	SDL_Renderer* m_rendererPtr; //Used for resetting the render scale when exiting a game
 	AudioComponent m_audio;
+
+	AchievementsListener m_achievListener; //For listening for achievement events, observer pattern
 };
