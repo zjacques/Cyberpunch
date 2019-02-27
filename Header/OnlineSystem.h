@@ -4,6 +4,7 @@
 #include "OnlineSendComponent.h"
 #include "OnlineInputComponent.h"
 #include <Windows.h>
+#include <math.h>
 
 using std::vector;
 using std::string;
@@ -22,7 +23,7 @@ public:
 
 	void update(double dt);
 
-	void SendCommands();
+	void SendCommands(bool sync);
 	void ReceiveCommands();
 
 	bool ConnectToServer();
@@ -48,4 +49,6 @@ private:
 	int m_lobbyNumber = 0;
 	vector<OnlineSendComponent*> m_sendingPlayers;
 	vector<OnlineInputComponent*> m_receivingPlayers;
+	double syncRate = 0.2;
+	double tts = 0;//time to sync
 };

@@ -18,6 +18,7 @@ public:
 
 	void loadTextures(SDL_Renderer& renderer);
 	void loadLevelData();
+	void loadAchievements();
 	SDL_Texture* loadFromPath(std::string fileName, SDL_Renderer& renderer);
 	Mix_Chunk* SFXLoadFromPath(std::string fileName);
 	Mix_Music* MusicLoadFromPath(std::string fileName);
@@ -31,8 +32,10 @@ public:
 	Mix_Chunk* getSFX(std::string name);
 	Mix_Music* getMusic(std::string name);
 	json& getLevelData() { return m_gameData; }
+	json& getAchievementData() { return m_achievementData; }
 private:
 	json m_gameData;
+	json m_achievementData;
 	std::string m_filePath;
 	std::map<std::string, SDL_Texture*> m_map; //Where we will hold the textures
 	std::map<std::string, Mix_Chunk*> m_sfx;

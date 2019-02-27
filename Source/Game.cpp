@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "SDL_mixer.h"
+#include "AchievementComponent.h"
 
 Game::Game(int fps) :
 	m_msPerFrame(fps / 60.0f), //Get the target fps
@@ -78,7 +79,6 @@ void Game::run()
 	{
 		now = std::chrono::system_clock::now();
 		dt = std::chrono::duration<double>(now - before).count();
-
 		//Process any events that have occured
 		processEvents(e);
 
@@ -97,6 +97,7 @@ void Game::run()
 
 		//Draw the Game
 		draw();
+		
 
 		//Make before time equal to the current time
 		before = now;
@@ -161,7 +162,10 @@ bool Game::loadMedia()
 	//Load any media here, we call our resource manager here
 	m_resources.loadTextures(*m_renderer);
 	m_mManager.setResourceHandler(m_resources);
-	m_mManager.setSystemPtr(m_systems);
+	m_mManager.setSystemPtr(m_systems);	
+
+	//Setup the achievement component
+	m_mManager.m_scenes["Achievements"]->achievements().setAchievementData(&m_resources.getAchievementData()); //Scene::achievements().setAchievementData(&Scene::resources().getAchievementData());
 
 	//Set the scene after the systems ptr has been set and the resource manager has been passed over
 	m_mManager.setScene("Main Menu");

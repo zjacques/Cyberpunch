@@ -26,6 +26,7 @@ public:
 		int& getMaxFrames();
 		float& getTimeGone();
 		float& getTimePerFrame();
+		void setTexture(SDL_Texture* texture) { m_texture = texture; }
 		std::vector<SDL_Rect> getFrames() { return m_frames; }
 	private:
 		std::string m_name; //Name of the animation

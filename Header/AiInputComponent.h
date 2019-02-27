@@ -18,7 +18,7 @@ public:
 	void handleInput(std::string s, Entity * e)
 	{
 		m_currentCMD = nullptr;
-		m_previousCMD = m_currentCMD;
+		//m_previousCMD = m_currentCMD;
 
 		if (aiIsButtonPressed("YBTN")) //Y
 		{

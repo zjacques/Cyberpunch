@@ -42,9 +42,11 @@ void MainMenuScene::stop()
 		Scene::systems()["Animation"]->deleteComponent(&btn->getComponent("Animation"));
 		Scene::systems()["Animation"]->deleteComponent(&btn->getComponent("Text Animation"));
 	}
-	m_audio.stop();
-	
-	//Clear the buttons vector
+
+	//Only stop the menu music if we are going into the game
+	if(Scene::getStgt() == "Game")
+		Scene::audio().stop();
+  
 	m_buttons.clear();
 }
 
@@ -179,6 +181,10 @@ void MainMenuScene::handleButtonPressed()
 	else if (tag == "Options")
 	{
 		Scene::goToScene("Options");
+	}
+	else if (tag == "Achievements")
+	{
+		Scene::goToScene("Achievements");
 	}
 	else if (tag == "Exit")
 	{
