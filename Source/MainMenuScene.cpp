@@ -162,7 +162,8 @@ void MainMenuScene::handleButtonPressed()
 	
 	if (tag == "Local")
 	{
-		Scene::goToScene("Game");
+		//Scene::goToScene("Game");
+		Scene::goToScene("PreGame");
 	}
 	else if (tag == "Multiplayer")
 	{

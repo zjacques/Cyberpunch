@@ -34,8 +34,11 @@ public:
 	bool joinLobby(int lob);
 
 	vector<int> getPlayers();
+	void assignPlayerSlots(vector<bool> slotsTaken);
 
 	void startGame();
+
+	void disconnect();
 
 	bool gameStarted = false;
 

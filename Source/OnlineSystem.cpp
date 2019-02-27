@@ -233,9 +233,41 @@ vector<int> OnlineSystem::getPlayers()
 	return retval;
 }
 
+void OnlineSystem::assignPlayerSlots(vector<bool> slotsTaken)
+{
+	string jsonString;
+	jsonString = "{\"type\":\"ASSIGNSLOTS\",\"list\":[";
+	bool first = true;
+	for (auto plyr : slotsTaken)
+	{
+		if (!first)
+		{
+			jsonString += ",";
+		}
+		else
+		{
+			first = false;
+		}
+		if (plyr)
+			jsonString += "true";
+		else
+			jsonString += "false";
+	}
+	jsonString += "]}";
+	m_Socket->sendString(jsonString);
+}
+
 void OnlineSystem::startGame()
 {
 	string jsonString = "{\"type\" : \"START\"}";
 	m_Socket->sendString(jsonString);
 	gameStarted = true;
+}
+
+void OnlineSystem::disconnect()
+{
+	m_Socket->sendString(m_Socket->QUIT_SIGNAL);
+	delete m_Socket;
+	isConnected = false;
+	
 }
