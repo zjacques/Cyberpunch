@@ -36,6 +36,7 @@ public:
 			if (phys->canJump())
 			{
 				phys->jump();
+				std::cout << "jump" << std::endl;
 				auto a = static_cast<AnimationComponent*>(&e.getComponent("Animation"));
 				a->playAnimation("Jump", false);
 				a->getCurrentAnimation()->resetAnimation();

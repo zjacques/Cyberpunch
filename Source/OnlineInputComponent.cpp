@@ -13,10 +13,9 @@ void OnlineInputComponent::handleInput(void* e)
 	if (m_positionsToSyncTo.size() > 0)
 	{
 		OnlineSendComponent::syncStruct loc = m_positionsToSyncTo.front();
-		syncPosition(entity, loc.pos.x, loc.pos.y, loc.vel.x, loc.vel.y, loc.dvel.x, loc.dvel.y);
+		//syncPosition(entity, loc.pos.x, loc.pos.y, loc.vel.x, loc.vel.y, loc.dvel.x, loc.dvel.y);
 		m_positionsToSyncTo.pop();
 	}
-	m_currentCMD = nullptr;
 
 	if ((m_previousCMD == (Command*)&m_moveLeftCMD || m_previousCMD == (Command*)&m_moveRightCMD) && m_commandsToSend.size() == 0)
 	{
@@ -24,6 +23,7 @@ void OnlineInputComponent::handleInput(void* e)
 	}
 	if (m_commandsToSend.size() > 0)
 	{
+		m_currentCMD = nullptr;
 		string topCMD = m_commandsToSend.front();
 		if (topCMD == "JUMP")
 		{
@@ -99,11 +99,11 @@ void OnlineInputComponent::syncPosition(Entity* entity, float px, float py, floa
 {
 	//auto entity = static_cast<Entity*>(e);
 	Vector2f asdf = static_cast<PlayerPhysicsComponent*>(&entity->getComponent("Player Physics"))->m_body->getPosition();
-	static_cast<PlayerPhysicsComponent*>(&entity->getComponent("Player Physics"))->m_body->setPosition(px, py+29);
+	static_cast<PlayerPhysicsComponent*>(&entity->getComponent("Player Physics"))->m_body->setPosition(px, py+25);
 	//static_cast<PlayerPhysicsComponent*>(&entity->getComponent("Player Physics"))->posPtr->position = Vector2f(px, py);
 	static_cast<PlayerPhysicsComponent*>(&entity->getComponent("Player Physics"))->m_currentVel = b2Vec2(vx, vy);
 	static_cast<PlayerPhysicsComponent*>(&entity->getComponent("Player Physics"))->m_desiredVel = b2Vec2(dvx, dvy);
-	static_cast<PlayerPhysicsComponent*>(&entity->getComponent("Player Physics"))->m_jumpSensor->setPosition(px, py+29);
+	static_cast<PlayerPhysicsComponent*>(&entity->getComponent("Player Physics"))->m_jumpSensor->setPosition(px, py+25);
 }
 
 
