@@ -5,6 +5,7 @@
 #include "GameScene.h"
 #include "LobbyScene.h"
 #include "PreGameScene.h"
+#include "AchievementsScene.h"
 
 class MenuManager
 {
@@ -16,7 +17,7 @@ public:
 	void setResourceHandler(ResourceHandler& resources);
 	void setSystemPtr(std::map<std::string, System*>& systems);
 	void setScene(std::string scene);
-private:
 	std::map<std::string, Scene*> m_scenes;
+private:
 	Scene* m_current; //Ptr to the curretn scene
 };

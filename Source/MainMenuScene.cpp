@@ -14,10 +14,10 @@ void MainMenuScene::start()
 {
 	if (m_audioCreated == false)
 	{
-		m_audio.addSound("MenuMusic", Scene::resources().getMusic("Good Song"));
+		Scene::audio().addSound("MenuMusic", Scene::resources().getMusic("Good Song"));
+		Scene::audio().playSound("MenuMusic", true);
 	}
 
-	m_audio.playSound("MenuMusic", true);
 	//Setup the input using the first joycon connected
 	m_input.initialiseJoycon(0);
 
@@ -41,7 +41,10 @@ void MainMenuScene::stop()
 		Scene::systems()["Animation"]->deleteComponent(&btn->getComponent("Animation"));
 		Scene::systems()["Animation"]->deleteComponent(&btn->getComponent("Text Animation"));
 	}
-	m_audio.stop();
+	//Only stop the menu music if we are going into the game
+	if(Scene::getStgt() == "Game")
+		Scene::audio().stop();
+
 	//Clear the buttons vector
 	m_buttons.clear();
 }
@@ -169,6 +172,10 @@ void MainMenuScene::handleButtonPressed()
 	else if (tag == "Options")
 	{
 		Scene::goToScene("Options");
+	}
+	else if (tag == "Achievements")
+	{
+		Scene::goToScene("Achievements");
 	}
 	else if (tag == "Exit")
 	{

@@ -23,6 +23,5 @@ private:
 	InputComponent m_input;
 	bool m_addedInput;
 	bool m_audioCreated;
-	AudioComponent m_audio;
 	std::vector<Entity*> m_buttons;
 };
