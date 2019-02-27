@@ -4,6 +4,7 @@
 #include "AttackSystem.h"
 #include "PreGameScene.h"
 #include "PhysicsSystem.h"
+#include "UISystem.h"
 
 #include "PhysicsComponent.h"
 #include "PlayerInputComponent.h"
@@ -34,6 +35,7 @@ public:
 	GameScene();
 	void start();
 	void setupTimer();
+	void setupUi();
 	void stop();
 	void update(double dt);
 	void updateStartTimer(double dt);
@@ -65,6 +67,7 @@ private:
 	std::vector<Entity*> m_AIPlayers;
 	std::vector<Entity*> m_allPlayers; //All local, online and Ai players
 	std::vector<Entity*> m_playersToDel;
+	std::map<Entity*, Entity*> m_ui;
 	Entity m_achiPopup; //Achievement pop up
 	float m_popupTime;
 	bool m_popupHalfPoint, m_popupSet;

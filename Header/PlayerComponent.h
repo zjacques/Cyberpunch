@@ -37,8 +37,7 @@ public:
 			m_respawning = true;
 			m_respawn = true;
 			m_spawnTimer = 2.5f; //Respawn after 2.5 seconds
-			m_newSpawn = &m_spawnLocations.at(rand() % m_spawnLocations.size()); //Number between 0 and the size of the amount of spawn points
-			
+			m_newSpawn = &m_spawnLocations.at(rand() % m_spawnLocations.size()); //Number between 0 and the size of the amount of spawn points	
 		}
 	}
 

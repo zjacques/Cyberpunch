@@ -159,6 +159,7 @@
     <ClCompile Include="Source\PlayerRespawnSystem.cpp" />
     <ClCompile Include="Source\RenderSystem.cpp" />
     <ClCompile Include="Source\ResourceManager.cpp" />
+    <ClCompile Include="Source\UISystem.cpp" />
     <ClCompile Include="Source\Vector2f.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -222,6 +223,7 @@
     <ClInclude Include="Header\SpriteComponent.h" />
     <ClInclude Include="Header\ResourceManager.h" />
     <ClInclude Include="Header\System.h" />
+    <ClInclude Include="Header\UISystem.h" />
     <ClInclude Include="Header\Vector2f.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

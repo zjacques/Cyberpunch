@@ -144,6 +144,8 @@ void GameScene::start()
 	m_achiPopup.addComponent("Animation", popanim);
 	popanim->playAnimation("Unlock", false);
 
+	setupUi();
+
 	//Setup timer
 	setupTimer();
 }
@@ -179,6 +181,72 @@ void GameScene::setupTimer()
 	Scene::systems()["Render"]->addComponent(&m_gameStart.getComponent("Sprite"));
 }
 
+void GameScene::setupUi()
+{
+	int index = 0;
+	int maxIndex = m_allPlayers.size();
+	bool done = false;
+
+	for (int i = 0; i < 2; i++)
+	{
+		if (done)
+			break;
+		for (int j = 0; j < 2; j++)
+		{
+			auto ent = new Entity("UI");
+			auto pos = new PositionComponent(100 + 1720 * j, 45 + 990 * i);
+			auto dmg0Pos = new PositionComponent(pos->position.x + 35, pos->position.y - 14);
+			auto dmg1Pos = new PositionComponent(pos->position.x + 52, pos->position.y - 14);
+			auto dmg2Pos = new PositionComponent(pos->position.x + 69, pos->position.y - 14);
+			auto sup0Pos = new PositionComponent(pos->position.x + 35, pos->position.y + 14);
+			auto sup1Pos = new PositionComponent(pos->position.x + 52, pos->position.y + 14);
+			auto sup2Pos = new PositionComponent(pos->position.x + 69, pos->position.y + 14);
+			ent->addComponent("Pos", pos);
+			ent->addComponent("Dmg Pos 0", dmg0Pos);
+			ent->addComponent("Dmg Pos 1", dmg1Pos);
+			ent->addComponent("Dmg Pos 2", dmg2Pos);
+			ent->addComponent("Sup Pos 0", sup0Pos);
+			ent->addComponent("Sup Pos 1", sup1Pos);
+			ent->addComponent("Sup Pos 2", sup2Pos);
+			ent->addComponent("Sprite", new SpriteComponent(pos, Vector2f(200, 90), Vector2f(200, 90), Scene::resources().getTexture("Portrait"), 9));
+
+			static_cast<SpriteComponent*>(&ent->getComponent("Sprite"))->useCamera() = false;
+
+			for (int k = 0; k < 3; k++)
+			{
+				auto sprite = new SpriteComponent(&ent->getComponent("Dmg Pos " + std::to_string(k)), Vector2f(320, 32), Vector2f(32, 32), Scene::resources().getTexture("Numbers Coloured"), 10);
+				sprite->setTextureRect({0,0,32,32});
+				sprite->useCamera() = false;
+				ent->addComponent("Dmg" + std::to_string(k), sprite);
+				Scene::systems()["Render"]->addComponent(&ent->getComponent("Dmg" + std::to_string(k)));
+			}
+			for (int k = 0; k < 3; k++)
+			{
+				auto sprite = new SpriteComponent(&ent->getComponent("Sup Pos " + std::to_string(k)), Vector2f(320, 32), Vector2f(32, 32), Scene::resources().getTexture("Numbers Coloured"), 10);
+				sprite->setTextureRect({ 0,0,32,32 });
+				sprite->useCamera() = false;
+				ent->addComponent("Sup" + std::to_string(k), sprite);
+				Scene::systems()["Render"]->addComponent(&ent->getComponent("Sup" + std::to_string(k)));
+			}
+				
+			Scene::systems()["Render"]->addComponent(&ent->getComponent("Sprite"));
+
+			m_ui[m_allPlayers.at(index)] = ent;
+
+			index++;
+
+			//Leave if we have reached the max amount of players, then exit
+			if (index == maxIndex)
+			{
+				done = true;
+				break;
+			}
+		}
+	}
+
+	Scene::systems()["UI"] = new UISystem(&m_ui);
+}
+
 void GameScene::stop()
 {
 	removeObserver(&m_achievListener); //Remove from the observer list
@@ -201,6 +269,8 @@ void GameScene::stop()
 	Scene::systems()["Respawn"]->removeAllComponents();
 	Scene::systems()["Animation"]->removeAllComponents();
 	Scene::systems()["Booth"]->removeAllComponents();
+	Scene::systems()["UI"]->removeAllComponents();
+	delete Scene::systems()["UI"];
 
 	for (auto ai : m_AIPlayers)
 		delete ai;
@@ -216,6 +286,7 @@ void GameScene::stop()
 	m_localPlayers.clear();
 	m_onlinePlayers.clear();
 	m_playersToDel.clear();
+	m_ui.clear();
 	delete m_pickUp;
 }
 
@@ -235,6 +306,7 @@ void GameScene::update(double dt)
 	Scene::systems()["AI"]->update(dt * scalar);
 	Scene::systems()["Dust"]->update(dt * scalar);
 	Scene::systems()["Respawn"]->update(dt * scalar);
+	Scene::systems()["UI"]->update(dt);
 
 	//Update the game start timer
 	updateStartTimer(dt);

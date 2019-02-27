@@ -40,6 +40,7 @@ public:
 	float& stunLeft() { return m_stunLeft; }
 	float& superLeft() { return m_superTime; }
 	int& damagePercentage() { return m_dmgPercentage; }
+	int& superPercentage() { return m_superPercentage; }
 
 	//Setters
 	void setCanFall(bool b) { m_canFall = b; }
