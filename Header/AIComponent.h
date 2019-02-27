@@ -19,16 +19,20 @@ public:
 		m_player(p),
 		m_world(world)
 	{
-		m_phys = new PhysicsComponent(static_cast<PositionComponent *>(&self->getComponent("Pos")));
+		m_left = new PhysicsComponent(static_cast<PositionComponent *>(&self->getComponent("Pos")));
+		m_right = new PhysicsComponent(static_cast<PositionComponent *>(&self->getComponent("Pos")));
 		auto pos = static_cast<PositionComponent *>(&self->getComponent("Pos"))->position;
-		m_phys->m_body = m_world.createBox(pos.x, pos.y, 75, 25, false, true, b2_staticBody);
-		m_world.addProperties(*m_phys->m_body, 0, 0, 0, true, new PhysicsComponent::ColData("Edge Sensor", m_self));
+		m_left->m_body = m_world.createBox(pos.x, pos.y, 30, 78, false, false, b2_dynamicBody);
+		m_world.addProperties(*m_left->m_body, 0, 0, 0, true, new PhysicsComponent::ColData("Left Edge Sensor", m_self));
+		m_right->m_body = m_world.createBox(pos.x, pos.y, 30, 78, false, false, b2_dynamicBody);
+		m_world.addProperties(*m_right->m_body, 0, 0, 0, true, new PhysicsComponent::ColData("Right Edge Sensor", m_self));
 	}
 	~AIComponent() {}
 
 	//Declare Tree, selector nodes and sequence nodes
 	BehaviourTree BT;
 	BehaviourTree::Selector m_selectors[7];
+	BehaviourTree::RandomSelector m_random;
 	BehaviourTree::Sequence m_sequences[3];
 	BehaviourTree::Sequence punchSequence;
 	BehaviourTree::Succeeder m_succeeders[3];
@@ -37,10 +41,12 @@ public:
 	Entity * nearestPlayer;
 	AiInputComponent * m_input;
 	PlayerComponent * m_player;
-	PhysicsComponent * m_phys;
+	PhysicsComponent * m_right;
+	PhysicsComponent * m_left;
 	Box2DBridge m_world;
 
-	bool onEdge = false;
+	bool onEdgeLeft = false;
+	bool onEdgeRight = false;
 	
 	//Declare actions for AI
 };

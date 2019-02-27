@@ -23,7 +23,7 @@ public:
 	{
 		auto hit = static_cast<AttackComponent*>(&e.getComponent("Attack"));
 		auto phys = static_cast<PlayerPhysicsComponent*>(&e.getComponent("Player Physics"));
-
+		
 		if (hit->attackActive() == false && phys->stunned() == false)
 		{
 			auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
@@ -41,7 +41,8 @@ public:
 				a->getCurrentAnimation()->resetAnimation();
 				auto s = static_cast<SpriteComponent*>(&e.getComponent("Sprite"));
 				s->setTexture(a->getCurrentAnimation()->getTexture());
-
+				auto p = static_cast<AudioComponent*>(&e.getComponent("Audio"));
+				p->playSound("Jump", false);
 			}
 
 		}
@@ -76,6 +77,8 @@ public:
 				if (!(a->getCurrentID() == "Jump" && a->getCurrentAnimation()->getCompleted() == false))
 				{
 					a->playAnimation("Run", true);
+					auto p = static_cast<AudioComponent*>(&e.getComponent("Audio"));
+					p->playSound("Footsteps", true);
 				}
 				auto s = static_cast<SpriteComponent*>(&e.getComponent("Sprite"));
 				s->setScale(1, s->getScale().y);
@@ -115,6 +118,8 @@ public:
 				if (!(a->getCurrentID() == "Jump" && a->getCurrentAnimation()->getCompleted() == false))
 				{
 					a->playAnimation("Run", true);
+					auto p = static_cast<AudioComponent*>(&e.getComponent("Audio"));
+					p->playSound("Footsteps", true);
 				}
 				auto s = static_cast<SpriteComponent*>(&e.getComponent("Sprite"));
 				s->setScale(-1, s->getScale().y);
@@ -149,6 +154,8 @@ public:
 			a->playAnimation("Punch " + std::to_string(rand() % 2), true);
 			auto s = static_cast<SpriteComponent*>(&e.getComponent("Sprite"));
 			s->setTexture(a->getCurrentAnimation()->getTexture());
+			auto p = static_cast<AudioComponent*>(&e.getComponent("Audio"));
+			p->playSound("Whoosh", false);
 
 			auto tag = "Attack";
 			auto offset = Vector2f(phys->isMovingLeft() ? -40 : 40, phys->isGravityFlipped() ? 12.5f : -12.5f);
@@ -187,6 +194,8 @@ public:
 			auto a = static_cast<AnimationComponent*>(&e.getComponent("Animation"));
 			a->playAnimation("Ground Kick", false);
 			static_cast<SpriteComponent*>(&e.getComponent("Sprite"))->setTexture(a->getCurrentAnimation()->getTexture());
+			auto p = static_cast<AudioComponent*>(&e.getComponent("Audio"));
+			p->playSound("Whoosh", false);
 		}
 
 	}
