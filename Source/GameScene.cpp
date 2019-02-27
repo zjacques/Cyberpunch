@@ -432,7 +432,7 @@ Entity * GameScene::createPlayer(int playerNumber,int controllerNumber, int posX
 	//Create the physics component and set up the bodies
 	auto phys = new PlayerPhysicsComponent(&p->getComponent("Pos"));
 	phys->m_jumpSensor = m_physicsWorld.createBox(posX, posY, 27, 5, false, false, b2BodyType::b2_dynamicBody);
-	if (netSys->isConnected || netSys->m_isHost) {
+	if (!netSys->isConnected || netSys->m_isHost) {
 		phys->m_body = m_physicsWorld.createBox(posX, posY, 30, 78, false, false, b2BodyType::b2_dynamicBody);
 		m_physicsWorld.addProperties(*phys->m_body, 1, 0.05f, 0.0f, false, new PhysicsComponent::ColData("Player Body", p));
 	}
@@ -450,7 +450,8 @@ Entity * GameScene::createPlayer(int playerNumber,int controllerNumber, int posX
 	phys->createJoint(m_physicsWorld);
 
 	//Try to add a sender to the server
-	if (netSys->isConnected && local)
+	//if (netSys->isConnected && local)
+	if(netSys->isConnected)
 	{
 		auto net = new OnlineSendComponent(local);
 		net->m_playerNumber = playerNumber;
