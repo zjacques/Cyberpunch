@@ -14,10 +14,11 @@ void MainMenuScene::start()
 {
 	if (m_audioCreated == false)
 	{
-		Scene::audio().addSound("MenuMusic", Scene::resources().getMusic("Good Song"));
-		Scene::audio().playSound("MenuMusic", true);
+		m_audio.addSound("MenuMusic", Scene::resources().getMusic("Good Song"));
+		m_audio.addSound("Neon", Scene::resources().getSFX("Neon"));
 	}
-
+	Mix_Volume(-1, 10);
+	m_audio.playSound("MenuMusic", true);
 	//Setup the input using the first joycon connected
 	m_input.initialiseJoycon(0);
 
@@ -41,11 +42,11 @@ void MainMenuScene::stop()
 		Scene::systems()["Animation"]->deleteComponent(&btn->getComponent("Animation"));
 		Scene::systems()["Animation"]->deleteComponent(&btn->getComponent("Text Animation"));
 	}
+
 	//Only stop the menu music if we are going into the game
 	if(Scene::getStgt() == "Game")
 		Scene::audio().stop();
-
-	//Clear the buttons vector
+  
 	m_buttons.clear();
 }
 
@@ -79,6 +80,8 @@ Entity* MainMenuScene::createButton(Vector2f position, SDL_Texture* selectedText
 	{
 		anim->playAnimation("Selected", false);
 		textAnim->playAnimation("Selected", false);
+		Mix_Volume(-1, 40);
+	//	m_audio.playSound("Neon", false);
 	}
 
 
@@ -120,21 +123,27 @@ void MainMenuScene::handleInput(InputSystem& input)
 		if (m_input.isButtonPressed("STICKUP"))
 		{
 			newIndex--;
+			
 		}
 		if (m_input.isButtonPressed("STICKDOWN"))
 		{
 			newIndex++;
+			
 		}
 		if (m_input.isButtonPressed("XBTN"))
 		{
 			handleButtonPressed();
+		
 		}
 
-
 		if (newIndex < 0)
+		{
 			newIndex = m_buttons.size() - 1;
-		else if (newIndex >= m_buttons.size())
+		}
+		else if (newIndex >= m_buttons.size()) {
 			newIndex = 0;
+			
+		}
 
 		//If the button we are highlighting has changed, deslect the current button and select the new one
 		if (newIndex != m_currentIndex)

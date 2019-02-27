@@ -23,9 +23,9 @@ void GameScene::start()
 {
 	if (m_audioCreated == false)
 	{
-		m_audio.addSound("GameMusic", Scene::resources().getMusic("Song 2"));
+		m_audio.addSound("GameMusic", Scene::resources().getMusic("Along Song"));
 	}
-
+	Mix_VolumeMusic(40);
 	m_audio.playSound("GameMusic", true);
 	m_rendererPtr = NULL;
 	m_gameOver = false;
@@ -107,7 +107,9 @@ void GameScene::start()
 	Scene::systems()["Animation"]->addComponent(anim);
 	m_pickUp->addComponent("Animation", anim);
 	Scene::systems()["Pickup"]->addComponent(&m_pickUp->getComponent("PickUp"));
-
+	auto audio = new AudioComponent();
+	audio->addSound("PickUp 1", Scene::resources().getSFX("PickUp 1"));
+	m_pickUp->addComponent("Audio", audio);
 	//DJBooths created here 
 	auto& booths = Scene::resources().getLevelData()["Booth"];
 
@@ -384,6 +386,14 @@ Entity * GameScene::createPlayer(int playerNumber,int controllerNumber, int posX
 	p->addComponent("Sprite", new SpriteComponent(&p->getComponent("Pos"), Vector2f(1700,85), Vector2f(85, 85), Scene::resources().getTexture("Player Idle"), 2));
 	auto animation = new AnimationComponent(&p->getComponent("Sprite"));
 	p->addComponent("Animation", animation);
+	auto audio = new AudioComponent();
+	audio->addSound("Spawn", Scene::resources().getSFX("Spawn"));
+	audio->addSound("KnockOut", Scene::resources().getSFX("KnockOut"));
+	audio->addSound("Punch", Scene::resources().getSFX("Punch"));
+	audio->addSound("Jump", Scene::resources().getSFX("Jump"));
+	audio->addSound("Whoosh", Scene::resources().getSFX("Whoosh"));
+	audio->addSound("Footsteps", Scene::resources().getSFX("Footsteps"));
+	p->addComponent("Audio", audio);
 
 	std::vector<SDL_Rect> m_animRects, m_stunRects; //The rectangles for the animations
 
@@ -488,6 +498,10 @@ Entity* GameScene::createDJB(int index, int posX, int posY)
 	Scene::systems()["Physics"]->addComponent(phys);
 	booth->addComponent("Sprite", new SpriteComponent(pos, Vector2f(152, 93), Vector2f(152, 93), Scene::resources().getTexture("Booth" + std::to_string(index)), 1));
 	Scene::systems()["Render"]->addComponent(&booth->getComponent("Sprite"));
+	auto audio = new AudioComponent();
+	audio->addSound("Switch", Scene::resources().getSFX("Switch"));
+	audio->addSound("Switch2", Scene::resources().getSFX("Switch2"));
+	booth->addComponent("Audio", audio);
 
 	if (index == 0)
 	{	
@@ -532,7 +546,14 @@ Entity * GameScene::createAI(int index, int posX, int posY, std::vector<Vector2f
 	auto animation = new AnimationComponent(&ai->getComponent("Sprite"));
 	auto behaviour = new AIComponent(&m_allPlayers, input, ai, player, m_physicsWorld);
 	ai->addComponent("AI", behaviour);
-
+	auto audio = new AudioComponent();
+	audio->addSound("Spawn", Scene::resources().getSFX("Spawn"));
+	audio->addSound("KnockOut", Scene::resources().getSFX("KnockOut"));
+	audio->addSound("Punch", Scene::resources().getSFX("Punch"));
+	audio->addSound("Jump", Scene::resources().getSFX("Jump"));
+	audio->addSound("Whoosh", Scene::resources().getSFX("Whoosh"));
+	audio->addSound("Footsteps", Scene::resources().getSFX("Footsteps"));
+	ai->addComponent("Audio", audio);
 	std::vector<SDL_Rect> m_animRects, m_stunRects; //The rectangles for the animations
 
 	for (int i = 0; i < 20; i++)
