@@ -99,11 +99,11 @@ void OnlineInputComponent::syncPosition(Entity* entity, float px, float py, floa
 {
 	//auto entity = static_cast<Entity*>(e);
 	Vector2f asdf = static_cast<PlayerPhysicsComponent*>(&entity->getComponent("Player Physics"))->m_body->getPosition();
-	static_cast<PlayerPhysicsComponent*>(&entity->getComponent("Player Physics"))->m_body->setPosition(px, py+29);
+	static_cast<PlayerPhysicsComponent*>(&entity->getComponent("Player Physics"))->m_body->setPosition(px, py);
 	//static_cast<PlayerPhysicsComponent*>(&entity->getComponent("Player Physics"))->posPtr->position = Vector2f(px, py);
 	static_cast<PlayerPhysicsComponent*>(&entity->getComponent("Player Physics"))->m_currentVel = b2Vec2(vx, vy);
 	static_cast<PlayerPhysicsComponent*>(&entity->getComponent("Player Physics"))->m_desiredVel = b2Vec2(dvx, dvy);
-	static_cast<PlayerPhysicsComponent*>(&entity->getComponent("Player Physics"))->m_jumpSensor->setPosition(px, py+29);
+	static_cast<PlayerPhysicsComponent*>(&entity->getComponent("Player Physics"))->m_jumpSensor->setPosition(px, py);
 }
 
 

@@ -25,6 +25,7 @@ public:
 	}
 
 	void setSync(Vector2f pos, Vector2f vel, Vector2f dvel) {
+		//pos -= Vector2f(15, 39);
 		syncVars.pos = pos;
 		syncVars.vel = vel;
 		syncVars.dvel = dvel;

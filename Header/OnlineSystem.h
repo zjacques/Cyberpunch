@@ -49,6 +49,6 @@ private:
 	int m_lobbyNumber = 0;
 	vector<OnlineSendComponent*> m_sendingPlayers;
 	vector<OnlineInputComponent*> m_receivingPlayers;
-	double syncRate = 0.2;
+	double syncRate = 0;
 	double tts = 0;//time to sync
 };
