@@ -190,6 +190,7 @@
     <ClInclude Include="Header\Entity.h" />
     <ClInclude Include="Header\GravityBoothComponent.h" />
     <ClInclude Include="Header\LobbyScene.h" />
+    <ClInclude Include="Header\Observer.h" />
     <ClInclude Include="Header\PickUpComponent.h" />
     <ClInclude Include="Header\PickUpSystem.h" />
     <ClInclude Include="Header\OnlineSystem.h" />

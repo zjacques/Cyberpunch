@@ -129,6 +129,14 @@ void AchievementsScene::stop()
 	for (auto& icon : m_icons)
 		Scene::systems()["Render"]->deleteComponent(&icon.getComponent("Sprite"));
 
+	Scene::systems()["Render"]->deleteComponent(&m_selectE.getComponent("Sprite"));
+	Scene::systems()["Render"]->deleteComponent(&m_selectE.getComponent("Des Sprite"));
+	Scene::systems()["Render"]->deleteComponent(&m_selectE.getComponent("Description Sprite"));
+
+	Scene::systems()["Animation"]->deleteComponent(&m_selectE.getComponent("A Animation"));
+	Scene::systems()["Animation"]->deleteComponent(&m_selectE.getComponent("B Animation"));
+	Scene::systems()["Animation"]->deleteComponent(&m_selectE.getComponent("C Animation"));
+
 	//Remove components from the systems
 	Scene::systems()["Render"]->deleteComponent(&m_bgE.getComponent("Sprite"));
 }

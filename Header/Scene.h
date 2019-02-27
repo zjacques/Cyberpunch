@@ -1,4 +1,5 @@
 #pragma once
+#include "Observer.h"
 #include "SDL.h"
 #include <iostream>
 #include "InputSystem.h"
@@ -7,7 +8,7 @@
 #include "AchievementComponent.h"
 
 //Base scene class, this will be inherited by every other scene
-class Scene
+class Scene : public Subject
 {
 public:
 	Scene() { m_stgt = ""; m_cs = false; }
