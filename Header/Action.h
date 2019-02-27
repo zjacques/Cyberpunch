@@ -410,7 +410,10 @@ public:
 
 		if (nearest->position.y < pos->position.y - 100)
 		{
-			m_input->m_current["YBTN"] = true;
+			if (dist(pos->position, nearest->position) < 150)
+			{
+				m_input->m_current["YBTN"] = true;
+			}
 		}
 		else if (nearest->position.y > pos->position.y + 200)
 		{
@@ -420,8 +423,13 @@ public:
 		{
 			return true;
 		}
-
 		return true;
+	}
+
+	//Euclidean distance function
+	float dist(Vector2f p1, Vector2f p2)
+	{
+		return sqrt((p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y));
 	}
 };
 
