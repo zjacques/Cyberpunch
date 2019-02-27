@@ -15,7 +15,7 @@
   {"Name":"Party Time", "Value":"False"},
   {"Name":"The Upside Down", "Value":"False"},
   {"Name":"Going Down", "Value":"False"},
-  {"Name":"Back to the Future", "Value":"False"},
+  {"Name":"Back to The Future", "Value":"False"},
   {"Name":"Mover", "Value":"False"}
   ]
 }

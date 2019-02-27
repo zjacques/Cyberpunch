@@ -64,6 +64,27 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 	m_map["Achievements BG"] = loadFromPath("GUI/Achievements_Screen.png", renderer);
 	m_map["Achievement Locked"] = loadFromPath("Achievements/Achievement_Locked.png", renderer);
 
+	std::vector<std::string> names({ "Punch First",
+		"Final Form",
+		"First Blood",
+		"Damage Dealer",
+		"Stunner",
+		"Eh Aye",
+		"Friends!",
+		"Bend it like Beckham",
+		"Last Woman Standing",
+		"Quitter...",
+		"Punching Bag",
+		"Party Time",
+		"The Upside Down",
+		"Going Down",
+		"Back to The Future",
+		"Mover" });
+
+	//Achievements
+	for (int i = 0; i < names.size(); i++)
+		m_map[names.at(i)] = loadFromPath("Achievements/" + names.at(i) + ".png", renderer);
+
 	//Game start animations
 	m_map["Timer 1"] = loadFromPath("GUI/1 Timer.png", renderer);
 	m_map["Timer 2"] = loadFromPath("GUI/2 Timer.png", renderer);

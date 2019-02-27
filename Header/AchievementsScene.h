@@ -15,6 +15,7 @@ public:
 	void draw(SDL_Renderer& renderer);
 
 private:
+	float m_animTimer; //Timer to play animations
 	Camera m_camera;
 	Entity m_bgE;
 	std::vector<Entity> m_icons;

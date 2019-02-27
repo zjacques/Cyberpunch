@@ -58,7 +58,7 @@ public:
 		}
 	}
 
-private:
 	std::map<std::string, bool> m_achievements;
+private:
 	json* m_data;
 };

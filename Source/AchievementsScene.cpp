@@ -1,17 +1,21 @@
 #include "AchievementsScene.h"
 #include "PositionComponent.h"
 #include "SpriteComponent.h"
+#include "AnimationComponent.h"
 #include "RenderSystem.h"
 
 AchievementsScene::AchievementsScene() :
 	m_bgE("BG"),
 	m_initialSetup(false),
-	m_camera(false)
+	m_camera(false),
+	m_animTimer(2.25f)
 {
 }
 
 void AchievementsScene::start()
 {
+	m_animTimer = 2.25f;
+
 	if (!m_initialSetup)
 	{
 		auto pos = new PositionComponent(960, 540);
@@ -19,20 +23,63 @@ void AchievementsScene::start()
 		auto sprite = new SpriteComponent(pos, Vector2f(1920, 1080), Vector2f(1920, 1080), Scene::resources().getTexture("Achievements BG"), 0);
 		m_bgE.addComponent("Sprite", sprite);
 
+		//Defining all the names for the vectors
+		std::vector<std::string> names({"Punch First",
+			"Final Form",
+			"First Blood",
+			"Damage Dealer",
+			"Stunner",
+			"Eh Aye",
+			"Friends!",
+			"Bend it like Beckham",
+			"Last Woman Standing",
+			"Quitter...",
+			"Punching Bag",
+			"Party Time",
+			"The Upside Down",
+			"Going Down",
+			"Back to The Future",
+			"Mover" });
+
+		for (auto name : names)
+			m_icons.push_back(Entity(name));
+
 		int index = 0;
 		for (int i = 0; i < 4; i++)
 		{
 			for (int j = 0; j < 4; j++)
 			{
-				m_icons.push_back(Entity("Icon"));
 				auto pos = new PositionComponent(672 + j * 192, 216 + i * 216);
 				m_icons.at(index).addComponent("Pos", pos);
-				auto s = new SpriteComponent(pos, Vector2f(50, 50), Vector2f(50, 50), Scene::resources().getTexture("Achievement Locked"), 1);
+				auto s = new SpriteComponent(pos, Vector2f(500, 50), Vector2f(50, 50), Scene::resources().getTexture("Achievement Locked"), 1);
 				m_icons.at(index).addComponent("Sprite", s);
 				index++;
 			}
 		}
 	}
+
+	auto achievements = Scene::achievements().m_achievements;
+
+	for (auto& ent : m_icons)
+	{
+		//If the achievement has been unlocked, set the sprite and animation for the icon
+		if (achievements[ent.m_ID])
+		{
+			std::cout << "Setting up animation for " << ent.m_ID << "\n";
+
+			std::vector<SDL_Rect> m_animRects;
+			for (int i = 0; i < 10; i++)
+				m_animRects.push_back({i*50, 0, 50, 50});
+
+			auto anim = new AnimationComponent(&ent.getComponent("Sprite"));
+			anim->addAnimation("Unlocked", Scene::resources().getTexture(ent.m_ID), m_animRects, 1.0f);
+			anim->playAnimation("Unlocked", false);
+
+			ent.addComponent("Animation", anim);
+			Scene::systems()["Animation"]->addComponent(anim);
+		}
+	}
+
 
 	for (auto& icon : m_icons)
 		Scene::systems()["Render"]->addComponent(&icon.getComponent("Sprite"));
@@ -52,6 +99,29 @@ void AchievementsScene::stop()
 
 void AchievementsScene::update(double dt)
 {
+	//Update the animations
+	Scene::systems()["Animation"]->update(dt);
+
+	m_animTimer -= dt;
+
+	if (m_animTimer <= 0)
+	{
+		//Player all the animations for the entities if they have one
+		for (auto& ent : m_icons)
+		{
+			//If the entity has an animation, play it
+			auto a = dynamic_cast<AnimationComponent*>(&ent.getComponent("Animation"));
+
+			if (nullptr != a)
+			{
+				a->getCurrentAnimation()->resetAnimation();
+				a->playAnimation("Unlocked", false);
+			}
+		}
+
+
+		m_animTimer = 2.25f;
+	}
 }
 
 void AchievementsScene::handleInput(InputSystem & input)
