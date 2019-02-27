@@ -16,17 +16,20 @@ GameScene::GameScene() :
 	m_camera(false),
 	m_gameStartTimer(3)
 {
-	m_numOfAIPlayers = 1;
+	m_numOfAIPlayers = 3;
 }
 
 void GameScene::start()
 {
 	if (m_audioCreated == false)
 	{
-		m_audio.addSound("GameMusic", Scene::resources().getMusic("Along Song"));
+		m_audio.addSound("GameMusic0", Scene::resources().getMusic("Along Song"));
+		m_audio.addSound("GameMusic1", Scene::resources().getMusic("Song 2"));
+		m_audio.addSound("GameMusic2", Scene::resources().getMusic("Laser"));
+		m_audio.addSound("GameMusic3", Scene::resources().getMusic("Pulse"));
 	}
 	Mix_VolumeMusic(40);
-	m_audio.playSound("GameMusic", true);
+	m_audio.playSound("GameMusic0", true);
 	m_rendererPtr = NULL;
 	m_gameOver = false;
 	m_endGameTimer = 10; //10 seconds to show the winner
@@ -43,7 +46,7 @@ void GameScene::start()
 	Scene::systems()["Dust"] = new DustSystem(&Scene::systems(), &m_allPlayers, &Scene::resources());
 	Scene::systems()["Respawn"] = new PlayerRespawnSystem();
 	static_cast<PickUpSystem*>(Scene::systems()["Pickup"])->setWorld(m_physicsWorld);
-	Scene::systems()["Booth"] = new DJBoothSystem(&Scene::resources(), &m_platforms, &m_bgEntity);
+	Scene::systems()["Booth"] = new DJBoothSystem(&Scene::resources(), &m_platforms, &m_bgEntity, &m_audio);
 
 	//Create background entity
 	auto bgPos = new PositionComponent(960 , 540);
@@ -56,6 +59,7 @@ void GameScene::start()
 	{
 		m_numOfLocalPlayers = PreGameScene::playerIndexes.localPlyrs.size();
 		m_numOfOnlinePlayers = PreGameScene::playerIndexes.onlinePlyrs.size();
+		m_numOfAIPlayers = PreGameScene::playerIndexes.botPlyrs.size();
 	}
 	else {
 		m_numOfLocalPlayers = SDL_NumJoysticks();
@@ -64,6 +68,7 @@ void GameScene::start()
 		PreGameScene::playerIndexes.localPlyrs.push_back(3);
 		PreGameScene::playerIndexes.localPlyrs.push_back(4);
 		m_numOfOnlinePlayers = 0;
+		m_numOfAIPlayers = PreGameScene::playerIndexes.botPlyrs.size();
 	}
 
 	//Create players, pass in the spawn locations to respawn players
@@ -77,18 +82,19 @@ void GameScene::start()
 	for (int i = 0; i < m_numOfLocalPlayers; i++)
 	{
 		int dex = PreGameScene::playerIndexes.localPlyrs[i];
-		m_localPlayers.push_back(createPlayer(dex, i, 600 + 150 * dex, 360, true, spawnPos));
+		m_localPlayers.push_back(createPlayer(dex, i, 400 + 150 * dex, 360, true, spawnPos));
 		m_allPlayers.emplace_back(m_localPlayers.at(i)); //Add local to all players vector
 	}
 	for (int i = 0; i < m_numOfOnlinePlayers; i++)
 	{
 		int dex = PreGameScene::playerIndexes.onlinePlyrs[i];
-		m_onlinePlayers.push_back(createPlayer(dex, 0, 600 + 150 * dex, 360, false, spawnPos));
+		m_onlinePlayers.push_back(createPlayer(dex, 0, 400 + 150 * dex, 360, false, spawnPos));
 		m_allPlayers.emplace_back(m_onlinePlayers.at(i)); //Add online players to all players vector
 	}
 	for (int i = 0; i < m_numOfAIPlayers; i++)
 	{
-		m_AIPlayers.push_back(createAI(1, 1000 + 150 * 1, 360, spawnPos));
+		int dex = PreGameScene::playerIndexes.botPlyrs[i];
+		m_AIPlayers.push_back(createAI(dex, 1000 + 150 * dex, 360, true, spawnPos));
 		m_allPlayers.emplace_back(m_AIPlayers.at(i)); //Add ai to all players vector
 	}
 	
@@ -529,7 +535,7 @@ Entity* GameScene::createDJB(int index, int posX, int posY)
 /// <param name="posX"></param>
 /// <param name="posY"></param>
 /// <returns></returns>
-Entity * GameScene::createAI(int index, int posX, int posY, std::vector<Vector2f> spawnPositions)
+Entity * GameScene::createAI(int index, int posX, int posY, bool local, std::vector<Vector2f> spawnPositions)
 {
 	auto ai = new Entity("AI");
 	auto pos = new PositionComponent(0, 0);

@@ -39,7 +39,7 @@ public:
 	void updateStartTimer(double dt);
 	void updateEndGameTimer(double dt);
 
-	Entity* createAI(int index, int posX, int posY, std::vector<Vector2f> spawnPositions);
+	Entity* createAI(int index, int posX, int posY, bool local, std::vector<Vector2f> spawnPositions);
 
 	void updateCamera(double dt);
 	Entity* createDJB(int index, int posX, int posY);
@@ -73,6 +73,7 @@ private:
 	//std::vector<OnlineInputSystem*> m_onlineInputs;
 	int m_numOfOnlinePlayers;
 	int m_numOfAIPlayers;
+	int m_songIndex;
 
 	//Physics variables
 	Box2DBridge m_physicsWorld;
