@@ -14,11 +14,11 @@ void MainMenuScene::start()
 {
 	if (m_audioCreated == false)
 	{
-		m_audio.addSound("MenuMusic", Scene::resources().getMusic("Good Song"));
-		m_audio.addSound("Neon", Scene::resources().getSFX("Neon"));
+		audio().addSound("MenuMusic", Scene::resources().getMusic("Good Song"));
+		audio().addSound("Neon", Scene::resources().getSFX("Neon"));
 	}
 	Mix_Volume(-1, 10);
-	m_audio.playSound("MenuMusic", true);
+	audio().playSound("MenuMusic", true);
 	//Setup the input using the first joycon connected
 	m_input.initialiseJoycon(0);
 
