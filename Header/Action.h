@@ -408,8 +408,20 @@ public:
 		//Cast nearest player entity from Ai component to Position component
 		auto nearest = dynamic_cast<PositionComponent *>(&comp->nearestPlayer->getComponent("Pos"));
 
-		//Return function true if player position is below(screen axis) the AI 
-		return nearest->position.y > pos->position.y - 50 ? true : false;
+		if (nearest->position.y < pos->position.y - 100)
+		{
+			m_input->m_current["YBTN"] = true;
+		}
+		else if (nearest->position.y > pos->position.y + 200)
+		{
+			m_input->m_current["STICKDOWN"] = true;
+		}
+		else
+		{
+			return true;
+		}
+
+		return true;
 	}
 };
 
@@ -490,27 +502,29 @@ public:
 			//If AI is right of player
 			if (nearest->position.x < pos->position.x)
 			{
-				if (comp->onEdgeRight)
-				{
-					m_input->m_current["YBTN"];
-					comp->onEdgeRight = false;
-				}
+
 				//Move left
 				m_input->m_current["STICKRIGHT"] = false;
 				m_input->m_current["STICKLEFT"] = true;
 			}
 			else //AI is left of player
 			{
-				if (comp->onEdgeLeft)
-				{
-					m_input->m_current["YBTN"];
-					comp->onEdgeLeft = false;
-				}
 				//Move right
 				m_input->m_current["STICKLEFT"] = false;
 				m_input->m_current["STICKRIGHT"] = true;
 			}
 			return true;
+		}
+
+		if (comp->onEdgeRight)
+		{
+			m_input->m_current["YBTN"];
+			comp->onEdgeRight = false;
+		}
+		else if (comp->onEdgeLeft)
+		{
+			m_input->m_current["YBTN"];
+			comp->onEdgeLeft = false;
 		}
 	}
 
