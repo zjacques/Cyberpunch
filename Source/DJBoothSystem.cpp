@@ -22,12 +22,18 @@ void DJBoothSystem::update(double dt)
 		{
 			m_currentBg++;
 			m_currentPc++;
+			m_currentTrack++;
 
 			if (m_currentBg > 3)
 				m_currentBg = 0;
 			
 			if (m_currentPc > 3)
 				m_currentPc = 0;
+
+			if (m_currentTrack > 3)
+				m_currentTrack = 0;
+
+			m_audioPtr->playSound("GameMusic" + std::to_string(m_currentTrack), true);
 
 
 			auto bgSprite = static_cast<SpriteComponent*>(&m_bgPtr->getComponent("Sprite"));

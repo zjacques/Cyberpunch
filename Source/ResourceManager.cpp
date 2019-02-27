@@ -132,6 +132,8 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 	m_sfx["Whoosh"] = SFXLoadFromPath("Audio/whoosh.ogg");
 	m_sfx["Neon"] = SFXLoadFromPath("Audio/neonBuzz.wav");
 	m_sfx["Neon2"] = SFXLoadFromPath("Audio/neon.wav");
+	m_music["Pulse"] = MusicLoadFromPath("Audio/Song3.ogg");
+	m_music["Laser"] = MusicLoadFromPath("Audio/Laser.ogg");
 
 	
 }
