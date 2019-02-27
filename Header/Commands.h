@@ -30,7 +30,7 @@ public:
 			if (net != NULL)
 			{
 				net->addCommand("JUMP");
-				net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y), Vector2f(phys->m_desiredVel.x, phys->m_desiredVel.y));
+				net->setSync(phys->posPtr->position-Vector2f(15,39), Vector2f(phys->m_currentVel.x, phys->m_currentVel.y), Vector2f(phys->m_desiredVel.x, phys->m_desiredVel.y));
 			}
 			//If the physics component can jump, then jump
 			if (phys->canJump())
