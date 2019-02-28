@@ -43,6 +43,8 @@ private:
 
 	int m_maxPlayers = 4;
 
+	bool m_netGame = false;
+
 	std::vector<Entity*> m_playerIcons;
 
 	Entity m_bg;

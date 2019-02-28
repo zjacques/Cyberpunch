@@ -16,6 +16,13 @@ PreGameScene::PreGameScene() :
 
 void PreGameScene::start()
 {
+	for (auto b : m_availablePlyrs)
+		b = true;
+	playerIndexes.localPlyrs.clear();
+	playerIndexes.onlinePlyrs.clear();
+	playerIndexes.botPlyrs.clear();
+
+
 	m_numOfPossibleLocalPlayers = SDL_NumJoysticks();
 
 	if (!m_setupBg)
@@ -35,6 +42,7 @@ void PreGameScene::start()
 
 	if (m_network->isConnected)
 	{
+		m_netGame = true;
 		if (m_network->m_isHost)
 		{
 			//m_input[0] gets to be player 1
@@ -105,6 +113,10 @@ void PreGameScene::stop()
 void PreGameScene::update(double dt)
 {
 	lastUpdate += dt;
+	if (m_netGame && !m_network->isConnected)
+	{
+		Scene::goToScene("Main Menu");
+	}
 	if (m_network->isConnected && lastUpdate > 0.5)
 	{
 		checkForUpdates();
@@ -152,7 +164,10 @@ void PreGameScene::handleInput(InputSystem & input)
 			//tell network you are leaving. It's only polite
 			//you'll have to tell it to shut down the lobby too probs....
 			if (m_network->isConnected) {
-				m_network->disconnect();
+				//vector<int> p = playerIndexes.localPlyrs;
+				//p.insert(p.end(), playerIndexes.onlinePlyrs.begin(), playerIndexes.onlinePlyrs.end());
+				vector<int> p{ 0,1,2,3 };
+				m_network->disconnect(p);
 			}
 			playerIndexes.localPlyrs.clear();
 			playerIndexes.onlinePlyrs.clear();
@@ -292,7 +307,9 @@ void PreGameScene::checkForUpdates()
 	for (auto num : players)
 	{
 		//if (num != playerIndexes.localPlyrs.back())
-		if(!(std::find(playerIndexes.localPlyrs.begin(), playerIndexes.localPlyrs.end(), num) != playerIndexes.localPlyrs.end()) && !(std::find(playerIndexes.botPlyrs.begin(), playerIndexes.botPlyrs.end(), num) == playerIndexes.botPlyrs.end()))
+		bool notInLocal = !(std::find(playerIndexes.localPlyrs.begin(), playerIndexes.localPlyrs.end(), num) != playerIndexes.localPlyrs.end());
+		bool notInBots = !(std::find(playerIndexes.botPlyrs.begin(), playerIndexes.botPlyrs.end(), num) != playerIndexes.botPlyrs.end());
+		if( notInLocal && notInBots)
 		{
 			playerIndexes.onlinePlyrs.push_back(num);
 			m_availablePlyrs[num] = false;

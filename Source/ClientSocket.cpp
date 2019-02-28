@@ -225,10 +225,10 @@ string ClientSocket::checkForIncomingMessages()
 			{
 				// ...generate a suitable error message...
 				string msg = "Lost connection to the server!";
-
+				return msg;
 				// ...and then throw it as an exception!
-				SocketException e(msg);
-				throw e;
+				//SocketException e(msg);
+				//throw e;
 			}
 
 		} // End of if (gotMessage != 0) section

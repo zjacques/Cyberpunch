@@ -2,6 +2,7 @@
 #include "Vector2f.h"
 #include "Entity.h"
 #include "PlayerPhysicsComponent.h"
+#include "OnlineSendComponent.h"
 #include "AudioComponent.h"
 
 class PlayerComponent : public Component
@@ -44,6 +45,13 @@ public:
 			m_newSpawn = &m_spawnLocations.at(rand() % m_spawnLocations.size()); //Number between 0 and the size of the amount of spawn points	
 		}
 		static_cast<AudioComponent&>(m_playerPtr->getComponent("Audio")).playSound("KnockOut", false);
+		auto net = static_cast<OnlineSendComponent*>(&m_playerPtr->getComponent("Send"));
+		if (net != NULL)
+		{
+			auto phys = static_cast<PlayerPhysicsComponent*>(&m_playerPtr->getComponent("Player Physics"));
+			net->addCommand("RESPAWN");
+			net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y), Vector2f(phys->m_desiredVel.x, phys->m_desiredVel.y));
+		}
 	}
 
 	void spawnPlayer()

@@ -30,6 +30,7 @@ public:
 	Entity* getPickupEntity() { return m_pickupEntity; }
 	PhysicsComponent* getBody() { return m_body; };
 	bool m_end;
+	int m_currentPos;
 private:
 	float m_timeLive;
 	float m_timeInBooth = 10;
@@ -46,6 +47,5 @@ private:
 	Entity* m_playerToTele, *m_pickupEntity;
 	bool m_teleport;
 	bool m_back;
-	int m_currentPos;
 
 };
