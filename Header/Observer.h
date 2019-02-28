@@ -40,6 +40,7 @@ namespace achi
 				observer->onNotify(entity, event);
 			}
 		}
+		static bool m_exit;
 		static int m_localPlayers;
 		static std::vector<Observer*> obs;
 		static Component* m_AchisPtr;
