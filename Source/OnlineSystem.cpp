@@ -78,7 +78,13 @@ void OnlineSystem::ReceiveCommands()
 	string receivedMessage = m_Socket->checkForIncomingMessages();
 
 	 //If so then...
-	if (receivedMessage != "")
+	if (receivedMessage == "Lost connection to the server!")
+	{
+		delete m_Socket;
+		isConnected = false;
+		m_isHost = false;
+	}
+	else if (receivedMessage != "")
 	{
 		json currentPacket = json::parse(receivedMessage);
 		if (currentPacket["type"] == "START")
