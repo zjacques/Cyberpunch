@@ -25,7 +25,7 @@ public:
 
 	void run()
 	{
-		std::cout << "Flipping Grvaity booth\n";
+		notify(m_pickUp, GRAV_FLIP);
 		bgSwitch = true;
 		flipGrav();
 
