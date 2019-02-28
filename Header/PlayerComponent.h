@@ -2,6 +2,7 @@
 #include "Vector2f.h"
 #include "Entity.h"
 #include "PlayerPhysicsComponent.h"
+#include "OnlineSendComponent.h"
 #include "AudioComponent.h"
 
 class PlayerComponent : public Component
@@ -47,7 +48,9 @@ public:
 		auto net = static_cast<OnlineSendComponent*>(&m_playerPtr->getComponent("Send"));
 		if (net != NULL)
 		{
+			auto phys = static_cast<PlayerPhysicsComponent*>(&m_playerPtr->getComponent("Player Physics"));
 			net->addCommand("RESPAWN");
+			net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y), Vector2f(phys->m_desiredVel.x, phys->m_desiredVel.y));
 		}
 	}
 

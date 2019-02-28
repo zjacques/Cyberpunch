@@ -38,6 +38,9 @@ public:
 
 	void startGame();
 
+	void spawnPickup(int spawnPosition);
+	int pickupLocation();
+
 	void disconnect();
 
 	bool gameStarted = false;
@@ -54,4 +57,5 @@ private:
 	vector<OnlineInputComponent*> m_receivingPlayers;
 	double syncRate = 0.5;
 	double tts = 0;//time to sync
+	int p_spawnPickup = -1;
 };

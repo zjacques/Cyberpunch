@@ -84,8 +84,12 @@ void OnlineSystem::ReceiveCommands()
 		if (currentPacket["type"] == "START")
 		{
 			gameStarted = true;
-		}else
-		if (currentPacket["type"] == "COMMANDS")
+		}
+		else if (currentPacket["type"] == "PICKUP")
+		{
+			p_spawnPickup = currentPacket["pos"];
+		}
+		else if (currentPacket["type"] == "COMMANDS")
 		{
 			for (auto& plyr : m_receivingPlayers)
 			{
@@ -262,6 +266,19 @@ void OnlineSystem::startGame()
 	string jsonString = "{\"type\" : \"START\"}";
 	m_Socket->sendString(jsonString);
 	gameStarted = true;
+}
+
+void OnlineSystem::spawnPickup(int spawnPosition)
+{
+	string jsonString = "{\"type\" : \"PICKUP\", \"pos\":"+toString(spawnPosition)+"}";
+	m_Socket->sendString(jsonString);
+}
+
+int OnlineSystem::pickupLocation()
+{
+	int retval = p_spawnPickup;
+	p_spawnPickup = -1;
+	return retval;
 }
 
 void OnlineSystem::disconnect()
