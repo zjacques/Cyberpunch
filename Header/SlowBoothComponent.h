@@ -29,6 +29,8 @@ public:
 	void update(double dt)
 	{
 		//If run was called
+		//if active will start slowing down dt this is time depended and will gradually slow down
+		//and gradually speed up again
 		if (m_active)
 		{
 			m_timer -= dt;

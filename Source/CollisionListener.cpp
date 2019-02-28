@@ -63,7 +63,11 @@ void CollisionListener::BeginContact(b2Contact * contact)
 		playerPhys->setCanJump(true);
 		playerPhys->setOnPlayer(true);
 	}
-		
+	
+	/// <summary>
+	/// Collision for the Player and the pickup, after collision triggers responses 
+	/// </summary>
+	/// <param name="contact"></param>
 	if ((dataA->Tag() == "Player Body" && dataB->Tag() == "Pickup")
 		|| (dataB->Tag() == "Player Body" && dataA->Tag() == "Pickup"))
 	{
@@ -76,6 +80,10 @@ void CollisionListener::BeginContact(b2Contact * contact)
 		//If player hits pickup, set status as dj
 		p->setDJ(true);
 	}
+	/// <summary>
+	/// Collision for when the player hits the booth, after collision triggers responses
+	/// </summary>
+	/// <param name="contact"></param>
 	if ((dataA->Tag() == "Attack" && dataB->Tag() == "Booth")
 		|| (dataB->Tag() == "Attack" && dataA->Tag() == "Booth"))
 	{
