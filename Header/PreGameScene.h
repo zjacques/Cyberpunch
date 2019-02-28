@@ -27,7 +27,7 @@ public:
 private:
 	void checkForUpdates();
 	vector<bool> m_availablePlyrs;
-	vector<pair<InputComponent, int>> m_input;
+	vector<pair<InputComponent*, int>> m_input;
 	//vector<bool> m_hasJoined;
 	int m_numOfPossibleLocalPlayers;
 	bool isGameOnline = false;

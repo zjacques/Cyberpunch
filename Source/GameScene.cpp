@@ -67,12 +67,14 @@ void GameScene::start()
 		m_numOfAIPlayers = PreGameScene::playerIndexes.botPlyrs.size();
 	}
 	else {
-		m_numOfLocalPlayers = SDL_NumJoysticks();
-		PreGameScene::playerIndexes.localPlyrs.push_back(1);
-		PreGameScene::playerIndexes.localPlyrs.push_back(2);
-		PreGameScene::playerIndexes.localPlyrs.push_back(3);
-		PreGameScene::playerIndexes.localPlyrs.push_back(4);
-		m_numOfOnlinePlayers = 0;
+		//m_numOfLocalPlayers = SDL_NumJoysticks();
+		//PreGameScene::playerIndexes.localPlyrs.push_back(1);
+		//PreGameScene::playerIndexes.localPlyrs.push_back(2);
+		//PreGameScene::playerIndexes.localPlyrs.push_back(3);
+		//PreGameScene::playerIndexes.localPlyrs.push_back(4);
+		//m_numOfOnlinePlayers = 0;		
+		m_numOfLocalPlayers = PreGameScene::playerIndexes.localPlyrs.size();
+		m_numOfOnlinePlayers = PreGameScene::playerIndexes.onlinePlyrs.size();
 		m_numOfAIPlayers = PreGameScene::playerIndexes.botPlyrs.size();
 	}
 

@@ -347,13 +347,6 @@ void ClientSocket::sendString(string stringToSend)
 			//pBuffer = _strdup(stringToSend.c_str());
 			inputLength = strlen(pBuffer) + 1;
 			int ret = 0;
-			//int size = *(&pBuffer + 1) - pBuffer; 
-			//delete pBuffer;
-			//pBuffer = new char[bufferSize];
-			/*int size1 = sizeof(pBuffer);
-			int size2 = sizeof(pBuffer[0]);
-			char a = pBuffer[250];
-			int size3 = size1 / size2;*/
 			// ...attempt to send the message to the server
 			ret = SDLNet_TCP_Send(clientSocket, (void *)pBuffer, inputLength);
 			cout << ret << endl;
