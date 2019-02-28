@@ -22,6 +22,7 @@ void PreGameScene::start()
 	playerIndexes.onlinePlyrs.clear();
 	playerIndexes.botPlyrs.clear();
 
+	m_input.clear();
 
 	m_numOfPossibleLocalPlayers = SDL_NumJoysticks();
 
@@ -233,7 +234,7 @@ void PreGameScene::handleInput(InputSystem & input)
 				//remove this player from the game if they are in
 				if (m_input[i].second > 0)//controllers not joined are set to -1
 				{
-					m_availablePlyrs[m_input[i].second] = false;
+					m_availablePlyrs[m_input[i].second] = true;
 					playerIndexes.localPlyrs.erase(std::remove(playerIndexes.localPlyrs.begin(), playerIndexes.localPlyrs.end(), m_input[i].second), playerIndexes.localPlyrs.end());
 					m_input[i].second = -1;
 					//tell the network you've left
