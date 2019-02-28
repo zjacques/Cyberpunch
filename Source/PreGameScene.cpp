@@ -169,6 +169,7 @@ void PreGameScene::handleInput(InputSystem & input)
 				//p.insert(p.end(), playerIndexes.onlinePlyrs.begin(), playerIndexes.onlinePlyrs.end());
 				vector<int> p{ 0,1,2,3 };
 				m_network->disconnect(p);
+				m_network->m_isHost = false;
 			}
 			playerIndexes.localPlyrs.clear();
 			playerIndexes.onlinePlyrs.clear();
