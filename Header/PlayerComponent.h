@@ -7,17 +7,18 @@
 class PlayerComponent : public Component
 {
 public:
-	PlayerComponent(std::vector<Vector2f> locations, Entity* player) :
+	PlayerComponent(std::vector<Vector2f> locations, Entity* player, int index) :
 		m_dead(false),
-	  m_lives(3),
+		m_lives(3),
 		m_newSpawn(nullptr),
 		m_playerPtr(player),
 		m_spawnLocations(locations),
 		m_respawn(false),
 		m_respawning(false),
 		m_winner(false),
-		m_dmgDealt(975),
-		m_dmgTaken(975),
+		m_playerIndex(index),
+		m_dmgDealt(0),
+		m_dmgTaken(0),
 		m_supersUsed(0)
 	{
 
@@ -55,6 +56,7 @@ public:
 		auto phys = static_cast<PlayerPhysicsComponent*>(&m_playerPtr->getComponent("Player Physics"));
 		//Set the players position to the new position
 		phys->m_body->setPosition(m_newSpawn->x, m_newSpawn->y);
+		phys->m_jumpSensor->setPosition(m_newSpawn->x, m_newSpawn->y);
 		phys->damagePercentage() = 0; //Reset the damage percentage
 	}
 
@@ -69,6 +71,7 @@ public:
 	bool& isDJ() { return inDJBooth; }
 	void setDJ(bool c) { inDJBooth = c; }
 	int m_dmgTaken, m_dmgDealt, m_timesStunned, m_timesSuperStunned, m_supersUsed;
+	int m_playerIndex;
 private:
 	float m_spawnTimer;
 	Entity * m_playerPtr;
