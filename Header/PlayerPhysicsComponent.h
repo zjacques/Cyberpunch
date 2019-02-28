@@ -20,7 +20,7 @@ public:
 	void beginSuper();
 	void endSuper();
 	void endSuperStun();
-	void damage(int dmg) {m_dmgPercentage += m_stunnedBySuper == false ? dmg : 0; }
+	void damage(int dmg) {m_dmgPercentage += dmg; }
 	void addSuper(int amount);
 	void changeBodyType(b2BodyType type);
 	void applyDamageImpulse(float x, float y);
