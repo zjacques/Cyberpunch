@@ -217,6 +217,7 @@ public:
 			auto e = dynamic_cast<AIComponent *>(&m_entity->getComponent("AI"));
 			//Assign nearest player to variable in the AI 
 			e->nearestPlayer = nearest;
+			//delete nearest;
 			return true;
 		}
 		return false;

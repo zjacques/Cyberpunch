@@ -139,6 +139,7 @@ void PlayerPhysicsComponent::moveUp()
 {
 	m_currentVel.y = 0;
 	m_currentVel.y -= m_gravFlipped ? -m_jumpSpeed : m_jumpSpeed;
+	m_canJump = false;
 }
 
 void PlayerPhysicsComponent::moveDown()
