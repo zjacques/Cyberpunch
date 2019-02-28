@@ -79,6 +79,13 @@ void PlayerPhysicsComponent::moveRight()
 	m_movingL = false;
 }
 
+void PlayerPhysicsComponent::addSuper(int amount)
+{
+	m_superPercentage += amount;
+
+	m_superPercentage = m_superPercentage > 100 ? 100 : m_superPercentage;
+}
+
 void PlayerPhysicsComponent::applyDamageImpulse(float x, float y)
 {
 	auto imp = Vector2f(x, y);
@@ -159,6 +166,7 @@ void PlayerPhysicsComponent::endSuper()
 {
 	m_supered = false;
 	m_superTime = 0;
+	m_superPercentage = 0;
 }
 
 void PlayerPhysicsComponent::endSuperStun()

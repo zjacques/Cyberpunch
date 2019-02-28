@@ -219,6 +219,11 @@ public:
 				net->addCommand("UPPERCUT");
 				net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y), Vector2f(phys->m_desiredVel.x, phys->m_desiredVel.y));
 			}
+
+			auto a = static_cast<AnimationComponent*>(&e.getComponent("Animation"));
+			a->playAnimation("Uppercut", false);
+			static_cast<SpriteComponent*>(&e.getComponent("Sprite"))->setTexture(a->getCurrentAnimation()->getTexture());
+
 			auto tag = "Attack";
 			auto offset = Vector2f(phys->isMovingLeft() ? -37.5f : 37.5f, 0);
 
