@@ -12,13 +12,10 @@ void AchievementsListener::onNotify(Entity * ent, Event event)
 		if (static_cast<PlayerComponent*>(&ent->getComponent("Player"))->m_dmgTaken >= 1000)
 		{
 			static_cast<AchievementComponent*>(achi::Listener::m_AchisPtr)->unlockAchievement("Punching Bag");
-
-			if (static_cast<PlayerComponent*>(&ent->getComponent("Player"))->m_hitWith == "Punch" &&
-				static_cast<PlayerComponent*>(&ent->getComponent("Player"))->m_hitBy->m_ID != "AI")
-			{
-				static_cast<AchievementComponent*>(achi::Listener::m_AchisPtr)->unlockAchievement("Punch First");
-			}
 		}
+		break;
+	case PUNCH_FIRST:
+		static_cast<AchievementComponent*>(achi::Listener::m_AchisPtr)->unlockAchievement("Punch First");
 		break;
 	case DAMAGE_DEALT:
 		//If the player has dealt 1000 damage, unlock the achievement for it
