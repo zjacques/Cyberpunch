@@ -21,7 +21,7 @@ public:
 		if (net != NULL)
 		{
 			auto phys = static_cast<PlayerPhysicsComponent*>(&entity->getComponent("Player Physics"));
-			net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y), Vector2f(phys->m_desiredVel.x, phys->m_desiredVel.y));
+			net->setSync(phys->m_body->getPosition(), Vector2f(phys->m_currentVel.x, phys->m_currentVel.y), Vector2f(phys->m_desiredVel.x, phys->m_desiredVel.y));
 		}
 
 		if (isButtonPressed("YBTN"))

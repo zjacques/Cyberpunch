@@ -141,7 +141,7 @@ void LobbyScene::handleButtonPressed()
 {
 	//placeholder
 
-	if (m_network->joinLobby(1))//plz to always be nonzero
+	if (m_currentIndex != 0 && m_network->joinLobby(m_currentIndex))//plz to always be nonzero
 	{
 		Scene::goToScene("PreGame");
 	}
