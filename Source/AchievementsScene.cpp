@@ -106,7 +106,6 @@ void AchievementsScene::start()
 		}
 	}
 
-
 	for (auto& icon : m_icons)
 		Scene::systems()["Render"]->addComponent(&icon.getComponent("Sprite"));
 
@@ -160,7 +159,6 @@ void AchievementsScene::update(double dt)
 				a->playAnimation("Unlocked", false);
 			}
 		}
-
 
 		m_animTimer = 2.25f;
 	}
@@ -240,5 +238,5 @@ void AchievementsScene::handleInput(InputSystem & input)
 
 void AchievementsScene::draw(SDL_Renderer & renderer)
 {
-	static_cast<RenderSystem*>(Scene::systems()["Render"])->render(renderer, m_camera);;
+	static_cast<RenderSystem*>(Scene::systems()["Render"])->render(renderer, m_camera);
 }

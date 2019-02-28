@@ -30,6 +30,7 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 	m_map["Game BG1"] = loadFromPath("Backgrounds-02.png", renderer);
 	m_map["Game BG2"] = loadFromPath("Backgrounds-03.png", renderer);
 	m_map["Game BG3"] = loadFromPath("Backgrounds-04.png", renderer);
+	m_map["Credits"] = loadFromPath("credits.png", renderer);
 
 	auto colours = std::vector<std::string>({ "Green", "Blue", "Orange", "Pink" });
 

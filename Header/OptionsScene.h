@@ -1,8 +1,13 @@
 #ifndef OPTIONSSCENE_H
 #define OPTIONSSCENE_H
 
+#include "Camera.h"
 #include "Scene.h"
-#include "../Libraries/SDL_TTF/include/SDL_ttf.h"
+#include "Entity.h"
+
+#include "PositionComponent.h"
+#include "SpriteComponent.h"
+#include "RenderSystem.h"
 
 class OptionsScene : public Scene
 {
@@ -15,6 +20,10 @@ public:
 	void draw(SDL_Renderer& renderer);
 	void handleInput(InputSystem& input);
 private:
+	Camera m_camera;
+	InputComponent* m_input;	
+	Entity * m_txtImage;
+	bool m_initialSetup;
 };
 
 #endif
