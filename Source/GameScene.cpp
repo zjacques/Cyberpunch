@@ -98,11 +98,11 @@ void GameScene::start()
 		m_onlinePlayers.push_back(createPlayer(dex, 0, 400 + 150 * dex, 360, false, spawnPos));
 		m_allPlayers.emplace_back(m_onlinePlayers.at(i)); //Add online players to all players vector
 	}
-	m_numOfAIPlayers = 1;
+	//m_numOfAIPlayers = 1;
 	for (int i = 0; i < m_numOfAIPlayers; i++)
 	{
-		//int dex = PreGameScene::playerIndexes.botPlyrs[i];
-		m_AIPlayers.push_back(createAI(i, 1000 + 150 * i, 360, true, spawnPos));
+		int dex = PreGameScene::playerIndexes.botPlyrs[i];
+		m_AIPlayers.push_back(createAI(dex, 1000 + 150 * dex, 360, true, spawnPos));
 		m_allPlayers.emplace_back(m_AIPlayers.at(i)); //Add ai to all players vector
 	}
 	
