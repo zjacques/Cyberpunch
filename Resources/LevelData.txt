@@ -23,12 +23,12 @@
     {"X":3500, "Y":430, "W":300, "H":25, "Tag":"Platform", "Angle":0},
     {"X":2970, "Y":360, "W":300, "H":25, "Tag":"Platform", "Angle":0},
 
-    {"X":4500, "Y":430, "W":400, "H":25, "Tag":"Platform", "Angle":0},
+    {"X":4500, "Y":470, "W":400, "H":25, "Tag":"Platform", "Angle":0},
     {"X":4300, "Y":330, "W":300, "H":25, "Tag":"Platform", "Angle":0},
     {"X":5270, "Y":860, "W":300, "H":25, "Tag":"Platform", "Angle":0},
-    {"X":4700, "Y":630, "W":400, "H":25, "Tag":"Platform", "Angle":0},
+    {"X":4700, "Y":680, "W":800, "H":25, "Tag":"Platform", "Angle":0},
     {"X":4500, "Y":830, "W":300, "H":25, "Tag":"Platform", "Angle":0},
-    {"X":4970, "Y":560, "W":300, "H":25, "Tag":"Platform", "Angle":0}
+    {"X":4970, "Y":320, "W":600, "H":25, "Tag":"Platform", "Angle":0}
 
 
   ],

@@ -34,7 +34,7 @@ public:
 				secondPair.m_offsets.push_back(static_cast<PositionComponent&>(m_entities->at(i)->getComponent("Pos")).position - secondPoint);
 				secondPair.m_platforms.push_back(m_entities->at(i));
 			}
-			else if (i < 21)
+			else if (i < 25)
 			{
 				thirdPair.m_offsets.push_back(static_cast<PositionComponent&>(m_entities->at(i)->getComponent("Pos")).position - thirdPoint);
 				thirdPair.m_platforms.push_back(m_entities->at(i));
