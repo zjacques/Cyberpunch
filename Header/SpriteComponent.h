@@ -47,6 +47,7 @@ public:
 
 	void setSourceRect(SDL_Rect size) { m_src = size; };
 	void setDestRect(SDL_Rect size) { m_dst = size; }
+	void setPosPtr(Component* pos) { m_posPtr = pos; }
 
 	//Getters
 	Vector2f& getPosition() { return static_cast<PositionComponent*>(m_posPtr)->position; }

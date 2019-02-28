@@ -6,16 +6,30 @@ MainMenuScene::MainMenuScene() :
 	m_currentIndex(0),
 	m_addedInput(false),
 	m_camera(false), //Dont use camera
-	m_audioCreated(false)
+	m_audioCreated(false),
+	m_logo("Logo")
 {
 }
 
 void MainMenuScene::start()
 {
+	m_logoTimer = 2.75f;
 	if (m_audioCreated == false)
 	{
 		audio().addSound("MenuMusic", Scene::resources().getMusic("Good Song"));
 		audio().addSound("Neon", Scene::resources().getSFX("Neon"));
+
+		auto pos = new PositionComponent(960, 190);
+		m_logo.addComponent("Pos", pos);
+		m_logo.addComponent("Sprite", new SpriteComponent(pos, Vector2f(6000, 250), Vector2f(500, 250), NULL, 1));
+		auto anim = new AnimationComponent(&m_logo.getComponent("Sprite"));
+		std::vector<SDL_Rect> frames;
+		for (int i = 0; i < 12; i++)
+			frames.push_back({500 * i, 0, 500, 250});
+		anim->addAnimation("Logo", Scene::resources().getTexture("Logo"), frames, 0.3f);
+		anim->playAnimation("Logo", false);
+		m_logo.addComponent("Animation", anim);
+
 	}
 	Mix_Volume(-1, 10);
 	audio().playSound("MenuMusic", true);
@@ -28,6 +42,10 @@ void MainMenuScene::start()
 	m_buttons.push_back(createButton(Vector2f(960, 445 + 135 * 2), Scene::resources().getTexture("Achievements Button"), "Achievements", m_currentIndex == 2 ? true : false));
 	m_buttons.push_back(createButton(Vector2f(960, 445 + 135 * 3), Scene::resources().getTexture("Options Button"), "Options", m_currentIndex == 3 ? true : false));
 	m_buttons.push_back(createButton(Vector2f(960, 445 + 135 * 4), Scene::resources().getTexture("Exit Button"), "Exit", m_currentIndex == 4 ? true : false));
+
+
+	Scene::systems()["Render"]->addComponent(&m_logo.getComponent("Sprite"));
+	Scene::systems()["Animation"]->addComponent(&m_logo.getComponent("Animation"));
 
 	m_audioCreated = true;
 }
@@ -42,6 +60,10 @@ void MainMenuScene::stop()
 		Scene::systems()["Animation"]->deleteComponent(&btn->getComponent("Animation"));
 		Scene::systems()["Animation"]->deleteComponent(&btn->getComponent("Text Animation"));
 	}
+
+	//Remove logo from the systems
+	Scene::systems()["Render"]->deleteComponent(&m_logo.getComponent("Sprite"));
+	Scene::systems()["Animation"]->deleteComponent(&m_logo.getComponent("Animation"));
 
 	//Only stop the menu music if we are going into the game
 	if(Scene::getStgt() == "Game")
@@ -98,6 +120,15 @@ Entity* MainMenuScene::createButton(Vector2f position, SDL_Texture* selectedText
 void MainMenuScene::update(double dt)
 {
 	Scene::systems()["Animation"]->update(dt);
+
+	m_logoTimer -= dt;
+
+	if (m_logoTimer <= 0)
+	{
+		m_logoTimer = 2.75f;
+		static_cast<AnimationComponent*>(&m_logo.getComponent("Animation"))->getCurrentAnimation()->resetAnimation();
+		static_cast<AnimationComponent*>(&m_logo.getComponent("Animation"))->playAnimation("Logo", false);
+	}
 }
 
 void MainMenuScene::draw(SDL_Renderer & renderer)
