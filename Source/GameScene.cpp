@@ -650,6 +650,7 @@ Entity * GameScene::createPlayer(int playerNumber,int controllerNumber, int posX
 
 	//Add the head picture to the playe rso the ui can get it from the player and display it in the correct corner
 	p->addComponent("Portrait", new SpriteComponent(nullptr, Vector2f(59, 65), Vector2f(59, 65), Scene::resources().getTexture("Head" + std::to_string(playerNumber)), 11));
+	static_cast<SpriteComponent*>(&p->getComponent("Portrait"))->setScale((playerNumber == 0 || playerNumber == 2) ? -1 : 1, 1);
 
 	return p; //Return the created entity
 }
@@ -803,6 +804,7 @@ Entity * GameScene::createAI(int index, int posX, int posY, bool local, std::vec
 	ai->addComponent("Player Physics", phys);
 
 	ai->addComponent("Portrait", new SpriteComponent(nullptr, Vector2f(59, 65), Vector2f(59, 65), Scene::resources().getTexture("Head" + std::to_string(index)), 11));
+	static_cast<SpriteComponent*>(&ai->getComponent("Portrait"))->setScale((index == 0 || index == 2) ? -1 : 1, 1);
 
 	//Add the physics component to the playe rphysics system
 	Scene::systems()["Player Physics"]->addComponent(phys);
