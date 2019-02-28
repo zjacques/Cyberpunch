@@ -44,7 +44,7 @@ void PreGameScene::start()
 				playerIndexes.onlinePlyrs.push_back(num);
 				m_availablePlyrs[num] = false;
 
-				playerIndexes.botPlyrs.push_back(num);
+				//playerIndexes.botPlyrs.push_back(num);
 			}
 		}
 

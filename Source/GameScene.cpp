@@ -773,6 +773,17 @@ Entity * GameScene::createAI(int index, int posX, int posY, bool local, std::vec
 	//Create the joint between the player and the jump sensor
 	phys->createJoint(m_physicsWorld);
 
+
+	//Try to add a sender to the server
+	auto netSys = static_cast<OnlineSystem*>(Scene::systems()["Network"]);
+	if (netSys->isConnected && local)
+	{
+		auto net = new OnlineSendComponent();
+		net->m_playerNumber = index;
+		ai->addComponent("Send", net);
+		netSys->addSendingPlayer(net);
+	} //if it can't connect to the server, it didn't need to be online anyway
+
 	//Add the components to the entity
 	ai->addComponent("Player Physics", phys);
 
