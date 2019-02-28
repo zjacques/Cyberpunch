@@ -44,7 +44,7 @@ void PreGameScene::start()
 				playerIndexes.onlinePlyrs.push_back(num);
 				m_availablePlyrs[num] = false;
 
-				playerIndexes.botPlyrs.push_back(num);
+				//playerIndexes.botPlyrs.push_back(num);
 			}
 		}
 
@@ -115,7 +115,10 @@ void PreGameScene::handleInput(InputSystem & input)
 		else if (m_input[0].first->isButtonPressed("ABTN"))
 		{
 			//tell network you are leaving. It's only polite
-			m_network->disconnect();
+			//you'll have to tell it to shut down the lobby too probs....
+			if (m_network->isConnected) {
+				m_network->disconnect();
+			}
 			playerIndexes.localPlyrs.clear();
 			playerIndexes.onlinePlyrs.clear();
 			playerIndexes.botPlyrs.clear();
@@ -199,10 +202,11 @@ void PreGameScene::checkForUpdates()
 {
 	vector<int> players = m_network->getPlayers();
 	playerIndexes.onlinePlyrs.clear();
-	playerIndexes.botPlyrs.clear();
+	//playerIndexes.botPlyrs.clear();
 	for (auto num : players)
 	{
-		if (num != playerIndexes.localPlyrs.back())
+		//if (num != playerIndexes.localPlyrs.back())
+		if(!(std::find(playerIndexes.localPlyrs.begin(), playerIndexes.localPlyrs.end(), num) != playerIndexes.localPlyrs.end()) && !(std::find(playerIndexes.botPlyrs.begin(), playerIndexes.botPlyrs.end(), num) == playerIndexes.botPlyrs.end()))
 		{
 			playerIndexes.onlinePlyrs.push_back(num);
 			m_availablePlyrs[num] = false;
