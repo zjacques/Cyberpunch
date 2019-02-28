@@ -19,7 +19,8 @@ enum Event
 	KICK_DEATH,
 	ONLINE_MATCH_ENDED,
 	SUPER_ACTIVATED,
-	AI_DEATH
+	AI_DEATH,
+	PUNCH_FIRST
 };
 
 class Observer

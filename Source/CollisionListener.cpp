@@ -246,6 +246,9 @@ void CollisionListener::checkPlayerAttack(b2Contact * contact)
 		otherPlayerVariables->m_hitBy = static_cast<Entity*>(dataA->Tag() == "Attack" ? dataA->Data() : dataB->Data());
 		otherPlayerVariables->m_hitWith = attackHit->m_currentAttackTag;
 
+		if (otherPlayerVariables->m_hitWith == "Punch" && attackingP->m_ID != "AI")
+			notify(nullptr, PUNCH_FIRST);
+
 		//If you attack a player that isnt super stunned, add to the super percentage
 		if(otherPPhys->superStunned() == false)
 			attackingPPhys->addSuper(dmgP); //Add damage to our super percentage
