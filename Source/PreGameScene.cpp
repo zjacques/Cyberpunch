@@ -130,8 +130,24 @@ void PreGameScene::handleInput(InputSystem & input)
 				if (m_availablePlyrs[j])
 				{
 					m_availablePlyrs[j] = false;
-					playerIndexes.botPlyrs.push_back(j);
+					playerIndexes.botPlyrs.push_back(j); 
 					playersChanged = true;
+					break;
+				}
+			}
+		}
+		else if (m_input[0].first->isButtonPressed("YBTN"))
+		{
+			//remove AI
+			for (int j = m_availablePlyrs.size(); j > 0; j--)
+			{
+				if (std::find(playerIndexes.botPlyrs.begin(), playerIndexes.botPlyrs.end(), j) != playerIndexes.botPlyrs.end() && !m_availablePlyrs[j])
+				{
+					m_availablePlyrs[j] = true;
+					playerIndexes.botPlyrs.push_back(j);
+					playerIndexes.botPlyrs.erase(std::remove(playerIndexes.botPlyrs.begin(), playerIndexes.botPlyrs.end(), j), playerIndexes.botPlyrs.end());
+					playersChanged = true;
+					break;
 				}
 			}
 		}
