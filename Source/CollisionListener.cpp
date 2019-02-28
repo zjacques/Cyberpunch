@@ -53,6 +53,16 @@ void CollisionListener::BeginContact(b2Contact * contact)
 			static_cast<DustTriggerComponent*>(&player->getComponent("Dust Trigger"))->setCreate();
 		}
 	}
+
+	if ((dataA->Tag() == "Jump Sensor" && dataB->Tag() == "Player Body")
+		|| (dataB->Tag() == "Jump Sensor" && dataA->Tag() == "Player Body"))
+	{
+		auto player = static_cast<Entity*>(dataA->Tag() == "Jump Sensor" ? dataA->Data() : dataB->Data());
+		auto playerPhys = static_cast<PlayerPhysicsComponent*>(&player->getComponent("Player Physics"));
+
+		playerPhys->setCanJump(true);
+		playerPhys->setOnPlayer(true);
+	}
 		
 	if ((dataA->Tag() == "Player Body" && dataB->Tag() == "Pickup")
 		|| (dataB->Tag() == "Player Body" && dataA->Tag() == "Pickup"))
@@ -60,7 +70,6 @@ void CollisionListener::BeginContact(b2Contact * contact)
 		auto player = static_cast<Entity*>(dataA->Tag() == "Player Body" ? dataA->Data() : dataB->Data());
 		auto pickUp = static_cast<Entity*>(dataB->Tag() == "Pickup" ? dataB->Data() : dataA->Data());
 
-		std::cout << "Hit" << std::endl;
 		static_cast<PickUpComponent*>(&pickUp->getComponent("PickUp"))->teleport(player);
 		static_cast<AudioComponent&>(pickUp->getComponent("Audio")).playSound("PickUp 1", false);
 		auto p = static_cast<PlayerComponent*>(&player->getComponent("Player"));
@@ -106,6 +115,16 @@ void CollisionListener::EndContact(b2Contact * contact)
 		auto phys = static_cast<PlayerPhysicsComponent*>(&player->getComponent("Player Physics"));
 		phys->setCanJump(false);
 		phys->setCanFall(false);
+	}
+
+	if ((dataA->Tag() == "Jump Sensor" && dataB->Tag() == "Player Body")
+		|| (dataB->Tag() == "Jump Sensor" && dataA->Tag() == "Player Body"))
+	{
+		auto player = static_cast<Entity*>(dataA->Tag() == "Jump Sensor" ? dataA->Data() : dataB->Data());
+		auto playerPhys = static_cast<PlayerPhysicsComponent*>(&player->getComponent("Player Physics"));
+
+		playerPhys->setCanJump(false);
+		playerPhys->setOnPlayer(false);
 	}
 
 	if ((dataA->Tag() == "Right Edge Sensor" && dataB->Tag() == "Platform")

@@ -28,7 +28,6 @@ public:
 	Entity * m_entity; 
 	//Stores a reference to the AIinput component for moving the AI player
 	AiInputComponent * m_input; 
-
 };
 
 #endif
@@ -85,7 +84,6 @@ public:
 		//return function as true to keep tree runnning
 		return true;
 	}
-
 };
 
 #endif
@@ -113,7 +111,6 @@ public:
 		if (phys->canJump())
 		{
 			m_input->m_current["YBTN"] = true;
-			std::cout << "JUMP" << std::endl;
 		}
 		return true;
 	}
@@ -139,7 +136,19 @@ public:
 	/// <returns></returns>
 	bool run() override
 	{
-		m_input->m_current["XBTN"] = true;
+		auto p = static_cast<PlayerPhysicsComponent *>(&m_entity->getComponent("Player Physics"));
+
+		if (p->canSuperUp())
+		{
+			m_input->m_current["ABTN"] = false;
+			m_input->m_current["XBTN"] = false;
+			m_input->m_current["RBBTN"] = true;
+		}
+		else
+		{
+			m_input->m_current["ABTN"] = false;
+			m_input->m_current["XBTN"] = true;
+		}
 		return true;
 	}
 };
@@ -159,6 +168,7 @@ public:
 
 	bool run() override
 	{
+		m_input->m_current["XBTN"] = false;
 		m_input->m_current["ABTN"] = true;
 		return true;
 	}
@@ -201,7 +211,7 @@ public:
 			//Loop through all entities
 			for (auto entity : *m_entities)
 			{
-				if (entity->m_ID != "AI")
+				if (entity != m_entity)
 				{
 					//Get position component of the current entity in the loop
 					auto newPos = dynamic_cast<PositionComponent *>(&entity->getComponent("Pos"));
@@ -306,7 +316,7 @@ public:
 		else //If player and AI are on the same X coord, jump
 		{
 			//jump
-			m_input->m_current["YBTN"] = true;
+			//m_input->m_current["YBTN"] = true;
 		}
 		//Return function as true to continue tree iteration
 		return true;
@@ -364,13 +374,13 @@ public:
 		auto comp = dynamic_cast<AIComponent *>(&m_entity->getComponent("AI"));
 
 		//Cast self component to PositionComponent
-		auto pos = dynamic_cast<PositionComponent *>(&m_entity->getComponent("Position"));
+		auto pos = dynamic_cast<PositionComponent *>(&m_entity->getComponent("Pos"));
 
 		//Cast nearest player entity from Ai component to Position component
 		auto nearest = dynamic_cast<PositionComponent *>(&comp->nearestPlayer->getComponent("Pos"));
 
 		//While the distance to the nearest enemy is less than 200
-		while (dist(pos->position, nearest->position) < 200)
+		if (dist(pos->position, nearest->position) < 200)
 		{
 			//If they're left of AI, move right
 			if (nearest->position.x < pos->position.x)
@@ -565,25 +575,30 @@ public:
 		//Cast nearest player entity from Ai component to Position component
 		auto nearest = dynamic_cast<PositionComponent *>(&comp->nearestPlayer->getComponent("Pos"));
 
+		auto phys = static_cast<PlayerPhysicsComponent *>(&m_entity->getComponent("Player Physics"));
+
 		//If the AI is more than 50 pixels from the player
 		//dist(nearest->position, pos->position) > 50
-		if (true)
+		//If AI is right of player
+		if (nearest->position.x < pos->position.x - 50)
 		{
-			//If AI is right of player
-			if (nearest->position.x < pos->position.x - 50)
+			//Move left
+			m_input->m_current["STICKRIGHT"] = false;
+			m_input->m_current["STICKLEFT"] = true;
+		}
+		else if (nearest->position.x > pos->position.x + 50) //AI is left of player
+		{
+			//Move right
+			m_input->m_current["STICKLEFT"] = false;
+			m_input->m_current["STICKRIGHT"] = true;
+		}
+		else
+		{
+			if (phys->isOnPlayer())
 			{
-				//Move left
-				m_input->m_current["STICKRIGHT"] = false;
-				m_input->m_current["STICKLEFT"] = true;
-			}
-			else if (nearest->position.x > pos->position.x + 50) //AI is left of player
-			{
-				//Move right
-				m_input->m_current["STICKLEFT"] = false;
-				m_input->m_current["STICKRIGHT"] = true;
-			}
-			else
-			{
+				auto f = new FleeAction(m_entity, m_input);
+				f->run();
+				delete f;
 			}
 		}
 
