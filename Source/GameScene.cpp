@@ -98,11 +98,11 @@ void GameScene::start()
 		m_onlinePlayers.push_back(createPlayer(dex, 0, 400 + 150 * dex, 360, false, spawnPos));
 		m_allPlayers.emplace_back(m_onlinePlayers.at(i)); //Add online players to all players vector
 	}
-	m_numOfAIPlayers = 1;
+	//m_numOfAIPlayers = 1;
 	for (int i = 0; i < m_numOfAIPlayers; i++)
 	{
-		//int dex = PreGameScene::playerIndexes.botPlyrs[i];
-		m_AIPlayers.push_back(createAI(i, 1000 + 150 * i, 360, true, spawnPos));
+		int dex = PreGameScene::playerIndexes.botPlyrs[i];
+		m_AIPlayers.push_back(createAI(dex, 1000 + 150 * dex, 360, true, spawnPos));
 		m_allPlayers.emplace_back(m_AIPlayers.at(i)); //Add ai to all players vector
 	}
 	
@@ -785,6 +785,17 @@ Entity * GameScene::createAI(int index, int posX, int posY, bool local, std::vec
 
 	//Create the joint between the player and the jump sensor
 	phys->createJoint(m_physicsWorld);
+
+
+	//Try to add a sender to the server
+	auto netSys = static_cast<OnlineSystem*>(Scene::systems()["Network"]);
+	if (netSys->isConnected && local)
+	{
+		auto net = new OnlineSendComponent();
+		net->m_playerNumber = index;
+		ai->addComponent("Send", net);
+		netSys->addSendingPlayer(net);
+	} //if it can't connect to the server, it didn't need to be online anyway
 
 	//Add the components to the entity
 	ai->addComponent("Player Physics", phys);
