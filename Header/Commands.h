@@ -161,7 +161,7 @@ public:
 			auto offset = Vector2f(phys->isMovingLeft() ? -40 : 40, phys->isGravityFlipped() ? 12.5f : -12.5f);
 
 			hit->attack(offset, Vector2f(30, 25), e, tag, .175f, 0);
-			hit->setAttackProperties(2, phys->isMovingLeft() ? -100 : 100, phys->isGravityFlipped() ? -30 : 30);
+			hit->setAttackProperties(3, phys->isMovingLeft() ? -100 : 100, phys->isGravityFlipped() ? -30 : 30);
 		}
 
 	}
@@ -189,7 +189,7 @@ public:
 			auto offset = Vector2f(phys->isMovingLeft() ? -50 : 50, phys->isGravityFlipped() ? -12.5f : 12.5f);
 
 			hit->attack(offset, Vector2f(50, 25), e, tag, .4f, 0);
-			hit->setAttackProperties(5, phys->isMovingLeft() ? -175 : 175, phys->isGravityFlipped() ? -45 : 45);
+			hit->setAttackProperties(7, phys->isMovingLeft() ? -175 : 175, phys->isGravityFlipped() ? -45 : 45);
 
 			auto a = static_cast<AnimationComponent*>(&e.getComponent("Animation"));
 			a->playAnimation("Ground Kick", false);
@@ -219,11 +219,16 @@ public:
 				net->addCommand("UPPERCUT");
 				net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y), Vector2f(phys->m_desiredVel.x, phys->m_desiredVel.y));
 			}
+
+			auto a = static_cast<AnimationComponent*>(&e.getComponent("Animation"));
+			a->playAnimation("Uppercut", false);
+			static_cast<SpriteComponent*>(&e.getComponent("Sprite"))->setTexture(a->getCurrentAnimation()->getTexture());
+
 			auto tag = "Attack";
 			auto offset = Vector2f(phys->isMovingLeft() ? -37.5f : 37.5f, 0);
 
 			hit->attack(offset, Vector2f(25, 45), e, tag, .4f, 0);
-			hit->setAttackProperties(4, phys->isMovingLeft() ? -10 : 10, phys->isGravityFlipped() ? -85 : 85);
+			hit->setAttackProperties(4, phys->isMovingLeft() ? -10 : 10, phys->isGravityFlipped() ? -125 : 125);
 		}
 
 	}

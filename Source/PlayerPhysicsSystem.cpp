@@ -17,6 +17,17 @@ void PlayerPhysicsSystem::update(double dt)
 		//Convert the component down to a player physics component
 		auto p = static_cast<PlayerPhysicsComponent*>(comp);
 
+		if (p->toSetStatic())
+		{
+			p->changeBodyType(b2BodyType::b2_staticBody);
+			p->toSetStatic() = false;
+		}
+		else if (p->toSetDynamic())
+		{
+			p->changeBodyType(b2BodyType::b2_dynamicBody);
+			p->toSetDynamic() = false;
+		}
+
 		if (m_gravityChange)
 			p->flipGravity(*m_worldPtr);
 

@@ -34,7 +34,7 @@ void GameScene::start()
 		m_audio.addSound("GameMusic3", Scene::resources().getMusic("Pulse"));
 	}
 	Mix_VolumeMusic(40);
-	//m_audio.playSound("GameMusic0", true);
+	m_audio.playSound("GameMusic0", true);
 	m_rendererPtr = NULL;
 	m_gameOver = false;
 	m_endGameTimer = 10; //10 seconds to show the winner
@@ -87,19 +87,21 @@ void GameScene::start()
 	for (int i = 0; i < m_numOfLocalPlayers; i++)
 	{
 		int dex = PreGameScene::playerIndexes.localPlyrs[i];
-		m_localPlayers.push_back(createPlayer(dex, i, 200 + 400 * dex, 360, true, spawnPos));
+		m_localPlayers.push_back(createPlayer(dex, i, spawnPos.at(dex).x, spawnPos.at(dex).y, true, spawnPos));
 		m_allPlayers.emplace_back(m_localPlayers.at(i)); //Add local to all players vector
 	}
 	for (int i = 0; i < m_numOfOnlinePlayers; i++)
 	{
 		int dex = PreGameScene::playerIndexes.onlinePlyrs[i];
-		m_onlinePlayers.push_back(createPlayer(dex, 0, 400 + 150 * dex, 360, false, spawnPos));
+		m_onlinePlayers.push_back(createPlayer(dex, 0, spawnPos.at(dex).x, spawnPos.at(dex).y, false, spawnPos));
 		m_allPlayers.emplace_back(m_onlinePlayers.at(i)); //Add online players to all players vector
 	}
+
+	//m_numOfAIPlayers = 1;
 	for (int i = 0; i < m_numOfAIPlayers; i++)
 	{
 		int dex = PreGameScene::playerIndexes.botPlyrs[i];
-		m_AIPlayers.push_back(createAI(dex, 1000 + 150 * dex, 360, true, spawnPos));
+		m_AIPlayers.push_back(createAI(dex, spawnPos.at(dex).x, spawnPos.at(dex).y, true, spawnPos));
 		m_allPlayers.emplace_back(m_AIPlayers.at(i)); //Add ai to all players vector
 	}
 	
@@ -549,7 +551,7 @@ Entity * GameScene::createPlayer(int playerNumber,int controllerNumber, int posX
 	p->addComponent("Pos", new PositionComponent(0,0));
 	p->addComponent("Dust Trigger", new DustTriggerComponent());
 	p->addComponent("Attack", new AttackComponent());
-	p->addComponent("Player", new PlayerComponent(spawnPositions, p));
+	p->addComponent("Player", new PlayerComponent(spawnPositions, p, playerNumber));
 	p->addComponent("Sprite", new SpriteComponent(&p->getComponent("Pos"), Vector2f(1700,85), Vector2f(85, 85), Scene::resources().getTexture("Player Idle"), 2));
 	auto animation = new AnimationComponent(&p->getComponent("Sprite"));
 	p->addComponent("Animation", animation);
@@ -571,15 +573,16 @@ Entity * GameScene::createPlayer(int playerNumber,int controllerNumber, int posX
 		m_animRects.push_back({85 * i, 0, 85, 85});
 	}
 
-	animation->addAnimation("Run", Scene::resources().getTexture("Player Run"), m_animRects, .75f);
-	animation->addAnimation("Idle", Scene::resources().getTexture("Player Idle"), m_animRects, .5f);
+	animation->addAnimation("Run", Scene::resources().getTexture("Player Run" + std::to_string(playerNumber)), m_animRects, .75f);
+	animation->addAnimation("Idle", Scene::resources().getTexture("Player Idle" + std::to_string(playerNumber)), m_animRects, .5f);
 	animation->addAnimation("Punch 0", Scene::resources().getTexture("Player Left Punch"), m_animRects, .175f);
 	animation->addAnimation("Punch 1", Scene::resources().getTexture("Player Right Punch"), m_animRects, .175f);
-	animation->addAnimation("Ground Kick", Scene::resources().getTexture("Player Ground Kick"), m_animRects, .4f);
-	animation->addAnimation("Jump", Scene::resources().getTexture("Player Jump"), m_animRects, .4f);
-	animation->addAnimation("Super Stun", Scene::resources().getTexture("Player Super Stun"), m_stunRects, .25f);
-	animation->addAnimation("Small Stun", Scene::resources().getTexture("Player Small Stun"), m_stunRects, .25f);
-	animation->addAnimation("Big Stun", Scene::resources().getTexture("Player Big Stun"), m_stunRects, .25f);
+	animation->addAnimation("Ground Kick", Scene::resources().getTexture("Player Ground Kick" + std::to_string(playerNumber)), m_animRects, .4f);
+	animation->addAnimation("Uppercut", Scene::resources().getTexture("Player Uppercut" + std::to_string(playerNumber)), m_animRects, .4f);
+	animation->addAnimation("Jump", Scene::resources().getTexture("Player Jump" + std::to_string(playerNumber)), m_animRects, .4f);
+	animation->addAnimation("Super Stun", Scene::resources().getTexture("Player Super Stun" + std::to_string(playerNumber)), m_stunRects, .25f);
+	animation->addAnimation("Small Stun", Scene::resources().getTexture("Player Small Stun" + std::to_string(playerNumber)), m_stunRects, .25f);
+	animation->addAnimation("Big Stun", Scene::resources().getTexture("Player Big Stun" + std::to_string(playerNumber)), m_stunRects, .25f);
 	animation->playAnimation("Idle", true); //Play the idle animation from the start
 
 	//Add components to the system
@@ -634,6 +637,10 @@ Entity * GameScene::createPlayer(int playerNumber,int controllerNumber, int posX
 
 	//Add the physics component to the player physics system
 	Scene::systems()["Player Physics"]->addComponent(phys);
+
+	//Add the head picture to the playe rso the ui can get it from the player and display it in the correct corner
+	p->addComponent("Portrait", new SpriteComponent(nullptr, Vector2f(59, 65), Vector2f(59, 65), Scene::resources().getTexture("Head" + std::to_string(playerNumber)), 11));
+	static_cast<SpriteComponent*>(&p->getComponent("Portrait"))->setScale((playerNumber == 0 || playerNumber == 2) ? -1 : 1, 1);
 
 	return p; //Return the created entity
 }
@@ -701,7 +708,7 @@ Entity * GameScene::createAI(int index, int posX, int posY, bool local, std::vec
 	auto ai = new Entity("AI");
 	auto pos = new PositionComponent(0, 0);
 	auto input = new AiInputComponent();
-	auto player = new PlayerComponent(spawnPositions, ai);
+	auto player = new PlayerComponent(spawnPositions, ai, index);
 
 	ai->addComponent("Input", input);
 	ai->addComponent("Pos", pos);
@@ -730,15 +737,16 @@ Entity * GameScene::createAI(int index, int posX, int posY, bool local, std::vec
 		m_animRects.push_back({ 85 * i, 0, 85, 85 });
 	}
 
-	animation->addAnimation("Run", Scene::resources().getTexture("Player Run"), m_animRects, .75f);
-	animation->addAnimation("Idle", Scene::resources().getTexture("Player Idle"), m_animRects, .5f);
+	animation->addAnimation("Run", Scene::resources().getTexture("Player Run" + std::to_string(index)), m_animRects, .75f);
+	animation->addAnimation("Idle", Scene::resources().getTexture("Player Idle" + std::to_string(index)), m_animRects, .5f);
 	animation->addAnimation("Punch 0", Scene::resources().getTexture("Player Left Punch"), m_animRects, .175f);
 	animation->addAnimation("Punch 1", Scene::resources().getTexture("Player Right Punch"), m_animRects, .175f);
-	animation->addAnimation("Ground Kick", Scene::resources().getTexture("Player Ground Kick"), m_animRects, .4f);
-	animation->addAnimation("Jump", Scene::resources().getTexture("Player Jump"), m_animRects, .4f);
-	animation->addAnimation("Super Stun", Scene::resources().getTexture("Player Super Stun"), m_stunRects, .25f);
-	animation->addAnimation("Small Stun", Scene::resources().getTexture("Player Small Stun"), m_stunRects, .25f);
-	animation->addAnimation("Big Stun", Scene::resources().getTexture("Player Big Stun"), m_stunRects, .25f);
+	animation->addAnimation("Ground Kick", Scene::resources().getTexture("Player Ground Kick" + std::to_string(index)), m_animRects, .4f);
+	animation->addAnimation("Uppercut", Scene::resources().getTexture("Player Uppercut" + std::to_string(index)), m_animRects, .4f);
+	animation->addAnimation("Jump", Scene::resources().getTexture("Player Jump" + std::to_string(index)), m_animRects, .4f);
+	animation->addAnimation("Super Stun", Scene::resources().getTexture("Player Super Stun" + std::to_string(index)), m_stunRects, .25f);
+	animation->addAnimation("Small Stun", Scene::resources().getTexture("Player Small Stun" + std::to_string(index)), m_stunRects, .25f);
+	animation->addAnimation("Big Stun", Scene::resources().getTexture("Player Big Stun" + std::to_string(index)), m_stunRects, .25f);
 	animation->playAnimation("Idle", true);
 	ai->addComponent("Animation", animation);
 	
@@ -771,8 +779,22 @@ Entity * GameScene::createAI(int index, int posX, int posY, bool local, std::vec
 	//Create the joint between the player and the jump sensor
 	phys->createJoint(m_physicsWorld);
 
+
+	//Try to add a sender to the server
+	auto netSys = static_cast<OnlineSystem*>(Scene::systems()["Network"]);
+	if (netSys->isConnected && local)
+	{
+		auto net = new OnlineSendComponent();
+		net->m_playerNumber = index;
+		ai->addComponent("Send", net);
+		netSys->addSendingPlayer(net);
+	} //if it can't connect to the server, it didn't need to be online anyway
+
 	//Add the components to the entity
 	ai->addComponent("Player Physics", phys);
+
+	ai->addComponent("Portrait", new SpriteComponent(nullptr, Vector2f(59, 65), Vector2f(59, 65), Scene::resources().getTexture("Head" + std::to_string(index)), 11));
+	static_cast<SpriteComponent*>(&ai->getComponent("Portrait"))->setScale((index == 0 || index == 2) ? -1 : 1, 1);
 
 	//Add the physics component to the playe rphysics system
 	Scene::systems()["Player Physics"]->addComponent(phys);

@@ -113,6 +113,7 @@ void LobbyScene::handleInput(InputSystem & input)
 		}
 		if (m_input->isButtonPressed("ABTN"))
 		{
+			m_network->disconnect(vector<int>{m_network->m_playerNumber});
 			Scene::goToScene("Main Menu");//Just go back to the main menu
 		}
 
@@ -141,7 +142,7 @@ void LobbyScene::handleButtonPressed()
 {
 	//placeholder
 
-	if (m_currentIndex != 0 && m_network->joinLobby(m_currentIndex))//plz to always be nonzero
+	if (m_buttons.size() != 0 && m_network->joinLobby(m_currentIndex+1))//plz to always be nonzero
 	{
 		Scene::goToScene("PreGame");
 	}

@@ -31,6 +31,20 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 	m_map["Game BG2"] = loadFromPath("Backgrounds-03.png", renderer);
 	m_map["Game BG3"] = loadFromPath("Backgrounds-04.png", renderer);
 
+	auto colours = std::vector<std::string>({ "Green", "Blue", "Orange", "Pink" });
+
+	for (int i = 0; i < 4; i++)
+	{
+		m_map["Player Run" + std::to_string(i)] = loadFromPath("Player/" + colours.at(i) + "/Player_Run.png", renderer);
+		m_map["Player Idle" + std::to_string(i)] = loadFromPath("Player/" + colours.at(i) + "/Player_Idle.png", renderer);
+		m_map["Player Ground Kick" + std::to_string(i)] = loadFromPath("Player/" + colours.at(i) + "/Player_Kick.png", renderer);
+		m_map["Player Jump" + std::to_string(i)] = loadFromPath("Player/" + colours.at(i) + "/Player_Jump.png", renderer);
+		m_map["Player Super Stun" + std::to_string(i)] = loadFromPath("Player/" + colours.at(i) + "/Player_Super_Stun.png", renderer);
+		m_map["Player Small Stun" + std::to_string(i)] = loadFromPath("Player/" + colours.at(i) + "/Player_Small_Stun.png", renderer);
+		m_map["Player Big Stun" + std::to_string(i)] = loadFromPath("Player/" + colours.at(i) + "/Player_Big_Stun.png", renderer);
+		m_map["Player Uppercut" + std::to_string(i)] = loadFromPath("Player/" + colours.at(i) + "/Player_Uppercut.png", renderer);
+	}
+
 	m_map["Player Run"] = loadFromPath("Player/Player_Run.png", renderer);
 	m_map["Player Idle"] = loadFromPath("Player/Player_Idle.png", renderer);
 	m_map["Player Ground Kick"] = loadFromPath("Player/Player_Kick.png", renderer);
@@ -69,10 +83,17 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 	m_map["Portrait"] = loadFromPath("GUI/Portrait.png", renderer);
 	m_map["Numbers Coloured"] = loadFromPath("GUI/Numbers Coloured.png", renderer);
 	m_map["Logo"] = loadFromPath("Logo.png", renderer);
-	m_map["Head0"] = loadFromPath("GUI/Blue Head.png", renderer);
-	m_map["Head1"] = loadFromPath("GUI/Green Head.png", renderer);
-	m_map["Head2"] = loadFromPath("GUI/Pink Head.png", renderer);
-	m_map["Head3"] = loadFromPath("GUI/Orange Head.png", renderer);
+	m_map["Head0"] = loadFromPath("GUI/Green Head.png", renderer);
+	m_map["Head1"] = loadFromPath("GUI/Blue Head.png", renderer);
+	m_map["Head2"] = loadFromPath("GUI/Orange Head.png", renderer);
+	m_map["Head3"] = loadFromPath("GUI/Pink Head.png", renderer);
+	m_map["Pre Game BG"] = loadFromPath("GUI/Pre_Game_BG.png", renderer);
+	m_map["Player Indicator"] = loadFromPath("GUI/Player Indicator.png", renderer);
+	m_map["Cpu Indicator"] = loadFromPath("GUI/Cpu Indicator.png", renderer);
+
+	for(int i = 0; i < colours.size(); i++)
+		m_map["Pre Game Head" + std::to_string(i)] = loadFromPath("GUI/Pre Game Head" + std::to_string(i) + ".png", renderer);
+
 
 	std::vector<std::string> names({ "Punch First",
 		"Final Form",
@@ -106,8 +127,7 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 	m_map["Winner"] = loadFromPath("GUI/Winner.png", renderer);
 
 	//The colours of the platforms
-	auto platforms = std::vector<std::string>({"Green", "Blue", "Orange", "Pink"});
-	for (auto& colour : platforms)
+	for (auto& colour : colours)
 	{
 		//Load all 3 platform pieces for each colour
 		for (int i = 0; i < 3; i++)

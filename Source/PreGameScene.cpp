@@ -1,8 +1,12 @@
 #include "..\Header\PreGameScene.h"
+#include "RenderSystem.h"
 
 
 PreGameScene::PlayersInfo PreGameScene::playerIndexes;
-PreGameScene::PreGameScene()
+PreGameScene::PreGameScene() :
+	m_bg("BG"),
+	m_camera(false),
+	m_setupBg(false)
 {
 	m_availablePlyrs.push_back(true);
 	m_availablePlyrs.push_back(true);
@@ -12,7 +16,24 @@ PreGameScene::PreGameScene()
 
 void PreGameScene::start()
 {
+	for (auto b : m_availablePlyrs)
+		b = true;
+	playerIndexes.localPlyrs.clear();
+	playerIndexes.onlinePlyrs.clear();
+	playerIndexes.botPlyrs.clear();
+
+	m_input.clear();
+
 	m_numOfPossibleLocalPlayers = SDL_NumJoysticks();
+
+	if (!m_setupBg)
+	{
+		auto bgPos = new PositionComponent(960, 540);
+		m_bg.addComponent("Pos", bgPos);
+		m_bg.addComponent("Sprite", new SpriteComponent(bgPos, Vector2f(1920, 1080), Vector2f(1920, 1080), Scene::resources().getTexture("Pre Game BG"), 0));
+	}
+
+	Scene::systems()["Render"]->addComponent(&m_bg.getComponent("Sprite"));
 
 	m_network = static_cast<OnlineSystem*>(Scene::systems()["Network"]);
 
@@ -22,6 +43,7 @@ void PreGameScene::start()
 
 	if (m_network->isConnected)
 	{
+		m_netGame = true;
 		if (m_network->m_isHost)
 		{
 			//m_input[0] gets to be player 1
@@ -44,7 +66,7 @@ void PreGameScene::start()
 				playerIndexes.onlinePlyrs.push_back(num);
 				m_availablePlyrs[num] = false;
 
-				playerIndexes.botPlyrs.push_back(num);
+				//playerIndexes.botPlyrs.push_back(num);
 			}
 		}
 
@@ -62,15 +84,40 @@ void PreGameScene::start()
 		Scene::systems()["Input"]->addComponent(m_input[i].first);
 		//m_hasJoined.push_back(false);
 	}
+
+	//Create first badge for the host player
+	m_playerIcons.push_back(createBadge(240, 540, true, 0));
+
+	m_setupBg = true;
 }
 
 void PreGameScene::stop()
 {
+	Scene::systems()["Render"]->deleteComponent(&m_bg.getComponent("Sprite"));
+
+	for (auto& badge : m_playerIcons)
+	{
+		Scene::systems()["Render"]->deleteComponent(&badge->getComponent("Sprite"));
+		Scene::systems()["Render"]->deleteComponent(&badge->getComponent("Ind Sprite"));
+
+		delete &badge->getComponent("Pos");
+		delete &badge->getComponent("Ind Pos");
+		delete &badge->getComponent("Sprite");
+		delete &badge->getComponent("Ind Sprite");
+		delete badge;
+	}
+
+	//CLear ethe vector so we dont have redundant memory stored
+	m_playerIcons.clear();
 }
 
 void PreGameScene::update(double dt)
 {
 	lastUpdate += dt;
+	if (m_netGame && !m_network->isConnected)
+	{
+		Scene::goToScene("Main Menu");
+	}
 	if (m_network->isConnected && lastUpdate > 0.5)
 	{
 		checkForUpdates();
@@ -84,6 +131,7 @@ void PreGameScene::update(double dt)
 
 void PreGameScene::draw(SDL_Renderer & renderer)
 {
+	static_cast<RenderSystem*>(Scene::systems()["Render"])->render(renderer, m_camera);
 }
 
 void PreGameScene::handleInput(InputSystem & input)
@@ -115,7 +163,13 @@ void PreGameScene::handleInput(InputSystem & input)
 		else if (m_input[0].first->isButtonPressed("ABTN"))
 		{
 			//tell network you are leaving. It's only polite
-			m_network->disconnect();
+			//you'll have to tell it to shut down the lobby too probs....
+			if (m_network->isConnected) {
+				//vector<int> p = playerIndexes.localPlyrs;
+				//p.insert(p.end(), playerIndexes.onlinePlyrs.begin(), playerIndexes.onlinePlyrs.end());
+				vector<int> p{ 0,1,2,3 };
+				m_network->disconnect(p);
+			}
 			playerIndexes.localPlyrs.clear();
 			playerIndexes.onlinePlyrs.clear();
 			playerIndexes.botPlyrs.clear();
@@ -131,6 +185,7 @@ void PreGameScene::handleInput(InputSystem & input)
 				{
 					m_availablePlyrs[j] = false;
 					playerIndexes.botPlyrs.push_back(j); 
+					m_playerIcons.push_back(createBadge(240 + m_playerIcons.size() * 480, 540, false, j));
 					playersChanged = true;
 					break;
 				}
@@ -179,7 +234,7 @@ void PreGameScene::handleInput(InputSystem & input)
 				//remove this player from the game if they are in
 				if (m_input[i].second > 0)//controllers not joined are set to -1
 				{
-					m_availablePlyrs[m_input[i].second] = false;
+					m_availablePlyrs[m_input[i].second] = true;
 					playerIndexes.localPlyrs.erase(std::remove(playerIndexes.localPlyrs.begin(), playerIndexes.localPlyrs.end(), m_input[i].second), playerIndexes.localPlyrs.end());
 					m_input[i].second = -1;
 					//tell the network you've left
@@ -193,16 +248,69 @@ void PreGameScene::handleInput(InputSystem & input)
 	{
 		m_network->assignPlayerSlots(m_availablePlyrs);
 	}
+
+	if(playersChanged)
+		reconstructBadges();
+}
+
+Entity * PreGameScene::createBadge(int x, int y, bool isPlayer, int index)
+{
+	auto ent = new Entity("Badge");
+	auto pos = new PositionComponent(x, y);
+	auto indPos = new PositionComponent(x, y - 200);
+	ent->addComponent("Pos", pos);
+	ent->addComponent("Ind Pos", indPos);
+	ent->addComponent("Sprite", new SpriteComponent(pos, Vector2f(300, 300), Vector2f(300, 300), Scene::resources().getTexture("Pre Game Head" + std::to_string(index)), 1));
+	ent->addComponent("Ind Sprite", new SpriteComponent(indPos, Vector2f(200, 75), Vector2f(200, 75), Scene::resources().getTexture(isPlayer ? "Player Indicator" : "Cpu Indicator"), 1));
+
+	Scene::systems()["Render"]->addComponent(&ent->getComponent("Sprite"));
+	Scene::systems()["Render"]->addComponent(&ent->getComponent("Ind Sprite"));
+
+	return ent;
+}
+
+void PreGameScene::reconstructBadges()
+{
+	for (auto& badge : m_playerIcons)
+	{
+		Scene::systems()["Render"]->deleteComponent(&badge->getComponent("Sprite"));
+		Scene::systems()["Render"]->deleteComponent(&badge->getComponent("Ind Sprite"));
+
+		delete &badge->getComponent("Pos");
+		delete &badge->getComponent("Ind Pos");
+		delete &badge->getComponent("Sprite");
+		delete &badge->getComponent("Ind Sprite");
+		delete badge;
+	}
+
+	//CLear ethe vector so we dont have redundant memory stored
+	m_playerIcons.clear();
+
+	for (auto index : playerIndexes.localPlyrs)
+	{
+		m_playerIcons.push_back(createBadge(240 + 480 * index, 540, true, index));
+	}
+	for (auto index : playerIndexes.onlinePlyrs)
+	{
+		m_playerIcons.push_back(createBadge(240 + 480 * index, 540, true, index));
+	}
+	for (auto index : playerIndexes.botPlyrs)
+	{
+		m_playerIcons.push_back(createBadge(240 + 480 * index, 540, false, index));
+	}
 }
 
 void PreGameScene::checkForUpdates()
 {
 	vector<int> players = m_network->getPlayers();
 	playerIndexes.onlinePlyrs.clear();
-	playerIndexes.botPlyrs.clear();
+	//playerIndexes.botPlyrs.clear();
 	for (auto num : players)
 	{
-		if (num != playerIndexes.localPlyrs.back())
+		//if (num != playerIndexes.localPlyrs.back())
+		bool notInLocal = !(std::find(playerIndexes.localPlyrs.begin(), playerIndexes.localPlyrs.end(), num) != playerIndexes.localPlyrs.end());
+		bool notInBots = !(std::find(playerIndexes.botPlyrs.begin(), playerIndexes.botPlyrs.end(), num) != playerIndexes.botPlyrs.end());
+		if( notInLocal && notInBots)
 		{
 			playerIndexes.onlinePlyrs.push_back(num);
 			m_availablePlyrs[num] = false;

@@ -57,6 +57,11 @@ void OnlineInputComponent::handleInput(void* e)
 		{
 			m_currentCMD = &m_superCMD;
 		}
+		else if (topCMD == "RESPAWN")
+		{
+			//m_currentCMD = &m_superCMD;
+			static_cast<PlayerComponent*>(&entity->getComponent("Player"))->respawn();
+		}
 		m_commandsToSend.pop();
 		//If the current command was set, execute the command
 		if (nullptr != m_currentCMD)

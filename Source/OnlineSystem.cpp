@@ -78,14 +78,30 @@ void OnlineSystem::ReceiveCommands()
 	string receivedMessage = m_Socket->checkForIncomingMessages();
 
 	 //If so then...
-	if (receivedMessage != "")
+	if (receivedMessage == "Lost connection to the server!")
+	{
+		delete m_Socket;
+		isConnected = false;
+		m_isHost = false;
+	}
+	else if (receivedMessage != "")
 	{
 		json currentPacket = json::parse(receivedMessage);
 		if (currentPacket["type"] == "START")
 		{
 			gameStarted = true;
-		}else
-		if (currentPacket["type"] == "COMMANDS")
+		}
+		else if (currentPacket["type"] == "PICKUP")
+		{
+			p_spawnPickup = currentPacket["pos"];
+		}
+		else if (currentPacket["type"] == "QUIT")
+		{
+			delete m_Socket;
+			isConnected = false;
+			m_isHost = false;
+		}
+		else if (currentPacket["type"] == "COMMANDS")
 		{
 			for (auto& plyr : m_receivingPlayers)
 			{
@@ -129,6 +145,17 @@ bool OnlineSystem::ConnectToServer()
 		//exit(-1);
 		isConnected = false;
 		return false;
+	}
+}
+
+string OnlineSystem::CheckMessages()
+{
+	string ret = m_Socket->checkForIncomingMessages();
+	if(ret != "Lost connection to the server!")
+		return ret;
+	else {
+		delete m_Socket;
+		isConnected = false;
 	}
 }
 
@@ -264,10 +291,34 @@ void OnlineSystem::startGame()
 	gameStarted = true;
 }
 
-void OnlineSystem::disconnect()
+void OnlineSystem::spawnPickup(int spawnPosition)
 {
-	m_Socket->sendString(m_Socket->QUIT_SIGNAL);
+	string jsonString = "{\"type\" : \"PICKUP\", \"pos\":"+toString(spawnPosition)+"}";
+	m_Socket->sendString(jsonString);
+}
+
+int OnlineSystem::pickupLocation()
+{
+	int retval = p_spawnPickup;
+	p_spawnPickup = -1;
+	return retval;
+}
+
+void OnlineSystem::disconnect(vector<int> relatedPlyrs)
+{
+	string pack = "{\"type\":\"QUIT\",\"list\":[";
+	bool isFirst = true;
+	for (auto p : relatedPlyrs) {
+		if (!isFirst)
+			pack += ",";
+		else
+			isFirst = false;
+		pack += toString(p);
+	}
+	pack += "]}";
+	m_Socket->sendString(pack);
 	delete m_Socket;
 	isConnected = false;
+	m_isHost = false;
 	
 }

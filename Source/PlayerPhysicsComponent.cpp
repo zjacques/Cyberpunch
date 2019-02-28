@@ -12,11 +12,14 @@ PlayerPhysicsComponent::PlayerPhysicsComponent(Component * pos) :
 	m_falling(false),
 	m_supered(false),
 	m_stunnedBySuper(false),
+	m_setStatic(false),
+	m_setDynamic(false),
 	m_stunLeft(0),
 	m_jumpSpeed(40.0f),
 	m_jumpDownSpeed(20.0f),
 	m_moveSpeed(10),
 	m_dmgPercentage(0),
+	m_originalMass(0),
 	m_superPercentage(0)
 {
 	posPtr = static_cast<PositionComponent*>(pos);
@@ -51,6 +54,8 @@ void PlayerPhysicsComponent::superStun()
 
 	//Set stun to 5.0f
 	m_stunLeft = 5.0f; 
+
+	m_setStatic = true; //Make the body static
 }
 
 void PlayerPhysicsComponent::jump()
@@ -77,6 +82,29 @@ void PlayerPhysicsComponent::moveRight()
 	m_desiredVel.x = 1;
 	m_movingR = true;
 	m_movingL = false;
+}
+
+void PlayerPhysicsComponent::addSuper(int amount)
+{
+	m_superPercentage += amount;
+
+	m_superPercentage = m_superPercentage > 100 ? 100 : m_superPercentage;
+}
+
+void PlayerPhysicsComponent::changeBodyType(b2BodyType type)
+{
+	if (m_originalMass == 0)
+		m_originalMass = m_body->getBody()->GetMass();
+
+	b2MassData data;
+	m_body->getBody()->GetMassData(&data);
+
+	if (type == b2BodyType::b2_staticBody)
+		data.mass = 99;
+	else
+		data.mass = m_originalMass;
+
+	m_body->getBody()->SetMassData(&data);
 }
 
 void PlayerPhysicsComponent::applyDamageImpulse(float x, float y)
@@ -159,12 +187,15 @@ void PlayerPhysicsComponent::endSuper()
 {
 	m_supered = false;
 	m_superTime = 0;
+	m_superPercentage = 0;
 }
 
 void PlayerPhysicsComponent::endSuperStun()
 {
 	m_stunned = false;
 	m_stunnedBySuper = false;
+
+	m_setDynamic = true;
 
 	//Stun the player after being hit
 	stun();

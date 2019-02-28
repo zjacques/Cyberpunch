@@ -32,7 +32,7 @@ void MainMenuScene::start()
 
 	}
 	Mix_Volume(-1, 10);
-	//audio().playSound("MenuMusic", true);
+	audio().playSound("MenuMusic", true);
 	//Setup the input using the first joycon connected
 	m_input.initialiseJoycon(0);
 

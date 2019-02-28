@@ -21,7 +21,8 @@ public:
 	void endSuper();
 	void endSuperStun();
 	void damage(int dmg) {m_dmgPercentage += m_stunnedBySuper == false ? dmg : 0; }
-	void addSuper(int amount) { m_superPercentage += m_supered == false ? amount : 0; }
+	void addSuper(int amount);
+	void changeBodyType(b2BodyType type);
 	void applyDamageImpulse(float x, float y);
 	void flipGravity(Box2DBridge& world);
 	void createJoint(Box2DBridge& world);
@@ -39,12 +40,16 @@ public:
 	bool canSuperUp() { return m_superPercentage >= 100; }
 	float& stunLeft() { return m_stunLeft; }
 	float& superLeft() { return m_superTime; }
+	bool& toSetStatic() { return m_setStatic; }
+	bool& toSetDynamic() { return m_setDynamic; }
 	int& damagePercentage() { return m_dmgPercentage; }
 	int& superPercentage() { return m_superPercentage; }
+	bool& isOnPlayer() { return m_onPlayer; }
 
 	//Setters
 	void setCanFall(bool b) { m_canFall = b; }
 	void setCanJump(bool b) { m_canJump = b; }
+	void setOnPlayer(bool b) { m_onPlayer = b; }
 
 	//---Member variables---//
 	//The body of the physics component
@@ -54,13 +59,15 @@ public:
 	PositionComponent * posPtr;
 	b2Vec2 m_currentVel, m_desiredVel;
 private:
+	bool m_setStatic, m_setDynamic;
 	float clamp(float min, float& val, float max);
 	b2RevoluteJointDef m_sensorJointDef;
 	b2RevoluteJoint * m_sensorJoint;
 	bool m_falling, m_stunned, m_canJump, m_canFall, m_movingL, m_movingR, m_gravFlipped, m_supered, m_stunnedBySuper;
 	float m_stunLeft, m_moveSpeed, m_jumpDownSpeed, m_jumpSpeed;
 	float m_superTime;
+	bool m_onPlayer = false;
 	int m_dmgPercentage, m_superPercentage;
-
+	float m_originalMass;
 	Vector2f m_superImpulse; //The impulse applied to the player after a super is over
 };

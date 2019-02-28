@@ -27,6 +27,7 @@ public:
 	void ReceiveCommands();
 
 	bool ConnectToServer();
+	string CheckMessages();
 
 	vector<LobbyInfo> getLobbies(); 
 
@@ -38,7 +39,10 @@ public:
 
 	void startGame();
 
-	void disconnect();
+	void spawnPickup(int spawnPosition);
+	int pickupLocation();
+
+	void disconnect(vector<int> relatedPlyrs);
 
 	bool gameStarted = false;
 
@@ -54,4 +58,5 @@ private:
 	vector<OnlineInputComponent*> m_receivingPlayers;
 	double syncRate = 0.5;
 	double tts = 0;//time to sync
+	int p_spawnPickup = -1;
 };
