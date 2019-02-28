@@ -235,7 +235,9 @@ void CollisionListener::checkPlayerAttack(b2Contact * contact)
 		auto attackPlayerVariables = static_cast<PlayerComponent*>(&attackingP->getComponent("Player"));
 		auto otherPlayerVariables = static_cast<PlayerComponent*>(&otherP->getComponent("Player"));
 
-		attackingPPhys->addSuper(dmgP); //Add damage to our super percentage
+		//If you attack a player that isnt super stunned, add to the super percentage
+		if(otherPPhys->superStunned() == false)
+			attackingPPhys->addSuper(dmgP); //Add damage to our super percentage
 		if (attackingPPhys->isSupered() && otherPPhys->superStunned() == false)
 		{
 			attackPlayerVariables->m_supersUsed++;

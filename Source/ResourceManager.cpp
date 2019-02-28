@@ -43,6 +43,8 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 		m_map["Player Small Stun" + std::to_string(i)] = loadFromPath("Player/" + colours.at(i) + "/Player_Small_Stun.png", renderer);
 		m_map["Player Big Stun" + std::to_string(i)] = loadFromPath("Player/" + colours.at(i) + "/Player_Big_Stun.png", renderer);
 		m_map["Player Uppercut" + std::to_string(i)] = loadFromPath("Player/" + colours.at(i) + "/Player_Uppercut.png", renderer);
+		m_map["Player Left Punch" + std::to_string(i)] = loadFromPath("Player/" + colours.at(i) + "/Left_Hand_Punch.png", renderer);
+		m_map["Player Right Punch" + std::to_string(i)] = loadFromPath("Player/" + colours.at(i) + "/Right_Hand_Punch.png", renderer);
 	}
 
 	m_map["Player Run"] = loadFromPath("Player/Player_Run.png", renderer);
