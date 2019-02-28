@@ -10,12 +10,14 @@ AttackComponent::AttackComponent() :
 	m_delay(0),
 	m_xImpulse(0),
 	m_yImpulse(0),
-	m_dmg(0)
+	m_dmg(0),
+	m_currentAttackTag("")
 {
 }
 
-void AttackComponent::attack(Vector2f offset, Vector2f size, Entity & e, std::string tag, float ttl, float delay = 0)
+void AttackComponent::attack(Vector2f offset, Vector2f size, Entity & e, std::string tag, float ttl, std::string attackName, float delay = 0)
 {
+	m_currentAttackTag = attackName;
 	m_attacked = true;
 	m_startDelay = true;
 	m_ttl = ttl;

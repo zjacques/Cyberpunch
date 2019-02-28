@@ -12,7 +12,14 @@ enum Event
 	PHASE_DOWN,
 	MATCH_ENDED,
 	SUPER_STUN,
-	PLAYER_KILLED
+	PLAYER_KILLED,
+	SLOW_DOWN,
+	GRAV_FLIP,
+	PLATFORM_MOVE,
+	KICK_DEATH,
+	ONLINE_MATCH_ENDED,
+	SUPER_ACTIVATED,
+	AI_DEATH
 };
 
 class Observer
@@ -26,6 +33,14 @@ namespace achi
 {
 	struct Listener
 	{
+		static void notify(Entity* entity, Event event)
+		{
+			for (auto& observer : achi::Listener::obs)
+			{
+				observer->onNotify(entity, event);
+			}
+		}
+		static int m_localPlayers;
 		static std::vector<Observer*> obs;
 		static Component* m_AchisPtr;
 		static std::vector<std::string> m_newUnlocks;

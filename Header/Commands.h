@@ -7,8 +7,9 @@
 #include "OnlineSendComponent.h"
 #include "AttackComponent.h"
 #include "AnimationComponent.h"
+#include "Observer.h"
 
-class Command
+class Command : public Subject
 {
 public:
 	virtual ~Command() {}
@@ -160,7 +161,7 @@ public:
 			auto tag = "Attack";
 			auto offset = Vector2f(phys->isMovingLeft() ? -40 : 40, phys->isGravityFlipped() ? 12.5f : -12.5f);
 
-			hit->attack(offset, Vector2f(30, 25), e, tag, .175f, 0);
+			hit->attack(offset, Vector2f(30, 25), e, tag, .175f, "Punch", 0);
 			hit->setAttackProperties(3, phys->isMovingLeft() ? -100 : 100, phys->isGravityFlipped() ? -30 : 30);
 		}
 
@@ -188,7 +189,7 @@ public:
 			auto tag = "Attack";
 			auto offset = Vector2f(phys->isMovingLeft() ? -50 : 50, phys->isGravityFlipped() ? -12.5f : 12.5f);
 
-			hit->attack(offset, Vector2f(50, 25), e, tag, .4f, 0);
+			hit->attack(offset, Vector2f(50, 25), e, tag, .4f, "Kick", 0);
 			hit->setAttackProperties(7, phys->isMovingLeft() ? -175 : 175, phys->isGravityFlipped() ? -45 : 45);
 
 			auto a = static_cast<AnimationComponent*>(&e.getComponent("Animation"));
@@ -227,7 +228,7 @@ public:
 			auto tag = "Attack";
 			auto offset = Vector2f(phys->isMovingLeft() ? -37.5f : 37.5f, 0);
 
-			hit->attack(offset, Vector2f(25, 45), e, tag, .4f, 0);
+			hit->attack(offset, Vector2f(25, 45), e, tag, .4f, "Uppercut", 0);
 			hit->setAttackProperties(4, phys->isMovingLeft() ? -10 : 10, phys->isGravityFlipped() ? -125 : 125);
 		}
 
@@ -246,7 +247,7 @@ public:
 
 		if (hit->attackActive() == false && phys->stunned() == false)
 		{
-			if (phys->canJump())
+			if (phys->canFall())
 			{
 				auto net = static_cast<OnlineSendComponent*>(&e.getComponent("Send"));
 				if (net != NULL)
@@ -255,6 +256,9 @@ public:
 					net->setSync(phys->posPtr->position, Vector2f(phys->m_currentVel.x, phys->m_currentVel.y), Vector2f(phys->m_desiredVel.x, phys->m_desiredVel.y));
 				}
 				phys->jumpDown();
+
+				if(e.m_ID != "AI")
+					achi::Listener::notify(&e, PHASE_DOWN);
 			}
 		}
 	}
@@ -281,7 +285,7 @@ public:
 			}
 
 			phys->beginSuper();
-			std::cout << "Player has used super up, they can now stun someone for 5 seconds if they hit within 5 seconds\n";
+			achi::Listener::notify(&e, SUPER_ACTIVATED);
 
 		}
 	}

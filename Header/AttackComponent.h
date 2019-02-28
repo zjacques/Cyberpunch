@@ -15,7 +15,7 @@ public:
 	//Spawns an attack positioned at offset with a size of size and it belongs to the entity
 	//and the attack is tagged so we know what it is (punch, kick) and the time to live for that attack
 	//And the delay on when the attack should start
-	void attack(Vector2f offset, Vector2f size, Entity& e, std::string tag, float ttl, float delay);
+	void attack(Vector2f offset, Vector2f size, Entity& e, std::string tag, float ttl, std::string attackName, float delay);
 	void setAttackProperties(int dmg, float xImpulse, float yImpulse);
 	void spawn(Box2DBridge& world); //Spawns an attack
 	void deleteAttack(Box2DBridge& world); //Deletes the attack
@@ -37,6 +37,7 @@ public:
 	int& damage() { return m_dmg; }
 	Entity* entity() { return m_e; }
 	PhysicsComponent * m_currentAttack; //A pointer to the attack
+	std::string m_currentAttackTag;
 private:
 	float m_delay, m_xImpulse, m_yImpulse;
 	int m_dmg;

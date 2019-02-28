@@ -47,7 +47,7 @@ public:
 	}
 	void run()
 	{
-		std::cout << "Platform moving booth\n";
+		notify(m_pickUp, PLATFORM_MOVE);
 		m_active = true;
 		m_timer = 20;
 		m_halfPoint = false;
