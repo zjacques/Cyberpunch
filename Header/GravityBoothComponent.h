@@ -22,7 +22,7 @@ public:
 
 	}
 
-
+	//when run is called this will make all of the gravity component run when triggered
 	void run()
 	{
 		std::cout << "Flipping Grvaity booth\n";
@@ -42,7 +42,7 @@ public:
 			}
 		}
 	}
-  
+  //flips gravity when booth is triggered
 	void flipGrav()
 	{
 
@@ -57,7 +57,7 @@ public:
 		m_collistenerPtr->flipGravity();
 		m_systemPtr->flipGravity();
 	}
-
+	//when the ten seconds are up this will trigger to turn gravity back to normal
 	void unflipGrav()
 	{
 		m_timer = 0;
