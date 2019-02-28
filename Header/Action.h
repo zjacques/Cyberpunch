@@ -566,20 +566,24 @@ public:
 		auto nearest = dynamic_cast<PositionComponent *>(&comp->nearestPlayer->getComponent("Pos"));
 
 		//If the AI is more than 50 pixels from the player
-		if (dist(nearest->position, pos->position) > 50)
+		//dist(nearest->position, pos->position) > 50
+		if (true)
 		{
 			//If AI is right of player
-			if (nearest->position.x < pos->position.x)
+			if (nearest->position.x < pos->position.x - 50)
 			{
 				//Move left
 				m_input->m_current["STICKRIGHT"] = false;
 				m_input->m_current["STICKLEFT"] = true;
 			}
-			else //AI is left of player
+			else if (nearest->position.x > pos->position.x + 50) //AI is left of player
 			{
 				//Move right
 				m_input->m_current["STICKLEFT"] = false;
 				m_input->m_current["STICKRIGHT"] = true;
+			}
+			else
+			{
 			}
 		}
 
