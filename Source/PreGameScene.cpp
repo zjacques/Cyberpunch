@@ -12,6 +12,13 @@ PreGameScene::PreGameScene()
 
 void PreGameScene::start()
 {
+	for (auto b : m_availablePlyrs)
+		b = true;
+	playerIndexes.localPlyrs.clear();
+	playerIndexes.onlinePlyrs.clear();
+	playerIndexes.botPlyrs.clear();
+
+
 	m_numOfPossibleLocalPlayers = SDL_NumJoysticks();
 
 	m_network = static_cast<OnlineSystem*>(Scene::systems()["Network"]);
