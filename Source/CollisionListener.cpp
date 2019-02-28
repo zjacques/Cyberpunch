@@ -60,10 +60,12 @@ void CollisionListener::BeginContact(b2Contact * contact)
 		auto player = static_cast<Entity*>(dataA->Tag() == "Player Body" ? dataA->Data() : dataB->Data());
 		auto pickUp = static_cast<Entity*>(dataB->Tag() == "Pickup" ? dataB->Data() : dataA->Data());
 
-
 		std::cout << "Hit" << std::endl;
 		static_cast<PickUpComponent*>(&pickUp->getComponent("PickUp"))->teleport(player);
 		static_cast<AudioComponent&>(pickUp->getComponent("Audio")).playSound("PickUp 1", false);
+		auto p = static_cast<PlayerComponent*>(&player->getComponent("Player"));
+		//If player hits pickup, set status as dj
+		p->setDJ(true);
 	}
 	if ((dataA->Tag() == "Attack" && dataB->Tag() == "Booth")
 		|| (dataB->Tag() == "Attack" && dataA->Tag() == "Booth"))

@@ -32,7 +32,7 @@ void AISystem::createTree()
 
 		//Left sub tree
 		cast_comp->m_selectors[0].addChildren({&cast_comp->m_sequences[0], &cast_comp->m_selectors[5]});
-		cast_comp->m_sequences[0].addChildren({ new CheckNearest(cast_comp->m_entities, e, input), new CloseEnough(e, input),
+		cast_comp->m_sequences[0].addChildren({ new DJAction(e, input), new CheckNearest(cast_comp->m_entities, e, input), new CloseEnough(e, input),
 			&cast_comp->m_succeeders[0], &cast_comp->m_selectors[1], &cast_comp->punchSequence});
 		cast_comp->m_succeeders[0].setChild(new CheckPlayerDirection(e, input));
 		cast_comp->m_selectors[1].addChildren({ new CheckHealth(e, input), &cast_comp->m_selectors[2] });
@@ -42,8 +42,8 @@ void AISystem::createTree()
 
 		//Right sub tree
 		cast_comp->m_selectors[5].addChildren({ &cast_comp->m_sequences[1], &cast_comp->m_sequences[2] });
-		cast_comp->m_sequences[1].addChildren({ new CheckNearest(cast_comp->m_entities, cast_comp->m_self, input), new CloseEnough(e, input) });
-		cast_comp->m_sequences[2].addChildren({ new CheckAbove(e, input), new MoveToPlayer(e, input) });
+		cast_comp->m_sequences[1].addChildren({new CheckNearest(cast_comp->m_entities, cast_comp->m_self, input), new CloseEnough(e, input) });
+		cast_comp->m_sequences[2].addChildren({new CheckAbove(e, input), new MoveToPlayer(e, input) });
 	}
 }
 
@@ -56,7 +56,6 @@ void AISystem::runTree()
 	{
 		auto cast_comp = dynamic_cast<AIComponent *>(c);
 		//Set input handler states back to default
-		//cast_comp->m_input->m_current = cast_comp->m_input->m_default;
 		cast_comp->m_input->m_current = cast_comp->m_input->m_default;
 
 		if (cast_comp->BT.run())

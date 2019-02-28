@@ -89,7 +89,7 @@ void GameScene::start()
 	for (int i = 0; i < m_numOfLocalPlayers; i++)
 	{
 		int dex = PreGameScene::playerIndexes.localPlyrs[i];
-		m_localPlayers.push_back(createPlayer(dex, i, 400 + 150 * dex, 360, true, spawnPos));
+		m_localPlayers.push_back(createPlayer(dex, i, 200 + 400 * dex, 360, true, spawnPos));
 		m_allPlayers.emplace_back(m_localPlayers.at(i)); //Add local to all players vector
 	}
 	for (int i = 0; i < m_numOfOnlinePlayers; i++)
@@ -98,10 +98,11 @@ void GameScene::start()
 		m_onlinePlayers.push_back(createPlayer(dex, 0, 400 + 150 * dex, 360, false, spawnPos));
 		m_allPlayers.emplace_back(m_onlinePlayers.at(i)); //Add online players to all players vector
 	}
+	m_numOfAIPlayers = 1;
 	for (int i = 0; i < m_numOfAIPlayers; i++)
 	{
-		int dex = PreGameScene::playerIndexes.botPlyrs[i];
-		m_AIPlayers.push_back(createAI(dex, 1000 + 150 * dex, 360, true, spawnPos));
+		//int dex = PreGameScene::playerIndexes.botPlyrs[i];
+		m_AIPlayers.push_back(createAI(i, 1000 + 150 * i, 360, true, spawnPos));
 		m_allPlayers.emplace_back(m_AIPlayers.at(i)); //Add ai to all players vector
 	}
 	
@@ -240,6 +241,14 @@ void GameScene::setupUi()
 			}
 				
 			Scene::systems()["Render"]->addComponent(&ent->getComponent("Sprite"));
+
+			ent->addComponent("Head", static_cast<SpriteComponent*>(&m_allPlayers.at(index)->getComponent("Portrait")));
+			m_allPlayers.at(index)->removeComponent("Portrait");
+			auto head = static_cast<SpriteComponent*>(&ent->getComponent("Head"));
+			head->useCamera() = false;
+			head->setPosPtr(new PositionComponent(pos->position.x - 55, pos->position.y));
+
+			Scene::systems()["Render"]->addComponent(head);
 
 			m_ui[m_allPlayers.at(index)] = ent;
 
@@ -637,6 +646,10 @@ Entity * GameScene::createPlayer(int playerNumber,int controllerNumber, int posX
 	//Add the physics component to the player physics system
 	Scene::systems()["Player Physics"]->addComponent(phys);
 
+
+	//Add the head picture to the playe rso the ui can get it from the player and display it in the correct corner
+	p->addComponent("Portrait", new SpriteComponent(nullptr, Vector2f(59, 65), Vector2f(59, 65), Scene::resources().getTexture("Head" + std::to_string(playerNumber)), 11));
+
 	return p; //Return the created entity
 }
 
@@ -786,6 +799,8 @@ Entity * GameScene::createAI(int index, int posX, int posY, bool local, std::vec
 
 	//Add the components to the entity
 	ai->addComponent("Player Physics", phys);
+
+	ai->addComponent("Portrait", new SpriteComponent(nullptr, Vector2f(59, 65), Vector2f(59, 65), Scene::resources().getTexture("Head" + std::to_string(index)), 11));
 
 	//Add the physics component to the playe rphysics system
 	Scene::systems()["Player Physics"]->addComponent(phys);

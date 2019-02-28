@@ -39,9 +39,9 @@ private:
 	Vector2f m_teleportLocationB;
 	Vector2f m_position = Vector2f(1920 / 2, 920 / 2);
 	Vector2f m_pos2 = Vector2f(1670, 280);
-	Vector2f m_pos3 = Vector2f(250, 840);
+	Vector2f m_pos3 = Vector2f(250, 760);
 	Vector2f m_pos4 = Vector2f(1650, 840);
-	Vector2f m_pos5 = Vector2f(250, 300);
+	Vector2f m_pos5 = Vector2f(250, 260);
 	PhysicsComponent* m_body;
 	Entity* m_playerToTele, *m_pickupEntity;
 	bool m_teleport;

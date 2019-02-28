@@ -18,9 +18,11 @@ public:
 	void handleInput(InputSystem& input);
 	void handleButtonPressed();
 private:
+	float m_logoTimer;
 	int m_currentIndex;
 	Camera m_camera;
 	InputComponent m_input;
+	Entity m_logo;
 	bool m_addedInput;
 	bool m_audioCreated;
 	std::vector<Entity*> m_buttons;
