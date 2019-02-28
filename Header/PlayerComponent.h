@@ -43,6 +43,11 @@ public:
 			m_newSpawn = &m_spawnLocations.at(rand() % m_spawnLocations.size()); //Number between 0 and the size of the amount of spawn points	
 		}
 		static_cast<AudioComponent&>(m_playerPtr->getComponent("Audio")).playSound("KnockOut", false);
+		auto net = static_cast<OnlineSendComponent*>(&m_playerPtr->getComponent("Send"));
+		if (net != NULL)
+		{
+			net->addCommand("RESPAWN");
+		}
 	}
 
 	void spawnPlayer()

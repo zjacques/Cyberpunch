@@ -206,7 +206,9 @@ void PreGameScene::checkForUpdates()
 	for (auto num : players)
 	{
 		//if (num != playerIndexes.localPlyrs.back())
-		if(!(std::find(playerIndexes.localPlyrs.begin(), playerIndexes.localPlyrs.end(), num) != playerIndexes.localPlyrs.end()) && !(std::find(playerIndexes.botPlyrs.begin(), playerIndexes.botPlyrs.end(), num) == playerIndexes.botPlyrs.end()))
+		bool notInLocal = !(std::find(playerIndexes.localPlyrs.begin(), playerIndexes.localPlyrs.end(), num) != playerIndexes.localPlyrs.end());
+		bool notInBots = !(std::find(playerIndexes.botPlyrs.begin(), playerIndexes.botPlyrs.end(), num) != playerIndexes.botPlyrs.end());
+		if( notInLocal && notInBots)
 		{
 			playerIndexes.onlinePlyrs.push_back(num);
 			m_availablePlyrs[num] = false;
