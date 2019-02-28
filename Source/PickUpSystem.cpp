@@ -17,23 +17,36 @@ void PickUpSystem::update(double dt)
 	for (auto& comp : m_components)
 	{
 		auto pickup = static_cast<PickUpComponent*>(comp);
-
-		if (pickup->getTimeTillSpawn() > 0)
+		if (!m_netSysPtr->isConnected || m_netSysPtr->m_isHost)
 		{
-			pickup->getTimeTillSpawn() -= dt;
-
-			if (pickup->getTimeTillSpawn() <= 0)
+			if (pickup->getTimeTillSpawn() > 0)
 			{
+				pickup->getTimeTillSpawn() -= dt;
+
+				if (pickup->getTimeTillSpawn() <= 0)
+				{
+					pickup->spawn(*m_worldPtr);
+					m_renderSysPtr->addComponent(&pickup->getPickupEntity()->getComponent("Sprite"));
+					if (m_netSysPtr->isConnected)
+						m_netSysPtr->spawnPickup(pickup->m_currentPos);
+				}
+
+			}
+		}
+		else 
+		{
+			int loc = m_netSysPtr->pickupLocation();
+			if (loc != -1)
+			{
+				pickup->m_currentPos = loc; 
 				pickup->spawn(*m_worldPtr);
 				m_renderSysPtr->addComponent(&pickup->getPickupEntity()->getComponent("Sprite"));
 			}
-
 		}
 
 		//countdown for time in booths
 		if (pickup->toTeleportB())
 		{
-			
 			pickup->getTimeInBooth() -= dt;
 
 			//checks to see if time is up for player in booth, sets teleport to false

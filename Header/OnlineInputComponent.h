@@ -1,5 +1,6 @@
 #pragma once
 #include "Component.h"
+#include "PlayerComponent.h"
 #include "Commands.h"
 #include "nlohmann/json.hpp"
 #include <queue>
