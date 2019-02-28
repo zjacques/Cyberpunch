@@ -113,6 +113,7 @@ void LobbyScene::handleInput(InputSystem & input)
 		}
 		if (m_input->isButtonPressed("ABTN"))
 		{
+			m_network->disconnect();
 			Scene::goToScene("Main Menu");//Just go back to the main menu
 		}
 
