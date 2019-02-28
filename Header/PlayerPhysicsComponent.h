@@ -44,10 +44,12 @@ public:
 	bool& toSetDynamic() { return m_setDynamic; }
 	int& damagePercentage() { return m_dmgPercentage; }
 	int& superPercentage() { return m_superPercentage; }
+	bool& isOnPlayer() { return m_onPlayer; }
 
 	//Setters
 	void setCanFall(bool b) { m_canFall = b; }
 	void setCanJump(bool b) { m_canJump = b; }
+	void setOnPlayer(bool b) { m_onPlayer = b; }
 
 	//---Member variables---//
 	//The body of the physics component
@@ -64,6 +66,7 @@ private:
 	bool m_falling, m_stunned, m_canJump, m_canFall, m_movingL, m_movingR, m_gravFlipped, m_supered, m_stunnedBySuper;
 	float m_stunLeft, m_moveSpeed, m_jumpDownSpeed, m_jumpSpeed;
 	float m_superTime;
+	bool m_onPlayer = false;
 	int m_dmgPercentage, m_superPercentage;
 	float m_originalMass;
 	Vector2f m_superImpulse; //The impulse applied to the player after a super is over

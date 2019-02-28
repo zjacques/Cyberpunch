@@ -1,8 +1,12 @@
 #include "..\Header\PreGameScene.h"
+#include "RenderSystem.h"
 
 
 PreGameScene::PlayersInfo PreGameScene::playerIndexes;
-PreGameScene::PreGameScene()
+PreGameScene::PreGameScene() :
+	m_bg("BG"),
+	m_camera(false),
+	m_setupBg(false)
 {
 	m_availablePlyrs.push_back(true);
 	m_availablePlyrs.push_back(true);
@@ -20,6 +24,15 @@ void PreGameScene::start()
 
 
 	m_numOfPossibleLocalPlayers = SDL_NumJoysticks();
+
+	if (!m_setupBg)
+	{
+		auto bgPos = new PositionComponent(960, 540);
+		m_bg.addComponent("Pos", bgPos);
+		m_bg.addComponent("Sprite", new SpriteComponent(bgPos, Vector2f(1920, 1080), Vector2f(1920, 1080), Scene::resources().getTexture("Pre Game BG"), 0));
+	}
+
+	Scene::systems()["Render"]->addComponent(&m_bg.getComponent("Sprite"));
 
 	m_network = static_cast<OnlineSystem*>(Scene::systems()["Network"]);
 
@@ -70,10 +83,31 @@ void PreGameScene::start()
 		Scene::systems()["Input"]->addComponent(m_input[i].first);
 		//m_hasJoined.push_back(false);
 	}
+
+	//Create first badge for the host player
+	m_playerIcons.push_back(createBadge(240, 540, true, 0));
+
+	m_setupBg = true;
 }
 
 void PreGameScene::stop()
 {
+	Scene::systems()["Render"]->deleteComponent(&m_bg.getComponent("Sprite"));
+
+	for (auto& badge : m_playerIcons)
+	{
+		Scene::systems()["Render"]->deleteComponent(&badge->getComponent("Sprite"));
+		Scene::systems()["Render"]->deleteComponent(&badge->getComponent("Ind Sprite"));
+
+		delete &badge->getComponent("Pos");
+		delete &badge->getComponent("Ind Pos");
+		delete &badge->getComponent("Sprite");
+		delete &badge->getComponent("Ind Sprite");
+		delete badge;
+	}
+
+	//CLear ethe vector so we dont have redundant memory stored
+	m_playerIcons.clear();
 }
 
 void PreGameScene::update(double dt)
@@ -96,6 +130,7 @@ void PreGameScene::update(double dt)
 
 void PreGameScene::draw(SDL_Renderer & renderer)
 {
+	static_cast<RenderSystem*>(Scene::systems()["Render"])->render(renderer, m_camera);
 }
 
 void PreGameScene::handleInput(InputSystem & input)
@@ -149,6 +184,7 @@ void PreGameScene::handleInput(InputSystem & input)
 				{
 					m_availablePlyrs[j] = false;
 					playerIndexes.botPlyrs.push_back(j); 
+					m_playerIcons.push_back(createBadge(240 + m_playerIcons.size() * 480, 540, false, j));
 					playersChanged = true;
 					break;
 				}
@@ -210,6 +246,56 @@ void PreGameScene::handleInput(InputSystem & input)
 	if (m_network->isConnected && playersChanged)//actually send the message to say which slots are taken
 	{
 		m_network->assignPlayerSlots(m_availablePlyrs);
+	}
+
+	if(playersChanged)
+		reconstructBadges();
+}
+
+Entity * PreGameScene::createBadge(int x, int y, bool isPlayer, int index)
+{
+	auto ent = new Entity("Badge");
+	auto pos = new PositionComponent(x, y);
+	auto indPos = new PositionComponent(x, y - 200);
+	ent->addComponent("Pos", pos);
+	ent->addComponent("Ind Pos", indPos);
+	ent->addComponent("Sprite", new SpriteComponent(pos, Vector2f(300, 300), Vector2f(300, 300), Scene::resources().getTexture("Pre Game Head" + std::to_string(index)), 1));
+	ent->addComponent("Ind Sprite", new SpriteComponent(indPos, Vector2f(200, 75), Vector2f(200, 75), Scene::resources().getTexture(isPlayer ? "Player Indicator" : "Cpu Indicator"), 1));
+
+	Scene::systems()["Render"]->addComponent(&ent->getComponent("Sprite"));
+	Scene::systems()["Render"]->addComponent(&ent->getComponent("Ind Sprite"));
+
+	return ent;
+}
+
+void PreGameScene::reconstructBadges()
+{
+	for (auto& badge : m_playerIcons)
+	{
+		Scene::systems()["Render"]->deleteComponent(&badge->getComponent("Sprite"));
+		Scene::systems()["Render"]->deleteComponent(&badge->getComponent("Ind Sprite"));
+
+		delete &badge->getComponent("Pos");
+		delete &badge->getComponent("Ind Pos");
+		delete &badge->getComponent("Sprite");
+		delete &badge->getComponent("Ind Sprite");
+		delete badge;
+	}
+
+	//CLear ethe vector so we dont have redundant memory stored
+	m_playerIcons.clear();
+
+	for (auto index : playerIndexes.localPlyrs)
+	{
+		m_playerIcons.push_back(createBadge(240 + 480 * index, 540, true, index));
+	}
+	for (auto index : playerIndexes.onlinePlyrs)
+	{
+		m_playerIcons.push_back(createBadge(240 + 480 * index, 540, true, index));
+	}
+	for (auto index : playerIndexes.botPlyrs)
+	{
+		m_playerIcons.push_back(createBadge(240 + 480 * index, 540, false, index));
 	}
 }
 

@@ -35,7 +35,7 @@ public:
 			else
 				m_currentCMD = &m_punchCMD;
 		}
-		else if (isButtonHeld("RBBTN") && isButtonHeld("LBBTN"))
+		else if (isButtonHeld("RBBTN"))
 		{
 			m_currentCMD = &m_superCMD;
 		}
