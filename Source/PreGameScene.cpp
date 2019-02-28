@@ -118,7 +118,7 @@ void PreGameScene::update(double dt)
 	{
 		Scene::goToScene("Main Menu");
 	}
-	if (m_network->isConnected && lastUpdate > 0.5)
+	if (m_network->isConnected && lastUpdate > 0.2)
 	{
 		checkForUpdates();
 		lastUpdate = 0;
@@ -169,6 +169,7 @@ void PreGameScene::handleInput(InputSystem & input)
 				//p.insert(p.end(), playerIndexes.onlinePlyrs.begin(), playerIndexes.onlinePlyrs.end());
 				vector<int> p{ 0,1,2,3 };
 				m_network->disconnect(p);
+				m_network->m_isHost = false;
 			}
 			playerIndexes.localPlyrs.clear();
 			playerIndexes.onlinePlyrs.clear();
@@ -177,34 +178,41 @@ void PreGameScene::handleInput(InputSystem & input)
 		}
 		else if (m_input[0].first->isButtonPressed("BBTN"))
 		{
-			//tell the network a slot is being taken up
-			//add AI
-			for (int j = 0; j < m_availablePlyrs.size(); j++)
+			if (!m_network->isConnected || m_network->m_isHost)
 			{
-				if (m_availablePlyrs[j])
+				//tell the network a slot is being taken up
+				//add AI
+				for (int j = 0; j < m_availablePlyrs.size(); j++)
 				{
-					m_availablePlyrs[j] = false;
-					playerIndexes.botPlyrs.push_back(j); 
-					m_playerIcons.push_back(createBadge(240 + m_playerIcons.size() * 480, 540, false, j));
-					playersChanged = true;
-					break;
+					if (m_availablePlyrs[j])
+					{
+						m_availablePlyrs[j] = false;
+						playerIndexes.botPlyrs.push_back(j);
+						m_playerIcons.push_back(createBadge(240 + m_playerIcons.size() * 480, 540, false, j));
+						playersChanged = true;
+						break;
+					}
 				}
 			}
 		}
 		else if (m_input[0].first->isButtonPressed("YBTN"))
 		{
-			//remove AI
-			for (int j = m_availablePlyrs.size(); j > 0; j--)
+			if (!m_network->isConnected || m_network->m_isHost)
 			{
-				if (std::find(playerIndexes.botPlyrs.begin(), playerIndexes.botPlyrs.end(), j) != playerIndexes.botPlyrs.end() && !m_availablePlyrs[j])
+				//remove AI
+				for (int j = m_availablePlyrs.size(); j > 0; j--)
 				{
-					m_availablePlyrs[j] = true;
-					playerIndexes.botPlyrs.push_back(j);
-					playerIndexes.botPlyrs.erase(std::remove(playerIndexes.botPlyrs.begin(), playerIndexes.botPlyrs.end(), j), playerIndexes.botPlyrs.end());
-					playersChanged = true;
-					break;
+					if (std::find(playerIndexes.botPlyrs.begin(), playerIndexes.botPlyrs.end(), j) != playerIndexes.botPlyrs.end() && !m_availablePlyrs[j])
+					{
+						m_availablePlyrs[j] = true;
+						playerIndexes.botPlyrs.push_back(j);
+						playerIndexes.botPlyrs.erase(std::remove(playerIndexes.botPlyrs.begin(), playerIndexes.botPlyrs.end(), j), playerIndexes.botPlyrs.end());
+						playersChanged = true;
+						break;
+					}
 				}
 			}
+
 		}
 		for (int i = 1; i < m_numOfPossibleLocalPlayers; i++)
 		{
@@ -316,4 +324,5 @@ void PreGameScene::checkForUpdates()
 			m_availablePlyrs[num] = false;
 		}
 	}
+	reconstructBadges();
 }

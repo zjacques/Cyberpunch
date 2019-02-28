@@ -222,6 +222,6 @@ void MainMenuScene::handleButtonPressed()
 	}
 	else if (tag == "Exit")
 	{
-		// Need a way to exit the game
+		achi::Listener::m_exit = true;
 	}
 }

@@ -87,6 +87,9 @@ void GameScene::start()
 		auto point = Scene::resources().getLevelData()["Spawn Points"].at(i);
 		spawnPos.push_back(Vector2f(point["X"], point["Y"]));
 	}
+
+	achi::Listener::m_localPlayers = m_numOfLocalPlayers; //Set the amount of local players in the global space
+
 	for (int i = 0; i < m_numOfLocalPlayers; i++)
 	{
 		int dex = PreGameScene::playerIndexes.localPlyrs[i];
@@ -386,6 +389,9 @@ void GameScene::update(double dt)
 		Scene::systems()["Render"]->addComponent(&m_gameEndE.getComponent("Sprite"));
 		static_cast<AnimationComponent&>(m_gameEndE.getComponent("Animation")).playAnimation("Win", false);
 		m_gameOver = true;
+		achi::Listener::notify(m_allPlayers.at(0), MATCH_ENDED);
+		if(m_numOfOnlinePlayers != 0) //If online, send an online match ended event
+			achi::Listener::notify(m_allPlayers.at(0), ONLINE_MATCH_ENDED);
 	}
 
 	updateEndGameTimer(dt);
@@ -945,87 +951,6 @@ void GameScene::draw(SDL_Renderer & renderer)
 	//Draw sprites in the render system
 	auto renderSystem = static_cast<RenderSystem*>(Scene::systems()["Render"]);
 	renderSystem->render(renderer, m_camera);
-
-	//Drawing the jump sensors and attack boxes for the player (For debug only, this will be deleted)
-	for (auto& player : m_allPlayers)
-	{
-		//auto phys = static_cast<PlayerPhysicsComponent*>(&player->getComponent("Player Physics"));
-		//auto hit = static_cast<AttackComponent*>(&player->getComponent("Attack"));
-
-		//Draw the players outline for the hitbox
-		//rect.w = phys->m_body->getSize().x;
-		//rect.h = phys->m_body->getSize().y;
-		//rect.x = phys->m_body->getPosition().x - (rect.w / 2) - m_camera.x();
-		//rect.y = phys->m_body->getPosition().y - (rect.h / 2) - m_camera.y();
-
-		//if (phys->isSupered())
-		//{
-		//	SDL_SetRenderDrawColor(&renderer, 255, 0, 0, 255);
-		//	SDL_RenderFillRect(&renderer, &rect);
-		//}
-		////Draw orange if stunned by a super punch
-		//else if (phys->superStunned())
-		//{
-		//	SDL_SetRenderDrawColor(&renderer, 255, 110, 0, 55);
-		//	SDL_RenderFillRect(&renderer, &rect);
-		//}
-		////If the player is stunned, draw a yellow rectangle
-		//else if (phys->stunned())
-		//{
-		//	SDL_SetRenderDrawColor(&renderer, 255, 255, 0, 20);
-		//	SDL_RenderFillRect(&renderer, &rect);
-		//}
-
-
-		//rect.w = phys->m_jumpSensor->getSize().x;
-		//rect.h = phys->m_jumpSensor->getSize().y;
-		//rect.x = phys->m_jumpSensor->getPosition().x - (rect.w / 2) - m_camera.x();
-		//rect.y = phys->m_jumpSensor->getPosition().y - (rect.h / 2) - m_camera.y();
-		//SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
-		//SDL_RenderDrawRect(&renderer, &rect);
-
-		//if (nullptr != hit->m_currentAttack)
-		//{
-		//	rect.w = hit->m_currentAttack->m_body->getSize().x;
-		//	rect.h = hit->m_currentAttack->m_body->getSize().y;
-		//	rect.x = hit->m_currentAttack->m_body->getPosition().x - (rect.w / 2) - m_camera.x();
-		//	rect.y = hit->m_currentAttack->m_body->getPosition().y - (rect.h / 2) - m_camera.y();
-		//	SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
-		//	SDL_RenderDrawRect(&renderer, &rect);
-		//}
-	}
-
-	for (auto i : m_AIPlayers)
-	{
-		/*SDL_SetRenderDrawColor(&renderer, 255, 0, 0, 255);
-		auto phys = static_cast<PlayerPhysicsComponent*>(&i->getComponent("Player Physics"));
-
-		for (int i = 0; i < m_numOfOnlinePlayers; i++)
-		{
-			SDL_SetRenderDrawColor(&renderer, 255, 0, 0, 255);
-			auto phys = static_cast<PlayerPhysicsComponent*>(&m_onlinePlayers.at(i)->getComponent("Player Physics"));
-
-			SDL_Rect rect;
-			rect.w = phys->m_body->getSize().x;
-			rect.h = phys->m_body->getSize().y;
-			rect.x = phys->m_body->getPosition().x - (rect.w / 2) -m_camera.x();
-			rect.y = phys->m_body->getPosition().y - (rect.h / 2) - m_camera.y();
-			SDL_RenderFillRect(&renderer, &rect);
-
-			rect.w = phys->m_jumpSensor->getSize().x;
-			rect.h = phys->m_jumpSensor->getSize().y;
-			rect.x = phys->m_jumpSensor->getPosition().x - (rect.w / 2) - m_camera.x();
-			rect.y = phys->m_jumpSensor->getPosition().y - (rect.h / 2) - m_camera.y();
-			SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
-			SDL_RenderDrawRect(&renderer, &rect);
-		}*/
-
-		/*for (int i = 0; i < m_numOfOnlinePlayers; i++)
-		{
-			m_onlinePlayers.at(i).draw(renderer);
-		}*/
-		//m_pickUp.draw(renderer);
-	}
 }
 
 void GameScene::handleInput(InputSystem & input)

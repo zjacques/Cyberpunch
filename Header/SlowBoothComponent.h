@@ -19,7 +19,7 @@ public:
 	}
 	void run()
 	{
-		std::cout << "Slowing down booth\n";
+		notify(m_pickUp, SLOW_DOWN);
 		m_active = true;
 		m_timer = 15;
 		m_halfPoint = false;

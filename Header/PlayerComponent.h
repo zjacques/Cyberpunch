@@ -20,7 +20,9 @@ public:
 		m_playerIndex(index),
 		m_dmgDealt(0),
 		m_dmgTaken(0),
-		m_supersUsed(0)
+		m_supersUsed(0),
+		m_hitBy(nullptr),
+		m_hitWith("")
 	{
 
 	}
@@ -29,6 +31,16 @@ public:
 	{
 		//Set the player to respawn
 		m_lives--;
+
+
+		if (m_hitWith == "Kick" && m_playerPtr->m_ID == "AI")
+			achi::Listener::notify(nullptr, KICK_DEATH);
+		
+		if (m_playerPtr->m_ID == "AI" && (nullptr != m_hitBy))
+		{
+			if (m_hitBy->m_ID != "AI")
+				achi::Listener::notify(nullptr, AI_DEATH);
+		}
 
 		//If the player is not the winner
 		if (m_lives < 1 && m_winner == false)
@@ -65,7 +77,14 @@ public:
 		//Set the players position to the new position
 		phys->m_body->setPosition(m_newSpawn->x, m_newSpawn->y);
 		phys->m_jumpSensor->setPosition(m_newSpawn->x, m_newSpawn->y);
+		phys->m_body->getBody()->SetAngularVelocity(0);
+		phys->m_body->getBody()->SetLinearVelocity(b2Vec2(0,0));
+		phys->m_jumpSensor->getBody()->SetAngularVelocity(0);
+		phys->m_jumpSensor->getBody()->SetLinearVelocity(b2Vec2(0, 0));
 		phys->damagePercentage() = 0; //Reset the damage percentage
+
+		m_hitWith = "";
+		m_hitBy = nullptr;
 	}
 
 	Vector2f getSpawnLocation() { return *m_newSpawn; }
@@ -80,6 +99,8 @@ public:
 	void setDJ(bool c) { inDJBooth = c; }
 	int m_dmgTaken, m_dmgDealt, m_timesStunned, m_timesSuperStunned, m_supersUsed;
 	int m_playerIndex;
+	Entity* m_hitBy;
+	std::string m_hitWith;
 private:
 	float m_spawnTimer;
 	Entity * m_playerPtr;
