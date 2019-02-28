@@ -28,6 +28,10 @@ public:
 		{
 			m_currentCMD = &m_punchCMD;
 		}
+		else if (isButtonHeld("RBBTN") && isButtonHeld("LBBTN"))
+		{
+			m_currentCMD = &m_superCMD;
+		}
 		else if (aiIsButtonPressed("ABTN")) //A
 		{
 			m_currentCMD = &m_kickCMD;
@@ -45,9 +49,17 @@ public:
 			m_currentCMD = &m_moveRightCMD;
 		}
 
+		//If a command is active, execute it
 		if (nullptr != m_currentCMD)
 		{
 			m_currentCMD->execute(*e);
+		} //Otherwise execute the idle command
+		else if (static_cast<AttackComponent *>(&e->getComponent("Attack"))->attackActive() == false
+			&& !(static_cast<AnimationComponent *>(&e->getComponent("Animation"))->getCurrentID() == "Jump"
+				&& static_cast<AnimationComponent *>(&e->getComponent("Animation"))->getCurrentAnimation()->getCompleted() == false)
+			&& static_cast<PlayerPhysicsComponent *>(&e->getComponent("Player Physics"))->stunned() == false)
+		{
+			m_idleCMD.execute(*e);
 		}
 
 		m_previousCMD = m_currentCMD;
@@ -73,6 +85,8 @@ private:
 	KickCommand m_kickCMD;
 	UppercutCommand m_uppercutCMD;
 	PhaseDownCommand m_phaseDownCMD;
+	SuperCommand m_superCMD;
+	IdleCommand m_idleCMD;
 	Command * m_currentCMD;
 	Command * m_previousCMD;
 	bool m_left, m_right;

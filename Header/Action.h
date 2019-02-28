@@ -139,7 +139,20 @@ public:
 	/// <returns></returns>
 	bool run() override
 	{
-		m_input->m_current["XBTN"] = true;
+		auto p = static_cast<PlayerPhysicsComponent *>(&m_entity->getComponent("Player Physics"));
+
+		if (p->canSuperUp())
+		{
+			m_input->m_current["ABTN"] = false;
+			m_input->m_current["XBTN"] = false;
+			m_input->m_current["RBBTN"] = true;
+		}
+		else
+		{
+			m_input->m_current["ABTN"] = false;
+			m_input->m_current["XBTN"] = true;
+			std::cout << "PUNCH" << std::endl;
+		}
 		return true;
 	}
 };
@@ -159,7 +172,9 @@ public:
 
 	bool run() override
 	{
+		m_input->m_current["XBTN"] = false;
 		m_input->m_current["ABTN"] = true;
+		std::cout << "KICK" << std::endl;
 		return true;
 	}
 };
