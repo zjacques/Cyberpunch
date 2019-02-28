@@ -118,7 +118,7 @@ void PreGameScene::update(double dt)
 	{
 		Scene::goToScene("Main Menu");
 	}
-	if (m_network->isConnected && lastUpdate > 0.5)
+	if (m_network->isConnected && lastUpdate > 0.2)
 	{
 		checkForUpdates();
 		lastUpdate = 0;
@@ -316,4 +316,5 @@ void PreGameScene::checkForUpdates()
 			m_availablePlyrs[num] = false;
 		}
 	}
+	reconstructBadges();
 }
