@@ -68,6 +68,7 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 	m_map["Achievement Banner"] = loadFromPath("Achievements/Achievement_Banner.png", renderer);
 	m_map["Portrait"] = loadFromPath("GUI/Portrait.png", renderer);
 	m_map["Numbers Coloured"] = loadFromPath("GUI/Numbers Coloured.png", renderer);
+	m_map["Logo"] = loadFromPath("Logo.png", renderer);
 
 	std::vector<std::string> names({ "Punch First",
 		"Final Form",
