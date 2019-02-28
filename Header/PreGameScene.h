@@ -3,6 +3,7 @@
 #include "OnlineSystem.h"
 #include "AiInputComponent.h"
 #include "PlayerInputComponent.h"
+#include "Camera.h"
 
 using std::map;
 using std::pair;
@@ -22,6 +23,9 @@ public:
 	void draw(SDL_Renderer& renderer);
 	void handleInput(InputSystem& input);
 
+	Entity* createBadge(int x, int y, bool isPlayer, int index);
+	void reconstructBadges();
+
 	//static PlayersInfo playerIndexes;
 
 private:
@@ -39,4 +43,9 @@ private:
 
 	int m_maxPlayers = 4;
 
+	std::vector<Entity*> m_playerIcons;
+
+	Entity m_bg;
+	Camera m_camera;
+	bool m_setupBg;
 };
