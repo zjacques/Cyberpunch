@@ -118,8 +118,7 @@ void PlayerPhysicsComponent::applyDamageImpulse(float x, float y)
 	//If stunne dby a super, build up the impulse
 	if (m_stunnedBySuper)
 	{
-		m_superImpulse += Vector2f(impulse.x * .2f, impulse.y * .5f);
-		std::cout << m_superImpulse << "\n";
+		m_superImpulse += Vector2f(impulse.x * .5f, impulse.y * .5f);
 	}
 	else //If not hit by a super stun, apply knockback
 	{

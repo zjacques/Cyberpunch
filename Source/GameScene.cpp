@@ -584,8 +584,8 @@ Entity * GameScene::createPlayer(int playerNumber,int controllerNumber, int posX
 
 	animation->addAnimation("Run", Scene::resources().getTexture("Player Run" + std::to_string(playerNumber)), m_animRects, .75f);
 	animation->addAnimation("Idle", Scene::resources().getTexture("Player Idle" + std::to_string(playerNumber)), m_animRects, .5f);
-	animation->addAnimation("Punch 0", Scene::resources().getTexture("Player Left Punch"), m_animRects, .175f);
-	animation->addAnimation("Punch 1", Scene::resources().getTexture("Player Right Punch"), m_animRects, .175f);
+	animation->addAnimation("Punch 0", Scene::resources().getTexture("Player Left Punch" + std::to_string(playerNumber)), m_animRects, .175f);
+	animation->addAnimation("Punch 1", Scene::resources().getTexture("Player Right Punch" + std::to_string(playerNumber)), m_animRects, .175f);
 	animation->addAnimation("Ground Kick", Scene::resources().getTexture("Player Ground Kick" + std::to_string(playerNumber)), m_animRects, .4f);
 	animation->addAnimation("Uppercut", Scene::resources().getTexture("Player Uppercut" + std::to_string(playerNumber)), m_animRects, .4f);
 	animation->addAnimation("Jump", Scene::resources().getTexture("Player Jump" + std::to_string(playerNumber)), m_animRects, .4f);
@@ -749,8 +749,8 @@ Entity * GameScene::createAI(int index, int posX, int posY, bool local, std::vec
 
 	animation->addAnimation("Run", Scene::resources().getTexture("Player Run" + std::to_string(index)), m_animRects, .75f);
 	animation->addAnimation("Idle", Scene::resources().getTexture("Player Idle" + std::to_string(index)), m_animRects, .5f);
-	animation->addAnimation("Punch 0", Scene::resources().getTexture("Player Left Punch"), m_animRects, .175f);
-	animation->addAnimation("Punch 1", Scene::resources().getTexture("Player Right Punch"), m_animRects, .175f);
+	animation->addAnimation("Punch 0", Scene::resources().getTexture("Player Left Punch" + std::to_string(index)), m_animRects, .175f);
+	animation->addAnimation("Punch 1", Scene::resources().getTexture("Player Right Punch" + std::to_string(index)), m_animRects, .175f);
 	animation->addAnimation("Ground Kick", Scene::resources().getTexture("Player Ground Kick" + std::to_string(index)), m_animRects, .4f);
 	animation->addAnimation("Uppercut", Scene::resources().getTexture("Player Uppercut" + std::to_string(index)), m_animRects, .4f);
 	animation->addAnimation("Jump", Scene::resources().getTexture("Player Jump" + std::to_string(index)), m_animRects, .4f);
