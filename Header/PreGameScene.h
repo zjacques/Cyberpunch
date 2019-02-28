@@ -5,6 +5,7 @@
 #include "PlayerInputComponent.h"
 
 using std::map;
+using std::pair;
 
 class PreGameScene : public Scene {
 public:
@@ -25,8 +26,9 @@ public:
 
 private:
 	void checkForUpdates();
-
-	vector<InputComponent> m_input;
+	vector<bool> m_availablePlyrs;
+	vector<pair<InputComponent, int>> m_input;
+	//vector<bool> m_hasJoined;
 	int m_numOfPossibleLocalPlayers;
 	bool isGameOnline = false;
 	OnlineSystem* m_network;

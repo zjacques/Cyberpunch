@@ -206,7 +206,7 @@ string ClientSocket::checkForIncomingMessages()
 
 			if (debug)
 			{
-				cout << endl << "Got message: " << pBuffer << " (" << serverResponseByteCount << " bytes)" << endl;
+				//cout << endl << "Got message: " << pBuffer << " (" << serverResponseByteCount << " bytes)" << endl;
 			}
 
 			if (serverResponseByteCount != 0)
@@ -243,7 +243,7 @@ string ClientSocket::checkForIncomingMessages()
 void ClientSocket::displayMessage(string &receivedMessage)
 {
 	// Display the message and then...
-	cout << endl << "Received: " << receivedMessage << endl;
+	//cout << endl << "Received: " << receivedMessage << endl;
 
 	// Blank it! Because we pass a reference to a string into this function
 	// it's the actual receivedMessage that's blanked and not just a copy
@@ -367,7 +367,7 @@ void ClientSocket::sendString(string stringToSend)
 			}
 			else
 			{
-				if (debug) { cout << "Message sent successfully : "<< stringToSend << endl; }
+				//if (debug) { cout << "Message sent successfully : "<< stringToSend << endl; }
 
 			}
 		}
