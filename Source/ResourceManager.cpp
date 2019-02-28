@@ -87,6 +87,13 @@ void ResourceHandler::loadTextures(SDL_Renderer& renderer)
 	m_map["Head1"] = loadFromPath("GUI/Blue Head.png", renderer);
 	m_map["Head2"] = loadFromPath("GUI/Orange Head.png", renderer);
 	m_map["Head3"] = loadFromPath("GUI/Pink Head.png", renderer);
+	m_map["Pre Game BG"] = loadFromPath("GUI/Pre_Game_BG.png", renderer);
+	m_map["Player Indicator"] = loadFromPath("GUI/Player Indicator.png", renderer);
+	m_map["Cpu Indicator"] = loadFromPath("GUI/Cpu Indicator.png", renderer);
+
+	for(int i = 0; i < colours.size(); i++)
+		m_map["Pre Game Head" + std::to_string(i)] = loadFromPath("GUI/Pre Game Head" + std::to_string(i) + ".png", renderer);
+
 
 	std::vector<std::string> names({ "Punch First",
 		"Final Form",
