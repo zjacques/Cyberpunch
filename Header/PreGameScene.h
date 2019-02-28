@@ -39,4 +39,6 @@ private:
 
 	int m_maxPlayers = 4;
 
+	bool m_netGame = false;
+
 };

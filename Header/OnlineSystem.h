@@ -27,6 +27,7 @@ public:
 	void ReceiveCommands();
 
 	bool ConnectToServer();
+	string CheckMessages();
 
 	vector<LobbyInfo> getLobbies(); 
 
@@ -41,7 +42,7 @@ public:
 	void spawnPickup(int spawnPosition);
 	int pickupLocation();
 
-	void disconnect();
+	void disconnect(vector<int> relatedPlyrs);
 
 	bool gameStarted = false;
 

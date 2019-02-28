@@ -89,6 +89,12 @@ void OnlineSystem::ReceiveCommands()
 		{
 			p_spawnPickup = currentPacket["pos"];
 		}
+		else if (currentPacket["type"] == "QUIT")
+		{
+			delete m_Socket;
+			isConnected = false;
+			m_isHost = false;
+		}
 		else if (currentPacket["type"] == "COMMANDS")
 		{
 			for (auto& plyr : m_receivingPlayers)
@@ -133,6 +139,17 @@ bool OnlineSystem::ConnectToServer()
 		//exit(-1);
 		isConnected = false;
 		return false;
+	}
+}
+
+string OnlineSystem::CheckMessages()
+{
+	string ret = m_Socket->checkForIncomingMessages();
+	if(ret != "Lost connection to the server!")
+		return ret;
+	else {
+		delete m_Socket;
+		isConnected = false;
 	}
 }
 
@@ -281,10 +298,21 @@ int OnlineSystem::pickupLocation()
 	return retval;
 }
 
-void OnlineSystem::disconnect()
+void OnlineSystem::disconnect(vector<int> relatedPlyrs)
 {
-	m_Socket->sendString(m_Socket->QUIT_SIGNAL);
+	string pack = "{\"type\":\"QUIT\",\"list\":[";
+	bool isFirst = true;
+	for (auto p : relatedPlyrs) {
+		if (!isFirst)
+			pack += ",";
+		else
+			isFirst = false;
+		pack += toString(p);
+	}
+	pack += "]}";
+	m_Socket->sendString(pack);
 	delete m_Socket;
 	isConnected = false;
+	m_isHost = false;
 	
 }
