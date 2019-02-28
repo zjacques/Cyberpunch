@@ -66,6 +66,8 @@ public:
 	bool& toRespawn() { return m_respawn; }
 	bool& isRespawning() { return m_respawning; }
 	bool& isWinner() { return m_winner; }
+	bool& isDJ() { return inDJBooth; }
+	void setDJ(bool c) { inDJBooth = c; }
 	int m_dmgTaken, m_dmgDealt, m_timesStunned, m_timesSuperStunned, m_supersUsed;
 private:
 	float m_spawnTimer;
@@ -75,5 +77,6 @@ private:
 	bool m_dead, m_respawn, m_respawning, m_winner;
 	int m_lives;
 	bool m_audioCreated;
+	bool inDJBooth = false;
 	AudioComponent m_audio;
 };

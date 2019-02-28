@@ -25,7 +25,7 @@ public:
 	class CompositeNode : public Node
 	{
 	public:
-		const std::vector<Node *> getChildren() const { return m_children; }
+		const std::vector<Node *>& getChildren() const { return m_children; }
 		void addChild(Node * c) { m_children.emplace_back(c); }
 		void addChildren(std::initializer_list<Node *>&& newChildren) { for (Node * c : newChildren) addChild(c); }
 		template <typename CONTAINER>

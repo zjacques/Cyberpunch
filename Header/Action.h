@@ -108,8 +108,13 @@ public:
 	/// <returns></returns>
 	bool run() override
 	{
+		auto phys = static_cast<PlayerPhysicsComponent *>(&m_entity->getComponent("Player Physics"));
 		//Passes YBTN command to AI input handler
-		m_input->m_current["YBTN"] = true;
+		if (phys->canJump())
+		{
+			m_input->m_current["YBTN"] = true;
+			std::cout << "JUMP" << std::endl;
+		}
 		return true;
 	}
 };
@@ -160,7 +165,6 @@ public:
 };
 
 #endif
-
 
 #ifndef CHECKNEAREST_H
 #define CHECKNEAREST_H
@@ -213,6 +217,7 @@ public:
 			auto e = dynamic_cast<AIComponent *>(&m_entity->getComponent("AI"));
 			//Assign nearest player to variable in the AI 
 			e->nearestPlayer = nearest;
+			//delete nearest;
 			return true;
 		}
 		return false;
@@ -414,7 +419,9 @@ public:
 		{
 			if (dist(pos->position, nearest->position) < 150)
 			{
-				m_input->m_current["YBTN"] = true;
+				auto a = new JumpAction(m_entity, m_input);
+				a->run();
+				delete a;
 			}
 		}
 		else if (nearest->position.y > pos->position.y + 200)
@@ -487,6 +494,58 @@ public:
 
 #endif
 
+#ifndef DJACTION_H
+#define DJACTION_H
+
+class DJAction : public Action
+{
+public:
+	DJAction(Entity * e, AiInputComponent * a)
+		: Action(e, a)
+	{}
+
+	bool run() override
+	{
+		auto p = static_cast<PlayerComponent *>(&m_entity->getComponent("Player"));
+		auto pos = static_cast<PositionComponent *>(&m_entity->getComponent("Pos"));
+		auto phys = static_cast<PlayerPhysicsComponent *>(&m_entity->getComponent("Player Physics"));
+		int index = random(1, 3);
+		Vector2f positionOne = Vector2f(1355, 80);
+		Vector2f positionTwo = Vector2f(1035, 80);
+		Vector2f positionThree = Vector2f(715, 80);
+
+		if (p->isDJ())
+		{
+			switch (index)
+			{
+			case 1:
+				phys->posPtr->position = positionOne;
+				break;
+			case 2:
+				phys->posPtr->position = positionTwo;
+				break;
+			case 3:
+				phys->posPtr->position = positionThree;
+				break;
+			}
+			auto a = new PunchAction(m_entity, m_input);
+			a->run();
+			delete a;
+		}
+		p->setDJ(false);
+		return true;
+	}
+
+	int random(int min, int max)
+	{
+		double x = rand() / static_cast<double>(RAND_MAX + 1);
+		int val = min + static_cast<int>(x * (max - min));
+		return val;
+	}
+};
+
+#endif
+
 #ifndef MOVETOPLAYER_H
 #define MOVETOPLAYER_H
 
@@ -507,36 +566,43 @@ public:
 		auto nearest = dynamic_cast<PositionComponent *>(&comp->nearestPlayer->getComponent("Pos"));
 
 		//If the AI is more than 50 pixels from the player
-		if (dist(nearest->position, pos->position) > 50)
+		//dist(nearest->position, pos->position) > 50
+		if (true)
 		{
 			//If AI is right of player
-			if (nearest->position.x < pos->position.x)
+			if (nearest->position.x < pos->position.x - 50)
 			{
 				//Move left
 				m_input->m_current["STICKRIGHT"] = false;
 				m_input->m_current["STICKLEFT"] = true;
 			}
-			else //AI is left of player
+			else if (nearest->position.x > pos->position.x + 50) //AI is left of player
 			{
 				//Move right
 				m_input->m_current["STICKLEFT"] = false;
 				m_input->m_current["STICKRIGHT"] = true;
 			}
-
+			else
+			{
+			}
 		}
 
 		if (comp->onEdgeRight)
 		{
 			m_input->m_current["STICKLEFT"] = false;
 			m_input->m_current["STICKRIGHT"] = true;
-			m_input->m_current["YBTN"] = true;
+			auto a = new JumpAction(m_entity, m_input);
+			a->run();
+			delete a;
 			comp->onEdgeRight = false;
 		}
 		else if (comp->onEdgeLeft)
 		{
 			m_input->m_current["STICKRIGHT"] = false;
 			m_input->m_current["STICKLEFT"] = true;
-			m_input->m_current["YBTN"] = true;
+			auto a = new JumpAction(m_entity, m_input);
+			a->run();
+			delete a;
 			comp->onEdgeLeft = false;
 		}
 		return true;
