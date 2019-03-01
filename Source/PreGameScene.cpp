@@ -47,13 +47,13 @@ void PreGameScene::start()
 		if (m_network->m_isHost)
 		{
 			//m_input[0] gets to be player 1
-			playerIndexes.localPlyrs.push_back(0);
+			playerIndexes.localPlyrs.push_back(pair<int,int>(0,0));
 			m_availablePlyrs[0] = false;
 			m_input[0].second = 0;
 		}
 		else {
 			//m_input[0] becomes the first available player
-			playerIndexes.localPlyrs.push_back(m_network->m_playerNumber);//move from member var to getter
+			playerIndexes.localPlyrs.push_back(pair<int, int>(0,m_network->m_playerNumber));//move from member var to getter
 			m_availablePlyrs[m_network->m_playerNumber] = false;
 			m_input[0].second = m_network->m_playerNumber;
 		}
@@ -61,7 +61,7 @@ void PreGameScene::start()
 
 		for (auto num : players)
 		{
-			if (num != playerIndexes.localPlyrs.back())
+			if (num != playerIndexes.localPlyrs.back().second)
 			{
 				playerIndexes.onlinePlyrs.push_back(num);
 				m_availablePlyrs[num] = false;
@@ -72,7 +72,7 @@ void PreGameScene::start()
 
 	}
 	else {
-		playerIndexes.localPlyrs.push_back(0);
+		playerIndexes.localPlyrs.push_back(pair<int, int>(0,0));
 		m_availablePlyrs[0] = false;
 		m_input[0].second = 0;
 	}
@@ -216,6 +216,7 @@ void PreGameScene::handleInput(InputSystem & input)
 		}
 		for (int i = 1; i < m_numOfPossibleLocalPlayers; i++)
 		{
+			if (i > 3)break;
 			if (m_input[i].first->isButtonPressed("XBTN"))//try to join the game;
 			{
 				if (m_input[i].second < 0)//controllers not joined are set to -1
@@ -228,7 +229,7 @@ void PreGameScene::handleInput(InputSystem & input)
 						if (m_availablePlyrs[j])
 						{
 							m_availablePlyrs[j] = false;
-							playerIndexes.localPlyrs.push_back(j);
+							playerIndexes.localPlyrs.push_back(pair<int, int>(i,j));
 							m_input[i].second = j;
 							//tell the network you've joined
 							playersChanged = true;
@@ -243,7 +244,7 @@ void PreGameScene::handleInput(InputSystem & input)
 				if (m_input[i].second > 0)//controllers not joined are set to -1
 				{
 					m_availablePlyrs[m_input[i].second] = true;
-					playerIndexes.localPlyrs.erase(std::remove(playerIndexes.localPlyrs.begin(), playerIndexes.localPlyrs.end(), m_input[i].second), playerIndexes.localPlyrs.end());
+					playerIndexes.localPlyrs.erase(std::remove(playerIndexes.localPlyrs.begin(), playerIndexes.localPlyrs.end(), pair<int,int>(i,m_input[i].second)), playerIndexes.localPlyrs.end());
 					m_input[i].second = -1;
 					//tell the network you've left
 					playersChanged = true;
@@ -296,7 +297,7 @@ void PreGameScene::reconstructBadges()
 
 	for (auto index : playerIndexes.localPlyrs)
 	{
-		m_playerIcons.push_back(createBadge(240 + 480 * index, 540, true, index));
+		m_playerIcons.push_back(createBadge(240 + 480 * index.second, 540, true, index.second));
 	}
 	for (auto index : playerIndexes.onlinePlyrs)
 	{
@@ -315,8 +316,11 @@ void PreGameScene::checkForUpdates()
 	//playerIndexes.botPlyrs.clear();
 	for (auto num : players)
 	{
-		//if (num != playerIndexes.localPlyrs.back())
-		bool notInLocal = !(std::find(playerIndexes.localPlyrs.begin(), playerIndexes.localPlyrs.end(), num) != playerIndexes.localPlyrs.end());
+		vector<int> localPlyrs;
+		for (auto l : playerIndexes.localPlyrs)
+			localPlyrs.push_back(l.second);
+		//bool notInLocal = !(std::find(playerIndexes.localPlyrs.begin(), playerIndexes.localPlyrs.end(), num) != playerIndexes.localPlyrs.end());
+		bool notInLocal = !(std::find(localPlyrs.begin(), localPlyrs.end(), num) != localPlyrs.end());
 		bool notInBots = !(std::find(playerIndexes.botPlyrs.begin(), playerIndexes.botPlyrs.end(), num) != playerIndexes.botPlyrs.end());
 		if( notInLocal && notInBots)
 		{
