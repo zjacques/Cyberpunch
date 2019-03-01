@@ -16,6 +16,7 @@ void MainMenuScene::start()
 	m_logoTimer = 2.75f;
 	if (m_audioCreated == false)
 	{
+		//loads in the appropriate audio files for the menu scene
 		audio().addSound("MenuMusic", Scene::resources().getMusic("Good Song"));
 		audio().addSound("Neon", Scene::resources().getSFX("Neon"));
 
@@ -31,6 +32,7 @@ void MainMenuScene::start()
 		m_logo.addComponent("Animation", anim);
 
 	}
+	//sets the volume and plays the menu screen music
 	Mix_Volume(-1, 10);
 	audio().playSound("MenuMusic", true);
 	//Setup the input using the first joycon connected
@@ -220,6 +222,6 @@ void MainMenuScene::handleButtonPressed()
 	}
 	else if (tag == "Exit")
 	{
-		// Need a way to exit the game
+		achi::Listener::m_exit = true;
 	}
 }

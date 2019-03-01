@@ -6,6 +6,7 @@ std::vector<Observer*> achi::Listener::obs = {};
 Component* achi::Listener::m_AchisPtr = nullptr;
 std::vector<std::string> achi::Listener::m_newUnlocks = {};
 int achi::Listener::m_localPlayers = 0;
+bool achi::Listener::m_exit = false;
 
 Game::Game(int fps) :
 	m_msPerFrame(fps / 60.0f), //Get the target fps
@@ -82,6 +83,7 @@ void Game::run()
 	//While our bool is false, loop indefinitely
 	while (!m_quit)
 	{
+		m_quit = achi::Listener::m_exit;
 		now = std::chrono::system_clock::now();
 		dt = std::chrono::duration<double>(now - before).count();
 		//Process any events that have occured

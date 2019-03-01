@@ -11,7 +11,7 @@ using std::pair;
 class PreGameScene : public Scene {
 public:
 	static struct PlayersInfo {
-		vector<int> localPlyrs;
+		vector<pair<int,int>> localPlyrs;
 		vector<int> onlinePlyrs;
 		vector<int> botPlyrs;
 	} playerIndexes;

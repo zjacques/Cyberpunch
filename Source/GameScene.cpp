@@ -33,6 +33,7 @@ void GameScene::start()
 		m_audio.addSound("GameMusic2", Scene::resources().getMusic("Laser"));
 		m_audio.addSound("GameMusic3", Scene::resources().getMusic("Pulse"));
 	}
+	//sets the volume for the game and plays the first music track of the game
 	Mix_VolumeMusic(40);
 	m_audio.playSound("GameMusic0", true);
 	m_rendererPtr = NULL;
@@ -67,12 +68,6 @@ void GameScene::start()
 		m_numOfAIPlayers = PreGameScene::playerIndexes.botPlyrs.size();
 	}
 	else {
-		//m_numOfLocalPlayers = SDL_NumJoysticks();
-		//PreGameScene::playerIndexes.localPlyrs.push_back(1);
-		//PreGameScene::playerIndexes.localPlyrs.push_back(2);
-		//PreGameScene::playerIndexes.localPlyrs.push_back(3);
-		//PreGameScene::playerIndexes.localPlyrs.push_back(4);
-		//m_numOfOnlinePlayers = 0;		
 		m_numOfLocalPlayers = PreGameScene::playerIndexes.localPlyrs.size();
 		m_numOfOnlinePlayers = PreGameScene::playerIndexes.onlinePlyrs.size();
 		m_numOfAIPlayers = PreGameScene::playerIndexes.botPlyrs.size();
@@ -91,8 +86,8 @@ void GameScene::start()
 
 	for (int i = 0; i < m_numOfLocalPlayers; i++)
 	{
-		int dex = PreGameScene::playerIndexes.localPlyrs[i];
-		m_localPlayers.push_back(createPlayer(dex, i, spawnPos.at(dex).x, spawnPos.at(dex).y, true, spawnPos));
+		int dex = PreGameScene::playerIndexes.localPlyrs[i].second;
+		m_localPlayers.push_back(createPlayer(dex, PreGameScene::playerIndexes.localPlyrs[i].first, spawnPos.at(dex).x, spawnPos.at(dex).y, true, spawnPos));
 		m_allPlayers.emplace_back(m_localPlayers.at(i)); //Add local to all players vector
 	}
 	for (int i = 0; i < m_numOfOnlinePlayers; i++)
@@ -119,15 +114,23 @@ void GameScene::start()
 	std::vector<SDL_Rect> m_spinAnimation;
 	for (int i = 0; i < 30; i++)
 		m_spinAnimation.push_back({i*50, 0, 50, 50});
+
+	//all the animations of the record and plays the spinning animation
 	anim->addAnimation("Spin", Scene::resources().getTexture("Record"), m_spinAnimation, 1.75f);
 	anim->playAnimation("Spin", true);
+
+	//adds that animation component
 	Scene::systems()["Animation"]->addComponent(anim);
 	m_pickUp->addComponent("Animation", anim);
 	Scene::systems()["Pickup"]->addComponent(&m_pickUp->getComponent("PickUp"));
+
+	//creates an audio component adds the sound
 	auto audio = new AudioComponent();
 	audio->addSound("PickUp 1", Scene::resources().getSFX("PickUp 1"));
 	m_pickUp->addComponent("Audio", audio);
-	//DJBooths created here 
+
+	//DJBooths created here
+	//sets their position by looping through until all three are set
 	auto& booths = Scene::resources().getLevelData()["Booth"];
 
 	for (int i = 0; i < booths.size() - 1; i++)
@@ -292,6 +295,7 @@ void GameScene::stop()
 	Scene::systems()["Animation"]->removeAllComponents();
 	Scene::systems()["Booth"]->removeAllComponents();
 	Scene::systems()["UI"]->removeAllComponents();
+	Scene::systems()["Network"]->removeAllComponents();
 	delete Scene::systems()["UI"];
 
 	for (auto ai : m_AIPlayers)
@@ -310,6 +314,18 @@ void GameScene::stop()
 	m_playersToDel.clear();
 	m_ui.clear();
 	delete m_pickUp;
+	if (static_cast<OnlineSystem*>(Scene::systems()["Network"])->isConnected)
+	{
+		vector<int> ret;
+		for (int i = 0; i < m_numOfLocalPlayers; i++)
+			ret.push_back(PreGameScene::playerIndexes.localPlyrs[i].second);
+		/*for (int i = 0; i < m_numOfOnlinePlayers; i++)
+			ret.push_back(PreGameScene::playerIndexes.onlinePlyrs[i]);*/
+		for (int i = 0; i < m_numOfAIPlayers; i++)
+			ret.push_back(PreGameScene::playerIndexes.botPlyrs[i]);
+
+		static_cast<OnlineSystem*>(Scene::systems()["Network"])->disconnect(ret);
+	}
 }
 
 void GameScene::update(double dt)
@@ -562,6 +578,7 @@ void GameScene::updateCamera(double dt)
 
 Entity * GameScene::createPlayer(int playerNumber,int controllerNumber, int posX, int posY, bool local, std::vector<Vector2f> spawnPositions)
 {
+	//Creates new entity of the player and adds all the appropriate components that the player needs
 	auto p = new Entity("Player");
 	p->addComponent("Pos", new PositionComponent(0,0));
 	p->addComponent("Dust Trigger", new DustTriggerComponent());
@@ -571,6 +588,7 @@ Entity * GameScene::createPlayer(int playerNumber,int controllerNumber, int posX
 	auto animation = new AnimationComponent(&p->getComponent("Sprite"));
 	p->addComponent("Animation", animation);
 	auto audio = new AudioComponent();
+	//loads in all the necessary audio files that the player eill need 
 	audio->addSound("Spawn", Scene::resources().getSFX("Spawn"));
 	audio->addSound("KnockOut", Scene::resources().getSFX("KnockOut"));
 	audio->addSound("Punch", Scene::resources().getSFX("Punch"));
@@ -587,7 +605,7 @@ Entity * GameScene::createPlayer(int playerNumber,int controllerNumber, int posX
 			m_stunRects.push_back({ 85 * i, 0, 85, 85 });
 		m_animRects.push_back({85 * i, 0, 85, 85});
 	}
-
+	//adds all the necessary animations that the player will need
 	animation->addAnimation("Run", Scene::resources().getTexture("Player Run" + std::to_string(playerNumber)), m_animRects, .75f);
 	animation->addAnimation("Idle", Scene::resources().getTexture("Player Idle" + std::to_string(playerNumber)), m_animRects, .5f);
 	animation->addAnimation("Punch 0", Scene::resources().getTexture("Player Left Punch" + std::to_string(playerNumber)), m_animRects, .175f);
@@ -676,6 +694,7 @@ Entity * GameScene::createKillBox(int posX, int posY, int width, int height)
 
 Entity* GameScene::createDJB(int index, int posX, int posY)
 {
+	//creates an entity for the DJ booths
 	auto booth = new Entity("Booth");
 	auto pos = new PositionComponent(0, 0);
 	booth->addComponent("Pos", pos);
@@ -689,10 +708,12 @@ Entity* GameScene::createDJB(int index, int posX, int posY)
 	booth->addComponent("Sprite", new SpriteComponent(pos, Vector2f(152, 93), Vector2f(152, 93), Scene::resources().getTexture("Booth" + std::to_string(index)), 1));
 	Scene::systems()["Render"]->addComponent(&booth->getComponent("Sprite"));
 	auto audio = new AudioComponent();
+	//adds all the appropriate audio for the DJ Booths
 	audio->addSound("Switch", Scene::resources().getSFX("Switch"));
 	audio->addSound("Switch2", Scene::resources().getSFX("Switch2"));
 	booth->addComponent("Audio", audio);
 
+	//Index for the three booths so that it spawns the correct booth in the correct location with the right sprite
 	if (index == 0)
 	{	
 		booth->addComponent("DJ Booth", new GravityBoothComponent(m_allPlayers, &m_physicsWorld, static_cast<PlayerPhysicsSystem*>(Scene::systems()["Player Physics"]), &m_collisionListener, m_pickUp));		

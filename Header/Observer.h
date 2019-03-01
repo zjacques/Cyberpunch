@@ -19,7 +19,8 @@ enum Event
 	KICK_DEATH,
 	ONLINE_MATCH_ENDED,
 	SUPER_ACTIVATED,
-	AI_DEATH
+	AI_DEATH,
+	PUNCH_FIRST
 };
 
 class Observer
@@ -40,6 +41,7 @@ namespace achi
 				observer->onNotify(entity, event);
 			}
 		}
+		static bool m_exit;
 		static int m_localPlayers;
 		static std::vector<Observer*> obs;
 		static Component* m_AchisPtr;

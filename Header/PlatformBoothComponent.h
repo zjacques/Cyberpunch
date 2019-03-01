@@ -15,14 +15,15 @@ public:
 		m_currentIndex(1),
 		DJBoothComponent(pickUp)
 	{
+		//vectors of positions for each set
 		auto firstPoint = Vector2f(960, 540);
 		auto secondPoint = Vector2f(2880, 540);
 		auto thirdPoint = Vector2f(4800, 540);
 		auto firstPair = OffsetPair();
 		auto secondPair = OffsetPair();
 		auto thirdPair = OffsetPair();
-
-		for (int i = 5; i < m_entities->size(); i++)
+		//this handles which platform sets are moved and at what time
+		for (int i = 7; i < m_entities->size(); i++)
 		{
 			if (i < 9)
 			{
@@ -100,7 +101,7 @@ public:
 				m_timer = 20;
 				m_speed = 100;
 			}	
-
+			//this handles the offset of the platforms when the command for moving platfrom is called
 			for (auto& pair : m_offsetVectors)
 			{
 				pair.first.x -= m_speed * dt;

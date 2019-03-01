@@ -14,6 +14,7 @@ void PickUpSystem::addComponent(Component * comp)
 
 void PickUpSystem::update(double dt)
 {
+	//checks the time and either spawns are despawns
 	for (auto& comp : m_components)
 	{
 		auto pickup = static_cast<PickUpComponent*>(comp);

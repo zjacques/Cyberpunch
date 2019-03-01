@@ -31,7 +31,7 @@ void LobbyScene::start()
 		}
 		else {
 			//else just tell the player to return to main menu
-			Scene::goToScene("Main Menu");
+			//Scene::goToScene("Main Menu");
 		}
 	}
 	else if (m_network->isConnected)
@@ -69,6 +69,8 @@ void LobbyScene::stop()
 
 void LobbyScene::update(double dt)
 {
+	if (!m_network->isConnected)
+		Scene::goToScene("Main Menu");
 }
 
 void LobbyScene::draw(SDL_Renderer & renderer)

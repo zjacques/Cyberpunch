@@ -12,12 +12,14 @@ void DJBoothSystem::addComponent(Component * comp)
 
 void DJBoothSystem::update(double dt)
 {
+	
 	for (auto& comp : m_components)
 	{
 		auto booth = static_cast<DJBoothComponent*>(comp);
 
 		booth->update(dt);
 
+		//increments the backgorund, platform colour and the in game song
 		if (booth->bgSwitch)
 		{
 			m_currentBg++;
@@ -33,9 +35,8 @@ void DJBoothSystem::update(double dt)
 			if (m_currentTrack > 3)
 				m_currentTrack = 0;
 
+			//sets the background, music and platform colour
 			m_audioPtr->playSound("GameMusic" + std::to_string(m_currentTrack), true);
-
-
 			auto bgSprite = static_cast<SpriteComponent*>(&m_bgPtr->getComponent("Sprite"));
 			bgSprite->setTexture(m_resourcePtr->getTexture("Game BG" + std::to_string(m_currentBg)));
 
