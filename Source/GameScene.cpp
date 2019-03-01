@@ -68,12 +68,6 @@ void GameScene::start()
 		m_numOfAIPlayers = PreGameScene::playerIndexes.botPlyrs.size();
 	}
 	else {
-		//m_numOfLocalPlayers = SDL_NumJoysticks();
-		//PreGameScene::playerIndexes.localPlyrs.push_back(1);
-		//PreGameScene::playerIndexes.localPlyrs.push_back(2);
-		//PreGameScene::playerIndexes.localPlyrs.push_back(3);
-		//PreGameScene::playerIndexes.localPlyrs.push_back(4);
-		//m_numOfOnlinePlayers = 0;		
 		m_numOfLocalPlayers = PreGameScene::playerIndexes.localPlyrs.size();
 		m_numOfOnlinePlayers = PreGameScene::playerIndexes.onlinePlyrs.size();
 		m_numOfAIPlayers = PreGameScene::playerIndexes.botPlyrs.size();
@@ -301,6 +295,7 @@ void GameScene::stop()
 	Scene::systems()["Animation"]->removeAllComponents();
 	Scene::systems()["Booth"]->removeAllComponents();
 	Scene::systems()["UI"]->removeAllComponents();
+	Scene::systems()["Network"]->removeAllComponents();
 	delete Scene::systems()["UI"];
 
 	for (auto ai : m_AIPlayers)
@@ -319,6 +314,18 @@ void GameScene::stop()
 	m_playersToDel.clear();
 	m_ui.clear();
 	delete m_pickUp;
+	if (static_cast<OnlineSystem*>(Scene::systems()["Network"])->isConnected)
+	{
+		vector<int> ret;
+		for (int i = 0; i < m_numOfLocalPlayers; i++)
+			ret.push_back(PreGameScene::playerIndexes.localPlyrs[i]);
+		/*for (int i = 0; i < m_numOfOnlinePlayers; i++)
+			ret.push_back(PreGameScene::playerIndexes.onlinePlyrs[i]);*/
+		for (int i = 0; i < m_numOfAIPlayers; i++)
+			ret.push_back(PreGameScene::playerIndexes.botPlyrs[i]);
+
+		static_cast<OnlineSystem*>(Scene::systems()["Network"])->disconnect(ret);
+	}
 }
 
 void GameScene::update(double dt)
