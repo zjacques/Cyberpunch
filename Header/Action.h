@@ -138,17 +138,9 @@ public:
 	{
 		auto p = static_cast<PlayerPhysicsComponent *>(&m_entity->getComponent("Player Physics"));
 
-		if (p->canSuperUp())
-		{
-			m_input->m_current["ABTN"] = false;
-			m_input->m_current["XBTN"] = false;
-			m_input->m_current["RBBTN"] = true;
-		}
-		else
-		{
-			m_input->m_current["ABTN"] = false;
-			m_input->m_current["XBTN"] = true;
-		}
+		m_input->m_current["ABTN"] = false;
+		m_input->m_current["XBTN"] = true;
+
 		return true;
 	}
 };
@@ -516,6 +508,7 @@ public:
 
 	bool run() override
 	{
+		auto acomp = static_cast<AIComponent *>(&m_entity->getComponent("AI"));
 		auto p = static_cast<PlayerComponent *>(&m_entity->getComponent("Player"));
 		auto pos = static_cast<PositionComponent *>(&m_entity->getComponent("Pos"));
 		auto phys = static_cast<PlayerPhysicsComponent *>(&m_entity->getComponent("Player Physics"));
@@ -538,10 +531,17 @@ public:
 				phys->posPtr->position = positionThree;
 				break;
 			}
-			auto a = new PunchAction(m_entity, m_input);
-			a->run();
-			delete a;
+
+			if (acomp->timer > 2)
+			{
+				auto a = new PunchAction(m_entity, m_input);
+				a->run();
+				delete a;
+				acomp->timer = 0;
+			}
+			
 		}
+		acomp->timer += 1 / 60.f;
 		p->setDJ(false);
 		return true;
 	}

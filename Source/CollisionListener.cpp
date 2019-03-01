@@ -231,7 +231,6 @@ void CollisionListener::checkPlayerAttack(b2Contact * contact)
 			dmgP = attackHit->damage(); //Get the damage
 			xImpulse = attackHit->xImpulse();
 			yImpulse = attackHit->yImpulse();
-
 		}
 	}
 
@@ -282,7 +281,6 @@ void CollisionListener::checkPlayerAttack(b2Contact * contact)
 
 		attackHit->destroyAttack() = true;
 		static_cast<AudioComponent&>(otherP->getComponent("Audio")).playSound("Punch", false);
-
 	}
 
 }

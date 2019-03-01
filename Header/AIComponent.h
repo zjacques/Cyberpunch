@@ -47,6 +47,7 @@ public:
 
 	bool onEdgeLeft = false;
 	bool onEdgeRight = false;
+	float timer = 0.f;
 	
 	//Declare actions for AI
 };
