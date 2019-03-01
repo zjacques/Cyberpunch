@@ -18,7 +18,6 @@ public:
 	void handleInput(std::string s, Entity * e)
 	{
 		m_currentCMD = nullptr;
-		//m_previousCMD = m_currentCMD;
 
 		if (aiIsButtonPressed("YBTN")) //Y
 		{
@@ -28,7 +27,7 @@ public:
 		{
 			m_currentCMD = &m_punchCMD;
 		}
-		else if (isButtonHeld("RBBTN") && isButtonHeld("LBBTN"))
+		else if (isButtonHeld("RBBTN"))
 		{
 			m_currentCMD = &m_superCMD;
 		}
