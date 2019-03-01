@@ -216,7 +216,6 @@ void PreGameScene::handleInput(InputSystem & input)
 		}
 		for (int i = 1; i < m_numOfPossibleLocalPlayers; i++)
 		{
-			if (i > 3)break;
 			if (m_input[i].first->isButtonPressed("XBTN"))//try to join the game;
 			{
 				if (m_input[i].second < 0)//controllers not joined are set to -1
