@@ -17,6 +17,9 @@ void AchievementsListener::onNotify(Entity * ent, Event event)
 	case PUNCH_FIRST:
 		static_cast<AchievementComponent*>(achi::Listener::m_AchisPtr)->unlockAchievement("Punch First");
 		break;
+	case PLAYER_DEATH:
+		static_cast<AchievementComponent*>(achi::Listener::m_AchisPtr)->unlockAchievement("First Blood");
+		break;
 	case DAMAGE_DEALT:
 		//If the player has dealt 1000 damage, unlock the achievement for it
 		if (static_cast<PlayerComponent*>(&ent->getComponent("Player"))->m_dmgDealt >= 1000)

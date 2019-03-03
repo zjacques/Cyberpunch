@@ -22,7 +22,8 @@ public:
 		m_dmgTaken(0),
 		m_supersUsed(0),
 		m_hitBy(nullptr),
-		m_hitWith("")
+		m_hitWith(""),
+		m_superPercentSpeed(0.05f)
 	{
 
 	}
@@ -39,7 +40,10 @@ public:
 		if (m_playerPtr->m_ID == "AI" && (nullptr != m_hitBy))
 		{
 			if (m_hitBy->m_ID != "AI")
+			{
 				achi::Listener::notify(nullptr, AI_DEATH);
+				achi::Listener::notify(nullptr, PLAYER_DEATH);
+			}
 		}
 
 		//If the player is not the winner
@@ -101,6 +105,7 @@ public:
 	int m_playerIndex;
 	Entity* m_hitBy;
 	std::string m_hitWith;
+	float m_superPercentSpeed;
 private:
 	float m_spawnTimer;
 	Entity * m_playerPtr;

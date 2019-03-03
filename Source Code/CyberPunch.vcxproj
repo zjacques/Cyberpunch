@@ -106,12 +106,14 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(projectDir)/Libraries/SDL2/include/;$(projectDir)/Libraries/;$(projectDir)/Header/;$(projectDir)/Libraries/nlohmann;$(projectDir)/Libraries/SDL2_net/include/;$(projectDir)/Libraries/SDL2_mixer/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(projectDir)/Libraries/SDL2/lib/;$(projectDir)/Libraries/Box2D/lib/;$(projectDir)/Libraries/SDL_TTF/lib/;$(projectDir)/Libraries/SDL_image/lib/;$(projectDir)/Libraries/SDL2_net/lib/;$(projectDir)/Libraries/SDL2_mixer/lib/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_net.lib;SDL2_image.lib;SDL2_ttf.lib;Box2D.lib;SDL2_mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

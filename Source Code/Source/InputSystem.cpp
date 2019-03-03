@@ -43,5 +43,31 @@ void InputSystem::update(double dt)
 		input->m_current["STICKDOWNRIGHT"] = SDL_JoystickGetHat(input->m_joycon, 0) == 6 ? true : false;
 		input->m_current["STICKUPLEFT"] = SDL_JoystickGetHat(input->m_joycon, 0) == 9 ? true : false;
 		input->m_current["STICKUPRIGHT"] = SDL_JoystickGetHat(input->m_joycon, 0) == 3 ? true : false;
+
+		if (SDL_JoystickGetAxis(input->m_joycon, 0) > 30000)
+		{
+			input->m_current["STICKRIGHT"] = true;
+		}
+		if (SDL_JoystickGetAxis(input->m_joycon, 0) < -30000)
+		{
+			input->m_current["STICKLEFT"] = true;
+		}
+		if (SDL_JoystickGetAxis(input->m_joycon, 1) < -30000)
+		{
+			input->m_current["STICKUP"] = true;
+		}
+		if (SDL_JoystickGetAxis(input->m_joycon, 1) > 30000)
+		{
+			input->m_current["STICKDOWN"] = true;
+		}
+
+
+		/*for (int i = 0; i < 16; i++)
+		{
+			if (SDL_JoystickGetAxis(input->m_joycon, 1))
+			{
+				std::cout << "Detected joystick movement with number " << i << "\n";
+			}
+		}*/
 	}
 }

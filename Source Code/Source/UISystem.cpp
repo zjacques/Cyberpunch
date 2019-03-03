@@ -22,6 +22,29 @@ void UISystem::update(double dt)
 		auto ui = pair.second;
 
 		auto dmg = std::to_string(static_cast<PlayerPhysicsComponent*>(&player->getComponent("Player Physics"))->damagePercentage());
+		auto p = static_cast<PlayerComponent*>(&player->getComponent("Player"));
+
+		if (static_cast<PlayerPhysicsComponent*>(&player->getComponent("Player Physics"))->isSupered())
+		{
+			auto phys = static_cast<PlayerPhysicsComponent*>(&player->getComponent("Player Physics"));
+
+
+			if (phys->superPercentage() > 0)
+			{
+				p->m_superPercentSpeed -= dt;
+
+				if (p->m_superPercentSpeed <= 0)
+				{
+					p->m_superPercentSpeed = 0.05f;
+					phys->superPercentage()--; //Take one off of the super percentage
+				}
+			}
+		}
+		else
+		{
+			p->m_superPercentSpeed = 0.05f;
+		}
+
 		auto super = std::to_string(static_cast<PlayerPhysicsComponent*>(&player->getComponent("Player Physics"))->superPercentage());
 
 		if(dmg.size() < 3)
